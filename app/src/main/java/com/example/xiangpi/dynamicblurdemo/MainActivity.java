@@ -1,62 +1,50 @@
 package com.example.xiangpi.dynamicblurdemo;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Bundle;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private ImageView mImageView;
-    private Button mBlurBtn;
+    private Button mBoxBlurBtn;
+    private Button mGaussianBlurBtn;
+    private Button mFastStackBlurBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mImageView = (ImageView) findViewById(R.id.photo);
-        mBlurBtn = (Button) findViewById(R.id.blur_btn);
+        initView();
+    }
 
-        mImageView.setImageResource(R.mipmap.sample1);
+    private void initView() {
+        mBoxBlurBtn = (Button) findViewById(R.id.box_blur);
+        mGaussianBlurBtn = (Button) findViewById(R.id.gaussian_blur);
+        mFastStackBlurBtn = (Button) findViewById(R.id.fast_stack_blur);
 
-        mBlurBtn.setOnClickListener(this);
+        mBoxBlurBtn.setOnClickListener(this);
+        mGaussianBlurBtn.setOnClickListener(this);
+        mFastStackBlurBtn.setOnClickListener(this);
 
     }
 
-
-
     @Override
-    public void onClick(View v) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
+    public void onClick(View view) {
 
-                Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.sample1);
+        final Intent intent = new Intent();
+        switch (view.getId()) {
+            case R.id.box_blur:
+                intent.setClass(MainActivity.this, BoxBlurActivity.class);
+                break;
+            case R.id.gaussian_blur:
+                break;
+            case R.id.fast_stack_blur:
+                break;
+        }
 
-                final int w = bitmap.getWidth();
-                final int h = bitmap.getHeight();
-
-                int[] pixels = new int[w * h];
-                bitmap.getPixels(pixels, 0, w, 0, 0, w, h);
-
-                final long start = System.currentTimeMillis();
-
-                final Bitmap blurred = BoxBlur.blur(10, bitmap);
-                final long stop = System.currentTimeMillis();
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mImageView.setImageBitmap(blurred);
-                        Toast.makeText(MainActivity.this, (stop - start) + "ms", Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
-        }).start();
+        startActivity(intent);
     }
 }
