@@ -14,6 +14,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button mGaussianBlurBtn;
     private Button mFastStackBlurBtn;
 
+    private Button mRenderScriptBtn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,10 +28,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mBoxBlurBtn = (Button) findViewById(R.id.box_blur);
         mGaussianBlurBtn = (Button) findViewById(R.id.gaussian_blur);
         mFastStackBlurBtn = (Button) findViewById(R.id.fast_stack_blur);
+        mRenderScriptBtn = (Button) findViewById(R.id.render_script_demo);
 
         mBoxBlurBtn.setOnClickListener(this);
         mGaussianBlurBtn.setOnClickListener(this);
         mFastStackBlurBtn.setOnClickListener(this);
+        mRenderScriptBtn.setOnClickListener(this);
 
     }
 
@@ -45,6 +49,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.fast_stack_blur:
                 intent.setClass(MainActivity.this, StackBlurActivity.class);
+                break;
+
+            case R.id.render_script_demo:
+                intent.setClass(MainActivity.this, RenderScriptActivity.class);
                 break;
         }
 

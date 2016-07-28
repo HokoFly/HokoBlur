@@ -1,4 +1,4 @@
-package com.example.xiangpi.dynamicblurdemo.BlurOp;
+package com.example.xiangpi.dynamicblurdemo.blurop;
 
 import android.graphics.Bitmap;
 

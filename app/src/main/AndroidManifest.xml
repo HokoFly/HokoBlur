@@ -22,7 +22,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.StackBlurActivity"></activity>
+        <activity android:name=".activity.StackBlurActivity" />
+        <activity android:name=".activity.RenderScriptActivity"></activity>
     </application>
 
 </manifest>

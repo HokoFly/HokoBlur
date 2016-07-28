@@ -30,5 +30,11 @@
         android:layout_height="wrap_content"
         android:text="Fast Blur"/>
 
+    <Button
+        android:id="@+id/render_script_demo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="RenderScript Blur"/>
+
 
 </LinearLayout>

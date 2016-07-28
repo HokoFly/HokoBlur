@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.xiangpi.dynamicblurdemo.R;
-import com.example.xiangpi.dynamicblurdemo.BlurOp.StackBlur;
+import com.example.xiangpi.dynamicblurdemo.blurop.StackBlur;
 
 public class StackBlurActivity extends AppCompatActivity implements View.OnClickListener{
 
