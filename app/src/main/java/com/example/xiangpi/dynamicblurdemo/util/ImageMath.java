@@ -1,4 +1,4 @@
-package com.example.xiangpi.dynamicblurdemo;
+package com.example.xiangpi.dynamicblurdemo.util;
 
 /**
  * Created by xiangpi on 16/7/25.

@@ -1,8 +1,10 @@
-package com.example.xiangpi.dynamicblurdemo;
+package com.example.xiangpi.dynamicblurdemo.BlurOp;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+
+import com.example.xiangpi.dynamicblurdemo.util.ImageMath;
 
 /**
  * Created by 余晓飞 on 2016/7/24.

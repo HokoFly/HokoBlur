@@ -1,4 +1,4 @@
-package com.example.xiangpi.dynamicblurdemo;
+package com.example.xiangpi.dynamicblurdemo.activity;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,6 +8,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.example.xiangpi.dynamicblurdemo.BlurOp.BoxBlur;
+import com.example.xiangpi.dynamicblurdemo.R;
 
 public class BoxBlurActivity extends AppCompatActivity implements View.OnClickListener{
 
