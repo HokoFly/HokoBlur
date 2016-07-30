@@ -29,7 +29,7 @@ public class BoxBlurActivity extends AppCompatActivity implements View.OnClickLi
         mBlurBtn = (Button) findViewById(R.id.blur_btn);
         mNativeBlurBtn = (Button) findViewById(R.id.native_blur_btn);
 
-        mImageView.setImageResource(R.mipmap.sample1);
+        mImageView.setImageResource(R.mipmap.sample);
 
         mBlurBtn.setOnClickListener(this);
         mNativeBlurBtn.setOnClickListener(this);
@@ -58,7 +58,9 @@ public class BoxBlurActivity extends AppCompatActivity implements View.OnClickLi
 
 //                BoxBlur.blur(pixels, result, w, h, 10);
 //                BoxBlur.blur(result, pixels, h, w, 10);
-                    BoxBlur.fastBlur(pixels, w, h, 10);
+                    for (int i = 0; i < 20; i++) {
+                        BoxBlur.fastBlur(pixels, w, h, 10);
+                    }
                     final Bitmap blurred = Bitmap.createBitmap(pixels, 0, w, w, h, Bitmap.Config.ARGB_8888);
 //                final Bitmap blurred = BoxBlur.blur(20, bitmap);
                     final long stop = System.currentTimeMillis();
@@ -78,7 +80,9 @@ public class BoxBlurActivity extends AppCompatActivity implements View.OnClickLi
                 public void run() {
                     final long start = System.currentTimeMillis();
 
-                    nativeBoxBlur(pixels, w, h, 10);
+                    for (int i = 0; i < 20; i++) {
+                        nativeBoxBlur(pixels, w, h, 10);
+                    }
                     final Bitmap blurred = Bitmap.createBitmap(pixels, 0, w, w, h, Bitmap.Config.ARGB_8888);
                     final long stop = System.currentTimeMillis();
                     runOnUiThread(new Runnable() {
