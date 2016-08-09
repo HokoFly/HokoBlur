@@ -2,7 +2,7 @@
 // Created by 橡皮 on 16/7/28.
 //
 
-#include "StackBlur.h"
+#include "include/StackBlur.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <jni.h>
@@ -35,22 +35,36 @@ void doInnerBlur(jint *pix, jint w, jint h, jint radius) {
     jint wh = w * h;
     jint div = radius + radius + 1;
 
-    short r[wh];
-    short g[wh];
-    short b[wh];
+    short *r;
+    short *g;
+    short *b;
+
+    r = (short*)malloc(sizeof(short) * wh);
+    g = (short*)malloc(sizeof(short) * wh);
+    b = (short*)malloc(sizeof(short) * wh);
+
     jint rsum, gsum, bsum, x, y, i, p, yp, yi, yw;
-    jint vmin[max(w, h)];
+    jint *vmin;
+
+    vmin = (jint*)malloc(sizeof(jint) * max(w, h));
 
     jint divsum = (div + 1) >> 1;
     divsum *= divsum;
-    short dv[256 * divsum];
+
+    short *dv;
+    dv = (short*)malloc(sizeof(short) * 256 * divsum);
+
     for (i = 0; i < 256 * divsum; i++) {
         dv[i] = (short)(i / divsum);
     }
 
     yw = yi = 0;
 
-    jint stack[div][3];
+    //jint stack[div][3];
+
+    jint (*stack)[3];
+    stack = (jint(*)[3])malloc(sizeof(jint) * div * 3);
+
     jint stackpointer;
     jint stackstart;
     jint * sir;
@@ -213,5 +227,11 @@ void doInnerBlur(jint *pix, jint w, jint h, jint radius) {
             yi += w;
         }
     }
+
+    free(r);
+    free(g);
+    free(b);
+    free(dv);
+    free(stack);
 }
 

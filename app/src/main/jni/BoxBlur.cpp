@@ -2,7 +2,7 @@
 // Created by 橡皮 on 16/7/28.
 //
 
-#include "BoxBlur.h"
+#include "include/BoxBlur.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <jni.h>

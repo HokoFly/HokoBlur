@@ -29,7 +29,7 @@ public class StackBlurActivity extends AppCompatActivity implements View.OnClick
         mBlurBtn = (Button) findViewById(R.id.blur_btn);
         mNativeBlurBtn = (Button) findViewById(R.id.native_blur_btn);
 
-        mImageView.setImageResource(R.mipmap.sample1);
+        mImageView.setImageResource(R.mipmap.sample);
 
         mBlurBtn.setOnClickListener(this);
         mNativeBlurBtn.setOnClickListener(this);
@@ -45,7 +45,7 @@ public class StackBlurActivity extends AppCompatActivity implements View.OnClick
                 @Override
                 public void run() {
 
-                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.sample1);
+                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.sample);
 
                     final int w = bitmap.getWidth();
                     final int h = bitmap.getHeight();
@@ -73,7 +73,7 @@ public class StackBlurActivity extends AppCompatActivity implements View.OnClick
                 @Override
                 public void run() {
 //
-                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.sample1);
+                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.sample);
 
                     final int w = bitmap.getWidth();
                     final int h = bitmap.getHeight();

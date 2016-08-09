@@ -17,7 +17,7 @@ import java.util.Arrays;
 
 public class RenderScriptActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private static final float BLUR_KERNEL_RADIUS = 10f;
+    private static final int BLUR_KERNEL_RADIUS = 10;
 
     private RenderScript mRenderScript;
 
@@ -30,6 +30,7 @@ public class RenderScriptActivity extends AppCompatActivity implements View.OnCl
     private ScriptC_invert mScriptInvert;
     private ScriptIntrinsicBlur mScriptBlur;
     private ScriptC_boxblur mScriptBoxBlur;
+    private ScriptC_stackblur mScriptStackBlur;
 
     private Button mInvertBtn;
     private Button mBoxBlurBtn;
@@ -64,8 +65,11 @@ public class RenderScriptActivity extends AppCompatActivity implements View.OnCl
 
         mScriptBoxBlur = new ScriptC_boxblur(mRenderScript);
 
+        mScriptStackBlur = new ScriptC_stackblur(mRenderScript);
+
         mInvertBtn.setOnClickListener(this);
         mBoxBlurBtn.setOnClickListener(this);
+        mStackBlurBtn.setOnClickListener(this);
         mGaussianBlurBtn.setOnClickListener(this);
 
     }
@@ -92,11 +96,36 @@ public class RenderScriptActivity extends AppCompatActivity implements View.OnCl
                     case R.id.box_blur_btn:
                         mScriptBoxBlur.set_input(mAllocationIn);
                         mScriptBoxBlur.set_output(mAllocationOut);
-                        mScriptBoxBlur.set_radius((int) BLUR_KERNEL_RADIUS);
+                        mScriptBoxBlur.set_radius(BLUR_KERNEL_RADIUS);
                         mScriptBoxBlur.forEach_boxblur(mAllocationIn);
 
                         break;
                     case R.id.stack_blur_btn:
+                        mScriptStackBlur.set_gIn(mAllocationIn);
+                        mScriptStackBlur.set_gOut(mAllocationOut);
+                        mScriptStackBlur.set_width(mBitmapIn.getWidth());
+                        mScriptStackBlur.set_height(mBitmapIn.getHeight());
+                        mScriptStackBlur.set_radius(BLUR_KERNEL_RADIUS);
+
+                        int[] rowIndices = new int[mBitmapIn.getHeight()];
+                        int[] colIndices = new int[mBitmapIn.getWidth()];
+
+                        for (int i = 0; i < mBitmapIn.getHeight(); i++) {
+                            rowIndices[i] = i;
+                        }
+
+                        for (int i = 0; i < mBitmapIn.getWidth(); i++) {
+                            colIndices[i] = i;
+                        }
+
+                        Allocation rows = Allocation.createSized(mRenderScript, Element.U32(mRenderScript), mBitmapIn.getHeight(), Allocation.USAGE_SCRIPT);
+                        Allocation cols = Allocation.createSized(mRenderScript, Element.U32(mRenderScript), mBitmapIn.getWidth(), Allocation.USAGE_SCRIPT);
+
+                        rows.copyFrom(rowIndices);
+                        cols.copyFrom(colIndices);
+                        mScriptStackBlur.forEach_blur_h(rows);
+                        mScriptStackBlur.forEach_blur_v(cols);
+
                         break;
                     case R.id.gaussian_blur_btn:
                         mScriptBlur.setInput(mAllocationIn);
