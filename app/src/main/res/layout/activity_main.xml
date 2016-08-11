@@ -35,6 +35,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="RenderScript Blur"/>
+    <Button
+        android:id="@+id/opengl_blur"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="OpenGL Blur"/>
 
 
 </LinearLayout>
