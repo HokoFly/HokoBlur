@@ -9,5 +9,9 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.xiangpi.dynamicblurdemo.activity.OpenGLActivity">
 
+    <com.example.xiangpi.dynamicblurdemo.opengl.BlurGLSurfaceView
+        android:id="@+id/blur_glsurfaceview"
+        android:layout_width="match_parent"
+        android:layout_height="400dp" />
 
 </RelativeLayout>

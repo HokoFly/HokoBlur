@@ -33,9 +33,50 @@ public class Rectangle {
                     "uniform vec4 vColor;   \n" +
                     "varying vec2 vTexCoord;   \n" +
                     "uniform sampler2D uTexture;   \n" +
+
                     "void main() {   \n" +
-                    "  gl_FragColor = texture2D(uTexture, 1.0f - vTexCoord);   \n" +
-//                    "  gl_FragColor = vColor;   \n" +
+                    "  vec2 offsets[9]; \n" +
+                    "  float offset = 0.003f; \n" +
+                    "  offsets[0] = vec2(-offset, offset); \n" +
+                    "  offsets[1] = vec2(0.0f, offset); \n" +
+                    "  offsets[2] = vec2(offset, offset); \n" +
+                    "  offsets[3] = vec2(-offset, 0.0f); \n" +
+                    "  offsets[4] = vec2(0.0f, 0.0f); \n" +
+                    "  offsets[5] = vec2(offset, 0.0f); \n" +
+                    "  offsets[6] = vec2(-offset, -offset); \n" +
+                    "  offsets[7] = vec2(0.0f, -offset); \n" +
+                    "  offsets[8] = vec2(offset, -offset); \n" +
+
+//                    "        vec2(-offset, offset), \n" +
+//                    "        vec2(0.0f,    offset), \n" +
+//                    "        vec2(offset,  offset), \n" +
+//                    "        vec2(-offset, 0.0f),   \n" +
+//                    "        vec2(0.0f,    0.0f),   \n" +
+//                    "        vec2(offset,  0.0f),   \n" +
+//                    "        vec2(-offset, -offset), \n" +
+//                    "        vec2(0.0f,    -offset), \n" +
+//                    "        vec2(offset,  -offset)  \n" +
+
+//                    "    ); \n" +
+                    "  float kernel[9];\n" +
+                    "  kernel[0] = 0.1f; \n" +
+                    "  kernel[1] = 0.1f; \n" +
+                    "  kernel[2] = 0.1f; \n" +
+                    "  kernel[3] = 0.1f; \n" +
+                    "  kernel[4] = 0.2f; \n" +
+                    "  kernel[5] = 0.1f; \n" +
+                    "  kernel[6] = 0.1f; \n" +
+                    "  kernel[7] = 0.1f; \n" +
+                    "  kernel[8] = 0.1f; \n" +
+                    "  vec3 sampleTex[9];\n" +
+                    "  for(int i = 0; i < 9; i++) {\n" +
+                    "        sampleTex[i] = vec3(texture2D(uTexture, 1.0f - (vTexCoord.st + offsets[i])));\n" +
+                    "  } \n" +
+                    "  vec3 col;  \n" +
+                    "  for(int i = 0; i < 9; i++) \n" +
+                    "        col += sampleTex[i] * kernel[i]; \n" +
+//                    "  gl_FragColor = texture2D(uTexture, 1.0f - vTexCoord);   \n" +
+                    "  gl_FragColor = vec4(col, 1.0);   \n" +
                     "}   \n";
 
     private FloatBuffer mVertexBuffer;
@@ -91,7 +132,7 @@ public class Rectangle {
         mCtx = context;
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inScaled = false;   // No pre-scaling
-        mBitmap = BitmapFactory.decodeResource(mCtx.getResources(), R.mipmap.sample1, options);
+        mBitmap = BitmapFactory.decodeResource(mCtx.getResources(), R.mipmap.test_wallpaper, options);
         if (mBitmap != null) {
             mWidth = mBitmap.getWidth();
             mHeight = mBitmap.getHeight();

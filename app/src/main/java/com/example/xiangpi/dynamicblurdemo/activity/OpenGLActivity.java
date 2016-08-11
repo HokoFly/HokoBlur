@@ -15,8 +15,8 @@ public class OpenGLActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mGLSurfaceView = new BlurGLSurfaceView(this);
-        setContentView(mGLSurfaceView);
+        setContentView(R.layout.activity_open_gl);
+        mGLSurfaceView = (BlurGLSurfaceView) findViewById(R.id.blur_glsurfaceview);
 
     }
 
