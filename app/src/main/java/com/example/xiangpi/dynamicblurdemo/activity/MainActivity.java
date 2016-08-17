@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Button mRenderScriptBtn;
     private Button mOpenGLBtn;
+    private Button mTexBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,12 +36,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mFastStackBlurBtn = (Button) findViewById(R.id.fast_stack_blur);
         mRenderScriptBtn = (Button) findViewById(R.id.render_script_demo);
         mOpenGLBtn = (Button) findViewById(R.id.opengl_blur);
+        mTexBtn = (Button) findViewById(R.id.tex_blur);
 
         mBoxBlurBtn.setOnClickListener(this);
         mGaussianBlurBtn.setOnClickListener(this);
         mFastStackBlurBtn.setOnClickListener(this);
         mRenderScriptBtn.setOnClickListener(this);
         mOpenGLBtn.setOnClickListener(this);
+        mTexBtn.setOnClickListener(this);
 
     }
 
@@ -63,6 +66,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.opengl_blur:
                 intent.setClass(MainActivity.this, OpenGLActivity.class);
+                break;
+            case R.id.tex_blur:
+                intent.setClass(MainActivity.this, TextureViewActivity.class);
                 break;
         }
 

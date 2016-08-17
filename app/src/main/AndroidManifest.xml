@@ -28,6 +28,7 @@
         <activity android:name=".activity.StackBlurActivity" />
         <activity android:name=".activity.RenderScriptActivity" />
         <activity android:name=".activity.OpenGLActivity"/>
+        <activity android:name=".activity.TextureViewActivity"/>
     </application>
 
 </manifest>

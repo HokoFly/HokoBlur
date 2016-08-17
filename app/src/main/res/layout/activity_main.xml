@@ -41,5 +41,12 @@
         android:layout_height="wrap_content"
         android:text="OpenGL Blur"/>
 
+    <Button
+        android:id="@+id/tex_blur"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextureView Blur"/>
+
+
 
 </LinearLayout>
