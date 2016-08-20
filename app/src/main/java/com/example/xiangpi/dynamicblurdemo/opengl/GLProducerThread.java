@@ -2,6 +2,7 @@ package com.example.xiangpi.dynamicblurdemo.opengl;
 
 import android.content.Context;
 import android.graphics.SurfaceTexture;
+import android.util.Log;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
@@ -102,8 +103,11 @@ public class GLProducerThread extends Thread {
         ((GLRendererImpl)mGLRenderer).initGLRenderer();
 
         while(mRunDraw) {
+            final long start = System.currentTimeMillis();
             mGLRenderer.onDrawFrame();
             mEgl.eglSwapBuffers(mEGLDisplay, mEGLSurface);
+            final long stop = System.currentTimeMillis();
+            Log.d("opengl_glsurfaceview", ((float)(stop - start))  + "ms");
             try {
                 sleep(5);
             } catch(InterruptedException e) {

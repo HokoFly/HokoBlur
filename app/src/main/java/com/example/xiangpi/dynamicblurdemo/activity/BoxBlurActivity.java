@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.example.xiangpi.dynamicblurdemo.blurop.BoxBlur;
 import com.example.xiangpi.dynamicblurdemo.R;
+import com.example.xiangpi.dynamicblurdemo.util.ImageUtils;
 
 public class BoxBlurActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -29,7 +30,7 @@ public class BoxBlurActivity extends AppCompatActivity implements View.OnClickLi
         mBlurBtn = (Button) findViewById(R.id.blur_btn);
         mNativeBlurBtn = (Button) findViewById(R.id.native_blur_btn);
 
-        mImageView.setImageResource(R.mipmap.test_wallpaper);
+        mImageView.setImageResource(ImageUtils.testImageRes);
 
         mBlurBtn.setOnClickListener(this);
         mNativeBlurBtn.setOnClickListener(this);
@@ -41,7 +42,7 @@ public class BoxBlurActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View v) {
         final int id = v.getId();
 
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.test_wallpaper);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), ImageUtils.testImageRes);
 
         final int w = bitmap.getWidth();
         final int h = bitmap.getHeight();

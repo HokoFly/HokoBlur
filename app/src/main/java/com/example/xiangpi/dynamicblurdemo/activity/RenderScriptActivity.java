@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 
 import com.example.xiangpi.dynamicblurdemo.R;
+import com.example.xiangpi.dynamicblurdemo.util.ImageUtils;
 
 import java.util.Arrays;
 
@@ -51,7 +52,7 @@ public class RenderScriptActivity extends AppCompatActivity implements View.OnCl
         mImageView = (ImageView) findViewById(R.id.photo);
 
         mRenderScript = RenderScript.create(this);
-        mBitmapIn = BitmapFactory.decodeResource(getResources(), R.mipmap.test_wallpaper);
+        mBitmapIn = BitmapFactory.decodeResource(getResources(), ImageUtils.testImageRes);
         mBitmapOut = Bitmap.createBitmap(mBitmapIn.getWidth(), mBitmapIn.getHeight(), Bitmap.Config.ARGB_8888);
 
         mImageView.setImageBitmap(mBitmapIn);
@@ -86,10 +87,11 @@ public class RenderScriptActivity extends AppCompatActivity implements View.OnCl
         new Thread(new Runnable() {
             @Override
             public void run() {
-                final long start = System.currentTimeMillis();
+                final long start;
 
                 switch (view.getId()) {
                     case R.id.invert_btn:
+                        start = System.currentTimeMillis();
                         mScriptInvert.forEach_invert(mAllocationIn, mAllocationOut);
                         break;
 
@@ -97,6 +99,7 @@ public class RenderScriptActivity extends AppCompatActivity implements View.OnCl
                         mScriptBoxBlur.set_input(mAllocationIn);
                         mScriptBoxBlur.set_output(mAllocationOut);
                         mScriptBoxBlur.set_radius(BLUR_KERNEL_RADIUS);
+                        start = System.currentTimeMillis();
                         mScriptBoxBlur.forEach_boxblur(mAllocationIn);
 
                         break;
@@ -123,14 +126,18 @@ public class RenderScriptActivity extends AppCompatActivity implements View.OnCl
 
                         rows.copyFrom(rowIndices);
                         cols.copyFrom(colIndices);
+                        start = System.currentTimeMillis();
                         mScriptStackBlur.forEach_blur_h(rows);
                         mScriptStackBlur.forEach_blur_v(cols);
 
                         break;
                     case R.id.gaussian_blur_btn:
                         mScriptBlur.setInput(mAllocationIn);
+                        start = System.currentTimeMillis();
                         mScriptBlur.forEach(mAllocationOut);
                         break;
+                    default:
+                        start = System.currentTimeMillis();
                 }
 
                 final long stop = System.currentTimeMillis();

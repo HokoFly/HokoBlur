@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.example.xiangpi.dynamicblurdemo.R;
 import com.example.xiangpi.dynamicblurdemo.blurop.StackBlur;
+import com.example.xiangpi.dynamicblurdemo.util.ImageUtils;
 
 public class StackBlurActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -29,7 +30,7 @@ public class StackBlurActivity extends AppCompatActivity implements View.OnClick
         mBlurBtn = (Button) findViewById(R.id.blur_btn);
         mNativeBlurBtn = (Button) findViewById(R.id.native_blur_btn);
 
-        mImageView.setImageResource(R.mipmap.test_wallpaper);
+        mImageView.setImageResource(ImageUtils.testImageRes);
 
         mBlurBtn.setOnClickListener(this);
         mNativeBlurBtn.setOnClickListener(this);
@@ -45,7 +46,7 @@ public class StackBlurActivity extends AppCompatActivity implements View.OnClick
                 @Override
                 public void run() {
 
-                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.test_wallpaper);
+                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), ImageUtils.testImageRes);
 
                     final int w = bitmap.getWidth();
                     final int h = bitmap.getHeight();
@@ -73,7 +74,7 @@ public class StackBlurActivity extends AppCompatActivity implements View.OnClick
                 @Override
                 public void run() {
 //
-                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.test_wallpaper);
+                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), ImageUtils.testImageRes);
 
                     final int w = bitmap.getWidth();
                     final int h = bitmap.getHeight();
