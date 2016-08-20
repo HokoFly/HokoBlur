@@ -9,8 +9,7 @@
 - Gaussian Blur（高斯模糊）
 
 >模糊效果： Box < Stack < Gaussian 
->
->模糊速度： Box > Stack > Gaussian
+
 
 ## II 模糊的实现方案
 
@@ -21,7 +20,7 @@
 
 ## III 性能对比
 ### 模糊耗时
-模糊1080×675图片10次耗时对比（并未做resize）
+模糊1080×675图片10次耗时对比（并未做resize）,模糊核半径10
 
 |   |Java|Native|RenderScript|OpenGL|
 |---|:---:|:---:|:---:|:---:|
@@ -32,6 +31,22 @@
 
 - **这里OpenGL的耗时为调用onDrawFrame所需时间，并非实际GPU计算耗时**
 - 测试机型：小米note
+
+### 模糊结果示例
+- Box Blur
+
+![](https://raw.githubusercontent.com/yuxfzju/DynamicBlurDemo/master/doc/graphic/blurred_img_box.jpg)
+
+- Stack Blur
+
+![](https://raw.githubusercontent.com/yuxfzju/DynamicBlurDemo/master/doc/graphic/blurred_img_stack.jpg)
+
+- Gaussian Blur
+
+![](https://raw.githubusercontent.com/yuxfzju/DynamicBlurDemo/master/doc/graphic/blurred_img_gaussian.jpg)
+
+
+模糊效果： Box < Stack < Gaussian 
 
 ### 对大尺寸图片的处理
 即便是用RenderScript，当图片尺寸较大，且模糊核半径较大时，仍然会有性能上的问题。因此传入的Bitmap需要做Resize。
