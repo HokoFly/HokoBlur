@@ -29,7 +29,7 @@ public class BoxBlurActivity extends AppCompatActivity implements View.OnClickLi
         mBlurBtn = (Button) findViewById(R.id.blur_btn);
         mNativeBlurBtn = (Button) findViewById(R.id.native_blur_btn);
 
-        mImageView.setImageResource(R.mipmap.sample);
+        mImageView.setImageResource(R.mipmap.test_wallpaper);
 
         mBlurBtn.setOnClickListener(this);
         mNativeBlurBtn.setOnClickListener(this);
@@ -41,7 +41,7 @@ public class BoxBlurActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View v) {
         final int id = v.getId();
 
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.sample);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.test_wallpaper);
 
         final int w = bitmap.getWidth();
         final int h = bitmap.getHeight();

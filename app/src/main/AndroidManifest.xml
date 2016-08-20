@@ -2,7 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.xiangpi.dynamicblurdemo">
 
-    <uses-feature android:glEsVersion="0x00020000" android:required="true" />
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -27,8 +29,9 @@
         </activity>
         <activity android:name=".activity.StackBlurActivity" />
         <activity android:name=".activity.RenderScriptActivity" />
-        <activity android:name=".activity.OpenGLActivity"/>
-        <activity android:name=".activity.TextureViewActivity"/>
+        <activity android:name=".activity.OpenGLActivity" />
+        <activity android:name=".activity.TextureViewActivity" />
+        <activity android:name=".activity.DynamicBlurActivity"></activity>
     </application>
 
 </manifest>

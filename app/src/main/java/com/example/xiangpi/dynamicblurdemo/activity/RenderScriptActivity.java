@@ -51,7 +51,7 @@ public class RenderScriptActivity extends AppCompatActivity implements View.OnCl
         mImageView = (ImageView) findViewById(R.id.photo);
 
         mRenderScript = RenderScript.create(this);
-        mBitmapIn = BitmapFactory.decodeResource(getResources(), R.mipmap.sample);
+        mBitmapIn = BitmapFactory.decodeResource(getResources(), R.mipmap.test_wallpaper);
         mBitmapOut = Bitmap.createBitmap(mBitmapIn.getWidth(), mBitmapIn.getHeight(), Bitmap.Config.ARGB_8888);
 
         mImageView.setImageBitmap(mBitmapIn);

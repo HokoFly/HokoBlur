@@ -22,6 +22,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button mOpenGLBtn;
     private Button mTexBtn;
 
+    private Button mDynamicBtn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRenderScriptBtn = (Button) findViewById(R.id.render_script_demo);
         mOpenGLBtn = (Button) findViewById(R.id.opengl_blur);
         mTexBtn = (Button) findViewById(R.id.tex_blur);
+        mDynamicBtn = (Button) findViewById(R.id.dynamic_blur);
 
         mBoxBlurBtn.setOnClickListener(this);
         mGaussianBlurBtn.setOnClickListener(this);
@@ -44,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRenderScriptBtn.setOnClickListener(this);
         mOpenGLBtn.setOnClickListener(this);
         mTexBtn.setOnClickListener(this);
+        mDynamicBtn.setOnClickListener(this);
 
     }
 
@@ -70,6 +74,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.tex_blur:
                 intent.setClass(MainActivity.this, TextureViewActivity.class);
                 break;
+            case R.id.dynamic_blur:
+                intent.setClass(MainActivity.this, DynamicBlurActivity.class);
         }
 
         List<ResolveInfo> list = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
