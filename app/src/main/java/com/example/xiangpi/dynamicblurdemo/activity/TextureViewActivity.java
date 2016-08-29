@@ -7,8 +7,8 @@ import android.view.TextureView;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.example.xiangpi.dynamicblurdemo.opengl.GLProducerThread;
-import com.example.xiangpi.dynamicblurdemo.opengl.GLRendererImpl;
+import com.example.xiangpi.dynamicblurdemo.opengl.textureview.GLProducerThread;
+import com.example.xiangpi.dynamicblurdemo.opengl.textureview.GLRendererImpl;
 
 public class TextureViewActivity extends AppCompatActivity implements TextureView.SurfaceTextureListener{
 

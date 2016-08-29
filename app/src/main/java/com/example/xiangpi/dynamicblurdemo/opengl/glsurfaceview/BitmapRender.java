@@ -1,10 +1,15 @@
-package com.example.xiangpi.dynamicblurdemo.opengl;
+package com.example.xiangpi.dynamicblurdemo.opengl.glsurfaceview;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.util.Log;
+
+import com.example.xiangpi.dynamicblurdemo.R;
+import com.example.xiangpi.dynamicblurdemo.opengl.Rectangle;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -23,8 +28,13 @@ public class BitmapRender implements GLSurfaceView.Renderer{
 
     private Context mCtx;
 
+    private Bitmap mBitmap;
+
     public BitmapRender(Context context) {
         mCtx = context;
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inScaled = false;   // No pre-scaling
+        mBitmap = BitmapFactory.decodeResource(mCtx.getResources(), R.mipmap.test_wallpaper, options);
     }
 
     @Override
@@ -33,7 +43,7 @@ public class BitmapRender implements GLSurfaceView.Renderer{
 //        mProgram = GLES20.glCreateProgram();
         Matrix.setLookAtM(mVMatrix, 0, 0, 0, -3, 0, 0, 0, 0, 1, 0);
 
-        mRectangle = new Rectangle(mCtx);
+        mRectangle = new Rectangle(mBitmap);
 
     }
 

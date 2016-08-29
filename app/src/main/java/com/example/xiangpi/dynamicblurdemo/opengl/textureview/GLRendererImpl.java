@@ -1,14 +1,20 @@
-package com.example.xiangpi.dynamicblurdemo.opengl;
+package com.example.xiangpi.dynamicblurdemo.opengl.textureview;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 import android.util.Log;
 
+import com.example.xiangpi.dynamicblurdemo.R;
+import com.example.xiangpi.dynamicblurdemo.opengl.GLRenderer;
+import com.example.xiangpi.dynamicblurdemo.opengl.Rectangle;
+
 /**
  * Created by xiangpi on 16/8/17.
  */
-public class GLRendererImpl implements GLProducerThread.GLRenderer{
+public class GLRendererImpl implements GLRenderer {
 
     private Context mCtx;
     private Rectangle mRectangle;
@@ -20,13 +26,17 @@ public class GLRendererImpl implements GLProducerThread.GLRenderer{
     private int mWidth;
     private int mHeight;
 
+    private Bitmap mBitmap;
 
     public GLRendererImpl(Context context) {
         mCtx = context;
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inScaled = false;   // No pre-scaling
+        mBitmap = BitmapFactory.decodeResource(mCtx.getResources(), R.mipmap.test_wallpaper, options);
     }
 
     public void initGLRenderer() {
-        mRectangle = new Rectangle(mCtx);
+        mRectangle = new Rectangle(mBitmap);
 
         GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1f);
 
@@ -50,6 +60,16 @@ public class GLRendererImpl implements GLProducerThread.GLRenderer{
         Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mVMatrix, 0);
 
         mRectangle.draw(mMVPMatrix);
+
+    }
+
+    @Override
+    public void onSurfaceCreated() {
+
+    }
+
+    @Override
+    public void onSurfaceChanged(int width, int height) {
 
     }
 }

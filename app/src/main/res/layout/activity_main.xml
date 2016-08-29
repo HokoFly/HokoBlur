@@ -53,6 +53,12 @@
         android:layout_height="wrap_content"
         android:text="Dynamic Blur"/>
 
+    <Button
+        android:id="@+id/offscreen_blur"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="OffScreen Blur"/>
+
 
 
 </LinearLayout>

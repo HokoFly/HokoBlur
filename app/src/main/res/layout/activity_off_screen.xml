@@ -7,11 +7,14 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.xiangpi.dynamicblurdemo.activity.OpenGLActivity">
+    tools:context="com.example.xiangpi.dynamicblurdemo.activity.OffScreenActivity">
 
-    <com.example.xiangpi.dynamicblurdemo.opengl.glsurfaceview.BlurGLSurfaceView
-        android:id="@+id/blur_glsurfaceview"
-        android:layout_width="match_parent"
-        android:layout_height="400dp" />
+
+    <Button
+        android:id="@+id/get_bitmap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="Get Bitmap"/>
 
 </RelativeLayout>

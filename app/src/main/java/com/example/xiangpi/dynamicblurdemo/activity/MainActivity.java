@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button mRenderScriptBtn;
     private Button mOpenGLBtn;
     private Button mTexBtn;
+    private Button mOffScreenBtn;
 
     private Button mDynamicBtn;
 
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mOpenGLBtn = (Button) findViewById(R.id.opengl_blur);
         mTexBtn = (Button) findViewById(R.id.tex_blur);
         mDynamicBtn = (Button) findViewById(R.id.dynamic_blur);
+        mOffScreenBtn = (Button) findViewById(R.id.offscreen_blur);
 
         mBoxBlurBtn.setOnClickListener(this);
         mGaussianBlurBtn.setOnClickListener(this);
@@ -48,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mOpenGLBtn.setOnClickListener(this);
         mTexBtn.setOnClickListener(this);
         mDynamicBtn.setOnClickListener(this);
+        mOffScreenBtn.setOnClickListener(this);
 
     }
 
@@ -76,6 +79,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.dynamic_blur:
                 intent.setClass(MainActivity.this, DynamicBlurActivity.class);
+                break;
+            case R.id.offscreen_blur:
+                intent.setClass(MainActivity.this, OffScreenActivity.class);
+                break;
         }
 
         List<ResolveInfo> list = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);

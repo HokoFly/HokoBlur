@@ -21,6 +21,10 @@ public class ImageUtils {
     public static int testImageRes = R.mipmap.sample;
 
     public static void saveBlurredImage(Bitmap bitmap) {
+        if (bitmap == null) {
+            return;
+        }
+
         File saveDir = new File(mSaveDirPath);
         if (!saveDir.exists()) {
             saveDir.mkdirs();

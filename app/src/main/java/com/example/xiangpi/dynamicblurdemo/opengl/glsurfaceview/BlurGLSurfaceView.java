@@ -1,4 +1,4 @@
-package com.example.xiangpi.dynamicblurdemo.opengl;
+package com.example.xiangpi.dynamicblurdemo.opengl.glsurfaceview;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;

@@ -1,12 +1,8 @@
-package com.example.xiangpi.dynamicblurdemo.opengl;
+package com.example.xiangpi.dynamicblurdemo.opengl.offline;
 
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
-
-import com.example.xiangpi.dynamicblurdemo.R;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -16,7 +12,7 @@ import java.nio.ShortBuffer;
 /**
  * Created by xiangpi on 16/8/10.
  */
-public class Rectangle {
+public class OffScreenRectangle {
 
     private final String vertexShaderCode =
             "uniform mat4 uMVPMatrix;   \n" +
@@ -24,7 +20,8 @@ public class Rectangle {
             "attribute vec4 aPosition;  \n" +
             "varying vec2 vTexCoord;  \n" +
             "void main() {              \n" +
-            "  gl_Position = uMVPMatrix * aPosition; \n" +
+//            "  gl_Position = uMVPMatrix * aPosition; \n" +
+            "  gl_Position = aPosition; \n" +
             "  vTexCoord = aTexCoord; \n" +
             "}  \n";
 
@@ -87,13 +84,13 @@ public class Rectangle {
 
     private static final int COORDS_PER_VERTEX = 3;
 
-//    private float squareCoords[] = {
-//                -0.5f,  0.5f, 0.0f,   // top left
-//                -0.5f, -0.5f, 0.0f,   // bottom left
-//                0.5f, -0.5f, 0.0f,   // bottom right
-//                0.5f,  0.5f, 0.0f }; // top right
-
-    private float squareCoords[];
+    private float squareCoords[] = {
+                -1f,  1f, 0.0f,   // top left
+                -1f, -1f, 0.0f,   // bottom left
+                1f, -1f, 0.0f,   // bottom right
+                1f,  1f, 0.0f }; // top right
+//
+//    private float squareCoords[];
 
     private static float texCoords[] = {
         0.0f, 1.0f,
@@ -125,14 +122,14 @@ public class Rectangle {
     private int mWidth;
     private int mHeight;
 
-    public Rectangle(Bitmap bitmap) {
+    public OffScreenRectangle(Bitmap bitmap) {
         mBitmap = bitmap;
 
         if (mBitmap != null) {
             mWidth = mBitmap.getWidth();
             mHeight = mBitmap.getHeight();
         }
-        setSquareCoords();
+//        setSquareCoords();
 
         mVertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
         mFragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
@@ -194,18 +191,18 @@ public class Rectangle {
         if (mWidth < mHeight) {
             final float ratio = (float) mWidth / mHeight;
             squareCoords = new float[]{
-                -ratio / 2,  0.5f, 0.0f,   // top left
-                -ratio / 2, -0.5f, 0.0f,   // bottom left
-                ratio / 2, -0.5f, 0.0f,   // bottom right
-                ratio / 2,  0.5f, 0.0f // top right
+                -ratio,  1f, 0.0f,   // top left
+                -ratio, -1f, 0.0f,   // bottom left
+                ratio, -1f, 0.0f,   // bottom right
+                ratio,  1f, 0.0f // top right
             };
         } else {
             final float ratio = (float) mHeight / mWidth;
             squareCoords = new float[] {
-                -0.5f, ratio / 2, 0.0f,
-                -0.5f, -ratio / 2, 0.0f,
-                0.5f, -ratio / 2, 0.0f,
-                0.5f, ratio / 2, 0.0f
+                -1f, ratio, 0.0f,
+                -1f, -ratio, 0.0f,
+                1f, -ratio, 0.0f,
+                1f, ratio, 0.0f
             };
         }
 
