@@ -29,7 +29,7 @@ public class OffScreenRendererImpl implements GLRenderer {
         mCtx = context;
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inScaled = false;   // No pre-scaling
-        mBitmap = BitmapFactory.decodeResource(mCtx.getResources(), R.mipmap.test_wallpaper, options);
+        mBitmap = BitmapFactory.decodeResource(mCtx.getResources(), R.mipmap.sample, options);
         mRectangle = new OffScreenRectangle(mBitmap);
     }
 

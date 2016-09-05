@@ -1,5 +1,6 @@
 package com.example.xiangpi.dynamicblurdemo.activity;
 
+import android.Manifest;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -10,6 +11,7 @@ import com.example.xiangpi.dynamicblurdemo.opengl.GLRenderer;
 import com.example.xiangpi.dynamicblurdemo.opengl.offline.OffScreenBuffer;
 import com.example.xiangpi.dynamicblurdemo.opengl.offline.OffScreenRendererImpl;
 import com.example.xiangpi.dynamicblurdemo.util.ImageUtils;
+import com.example.xiangpi.dynamicblurdemo.util.PermissionUtil;
 
 public class OffScreenActivity extends AppCompatActivity {
 
@@ -38,5 +40,7 @@ public class OffScreenActivity extends AppCompatActivity {
                 ImageUtils.saveBlurredImage(mOffScreenBuffer.getBitmap());
             }
         });
+
+        PermissionUtil.checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, this);
     }
 }

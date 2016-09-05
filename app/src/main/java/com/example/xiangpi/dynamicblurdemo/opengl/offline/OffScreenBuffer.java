@@ -51,7 +51,7 @@ public class OffScreenBuffer {
         mCtx = context;
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inScaled = false;   // No pre-scaling
-        mBitmap = BitmapFactory.decodeResource(mCtx.getResources(), R.mipmap.test_wallpaper, options);
+        mBitmap = BitmapFactory.decodeResource(mCtx.getResources(), R.mipmap.sample, options);
         if (mBitmap != null) {
             mWidth = mBitmap.getWidth();
             mHeight = mBitmap.getHeight();

@@ -4,6 +4,9 @@ import android.graphics.Bitmap;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
 
+import com.example.xiangpi.dynamicblurdemo.util.KernelUtil;
+import com.example.xiangpi.dynamicblurdemo.util.ShaderUtil;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -30,50 +33,18 @@ public class OffScreenRectangle {
                     "uniform vec4 vColor;   \n" +
                     "varying vec2 vTexCoord;   \n" +
                     "uniform sampler2D uTexture;   \n" +
+                    "uniform float uWidthOffset;  \n" +
+                    "uniform float uHeightOffset;  \n" +
+
+                    "mediump float getGaussWeight(mediump float currentPos, mediump float delta) \n" +
+                    "{ \n" +
+                        "return 1.0f / sqrt(2.0 * 3.1415926f * delta * delta) * exp(-(currentPos * currentPos) / (2.0 * delta * delta)); \n" +
+                    "}  \n" +
 
                     "void main() {   \n" +
-                    "  vec2 offsets[9]; \n" +
-                    "  float offset = 0.003f; \n" +
-                    "  offsets[0] = vec2(-offset, offset); \n" +
-                    "  offsets[1] = vec2(0.0f, offset); \n" +
-                    "  offsets[2] = vec2(offset, offset); \n" +
-                    "  offsets[3] = vec2(-offset, 0.0f); \n" +
-                    "  offsets[4] = vec2(0.0f, 0.0f); \n" +
-                    "  offsets[5] = vec2(offset, 0.0f); \n" +
-                    "  offsets[6] = vec2(-offset, -offset); \n" +
-                    "  offsets[7] = vec2(0.0f, -offset); \n" +
-                    "  offsets[8] = vec2(offset, -offset); \n" +
-
-//                    "        vec2(-offset, offset), \n" +
-//                    "        vec2(0.0f,    offset), \n" +
-//                    "        vec2(offset,  offset), \n" +
-//                    "        vec2(-offset, 0.0f),   \n" +
-//                    "        vec2(0.0f,    0.0f),   \n" +
-//                    "        vec2(offset,  0.0f),   \n" +
-//                    "        vec2(-offset, -offset), \n" +
-//                    "        vec2(0.0f,    -offset), \n" +
-//                    "        vec2(offset,  -offset)  \n" +
-
-//                    "    ); \n" +
-                    "  float kernel[9];\n" +
-                    "  kernel[0] = 0.1f; \n" +
-                    "  kernel[1] = 0.1f; \n" +
-                    "  kernel[2] = 0.1f; \n" +
-                    "  kernel[3] = 0.1f; \n" +
-                    "  kernel[4] = 0.2f; \n" +
-                    "  kernel[5] = 0.1f; \n" +
-                    "  kernel[6] = 0.1f; \n" +
-                    "  kernel[7] = 0.1f; \n" +
-                    "  kernel[8] = 0.1f; \n" +
-                    "  vec3 sampleTex[9];\n" +
-                    "  for(int i = 0; i < 9; i++) {\n" +
-                    "        sampleTex[i] = vec3(texture2D(uTexture, 1.0f - (vTexCoord.st + offsets[i])));\n" +
-                    "  } \n" +
-                    "  vec3 col;  \n" +
-                    "  for(int i = 0; i < 9; i++) \n" +
-                    "        col += sampleTex[i] * kernel[i]; \n" +
-//                    "  gl_FragColor = texture2D(uTexture, 1.0f - vTexCoord);   \n" +
-                    "  gl_FragColor = vec4(col, 1.0);   \n" +
+                    ShaderUtil.getOffsetInitCode(10) +
+//                    ShaderUtil.getKernelInitCode(KernelUtil.getGaussianKernel(5)) +
+                    ShaderUtil.getSampleCode(21) +
                     "}   \n";
 
     private FloatBuffer mVertexBuffer;
@@ -112,6 +83,9 @@ public class OffScreenRectangle {
     private int mMVPMatrixHandle;
     private int mTexCoordHandle;
 
+    private int mWidthOffsetHandle;
+    private int mHeightOffsetHandle;
+
     private int vertexStride = COORDS_PER_VERTEX * 4;
 
     private Bitmap mBitmap;
@@ -129,7 +103,6 @@ public class OffScreenRectangle {
             mWidth = mBitmap.getWidth();
             mHeight = mBitmap.getHeight();
         }
-//        setSquareCoords();
 
         mVertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
         mFragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
@@ -187,27 +160,6 @@ public class OffScreenRectangle {
 
     }
 
-    private void setSquareCoords() {
-        if (mWidth < mHeight) {
-            final float ratio = (float) mWidth / mHeight;
-            squareCoords = new float[]{
-                -ratio,  1f, 0.0f,   // top left
-                -ratio, -1f, 0.0f,   // bottom left
-                ratio, -1f, 0.0f,   // bottom right
-                ratio,  1f, 0.0f // top right
-            };
-        } else {
-            final float ratio = (float) mHeight / mWidth;
-            squareCoords = new float[] {
-                -1f, ratio, 0.0f,
-                -1f, -ratio, 0.0f,
-                1f, -ratio, 0.0f,
-                1f, ratio, 0.0f
-            };
-        }
-
-    }
-
     public void draw(float[] mvpMatrix) {
         GLES20.glUseProgram(mProgram);
 
@@ -229,6 +181,11 @@ public class OffScreenRectangle {
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureDataHandle);
         GLES20.glUniform1i(mTextureUniformHandle, 0);
+
+        mWidthOffsetHandle = GLES20.glGetUniformLocation(mProgram, "uWidthOffset");
+        mHeightOffsetHandle = GLES20.glGetUniformLocation(mProgram, "uHeightOffset");
+        GLES20.glUniform1f(mWidthOffsetHandle, 0f / mWidth);
+        GLES20.glUniform1f(mHeightOffsetHandle, 1f / mHeight);
 
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, mDrawListBuffer);
         GLES20.glDisableVertexAttribArray(mPositionHandle);
