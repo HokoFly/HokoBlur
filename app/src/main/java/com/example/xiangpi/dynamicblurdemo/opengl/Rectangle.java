@@ -70,7 +70,7 @@ public class Rectangle {
                     "  kernel[8] = 0.1f; \n" +
                     "  vec3 sampleTex[9];\n" +
                     "  for(int i = 0; i < 9; i++) {\n" +
-                    "        sampleTex[i] = vec3(texture2D(uTexture, 1.0f - (vTexCoord.st + offsets[i])));\n" +
+                    "        sampleTex[i] = vec3(texture2D(uTexture,  (vTexCoord.st + offsets[i])));\n" +
                     "  } \n" +
                     "  vec3 col;  \n" +
                     "  for(int i = 0; i < 9; i++) \n" +
@@ -96,10 +96,10 @@ public class Rectangle {
     private float squareCoords[];
 
     private static float texCoords[] = {
-        0.0f, 1.0f,
-        0.0f, 0.0f,
         1.0f, 0.0f,
-        1.0f, 1.0f};
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 0.0f};
 
     private short drawOrder[] = { 0, 1, 2, 0, 2, 3 };
 

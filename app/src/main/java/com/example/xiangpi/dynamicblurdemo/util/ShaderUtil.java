@@ -4,7 +4,7 @@ package com.example.xiangpi.dynamicblurdemo.util;
  * Created by xiangpi on 16/9/4.
  */
 public class ShaderUtil {
-    private static final String GAUSSIAN_SIGMA = "10.0f";
+    private static final String GAUSSIAN_SIGMA = "3.0f";
 
 
     public static String getKernelInitCode(float[] kernel) {
@@ -98,14 +98,14 @@ public class ShaderUtil {
     /**
      * 预先设置Kernel权重数组，出现GPU寄存器不足，无法计算，这里在代码中直接计算kernel
      */
-    public static String getSampleCode(int d) {
+    public static String getGaussianSampleCode(int d) {
         StringBuilder sb = new StringBuilder();
 
         sb.append("  vec3 sampleTex[KERNEL_SIZE];\n")
             .append("  vec3 col;  \n")
             .append("  float weightSum = 0.0f; \n")
             .append("  for(int i = 0; i < KERNEL_SIZE; i++) {\n")
-            .append("        sampleTex[i] = vec3(texture2D(uTexture, 1.0f - (vTexCoord.st + offsets[i])));\n")
+            .append("        sampleTex[i] = vec3(texture2D(uTexture, (vTexCoord.st + offsets[i])));\n")
             .append("  } \n")
             .append("  for(int i = 0; i < KERNEL_SIZE; i++) { \n")
             .append("       float index = float(i); \n")
@@ -115,6 +115,29 @@ public class ShaderUtil {
             .append("       weightSum += gaussWeight;\n")
             .append("  }   \n")
             .append("  gl_FragColor = vec4(col / weightSum, 1.0);   \n");
+
+        return sb.toString().replace("KERNEL_SIZE", d + "");
+    }
+
+    /**
+     * 预先设置Kernel权重数组，出现GPU寄存器不足，无法计算，这里在代码中直接计算kernel
+     */
+    public static String getBoxSampleCode(int d) {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("  vec3 sampleTex[KERNEL_SIZE];\n")
+                .append("  vec3 col;  \n")
+                .append("  float weightSum = 0.0f; \n")
+                .append("  for(int i = 0; i < KERNEL_SIZE; i++) {\n")
+                .append("        sampleTex[i] = vec3(texture2D(uTexture, (vTexCoord.st + offsets[i])));\n")
+                .append("  } \n")
+                .append("  for(int i = 0; i < KERNEL_SIZE; i++) { \n")
+                .append("       float index = float(i); \n")
+                .append("       float gaussWeight = 1.0f / float(KERNEL_SIZE); \n")
+                .append("       col += sampleTex[i] * gaussWeight; \n")
+                .append("       weightSum += gaussWeight;\n")
+                .append("  }   \n")
+                .append("  gl_FragColor = vec4(col / weightSum, 1.0);   \n");
 
         return sb.toString().replace("KERNEL_SIZE", d + "");
     }
