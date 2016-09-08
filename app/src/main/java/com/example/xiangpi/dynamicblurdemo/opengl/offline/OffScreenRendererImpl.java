@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
+import android.util.Log;
 
 import com.example.xiangpi.dynamicblurdemo.R;
 import com.example.xiangpi.dynamicblurdemo.opengl.GLRenderer;
@@ -25,10 +26,10 @@ public class OffScreenRendererImpl implements GLRenderer {
     private float[] mProjMatrix = new float[16];
     private float[] mMVPMatrix = new float[16];
 
-    public OffScreenRendererImpl(Context context, Bitmap bitmap) {
+    public OffScreenRendererImpl(Context context, Bitmap bitmap, int radius) {
         mCtx = context;
         mBitmap = bitmap;
-        mRectangle = new OffScreenRectangle(bitmap);
+        mRectangle = new OffScreenRectangle(radius);
     }
 
     @Override
@@ -36,9 +37,12 @@ public class OffScreenRendererImpl implements GLRenderer {
 
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
         Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mVMatrix, 0);
-        mRectangle = new OffScreenRectangle(mBitmap);
+//        mRectangle = new OffScreenRectangle(mBitmap);
+        mRectangle.setInputBitmap(mBitmap);
 
         mRectangle.draw(mMVPMatrix);
+
+
     }
 
     @Override

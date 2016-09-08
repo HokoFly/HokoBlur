@@ -98,7 +98,9 @@ public class ShaderUtil {
     /**
      * 预先设置Kernel权重数组，出现GPU寄存器不足，无法计算，这里在代码中直接计算kernel
      */
-    public static String getGaussianSampleCode(int d) {
+    public static String getGaussianSampleCode(int radius) {
+        int d = radius * 2 + 1;
+
         StringBuilder sb = new StringBuilder();
 
         sb.append("  vec3 sampleTex[KERNEL_SIZE];\n")
@@ -122,8 +124,10 @@ public class ShaderUtil {
     /**
      * 预先设置Kernel权重数组，出现GPU寄存器不足，无法计算，这里在代码中直接计算kernel
      */
-    public static String getBoxSampleCode(int d) {
+    public static String getBoxSampleCode(int radius) {
         StringBuilder sb = new StringBuilder();
+
+        int d = radius * 2 + 1;
 
         sb.append("  vec3 sampleTex[KERNEL_SIZE];\n")
                 .append("  vec3 col;  \n")

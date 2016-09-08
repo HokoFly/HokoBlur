@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
 import android.opengl.Matrix;
+import android.text.style.StyleSpan;
+import android.util.Log;
 
 import com.example.xiangpi.dynamicblurdemo.util.KernelUtil;
 import com.example.xiangpi.dynamicblurdemo.util.ShaderUtil;
@@ -31,25 +33,8 @@ public class OffScreenRectangle {
             "  vTexCoord = aTexCoord; \n" +
             "}  \n";
 
-    private final String fragmentShaderCode =
-                    "precision mediump float;   \n" +
-                    "uniform vec4 vColor;   \n" +
-                    "varying vec2 vTexCoord;   \n" +
-                    "uniform sampler2D uTexture;   \n" +
-                    "uniform float uWidthOffset;  \n" +
-                    "uniform float uHeightOffset;  \n" +
+    private final String fragmentShaderCode;
 
-                    "mediump float getGaussWeight(mediump float currentPos, mediump float delta) \n" +
-                    "{ \n" +
-                        "return 1.0f / sqrt(2.0 * 3.1415926f * delta * delta) * exp(-(currentPos * currentPos) / (2.0 * delta * delta)); \n" +
-                    "}  \n" +
-
-                    "void main() {   \n" +
-                    ShaderUtil.getOffsetInitCode(8) +
-//                    ShaderUtil.getKernelInitCode(KernelUtil.getGaussianKernel(5)) +
-                    ShaderUtil.getGaussianSampleCode(17) +
-//                    ShaderUtil.getBoxSampleCode(11) +
-                    "}   \n";
 
     private FloatBuffer mVertexBuffer;
 
@@ -70,12 +55,17 @@ public class OffScreenRectangle {
             1.0f, 0.0f,
             0.0f, 0.0f,
             0.0f, 1.0f};
+//    private static float mTexVerticalCoords[] = {
+//            1.0f, 1.0f,
+//            1.0f, 0.0f,
+//            0.0f, 0.0f,
+//            0.0f, 1.0f};
 
-    private static float mTexVerticalCoords[] = {
-            1.0f, 0.0f,
-            1.0f, 1.0f,
-            0.0f, 1.0f,
-            0.0f, 0.0f};
+//    private static float mTexVerticalCoords[] = {
+//            1.0f, 0.0f,
+//            1.0f, 1.0f,
+//            0.0f, 1.0f,
+//            0.0f, 0.0f};
 
     private short drawOrder[] = { 0, 1, 2, 0, 2, 3 };
 
@@ -109,16 +99,9 @@ public class OffScreenRectangle {
     private int mWidth;
     private int mHeight;
 
-    public OffScreenRectangle(Bitmap bitmap) {
-        mBitmap = bitmap;
+    public OffScreenRectangle(int blurRadius) {
 
-        if (mBitmap != null) {
-            mWidth = mBitmap.getWidth();
-            mHeight = mBitmap.getHeight();
-        }
-
-        mVertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
-        mFragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
+        fragmentShaderCode = getFragmentShaderCode(blurRadius);
 
         ByteBuffer bb = ByteBuffer.allocateDirect(squareCoords.length * 4);
         bb.order(ByteOrder.nativeOrder());
@@ -138,6 +121,21 @@ public class OffScreenRectangle {
         mTexCoordBuffer.put(mTexHorizontalCoords);
         mTexCoordBuffer.position(0);
 
+
+    }
+
+    public void setInputBitmap(Bitmap bitmap) {
+
+        mVertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
+
+        mFragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
+
+        mBitmap = bitmap;
+
+        if (mBitmap != null) {
+            mWidth = mBitmap.getWidth();
+            mHeight = mBitmap.getHeight();
+        }
         mInputTexture = loadTexture(mBitmap);
 
         initHorizontal();
@@ -147,14 +145,11 @@ public class OffScreenRectangle {
 
     private void initHorizontal() {
         mHorizontalProgram = GLES20.glCreateProgram();
-
         GLES20.glAttachShader(mHorizontalProgram, mVertexShader);
         GLES20.glAttachShader(mHorizontalProgram, mFragmentShader);
         GLES20.glLinkProgram(mHorizontalProgram);
-
         mHorizontalTexture = loadTexture(mWidth, mHeight);
         mHorizontalFrameBuffer = genFrameBuffer(mHorizontalTexture);
-
 
     }
 
@@ -163,8 +158,8 @@ public class OffScreenRectangle {
         GLES20.glAttachShader(mVerticalProgram, mVertexShader);
         GLES20.glAttachShader(mVerticalProgram, mFragmentShader);
         GLES20.glLinkProgram(mVerticalProgram);
-
         mVerticalTexture = loadTexture(mWidth, mHeight);
+
     }
 
     private int loadShader(int type, String shaderCode) {
@@ -172,6 +167,29 @@ public class OffScreenRectangle {
         GLES20.glShaderSource(shader, shaderCode);
         GLES20.glCompileShader(shader);
         return shader;
+    }
+
+    private String getFragmentShaderCode(int radius) {
+
+        String code = "precision mediump float;   \n" +
+                "uniform vec4 vColor;   \n" +
+                "varying vec2 vTexCoord;   \n" +
+                "uniform sampler2D uTexture;   \n" +
+                "uniform float uWidthOffset;  \n" +
+                "uniform float uHeightOffset;  \n" +
+
+                "mediump float getGaussWeight(mediump float currentPos, mediump float delta) \n" +
+                "{ \n" +
+                "return 1.0f / sqrt(2.0 * 3.1415926f * delta * delta) * exp(-(currentPos * currentPos) / (2.0 * delta * delta)); \n" +
+                "}  \n" +
+
+                "void main() {   \n" +
+                ShaderUtil.getOffsetInitCode(radius) +
+//                    ShaderUtil.getKernelInitCode(KernelUtil.getGaussianKernel(5)) +
+                ShaderUtil.getGaussianSampleCode(radius) +
+//                    ShaderUtil.getBoxSampleCode(11) +
+                "}   \n";
+        return code;
     }
 
     private int loadTexture(Bitmap bitmap) {
@@ -287,9 +305,9 @@ public class OffScreenRectangle {
         mMVPMatrixHandle = GLES20.glGetUniformLocation(mVerticalProgram, "uMVPMatrix");
         GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0);
 
-        mTexCoordBuffer.clear();
-        mTexCoordBuffer.put(mTexVerticalCoords);
-        mTexCoordBuffer.position(0);
+//        mTexCoordBuffer.clear();
+//        mTexCoordBuffer.put(mTexVerticalCoords);
+//        mTexCoordBuffer.position(0);
         mTexCoordHandle = GLES20.glGetAttribLocation(mVerticalProgram, "aTexCoord");
         GLES20.glEnableVertexAttribArray(mTexCoordHandle);
         GLES20.glVertexAttribPointer(mTexCoordHandle, 2, GLES20.GL_FLOAT, false, 0, mTexCoordBuffer);

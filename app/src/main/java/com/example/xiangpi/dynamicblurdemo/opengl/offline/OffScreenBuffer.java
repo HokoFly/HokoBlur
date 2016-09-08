@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
+import android.util.Log;
 
 import com.example.xiangpi.dynamicblurdemo.R;
 import com.example.xiangpi.dynamicblurdemo.opengl.GLRenderer;
@@ -115,7 +116,6 @@ public class OffScreenBuffer {
             mRenderer.onDrawFrame();
             mEgl.eglSwapBuffers(mEGLDisplay, mEGLSurface);
         }
-
         convertToBitmap();
 
         return mOutputBitmap;
@@ -131,13 +131,13 @@ public class OffScreenBuffer {
 
         // Convert upside down mirror-reversed image to right-side up normal
         // image.
-        for (int i = 0; i < mHeight; i++) {
-            for (int j = 0; j < mWidth; j++) {
-                iat[(mHeight - i - 1) * mWidth + j] = ia[i * mWidth + j];
-            }
-        }
+//        for (int i = 0; i < mHeight; i++) {
+//            for (int j = 0; j < mWidth; j++) {
+//                iat[(mHeight - i - 1) * mWidth + j] = ia[i * mWidth + j];
+//            }
+//        }
 
         mOutputBitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
-        mOutputBitmap.copyPixelsFromBuffer(IntBuffer.wrap(iat));
+        mOutputBitmap.copyPixelsFromBuffer(IntBuffer.wrap(ia));
     }
 }

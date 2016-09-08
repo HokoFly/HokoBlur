@@ -12,6 +12,7 @@ import android.support.v8.renderscript.RenderScript;
 import android.support.v8.renderscript.ScriptIntrinsicBlur;
 import android.util.AttributeSet;
 import android.util.EventLogTags;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,6 +60,8 @@ public class BlurringView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        long start = System.currentTimeMillis();
+
 
         if (mBlurredView != null) {
 
@@ -71,7 +74,9 @@ public class BlurringView extends View {
                 }
 
                 mBlurredView.draw(mBlurringCanvas);
+//
                 mBlurredBitmap = OpenGLBlurHelper.getInstance(getContext()).doBlur(mToBlurBitmap, BLUR_KERNEL_RADIUS);
+//
 //                mBlurredBitmap = mBlurHelper.doBlur(mToBlurBitmap, BLUR_KERNEL_RADIUS);
 
                 canvas.save();
@@ -82,6 +87,11 @@ public class BlurringView extends View {
             }
 
         }
+
+        long stop = System.currentTimeMillis();
+
+        Log.d("Init Opengl", (stop - start)  + "us" );
+
 
 
     }

@@ -53,7 +53,7 @@ public class OpenGLBlurHelper {
         if (radius <= 0) {
             radius = BLUR_KERNEL_RADIUS;
         }
-        mGLRenderer = new OffScreenRendererImpl(mCtx, input);
+        mGLRenderer = new OffScreenRendererImpl(mCtx, input, radius);
 
         mOffScreenBuffer.setRenderer(mGLRenderer);
 

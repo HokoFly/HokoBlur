@@ -9,7 +9,8 @@
     <RelativeLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="250dp">
+        android:layout_height="250dp"
+        android:background="@android:color/white">
 
         <ImageView
             android:id="@+id/image0"
