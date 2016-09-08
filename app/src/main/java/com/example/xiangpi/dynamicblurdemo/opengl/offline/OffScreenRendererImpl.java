@@ -25,12 +25,10 @@ public class OffScreenRendererImpl implements GLRenderer {
     private float[] mProjMatrix = new float[16];
     private float[] mMVPMatrix = new float[16];
 
-    public OffScreenRendererImpl(Context context) {
+    public OffScreenRendererImpl(Context context, Bitmap bitmap) {
         mCtx = context;
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inScaled = false;   // No pre-scaling
-        mBitmap = BitmapFactory.decodeResource(mCtx.getResources(), R.mipmap.sample, options);
-        mRectangle = new OffScreenRectangle(mBitmap);
+        mBitmap = bitmap;
+        mRectangle = new OffScreenRectangle(bitmap);
     }
 
     @Override
@@ -55,5 +53,10 @@ public class OffScreenRendererImpl implements GLRenderer {
 //        float ratio = (float) width / height;
         float ratio = 1.0f;
         Matrix.frustumM(mProjMatrix, 0, -ratio, ratio, -1, 1, 3, 7);
+    }
+
+    @Override
+    public Bitmap getInputBitmap() {
+        return mBitmap;
     }
 }

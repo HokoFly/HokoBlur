@@ -45,18 +45,10 @@ public class OffScreenBuffer {
     private GLRenderer mRenderer;
     private Context mCtx;
 
-    private Bitmap mBitmap;
+    private Bitmap mOutputBitmap;
 
     public OffScreenBuffer(Context context) {
         mCtx = context;
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inScaled = false;   // No pre-scaling
-        mBitmap = BitmapFactory.decodeResource(mCtx.getResources(), R.mipmap.sample, options);
-        if (mBitmap != null) {
-            mWidth = mBitmap.getWidth();
-            mHeight = mBitmap.getHeight();
-        }
-        initGL();
     }
 
     private void initGL() {
@@ -108,6 +100,10 @@ public class OffScreenBuffer {
     public void setRenderer(GLRenderer renderer) {
         mRenderer = renderer;
 
+        mWidth = mRenderer.getInputBitmap().getWidth();
+        mHeight = mRenderer.getInputBitmap().getHeight();
+        initGL();
+
         if (mRenderer != null) {
             mRenderer.onSurfaceCreated();
             mRenderer.onSurfaceChanged(mWidth, mHeight);
@@ -122,7 +118,7 @@ public class OffScreenBuffer {
 
         convertToBitmap();
 
-        return mBitmap;
+        return mOutputBitmap;
 
     }
 
@@ -141,7 +137,7 @@ public class OffScreenBuffer {
             }
         }
 
-        mBitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
-        mBitmap.copyPixelsFromBuffer(IntBuffer.wrap(iat));
+        mOutputBitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
+        mOutputBitmap.copyPixelsFromBuffer(IntBuffer.wrap(iat));
     }
 }

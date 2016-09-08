@@ -1,6 +1,8 @@
 package com.example.xiangpi.dynamicblurdemo.activity;
 
 import android.Manifest;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -11,11 +13,14 @@ import com.example.xiangpi.dynamicblurdemo.opengl.GLRenderer;
 import com.example.xiangpi.dynamicblurdemo.opengl.offline.OffScreenBuffer;
 import com.example.xiangpi.dynamicblurdemo.opengl.offline.OffScreenRendererImpl;
 import com.example.xiangpi.dynamicblurdemo.util.ImageUtils;
+import com.example.xiangpi.dynamicblurdemo.util.OpenGLBlurHelper;
 import com.example.xiangpi.dynamicblurdemo.util.PermissionUtil;
 
 public class OffScreenActivity extends AppCompatActivity {
 
     private Button mButton;
+
+    private Bitmap mBitmap;
 
     private GLRenderer mGLRenderer;
 
@@ -26,18 +31,16 @@ public class OffScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_off_screen);
 
-        mGLRenderer = new OffScreenRendererImpl(this);
-
-        mOffScreenBuffer = new OffScreenBuffer(this);
-
-        mOffScreenBuffer.setRenderer(mGLRenderer);
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inScaled = false;   // No pre-scaling
+        mBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.sample, options);
 
         mButton = (Button) findViewById(R.id.get_bitmap);
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                ImageUtils.saveBlurredImage(mOffScreenBuffer.getBitmap());
+                ImageUtils.saveBlurredImage(OpenGLBlurHelper.getInstance(OffScreenActivity.this).doBlur(mBitmap, 5));
             }
         });
 

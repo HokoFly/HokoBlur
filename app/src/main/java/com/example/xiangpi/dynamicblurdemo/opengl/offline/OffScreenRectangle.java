@@ -235,6 +235,7 @@ public class OffScreenRectangle {
         drawHorizontalBlur(mvpMatrix);
         resetAllBuffer();
         drawVerticalBlur(mvpMatrix);
+        resetAllBuffer();
 
     }
 

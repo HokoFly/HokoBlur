@@ -72,4 +72,9 @@ public class GLRendererImpl implements GLRenderer {
     public void onSurfaceChanged(int width, int height) {
 
     }
+
+    @Override
+    public Bitmap getInputBitmap() {
+        return mBitmap;
+    }
 }
