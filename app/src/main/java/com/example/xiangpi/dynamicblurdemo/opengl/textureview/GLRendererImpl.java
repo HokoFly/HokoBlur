@@ -5,11 +5,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
-import android.util.Log;
 
 import com.example.xiangpi.dynamicblurdemo.R;
-import com.example.xiangpi.dynamicblurdemo.opengl.GLRenderer;
 import com.example.xiangpi.dynamicblurdemo.opengl.Rectangle;
+import com.xiangpi.blurlibrary.opengl.offscreen.GLRenderer;
 
 /**
  * Created by xiangpi on 16/8/17.

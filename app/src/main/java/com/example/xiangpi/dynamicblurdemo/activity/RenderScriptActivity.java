@@ -2,19 +2,19 @@ package com.example.xiangpi.dynamicblurdemo.activity;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v8.renderscript.*;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v8.renderscript.Allocation;
+import android.support.v8.renderscript.Element;
+import android.support.v8.renderscript.RenderScript;
+import android.support.v8.renderscript.ScriptIntrinsicBlur;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-
 import com.example.xiangpi.dynamicblurdemo.R;
 import com.example.xiangpi.dynamicblurdemo.util.ImageUtils;
-
-import java.util.Arrays;
 
 public class RenderScriptActivity extends AppCompatActivity implements View.OnClickListener{
 

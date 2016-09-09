@@ -11,8 +11,9 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.example.xiangpi.dynamicblurdemo.helper.Blur;
-import com.example.xiangpi.dynamicblurdemo.helper.RenderScriptBlurGenerator;
+import com.xiangpi.blurlibrary.Blur;
+import com.xiangpi.blurlibrary.generator.RenderScriptBlurGenerator;
+
 
 /**
  * Created by xiangpi on 16/8/20.
@@ -70,7 +71,7 @@ public class BlurringView extends View {
 //
 //                mBlurredBitmap = OpenGLBlurGenerator.getInstance().doBlur(mToBlurBitmap, BLUR_KERNEL_RADIUS);
                 mBlurredBitmap = Blur.with(getContext())
-                                    .setBlurScheme(Blur.BlurScheme.JAVA)
+                                    .setBlurScheme(Blur.BlurScheme.NATIVE)
                                     .setBlurMode(Blur.BlurMode.STACK)
                                     .setBlurRadius(2)
                                     .getBlurGenerator()

@@ -9,11 +9,35 @@ android {
         targetSdkVersion 24
         versionCode 1
         versionName "1.0"
+
+        renderscriptTargetApi 15
+        renderscriptSupportModeEnabled true
+
+        ndk {
+            moduleName "ImageBlur"
+            ldLibs "log" //添加log库，看自己需求
+            abiFilters "armeabi", "armeabi-v7a"
+        }
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+        debug {
+            jniDebuggable = true
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    sourceSets {
+        main {
+            jni.srcDir "src/main/jni"
+            jniLibs.srcDir "src/main/libs"
         }
     }
 }

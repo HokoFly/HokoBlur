@@ -9,7 +9,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.example.xiangpi.dynamicblurdemo.originblur.BoxBlur;
+import com.xiangpi.blurlibrary.origin.BoxBlur;
 import com.example.xiangpi.dynamicblurdemo.R;
 import com.example.xiangpi.dynamicblurdemo.util.ImageUtils;
 
