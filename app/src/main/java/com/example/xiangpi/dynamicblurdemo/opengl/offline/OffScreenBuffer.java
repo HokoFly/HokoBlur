@@ -1,12 +1,8 @@
 package com.example.xiangpi.dynamicblurdemo.opengl.offline;
 
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
-import android.util.Log;
 
-import com.example.xiangpi.dynamicblurdemo.R;
 import com.example.xiangpi.dynamicblurdemo.opengl.GLRenderer;
 
 import java.nio.IntBuffer;
@@ -16,7 +12,6 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLContext;
 import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
-import javax.microedition.khronos.opengles.GL;
 
 import static javax.microedition.khronos.opengles.GL10.GL_RGBA;
 import static javax.microedition.khronos.opengles.GL10.GL_UNSIGNED_BYTE;
@@ -34,22 +29,21 @@ public class OffScreenBuffer {
 
     private EGLSurface mEGLSurface = EGL10.EGL_NO_SURFACE;
 
-    private GL mGL;
-
     private static final int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
 
     private static final int EGL_OPENGL_ES2_BIT = 4;
+
+    private EGLConfig[] mEglConfigs = new EGLConfig[1];
 
     private int mWidth;
     private int mHeight;
 
     private GLRenderer mRenderer;
-    private Context mCtx;
 
     private Bitmap mOutputBitmap;
 
-    public OffScreenBuffer(Context context) {
-        mCtx = context;
+    public OffScreenBuffer() {
+        initGL();
     }
 
     private void initGL() {
@@ -75,35 +69,35 @@ public class OffScreenBuffer {
 
         int []numConfigs = new int[1];
 
-        EGLConfig[]configs = new EGLConfig[1];
-
-        mEgl.eglChooseConfig(mEGLDisplay, configAttribs, configs, 1, numConfigs);
+        mEgl.eglChooseConfig(mEGLDisplay, configAttribs, mEglConfigs, 1, numConfigs);
 
         int []contextAttribs = {
                 EGL_CONTEXT_CLIENT_VERSION, 2,
                 EGL10.EGL_NONE
         };
+        mEGLContext = mEgl.eglCreateContext(mEGLDisplay, mEglConfigs[0], EGL10.EGL_NO_CONTEXT, contextAttribs);
 
+    }
+
+    private void initSurface() {
         int[] surfaceAttribs = {
                 EGL10.EGL_WIDTH, mWidth,
                 EGL10.EGL_HEIGHT, mHeight,
                 EGL10.EGL_NONE
         };
 
-        mEGLContext = mEgl.eglCreateContext(mEGLDisplay, configs[0], EGL10.EGL_NO_CONTEXT, contextAttribs);
-        mEGLSurface = mEgl.eglCreatePbufferSurface(mEGLDisplay, configs[0], surfaceAttribs);
+        mEGLSurface = mEgl.eglCreatePbufferSurface(mEGLDisplay, mEglConfigs[0], surfaceAttribs);
 
         mEgl.eglMakeCurrent(mEGLDisplay, mEGLSurface, mEGLSurface, mEGLContext);
 
-        mGL = mEGLContext.getGL();
     }
 
     public void setRenderer(GLRenderer renderer) {
         mRenderer = renderer;
-
         mWidth = mRenderer.getInputBitmap().getWidth();
         mHeight = mRenderer.getInputBitmap().getHeight();
-        initGL();
+
+        initSurface();
 
         if (mRenderer != null) {
             mRenderer.onSurfaceCreated();
@@ -125,7 +119,6 @@ public class OffScreenBuffer {
     private void convertToBitmap() {
         int[] iat = new int[mWidth * mHeight];
         IntBuffer ib = IntBuffer.allocate(mWidth * mHeight);
-//        mGL.glReadPixels(0, 0, mWidth, mHeight, GL_RGBA, GL_UNSIGNED_BYTE, ib);
         GLES20.glReadPixels(0, 0, mWidth, mHeight, GL_RGBA, GL_UNSIGNED_BYTE, ib);
         int[] ia = ib.array();
 

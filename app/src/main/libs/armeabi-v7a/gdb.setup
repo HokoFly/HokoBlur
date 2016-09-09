@@ -1,0 +1,2 @@
+set solib-search-path /Users/xiangpi/Documents/xiangpi/Project/DynamicBlurDemo/app/src/main/obj/local/armeabi-v7a
+directory /Users/xiangpi/Library/Android/sdk/ndk-bundle/platforms/android-9/arch-arm/usr/include /Users/xiangpi/Library/Android/sdk/ndk-bundle/sources/cxx-stl/system/include .

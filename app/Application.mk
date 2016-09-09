@@ -1,1 +1,0 @@
-APP_BUILD_SCRIPT := ./src/main/jni/Android.mk

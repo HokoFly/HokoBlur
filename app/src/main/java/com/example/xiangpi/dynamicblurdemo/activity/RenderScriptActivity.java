@@ -99,13 +99,15 @@ public class RenderScriptActivity extends AppCompatActivity implements View.OnCl
                         mScriptBoxBlur.set_input(mAllocationIn);
                         mScriptBoxBlur.set_output(mAllocationOut);
                         mScriptBoxBlur.set_radius(BLUR_KERNEL_RADIUS);
+                        mScriptBoxBlur.set_width(mBitmapIn.getWidth());
+                        mScriptBoxBlur.set_height(mBitmapIn.getHeight());
                         start = System.currentTimeMillis();
                         mScriptBoxBlur.forEach_boxblur(mAllocationIn);
 
                         break;
                     case R.id.stack_blur_btn:
-                        mScriptStackBlur.set_gIn(mAllocationIn);
-                        mScriptStackBlur.set_gOut(mAllocationOut);
+                        mScriptStackBlur.set_input(mAllocationIn);
+                        mScriptStackBlur.set_output(mAllocationOut);
                         mScriptStackBlur.set_width(mBitmapIn.getWidth());
                         mScriptStackBlur.set_height(mBitmapIn.getHeight());
                         mScriptStackBlur.set_radius(BLUR_KERNEL_RADIUS);

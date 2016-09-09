@@ -6,20 +6,13 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.view.ViewCompat;
-import android.support.v8.renderscript.Allocation;
-import android.support.v8.renderscript.Element;
-import android.support.v8.renderscript.RenderScript;
-import android.support.v8.renderscript.ScriptIntrinsicBlur;
 import android.util.AttributeSet;
-import android.util.EventLogTags;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 
-import com.example.xiangpi.dynamicblurdemo.opengl.offline.OffScreenBuffer;
-import com.example.xiangpi.dynamicblurdemo.util.OpenGLBlurHelper;
-import com.example.xiangpi.dynamicblurdemo.util.RenderScriptBlurHelper;
+import com.example.xiangpi.dynamicblurdemo.helper.Blur;
+import com.example.xiangpi.dynamicblurdemo.helper.RenderScriptBlurGenerator;
 
 /**
  * Created by xiangpi on 16/8/20.
@@ -39,7 +32,7 @@ public class BlurringView extends View {
     private Bitmap mToBlurBitmap;
     private Bitmap mBlurredBitmap;
     private Canvas mBlurringCanvas;
-    private RenderScriptBlurHelper mBlurHelper;
+    private RenderScriptBlurGenerator mBlurHelper;
 
     public BlurringView(Context context) {
         super(context);
@@ -54,7 +47,7 @@ public class BlurringView extends View {
 
 
     private void init(Context context) {
-        mBlurHelper = RenderScriptBlurHelper.getInstance(context);
+        mBlurHelper = RenderScriptBlurGenerator.getInstance(context);
     }
 
     @Override
@@ -75,8 +68,14 @@ public class BlurringView extends View {
 
                 mBlurredView.draw(mBlurringCanvas);
 //
-                mBlurredBitmap = OpenGLBlurHelper.getInstance(getContext()).doBlur(mToBlurBitmap, BLUR_KERNEL_RADIUS);
-//
+//                mBlurredBitmap = OpenGLBlurGenerator.getInstance().doBlur(mToBlurBitmap, BLUR_KERNEL_RADIUS);
+                mBlurredBitmap = Blur.with(getContext())
+                                    .setBlurScheme(Blur.BlurScheme.JAVA)
+                                    .setBlurMode(Blur.BlurMode.STACK)
+                                    .setBlurRadius(2)
+                                    .getBlurGenerator()
+                                    .doBlur(mToBlurBitmap);
+
 //                mBlurredBitmap = mBlurHelper.doBlur(mToBlurBitmap, BLUR_KERNEL_RADIUS);
 
                 canvas.save();
@@ -162,7 +161,7 @@ public class BlurringView extends View {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        RenderScriptBlurHelper.release();
+        RenderScriptBlurGenerator.release();
     }
 
 

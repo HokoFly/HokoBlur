@@ -43,8 +43,8 @@ static unsigned char const stackblur_shr[255] =
         24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24
 };
 
-rs_allocation gIn;
-rs_allocation gOut;
+rs_allocation input;
+rs_allocation output;
 
 uint32_t width;
 uint32_t height;
@@ -82,7 +82,7 @@ void __attribute__((kernel)) blur_v(uint32_t in) {
         {
             stack_ptr = &stack[i];
 
-            inPixel = rsGetElementAt_uchar4(gOut, src_i).xyz;
+            inPixel = rsGetElementAt_uchar4(output, src_i).xyz;
 
             *stack_ptr = inPixel;
 
@@ -96,7 +96,7 @@ void __attribute__((kernel)) blur_v(uint32_t in) {
 
             stack_ptr = &stack[i + radius];
 
-            inPixel = rsGetElementAt_uchar4(gOut, src_i).xyz;
+            inPixel = rsGetElementAt_uchar4(output, src_i).xyz;
 
             *stack_ptr = inPixel;
 
@@ -114,9 +114,9 @@ void __attribute__((kernel)) blur_v(uint32_t in) {
         {
             uchar4 outPixel;
             outPixel.xyz = convert_uchar3((sum * mul_sum) >> shr_sum);
-            outPixel.w = rsGetElementAt_uchar4(gOut, dst_i).w;
+            outPixel.w = rsGetElementAt_uchar4(output, dst_i).w;
             outPixel = min(max(outPixel, 0), outPixel.w);
-            rsSetElementAt_uchar4(gOut, outPixel, dst_i);
+            rsSetElementAt_uchar4(output, outPixel, dst_i);
             dst_i += width;
 
             sum -= sum_out;
@@ -133,7 +133,7 @@ void __attribute__((kernel)) blur_v(uint32_t in) {
                 ++yp;
             }
 
-            inPixel = rsGetElementAt_uchar4(gOut, src_i).xyz;
+            inPixel = rsGetElementAt_uchar4(output, src_i).xyz;
 
             *stack_ptr = inPixel;
 
@@ -183,7 +183,7 @@ void __attribute__((kernel)) blur_h(uint32_t in) {
     for(i = 0; i <= radius; i++)
     {
        stack_ptr    = &stack[ i ];
-       inPixel = rsGetElementAt_uchar4(gIn, src_i).xyz;
+       inPixel = rsGetElementAt_uchar4(input, src_i).xyz;
        *stack_ptr = inPixel;
        sum_tmp = convert_uint3(inPixel);
        sum_out += sum_tmp;
@@ -195,7 +195,7 @@ void __attribute__((kernel)) blur_h(uint32_t in) {
     {
        if (i <= wm) src_i += 1;
        stack_ptr = &stack[ (i + radius) ];
-       inPixel = rsGetElementAt_uchar4(gIn, src_i).xyz;
+       inPixel = rsGetElementAt_uchar4(input, src_i).xyz;
 
        *stack_ptr = inPixel;
        sum_tmp = convert_uint3(inPixel);
@@ -211,12 +211,12 @@ void __attribute__((kernel)) blur_h(uint32_t in) {
     for(x = 0; x < width; x++) {
         uchar4 outPixel;
         outPixel.xyz = convert_uchar3((sum * mul_sum) >> shr_sum);
-        outPixel.w = rsGetElementAt_uchar4(gIn, dst_i).w;
+        outPixel.w = rsGetElementAt_uchar4(input, dst_i).w;
         outPixel = min(max(outPixel, 0), outPixel.w);
 
         //rsDebug("outPixel", outPixel);
         //rsDebug("dst_i", dst_i);
-        rsSetElementAt_uchar4(gOut, outPixel, dst_i);
+        rsSetElementAt_uchar4(output, outPixel, dst_i);
 
         dst_i += 1;
 
@@ -234,7 +234,7 @@ void __attribute__((kernel)) blur_h(uint32_t in) {
            ++xp;
         }
 
-        inPixel = rsGetElementAt_uchar4(gIn, src_i).xyz;
+        inPixel = rsGetElementAt_uchar4(input, src_i).xyz;
 
         *stack_ptr = inPixel;
         sum_in += convert_uint3(inPixel);

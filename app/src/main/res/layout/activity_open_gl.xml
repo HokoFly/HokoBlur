@@ -7,7 +7,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.xiangpi.dynamicblurdemo.activity.OpenGLActivity">
+    tools:context=".activity.GLSurfaceActivity">
 
     <com.example.xiangpi.dynamicblurdemo.opengl.glsurfaceview.BlurGLSurfaceView
         android:id="@+id/blur_glsurfaceview"

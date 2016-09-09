@@ -1,12 +1,8 @@
 package com.example.xiangpi.dynamicblurdemo.activity;
 
-import android.Manifest;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.os.Build;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -76,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 intent.setClass(MainActivity.this, RenderScriptActivity.class);
                 break;
             case R.id.opengl_blur:
-                intent.setClass(MainActivity.this, OpenGLActivity.class);
+                intent.setClass(MainActivity.this, GLSurfaceActivity.class);
                 break;
             case R.id.tex_blur:
                 intent.setClass(MainActivity.this, TextureViewActivity.class);

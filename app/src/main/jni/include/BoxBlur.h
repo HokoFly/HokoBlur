@@ -60,7 +60,7 @@ extern "C" {
 
 
 
-JNIEXPORT void JNICALL Java_com_example_xiangpi_dynamicblurdemo_activity_BoxBlurActivity_nativeBoxBlur
+JNIEXPORT void JNICALL Java_com_example_xiangpi_dynamicblurdemo_helper_NativeBlurGenerator_nativeBoxBlur
         (JNIEnv *, jobject, jintArray, jint, jint, jint);
 
 void blurHorizontal(int[], int[], int width, int height, int radius);

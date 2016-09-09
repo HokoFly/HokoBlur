@@ -1,15 +1,11 @@
 package com.example.xiangpi.dynamicblurdemo.opengl.offline;
 
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
-import android.util.Log;
 
-import com.example.xiangpi.dynamicblurdemo.R;
+import com.example.xiangpi.dynamicblurdemo.helper.Blur;
 import com.example.xiangpi.dynamicblurdemo.opengl.GLRenderer;
-import com.example.xiangpi.dynamicblurdemo.opengl.Rectangle;
 
 /**
  * Created by xiangpi on 16/8/29.
@@ -20,16 +16,13 @@ public class OffScreenRendererImpl implements GLRenderer {
 
     private Bitmap mBitmap;
 
-    private Context mCtx;
-
     private float[] mVMatrix = new float[16];
     private float[] mProjMatrix = new float[16];
     private float[] mMVPMatrix = new float[16];
 
-    public OffScreenRendererImpl(Context context, Bitmap bitmap, int radius) {
-        mCtx = context;
+    public OffScreenRendererImpl(Bitmap bitmap, int radius, Blur.BlurMode mode) {
         mBitmap = bitmap;
-        mRectangle = new OffScreenRectangle(radius);
+        mRectangle = new OffScreenRectangle(radius, mode);
     }
 
     @Override

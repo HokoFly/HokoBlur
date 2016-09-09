@@ -3,19 +3,15 @@ package com.example.xiangpi.dynamicblurdemo.opengl.offline;
 import android.graphics.Bitmap;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
-import android.opengl.Matrix;
-import android.text.style.StyleSpan;
 import android.util.Log;
 
-import com.example.xiangpi.dynamicblurdemo.util.KernelUtil;
+import com.example.xiangpi.dynamicblurdemo.helper.Blur;
 import com.example.xiangpi.dynamicblurdemo.util.ShaderUtil;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
-
-import javax.microedition.khronos.opengles.GL;
 
 /**
  * Created by xiangpi on 16/8/10.
@@ -99,9 +95,9 @@ public class OffScreenRectangle {
     private int mWidth;
     private int mHeight;
 
-    public OffScreenRectangle(int blurRadius) {
+    public OffScreenRectangle(int blurRadius, Blur.BlurMode mode) {
 
-        fragmentShaderCode = getFragmentShaderCode(blurRadius);
+        fragmentShaderCode = getFragmentShaderCode(blurRadius, mode);
 
         ByteBuffer bb = ByteBuffer.allocateDirect(squareCoords.length * 4);
         bb.order(ByteOrder.nativeOrder());
@@ -169,7 +165,7 @@ public class OffScreenRectangle {
         return shader;
     }
 
-    private String getFragmentShaderCode(int radius) {
+    private String getFragmentShaderCode(int radius, Blur.BlurMode mode) {
 
         String code = "precision mediump float;   \n" +
                 "uniform vec4 vColor;   \n" +
@@ -184,11 +180,18 @@ public class OffScreenRectangle {
                 "}  \n" +
 
                 "void main() {   \n" +
-                ShaderUtil.getOffsetInitCode(radius) +
-//                    ShaderUtil.getKernelInitCode(KernelUtil.getGaussianKernel(5)) +
-                ShaderUtil.getGaussianSampleCode(radius) +
-//                    ShaderUtil.getBoxSampleCode(11) +
-                "}   \n";
+                ShaderUtil.getOffsetInitCode(radius);
+//                    ShaderUtil.getKernelInitCode(KernelUtil.getGaussianKernel(5)) +;
+
+        if (mode == Blur.BlurMode.BOX) {
+            code += (ShaderUtil.getBoxSampleCode(radius) + "}   \n");
+            Log.d("opengl", "blur_box");
+        } else {
+            //暂不支持StackBlur，统一为高斯模糊
+            code += (ShaderUtil.getGaussianSampleCode(radius) + "}   \n");
+            Log.d("opengl", "blur_gaussian");
+        }
+
         return code;
     }
 

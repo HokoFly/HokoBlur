@@ -11,9 +11,8 @@ import android.widget.Button;
 import com.example.xiangpi.dynamicblurdemo.R;
 import com.example.xiangpi.dynamicblurdemo.opengl.GLRenderer;
 import com.example.xiangpi.dynamicblurdemo.opengl.offline.OffScreenBuffer;
-import com.example.xiangpi.dynamicblurdemo.opengl.offline.OffScreenRendererImpl;
 import com.example.xiangpi.dynamicblurdemo.util.ImageUtils;
-import com.example.xiangpi.dynamicblurdemo.util.OpenGLBlurHelper;
+import com.example.xiangpi.dynamicblurdemo.helper.OpenGLBlurGenerator;
 import com.example.xiangpi.dynamicblurdemo.util.PermissionUtil;
 
 public class OffScreenActivity extends AppCompatActivity {
@@ -40,7 +39,7 @@ public class OffScreenActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                ImageUtils.saveBlurredImage(OpenGLBlurHelper.getInstance(OffScreenActivity.this).doBlur(mBitmap, 5));
+                ImageUtils.saveBlurredImage(OpenGLBlurGenerator.getInstance().doBlur(mBitmap));
             }
         });
 

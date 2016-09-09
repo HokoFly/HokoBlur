@@ -61,7 +61,7 @@ extern "C" {
 #define max(a, b) ((a)>(b)?(a):(b))
 #define min(a, b) ((a)<(b)?(a):(b))
 
-JNIEXPORT void JNICALL Java_com_example_xiangpi_dynamicblurdemo_activity_StackBlurActivity_nativeStackBlur
+JNIEXPORT void JNICALL Java_com_example_xiangpi_dynamicblurdemo_helper_NativeBlurGenerator_nativeStackBlur
         (JNIEnv *, jobject, jintArray, jint, jint, jint);
 
 void doInnerBlur(jint *, jint , jint , jint);

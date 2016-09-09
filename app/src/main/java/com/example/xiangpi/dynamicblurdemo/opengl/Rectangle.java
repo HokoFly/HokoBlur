@@ -47,17 +47,6 @@ public class Rectangle {
                     "  offsets[7] = vec2(0.0f, -offset); \n" +
                     "  offsets[8] = vec2(offset, -offset); \n" +
 
-//                    "        vec2(-offset, offset), \n" +
-//                    "        vec2(0.0f,    offset), \n" +
-//                    "        vec2(offset,  offset), \n" +
-//                    "        vec2(-offset, 0.0f),   \n" +
-//                    "        vec2(0.0f,    0.0f),   \n" +
-//                    "        vec2(offset,  0.0f),   \n" +
-//                    "        vec2(-offset, -offset), \n" +
-//                    "        vec2(0.0f,    -offset), \n" +
-//                    "        vec2(offset,  -offset)  \n" +
-
-//                    "    ); \n" +
                     "  float kernel[9];\n" +
                     "  kernel[0] = 0.1f; \n" +
                     "  kernel[1] = 0.1f; \n" +

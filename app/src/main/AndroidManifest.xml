@@ -32,7 +32,7 @@
         </activity>
         <activity android:name=".activity.StackBlurActivity" />
         <activity android:name=".activity.RenderScriptActivity" />
-        <activity android:name=".activity.OpenGLActivity" />
+        <activity android:name=".activity.GLSurfaceActivity" />
         <activity android:name=".activity.TextureViewActivity" />
         <activity android:name=".activity.DynamicBlurActivity" />
         <activity android:name=".activity.OffScreenActivity"></activity>

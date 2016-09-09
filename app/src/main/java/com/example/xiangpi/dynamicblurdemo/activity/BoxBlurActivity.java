@@ -1,17 +1,15 @@
 package com.example.xiangpi.dynamicblurdemo.activity;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.example.xiangpi.dynamicblurdemo.blurop.BoxBlur;
+import com.example.xiangpi.dynamicblurdemo.originblur.BoxBlur;
 import com.example.xiangpi.dynamicblurdemo.R;
 import com.example.xiangpi.dynamicblurdemo.util.ImageUtils;
 
@@ -60,7 +58,7 @@ public class BoxBlurActivity extends AppCompatActivity implements View.OnClickLi
 //                BoxBlur.blur(pixels, result, w, h, 10);
 //                BoxBlur.blur(result, pixels, h, w, 10);
                     for (int i = 0; i < 20; i++) {
-                        BoxBlur.fastBlur(pixels, w, h, 10);
+                        BoxBlur.doBlur(pixels, w, h, 10);
                     }
                     final Bitmap blurred = Bitmap.createBitmap(pixels, 0, w, w, h, Bitmap.Config.ARGB_8888);
 //                final Bitmap blurred = BoxBlur.blur(20, bitmap);
@@ -99,10 +97,10 @@ public class BoxBlurActivity extends AppCompatActivity implements View.OnClickLi
 
     }
 
-    static {
-        System.loadLibrary("boxblur");
-    }
+    private native void nativeBoxBlur(int[] pixels, int width, int height, int radius);
 
-    public native void nativeBoxBlur(int[] pixels, int width, int height, int radius);
+    static {
+        System.loadLibrary("ImageBlur");
+    }
 
 }

@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.xiangpi.dynamicblurdemo.R;
-import com.example.xiangpi.dynamicblurdemo.blurop.StackBlur;
+import com.example.xiangpi.dynamicblurdemo.originblur.StackBlur;
 import com.example.xiangpi.dynamicblurdemo.util.ImageUtils;
 
 public class StackBlurActivity extends AppCompatActivity implements View.OnClickListener{
@@ -42,33 +42,33 @@ public class StackBlurActivity extends AppCompatActivity implements View.OnClick
     public void onClick(View v) {
         final int id = v.getId();
         if (id == R.id.blur_btn) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-
-                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), ImageUtils.testImageRes);
-
-                    final int w = bitmap.getWidth();
-                    final int h = bitmap.getHeight();
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//
+//                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), ImageUtils.testImageRes);
+//
+//                    final int w = bitmap.getWidth();
+//                    final int h = bitmap.getHeight();
 //
 //                int[] pixels = new int[w * h];
 //                int[] result = new int[w * h];
 //                bitmap.getPixels(pixels, 0, w, 0, 0, w, h);
-
-                    final long start = System.currentTimeMillis();
-
-                    final Bitmap blurred = StackBlur.doBlur(bitmap, 10, false);
-                    final long stop = System.currentTimeMillis();
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mImageView.setImageBitmap(blurred);
-                            Toast.makeText(StackBlurActivity.this, (stop - start) + "ms", Toast.LENGTH_LONG).show();
-                        }
-                    });
-                }
-            }).start();
+//
+//                    final long start = System.currentTimeMillis();
+//
+//                    final Bitmap blurred = StackBlur.doBlur(pixels, w, h, 10);
+//                    final long stop = System.currentTimeMillis();
+//
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            mImageView.setImageBitmap(blurred);
+//                            Toast.makeText(StackBlurActivity.this, (stop - start) + "ms", Toast.LENGTH_LONG).show();
+//                        }
+//                    });
+//                }
+//            }).start();
         } else if (id == R.id.native_blur_btn){
             new Thread(new Runnable() {
                 @Override
@@ -104,6 +104,6 @@ public class StackBlurActivity extends AppCompatActivity implements View.OnClick
     public native void nativeStackBlur(int[] pixels, int width, int height, int radius);
 
     static {
-        System.loadLibrary("boxblur");
+        System.loadLibrary("ImageBlur");
     }
 }

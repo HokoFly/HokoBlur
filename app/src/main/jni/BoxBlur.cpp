@@ -9,7 +9,7 @@
 #include <android/log.h>
 
 
-JNIEXPORT void JNICALL Java_com_example_xiangpi_dynamicblurdemo_activity_BoxBlurActivity_nativeBoxBlur
+JNIEXPORT void JNICALL Java_com_example_xiangpi_dynamicblurdemo_helper_NativeBlurGenerator_nativeBoxBlur
         (JNIEnv * env, jobject j_object, jintArray j_inArray, jint j_w, jint j_h, jint j_radius) {
 
     jint *c_inArray;
