@@ -7,7 +7,7 @@ import android.opengl.GLES20;
 import android.opengl.Matrix;
 
 import com.example.xiangpi.dynamicblurdemo.R;
-import com.example.xiangpi.dynamicblurdemo.opengl.Rectangle;
+import com.example.xiangpi.dynamicblurdemo.opengl.shape.Rectangle;
 import com.xiangpi.blurlibrary.opengl.offscreen.GLRenderer;
 
 /**

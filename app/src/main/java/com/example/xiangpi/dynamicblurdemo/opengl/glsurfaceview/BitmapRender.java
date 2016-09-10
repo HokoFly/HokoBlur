@@ -9,7 +9,7 @@ import android.opengl.Matrix;
 import android.util.Log;
 
 import com.example.xiangpi.dynamicblurdemo.R;
-import com.example.xiangpi.dynamicblurdemo.opengl.Rectangle;
+import com.example.xiangpi.dynamicblurdemo.opengl.shape.Rectangle;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;

@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.example.xiangpi.dynamicblurdemo.R;
 import com.example.xiangpi.dynamicblurdemo.util.ImageUtils;
@@ -28,7 +27,7 @@ public class StackBlurActivity extends AppCompatActivity implements View.OnClick
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_box_blur);
+        setContentView(R.layout.activity_blur);
 
         mImageView = (ImageView) findViewById(R.id.photo);
         mBlurBtn = (Button) findViewById(R.id.blur_btn);

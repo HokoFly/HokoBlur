@@ -2,7 +2,7 @@
 // Created by 橡皮 on 16/7/28.
 //
 
-#include "include/BoxBlur.h"
+#include "include/BoxBlurFilter.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <jni.h>
@@ -25,8 +25,8 @@ JNIEXPORT void JNICALL Java_com_xiangpi_blurlibrary_generator_NativeBlurGenerato
 
     c_outArray = (jint *) malloc(sizeof(jint) * arr_len);
 
-    blurHorizontal(c_inArray, c_outArray, j_w, j_h, j_radius);
-    blurHorizontal(c_outArray, c_inArray, j_h, j_w, j_radius);
+    boxBlurHorizontal(c_inArray, c_outArray, j_w, j_h, j_radius);
+    boxBlurHorizontal(c_outArray, c_inArray, j_h, j_w, j_radius);
 
     env->SetIntArrayRegion(j_inArray, 0, arr_len, c_inArray);
 
@@ -34,7 +34,7 @@ JNIEXPORT void JNICALL Java_com_xiangpi_blurlibrary_generator_NativeBlurGenerato
     free(c_outArray);
 }
 
-  void blurHorizontal(jint * in, jint * out, jint width, jint height, jint radius) {
+  void boxBlurHorizontal(jint * in, jint * out, jint width, jint height, jint radius) {
         jint widthMinus1 = width-1;
         jint tableSize = 2*radius+1;
         jint divide[256*tableSize];

@@ -53,6 +53,7 @@ public class NativeBlurGenerator extends BlurGenerator{
 
     public native void nativeBoxBlur(int[] pixels, int width, int height, int radius);
     public native void nativeStackBlur(int[] pixels, int width, int height, int radius);
+    public native void nativeGaussianBlur(int[] pixels, int width, int height, int radius);
 
     static {
         System.loadLibrary("ImageBlur");

@@ -8,12 +8,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
-import com.xiangpi.blurlibrary.Blur;
-import com.xiangpi.blurlibrary.generator.IBlur;
 import com.example.xiangpi.dynamicblurdemo.R;
 import com.example.xiangpi.dynamicblurdemo.util.ImageUtils;
+import com.xiangpi.blurlibrary.Blur;
+import com.xiangpi.blurlibrary.generator.IBlur;
 
-public class BoxBlurActivity extends AppCompatActivity implements View.OnClickListener {
+public class GaussianBlurActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ImageView mImageView;
     private Button mBlurBtn;
@@ -37,8 +37,8 @@ public class BoxBlurActivity extends AppCompatActivity implements View.OnClickLi
         mBlurBtn.setOnClickListener(this);
         mNativeBlurBtn.setOnClickListener(this);
         mInBitmap = BitmapFactory.decodeResource(getResources(), ImageUtils.testImageRes);
-        mOriginBlurGenerator = Blur.with(this).mode(Blur.BlurMode.BOX).scheme(Blur.BlurScheme.JAVA).getBlurGenerator();
-        mNativeBlurGenerator = Blur.with(this).mode(Blur.BlurMode.BOX).scheme(Blur.BlurScheme.NATIVE).getBlurGenerator();
+        mOriginBlurGenerator = Blur.with(this).mode(Blur.BlurMode.GAUSSIAN).scheme(Blur.BlurScheme.JAVA).getBlurGenerator();
+        mNativeBlurGenerator = Blur.with(this).mode(Blur.BlurMode.GAUSSIAN).scheme(Blur.BlurScheme.NATIVE).getBlurGenerator();
     }
 
 

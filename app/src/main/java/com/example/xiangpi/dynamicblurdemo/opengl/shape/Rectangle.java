@@ -1,4 +1,4 @@
-package com.example.xiangpi.dynamicblurdemo.opengl;
+package com.example.xiangpi.dynamicblurdemo.opengl.shape;
 
 import android.content.Context;
 import android.graphics.Bitmap;

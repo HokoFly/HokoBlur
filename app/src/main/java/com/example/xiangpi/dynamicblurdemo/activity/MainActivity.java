@@ -63,11 +63,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 intent.setClass(MainActivity.this, BoxBlurActivity.class);
                 break;
             case R.id.gaussian_blur:
+                intent.setClass(MainActivity.this, GaussianBlurActivity.class);
                 break;
             case R.id.fast_stack_blur:
                 intent.setClass(MainActivity.this, StackBlurActivity.class);
                 break;
-
             case R.id.render_script_demo:
                 intent.setClass(MainActivity.this, RenderScriptActivity.class);
                 break;

@@ -4,6 +4,6 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE    := ImageBlur
 LOCAL_C_INCLUDES := include
-LOCAL_SRC_FILES := BoxBlur.cpp StackBlur.cpp
+LOCAL_SRC_FILES := BoxBlurFilter.cpp StackBlurFilter.cpp GaussianBlurFilter.cpp
 LOCAL_LDLIBS := -llog -lm
 include $(BUILD_SHARED_LIBRARY)

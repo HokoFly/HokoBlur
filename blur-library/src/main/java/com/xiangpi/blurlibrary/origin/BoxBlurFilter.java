@@ -3,7 +3,7 @@ package com.xiangpi.blurlibrary.origin;
 /**
  * Created by 余晓飞 on 2016/7/24.
  */
-public class BoxBlur {
+public class BoxBlurFilter {
 
     public static void doBlur(int[] in, int width, int height, int radius) {
         int[] result = new int[width * height];

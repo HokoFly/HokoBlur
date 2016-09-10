@@ -3,8 +3,9 @@ package com.xiangpi.blurlibrary.generator;
 import android.graphics.Bitmap;
 
 import com.xiangpi.blurlibrary.Blur;
-import com.xiangpi.blurlibrary.origin.BoxBlur;
-import com.xiangpi.blurlibrary.origin.StackBlur;
+import com.xiangpi.blurlibrary.origin.BoxBlurFilter;
+import com.xiangpi.blurlibrary.origin.GaussianBlurFilter;
+import com.xiangpi.blurlibrary.origin.StackBlurFilter;
 
 /**
  * Created by xiangpi on 16/9/7.
@@ -39,11 +40,11 @@ public class OriginBlurGenerator extends BlurGenerator{
             input.getPixels(pixels, 0, w, 0, 0, w, h);
 
             if (mBlurMode == Blur.BlurMode.BOX) {
-                BoxBlur.doBlur(pixels, w, h, mRadius);
+                BoxBlurFilter.doBlur(pixels, w, h, mRadius);
             } else if (mBlurMode == Blur.BlurMode.STACK) {
-                StackBlur.doBlur(pixels, w, h, mRadius);
+                StackBlurFilter.doBlur(pixels, w, h, mRadius);
             } else if (mBlurMode == Blur.BlurMode.GAUSSIAN) {
-                StackBlur.doBlur(pixels, w, h, mRadius);
+                GaussianBlurFilter.doBlur(pixels, w, h, mRadius);
             }
 
             output = Bitmap.createBitmap(pixels, 0, w, w, h, Bitmap.Config.ARGB_8888);
@@ -60,4 +61,9 @@ public class OriginBlurGenerator extends BlurGenerator{
 //    }
 
 
+    @Override
+    public void setBlurRadius(int radius) {
+        super.setBlurRadius(radius);
+
+    }
 }

@@ -2,7 +2,7 @@
 // Created by 橡皮 on 16/7/28.
 //
 
-#include "include/StackBlur.h"
+#include "include/StackBlurFilter.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <jni.h>
@@ -10,7 +10,7 @@
 
 
 JNIEXPORT void JNICALL Java_com_xiangpi_blurlibrary_generator_NativeBlurGenerator_nativeStackBlur
-        (JNIEnv * env, jobject j_object, jintArray j_inArray, jint j_w, jint j_h, jint j_radius) {
+        (JNIEnv *env, jobject j_object, jintArray j_inArray, jint j_w, jint j_h, jint j_radius) {
 
     jint *c_inArray;
     jint arr_len;
@@ -39,23 +39,23 @@ void doInnerBlur(jint *pix, jint w, jint h, jint radius) {
     short *g;
     short *b;
 
-    r = (short*)malloc(sizeof(short) * wh);
-    g = (short*)malloc(sizeof(short) * wh);
-    b = (short*)malloc(sizeof(short) * wh);
+    r = (short *) malloc(sizeof(short) * wh);
+    g = (short *) malloc(sizeof(short) * wh);
+    b = (short *) malloc(sizeof(short) * wh);
 
     jint rsum, gsum, bsum, x, y, i, p, yp, yi, yw;
     jint *vmin;
 
-    vmin = (jint*)malloc(sizeof(jint) * max(w, h));
+    vmin = (jint *) malloc(sizeof(jint) * max(w, h));
 
     jint divsum = (div + 1) >> 1;
     divsum *= divsum;
 
     short *dv;
-    dv = (short*)malloc(sizeof(short) * 256 * divsum);
+    dv = (short *) malloc(sizeof(short) * 256 * divsum);
 
     for (i = 0; i < 256 * divsum; i++) {
-        dv[i] = (short)(i / divsum);
+        dv[i] = (short) (i / divsum);
     }
 
     yw = yi = 0;
@@ -63,11 +63,11 @@ void doInnerBlur(jint *pix, jint w, jint h, jint radius) {
     //jint stack[div][3];
 
     jint (*stack)[3];
-    stack = (jint(*)[3])malloc(sizeof(jint) * div * 3);
+    stack = (jint(*)[3]) malloc(sizeof(jint) * div * 3);
 
     jint stackpointer;
     jint stackstart;
-    jint * sir;
+    jint *sir;
     jint rbs;
     jint r1 = radius + 1;
     jint routsum, goutsum, boutsum;
@@ -234,4 +234,3 @@ void doInnerBlur(jint *pix, jint w, jint h, jint radius) {
     free(dv);
     free(stack);
 }
-

@@ -30,12 +30,13 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity android:name=".activity.GaussianBlurActivity" />
         <activity android:name=".activity.StackBlurActivity" />
         <activity android:name=".activity.RenderScriptActivity" />
         <activity android:name=".activity.GLSurfaceActivity" />
         <activity android:name=".activity.TextureViewActivity" />
         <activity android:name=".activity.DynamicBlurActivity" />
-        <activity android:name=".activity.OffScreenActivity"></activity>
+        <activity android:name=".activity.OffScreenActivity"/>
     </application>
 
 </manifest>

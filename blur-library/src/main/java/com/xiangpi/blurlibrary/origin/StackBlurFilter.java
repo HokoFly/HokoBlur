@@ -29,7 +29,7 @@ package com.xiangpi.blurlibrary.origin;
  *
  * Stack Blur Algorithm by Mario Klingemann <mario@quasimondo.com>
  **/
-public class StackBlur {
+public class StackBlurFilter {
 
         public static void doBlur(int[] pix, int w, int h, int radius) {
 
