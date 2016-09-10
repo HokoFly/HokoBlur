@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.xiangpi.blurlibrary.Blur;
+import com.xiangpi.blurlibrary.generator.IBlur;
 import com.xiangpi.blurlibrary.origin.BoxBlur;
 import com.example.xiangpi.dynamicblurdemo.R;
 import com.example.xiangpi.dynamicblurdemo.util.ImageUtils;
@@ -18,6 +20,10 @@ public class BoxBlurActivity extends AppCompatActivity implements View.OnClickLi
     private ImageView mImageView;
     private Button mBlurBtn;
     private Button mNativeBlurBtn;
+    private Bitmap mInBitmap;
+    private Bitmap mOutBitmap;
+    private IBlur mOriginBlurGenerator;
+    private IBlur mNativeBlurGenerator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +38,9 @@ public class BoxBlurActivity extends AppCompatActivity implements View.OnClickLi
 
         mBlurBtn.setOnClickListener(this);
         mNativeBlurBtn.setOnClickListener(this);
-
+        mInBitmap = BitmapFactory.decodeResource(getResources(), ImageUtils.testImageRes);
+        mOriginBlurGenerator = Blur.with(this).mode(Blur.BlurMode.BOX).scheme(Blur.BlurScheme.JAVA).getBlurGenerator();
+        mNativeBlurGenerator = Blur.with(this).mode(Blur.BlurMode.BOX).scheme(Blur.BlurScheme.NATIVE).getBlurGenerator();
     }
 
 
@@ -40,35 +48,18 @@ public class BoxBlurActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View v) {
         final int id = v.getId();
 
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), ImageUtils.testImageRes);
-
-        final int w = bitmap.getWidth();
-        final int h = bitmap.getHeight();
-
-        final int[] pixels = new int[w * h];
-        int[] result = new int[w * h];
-        bitmap.getPixels(pixels, 0, w, 0, 0, w, h);
-
         if (id == R.id.blur_btn) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    final long start = System.currentTimeMillis();
-
-//                BoxBlur.blur(pixels, result, w, h, 10);
-//                BoxBlur.blur(result, pixels, h, w, 10);
-                    for (int i = 0; i < 20; i++) {
-                        BoxBlur.doBlur(pixels, w, h, 10);
+                    for (int i = 0; i < ImageUtils.blurCount; i++) {
+                        mOutBitmap = mOriginBlurGenerator.doBlur(mInBitmap);
                     }
-                    final Bitmap blurred = Bitmap.createBitmap(pixels, 0, w, w, h, Bitmap.Config.ARGB_8888);
-//                final Bitmap blurred = BoxBlur.blur(20, bitmap);
-                    final long stop = System.currentTimeMillis();
 
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            mImageView.setImageBitmap(blurred);
-                            Toast.makeText(BoxBlurActivity.this, (stop - start) + "ms", Toast.LENGTH_LONG).show();
+                            mImageView.setImageBitmap(mOutBitmap);
                         }
                     });
                 }
@@ -77,30 +68,19 @@ public class BoxBlurActivity extends AppCompatActivity implements View.OnClickLi
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    final long start = System.currentTimeMillis();
-
-                    for (int i = 0; i < 20; i++) {
-                        nativeBoxBlur(pixels, w, h, 10);
+                    for (int i = 0; i < ImageUtils.blurCount; i++) {
+                        mOutBitmap = mNativeBlurGenerator.doBlur(mInBitmap);
                     }
-                    final Bitmap blurred = Bitmap.createBitmap(pixels, 0, w, w, h, Bitmap.Config.ARGB_8888);
-                    final long stop = System.currentTimeMillis();
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            mImageView.setImageBitmap(blurred);
-                            Toast.makeText(BoxBlurActivity.this, (stop - start) + "ms", Toast.LENGTH_LONG).show();
+                            mImageView.setImageBitmap(mOutBitmap);
                         }
                     });
                 }
             }).start();
         }
 
-    }
-
-    private native void nativeBoxBlur(int[] pixels, int width, int height, int radius);
-
-    static {
-        System.loadLibrary("ImageBlur");
     }
 
 }

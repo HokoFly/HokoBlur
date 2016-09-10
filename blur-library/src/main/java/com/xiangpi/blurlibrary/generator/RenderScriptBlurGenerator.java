@@ -16,7 +16,7 @@ import com.xiangpi.blurlibrary.Blur;
  */
 public class RenderScriptBlurGenerator extends BlurGenerator {
 
-    private static volatile RenderScriptBlurGenerator sGenerator;
+//    private static volatile RenderScriptBlurGenerator sGenerator;
 
     private RenderScript mRenderScript;
     private ScriptIntrinsicBlur mGaussianBlurScirpt;
@@ -26,7 +26,7 @@ public class RenderScriptBlurGenerator extends BlurGenerator {
     private Allocation mAllocationIn;
     private Allocation mAllocationOut;
 
-    private RenderScriptBlurGenerator(Context context) {
+    public RenderScriptBlurGenerator(Context context) {
         init(context);
 
     }
@@ -38,17 +38,17 @@ public class RenderScriptBlurGenerator extends BlurGenerator {
         mStackBlurScript = new ScriptC_stackblur(mRenderScript);
     }
 
-    public static RenderScriptBlurGenerator getInstance(Context context) {
-        if (sGenerator == null) {
-            synchronized (RenderScriptBlurGenerator.class) {
-                if (sGenerator == null) {
-                    sGenerator = new RenderScriptBlurGenerator(context);
-                }
-            }
-        }
-
-        return sGenerator;
-    }
+//    public static RenderScriptBlurGenerator getInstance(Context context) {
+//        if (sGenerator == null) {
+//            synchronized (RenderScriptBlurGenerator.class) {
+//                if (sGenerator == null) {
+//                    sGenerator = new RenderScriptBlurGenerator(context);
+//                }
+//            }
+//        }
+//
+//        return sGenerator;
+//    }
 
     @Override
     public Bitmap doBlur(Bitmap input) {
@@ -79,20 +79,9 @@ public class RenderScriptBlurGenerator extends BlurGenerator {
         return output;
     }
 
-    @Override
-    public void setBlurMode(Blur.BlurMode mode) {
-        mBlurMode = mode;
-    }
-
-    @Override
-    public void setBlurRadius(int radius) {
-        mRadius = radius;
-    }
-
-
-    public static void release() {
-        sGenerator = null;
-    }
+//    public static void release() {
+//        sGenerator = null;
+//    }
 
     private void doBoxBlur(Bitmap input) {
         mBoxBlurScript.set_input(mAllocationIn);

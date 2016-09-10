@@ -20,6 +20,8 @@ public class ImageUtils {
 
     public static int testImageRes = R.mipmap.sample;
 
+    public static int blurCount = 1;
+
     public static void saveBlurredImage(Bitmap bitmap) {
         if (bitmap == null) {
             return;

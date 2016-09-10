@@ -16,16 +16,8 @@
         android:layout_centerHorizontal="true"/>
 
     <Button
-        android:id="@+id/invert_btn"
-        android:layout_below="@id/photo"
-        android:text="反色"
-        android:layout_centerHorizontal="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <Button
         android:id="@+id/box_blur_btn"
-        android:layout_below="@id/invert_btn"
+        android:layout_below="@id/photo"
         android:text="Box Blur"
         android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"

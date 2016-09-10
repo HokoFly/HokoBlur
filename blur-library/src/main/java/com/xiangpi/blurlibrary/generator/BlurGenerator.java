@@ -14,4 +14,14 @@ public abstract class BlurGenerator implements IBlur {
     protected int mRadius = BLUR_KERNEL_RADIUS;
 
     protected Blur.BlurMode mBlurMode = DEFAULT_BLUR_MODE;
+
+    @Override
+    public void setBlurMode(Blur.BlurMode mode) {
+        mBlurMode = mode;
+    }
+
+    @Override
+    public void setBlurRadius(int radius) {
+        mRadius = radius;
+    }
 }

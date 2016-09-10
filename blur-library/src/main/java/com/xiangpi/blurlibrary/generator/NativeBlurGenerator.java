@@ -9,19 +9,19 @@ import com.xiangpi.blurlibrary.Blur;
  */
 public class NativeBlurGenerator extends BlurGenerator{
 
-    private static volatile NativeBlurGenerator sGenerator;
-
-    public static NativeBlurGenerator getInstance() {
-        if (sGenerator == null) {
-            synchronized (NativeBlurGenerator.class) {
-                if (sGenerator == null) {
-                    sGenerator = new NativeBlurGenerator();
-                }
-            }
-        }
-
-        return sGenerator;
-    }
+//    private static volatile NativeBlurGenerator sGenerator;
+//
+//    public static NativeBlurGenerator getInstance() {
+//        if (sGenerator == null) {
+//            synchronized (NativeBlurGenerator.class) {
+//                if (sGenerator == null) {
+//                    sGenerator = new NativeBlurGenerator();
+//                }
+//            }
+//        }
+//
+//        return sGenerator;
+//    }
 
     @Override
     public Bitmap doBlur(Bitmap input) {
@@ -46,20 +46,10 @@ public class NativeBlurGenerator extends BlurGenerator{
         return blurred;
     }
 
-    public static void release() {
-        sGenerator = null;
-    }
+//    public static void release() {
+//        sGenerator = null;
+//    }
 
-
-    @Override
-    public void setBlurMode(Blur.BlurMode mode) {
-        mBlurMode = mode;
-    }
-
-    @Override
-    public void setBlurRadius(int radius) {
-        mRadius = radius;
-    }
 
     public native void nativeBoxBlur(int[] pixels, int width, int height, int radius);
     public native void nativeStackBlur(int[] pixels, int width, int height, int radius);

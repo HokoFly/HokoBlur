@@ -11,19 +11,19 @@ import com.xiangpi.blurlibrary.origin.StackBlur;
  */
 public class OriginBlurGenerator extends BlurGenerator{
 
-    private static volatile OriginBlurGenerator sGenerator;
-
-    public static OriginBlurGenerator getInstance() {
-        if (sGenerator == null) {
-            synchronized (OriginBlurGenerator.class) {
-                if (sGenerator == null) {
-                    sGenerator = new OriginBlurGenerator();
-                }
-            }
-        }
-
-        return sGenerator;
-    }
+//    private static volatile OriginBlurGenerator sGenerator;
+//
+//    public static OriginBlurGenerator getInstance() {
+//        if (sGenerator == null) {
+//            synchronized (OriginBlurGenerator.class) {
+//                if (sGenerator == null) {
+//                    sGenerator = new OriginBlurGenerator();
+//                }
+//            }
+//        }
+//
+//        return sGenerator;
+//    }
 
     @Override
     public Bitmap doBlur(Bitmap input) {
@@ -55,19 +55,9 @@ public class OriginBlurGenerator extends BlurGenerator{
         return output;
     }
 
-    public static void release() {
-        sGenerator = null;
-    }
+//    public static void release() {
+//        sGenerator = null;
+//    }
 
-
-    @Override
-    public void setBlurMode(Blur.BlurMode mode) {
-        mBlurMode = mode;
-    }
-
-    @Override
-    public void setBlurRadius(int radius) {
-        mRadius = radius;
-    }
 
 }

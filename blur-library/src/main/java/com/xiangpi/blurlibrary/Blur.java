@@ -34,7 +34,7 @@ public class Blur {
 
     private BlurMode mBlurMode = DEFAULT_MODE;
     private BlurScheme mBlurScheme = DEFAULT_SCHEME;
-    private int mRadius;
+    private int mRadius = DEFAULT_BLUR_RADIUS;
     private float mSampleFactor;
 
 
@@ -54,17 +54,17 @@ public class Blur {
         return sHelper;
     }
 
-    public Blur setBlurMode(BlurMode mode) {
+    public Blur mode(BlurMode mode) {
         mBlurMode = mode;
         return sHelper;
     }
 
-    public Blur setBlurScheme(BlurScheme scheme) {
+    public Blur scheme(BlurScheme scheme) {
         mBlurScheme = scheme;
         return sHelper;
     }
 
-    public Blur setBlurRadius(int radius) {
+    public Blur radius(int radius) {
         mRadius = radius;
         return sHelper;
     }
@@ -83,13 +83,13 @@ public class Blur {
         IBlur generator = null;
 
         if (mBlurScheme == BlurScheme.RENDER_SCRIPT) {
-            generator = RenderScriptBlurGenerator.getInstance(mCtx);
+            generator = new RenderScriptBlurGenerator(mCtx);
         } else if (mBlurScheme == BlurScheme.OPENGL) {
-            generator = OpenGLBlurGenerator.getInstance();
+            generator = new OpenGLBlurGenerator();
         } else if (mBlurScheme == BlurScheme.NATIVE){
-            generator = NativeBlurGenerator.getInstance();
+            generator = new NativeBlurGenerator();
         } else if (mBlurScheme == BlurScheme.JAVA) {
-            generator = OriginBlurGenerator.getInstance();
+            generator = new OriginBlurGenerator();
         }
 
         if (generator != null) {

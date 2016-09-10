@@ -13,13 +13,13 @@ import com.xiangpi.blurlibrary.opengl.offscreen.OffScreenRendererImpl;
  */
 public class OpenGLBlurGenerator extends BlurGenerator{
 
-    private static volatile OpenGLBlurGenerator sGenerator;
+//    private static volatile OpenGLBlurGenerator sGenerator;
 
     private GLRenderer mGLRenderer;
 
     private OffScreenBuffer mOffScreenBuffer;
 
-    private OpenGLBlurGenerator() {
+    public OpenGLBlurGenerator() {
         init();
     }
 
@@ -27,17 +27,17 @@ public class OpenGLBlurGenerator extends BlurGenerator{
         mOffScreenBuffer = new OffScreenBuffer();
     }
 
-    public static OpenGLBlurGenerator getInstance() {
-        if (sGenerator == null) {
-            synchronized (OpenGLBlurGenerator.class) {
-                if (sGenerator == null) {
-                    sGenerator = new OpenGLBlurGenerator();
-                }
-            }
-        }
-
-        return sGenerator;
-    }
+//    public static OpenGLBlurGenerator getInstance() {
+//        if (sGenerator == null) {
+//            synchronized (OpenGLBlurGenerator.class) {
+//                if (sGenerator == null) {
+//                    sGenerator = new OpenGLBlurGenerator();
+//                }
+//            }
+//        }
+//
+//        return sGenerator;
+//    }
 
     @Override
     public Bitmap doBlur(Bitmap input) {
@@ -52,18 +52,8 @@ public class OpenGLBlurGenerator extends BlurGenerator{
         return mOffScreenBuffer.getBitmap();
     }
 
-    public static void release() {
-        sGenerator = null;
-    }
+//    public static void release() {
+//        sGenerator = null;
+//    }
 
-
-    @Override
-    public void setBlurMode(Blur.BlurMode mode) {
-        mBlurMode = mode;
-    }
-
-    @Override
-    public void setBlurRadius(int radius) {
-        mRadius = radius;
-    }
 }

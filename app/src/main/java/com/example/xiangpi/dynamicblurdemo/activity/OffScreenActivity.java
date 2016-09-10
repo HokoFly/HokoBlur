@@ -33,7 +33,7 @@ public class OffScreenActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                ImageUtils.saveBlurredImage(OpenGLBlurGenerator.getInstance().doBlur(mBitmap));
+                ImageUtils.saveBlurredImage(new OpenGLBlurGenerator().doBlur(mBitmap));
             }
         });
 
