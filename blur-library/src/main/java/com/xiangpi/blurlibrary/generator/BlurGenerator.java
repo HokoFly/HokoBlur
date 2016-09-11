@@ -24,4 +24,5 @@ public abstract class BlurGenerator implements IBlur {
     public void setBlurRadius(int radius) {
         mRadius = radius;
     }
+
 }

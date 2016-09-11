@@ -56,6 +56,10 @@ public class RenderScriptBlurGenerator extends BlurGenerator {
             throw new IllegalArgumentException("You must input a bitmap !");
         }
 
+        if (mRadius <= 0) {
+            return input;
+        }
+
         Bitmap output = Bitmap.createBitmap(input.getWidth(), input.getHeight(), Bitmap.Config.ARGB_8888);
 
         mAllocationIn = Allocation.createFromBitmap(mRenderScript, input);

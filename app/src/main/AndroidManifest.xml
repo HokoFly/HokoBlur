@@ -23,20 +23,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.BoxBlurActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".activity.GaussianBlurActivity" />
-        <activity android:name=".activity.StackBlurActivity" />
-        <activity android:name=".activity.RenderScriptActivity" />
         <activity android:name=".activity.GLSurfaceActivity" />
         <activity android:name=".activity.TextureViewActivity" />
         <activity android:name=".activity.DynamicBlurActivity" />
-        <activity android:name=".activity.OffScreenActivity"/>
+        <activity android:name=".activity.MultiBlurActivity"></activity>
     </application>
 
 </manifest>

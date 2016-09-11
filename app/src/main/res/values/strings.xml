@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">DynamicBlurDemo</string>
+
+    <string-array name="blur_schemes">
+        <item>RenderScript</item>
+        <item>OpenGL</item>
+        <item>Native C/C++</item>
+        <item>JAVA</item>
+    </string-array>
+
+    <string-array name="blur_modes">
+        <item>Gaussian</item>
+        <item>Stack</item>
+        <item>Box</item>
+    </string-array>
 </resources>

@@ -29,6 +29,11 @@ public class NativeBlurGenerator extends BlurGenerator{
             throw new IllegalArgumentException("You must input a bitmap !");
         }
 
+        if (mRadius <= 0) {
+            return input;
+        }
+
+
         final int w = input.getWidth();
         final int h = input.getHeight();
         final int[] pixels = new int[w * h];

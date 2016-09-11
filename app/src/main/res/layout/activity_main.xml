@@ -11,30 +11,12 @@
     tools:context=".activity.MainActivity">
 
     <Button
-        android:id="@+id/box_blur"
+        android:id="@+id/multi_blur"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Box Blur"/>
+        android:text="各类模糊算法"/>
 
 
-    <Button
-        android:id="@+id/gaussian_blur"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Gaussian Blur"/>
-
-
-    <Button
-        android:id="@+id/fast_stack_blur"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Fast Blur"/>
-
-    <Button
-        android:id="@+id/render_script_demo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="RenderScript Blur"/>
     <Button
         android:id="@+id/opengl_blur"
         android:layout_width="wrap_content"
@@ -52,13 +34,5 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Dynamic Blur"/>
-
-    <Button
-        android:id="@+id/offscreen_blur"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="OffScreen Blur"/>
-
-
 
 </LinearLayout>

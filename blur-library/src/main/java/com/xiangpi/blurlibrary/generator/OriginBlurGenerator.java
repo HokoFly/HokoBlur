@@ -32,6 +32,10 @@ public class OriginBlurGenerator extends BlurGenerator{
             throw new IllegalArgumentException("You must input a bitmap !");
         }
 
+        if (mRadius <= 0) {
+            return input;
+        }
+
         Bitmap output = null;
         try {
             final int w = input.getWidth();
