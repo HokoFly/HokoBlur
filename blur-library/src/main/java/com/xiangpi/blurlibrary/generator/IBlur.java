@@ -19,4 +19,6 @@ public interface IBlur {
 
     void setBlurRadius(int radius);
 
+    void setSampleFactor(float factor);
+
 }

@@ -10,6 +10,7 @@ import android.support.v8.renderscript.ScriptIntrinsicBlur;
 import com.example.xiangpi.dynamicblurdemo.activity.ScriptC_boxblur;
 import com.example.xiangpi.dynamicblurdemo.activity.ScriptC_stackblur;
 import com.xiangpi.blurlibrary.Blur;
+import com.xiangpi.blurlibrary.util.BitmapUtil;
 
 /**
  * Created by xiangpi on 16/9/7.
@@ -51,36 +52,32 @@ public class RenderScriptBlurGenerator extends BlurGenerator {
 //    }
 
     @Override
-    public Bitmap doBlur(Bitmap input) {
-        if (input == null) {
-            throw new IllegalArgumentException("You must input a bitmap !");
+    protected Bitmap doInnerBlur(Bitmap scaledInBitmap) {
+        if (scaledInBitmap == null) {
+            return null;
         }
 
-        if (mRadius <= 0) {
-            return input;
-        }
+        Bitmap scaledOutBitmap = Bitmap.createBitmap(scaledInBitmap.getWidth(), scaledInBitmap.getHeight(), Bitmap.Config.ARGB_8888);
 
-        Bitmap output = Bitmap.createBitmap(input.getWidth(), input.getHeight(), Bitmap.Config.ARGB_8888);
-
-        mAllocationIn = Allocation.createFromBitmap(mRenderScript, input);
-        mAllocationOut = Allocation.createFromBitmap(mRenderScript, output);
+        mAllocationIn = Allocation.createFromBitmap(mRenderScript, scaledInBitmap);
+        mAllocationOut = Allocation.createFromBitmap(mRenderScript, scaledOutBitmap);
 
         try {
             if (mBlurMode == Blur.BlurMode.BOX) {
-                doBoxBlur(input);
+                doBoxBlur(scaledInBitmap);
             } else if (mBlurMode == Blur.BlurMode.STACK) {
-                doStackBlur(input);
+                doStackBlur(scaledInBitmap);
             } else if (mBlurMode == Blur.BlurMode.GAUSSIAN) {
-                doGaussianBlur(input);
+                doGaussianBlur(scaledInBitmap);
             }
 
-            mAllocationOut.copyTo(output);
+            mAllocationOut.copyTo(scaledOutBitmap);
         } catch (Exception e) {
             e.printStackTrace();
-            output = input;
+            scaledOutBitmap = scaledInBitmap;
         }
 
-        return output;
+        return scaledOutBitmap;
     }
 
 //    public static void release() {
@@ -98,7 +95,7 @@ public class RenderScriptBlurGenerator extends BlurGenerator {
 
     private void doGaussianBlur(Bitmap input) {
         mGaussianBlurScirpt.setRadius(mRadius);
-        mAllocationIn.copyFrom(input);
+//        mAllocationIn.copyFrom(input);
         mGaussianBlurScirpt.setInput(mAllocationIn);
         mGaussianBlurScirpt.forEach(mAllocationOut);
     }

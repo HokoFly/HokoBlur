@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import com.xiangpi.blurlibrary.opengl.offscreen.GLRenderer;
 import com.xiangpi.blurlibrary.opengl.offscreen.OffScreenBuffer;
 import com.xiangpi.blurlibrary.opengl.offscreen.OffScreenRendererImpl;
+import com.xiangpi.blurlibrary.util.BitmapUtil;
 
 
 /**
@@ -39,19 +40,12 @@ public class OpenGLBlurGenerator extends BlurGenerator{
 //    }
 
     @Override
-    public Bitmap doBlur(Bitmap input) {
-        if (input == null) {
-            throw new IllegalArgumentException("You must input a bitmap !");
+    protected Bitmap doInnerBlur(Bitmap scaledInBitmap) {
+        if (scaledInBitmap == null) {
+            return null;
         }
-
-        if (mRadius <= 0) {
-            return input;
-        }
-
-        mGLRenderer = new OffScreenRendererImpl(input, mRadius, mBlurMode);
-
+        mGLRenderer = new OffScreenRendererImpl(scaledInBitmap, mRadius, mBlurMode);
         mOffScreenBuffer.setRenderer(mGLRenderer);
-
         return mOffScreenBuffer.getBitmap();
     }
 

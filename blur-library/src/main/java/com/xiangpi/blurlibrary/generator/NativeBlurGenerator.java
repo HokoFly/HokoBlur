@@ -3,6 +3,7 @@ package com.xiangpi.blurlibrary.generator;
 import android.graphics.Bitmap;
 
 import com.xiangpi.blurlibrary.Blur;
+import com.xiangpi.blurlibrary.util.BitmapUtil;
 
 /**
  * Created by xiangpi on 16/9/7.
@@ -24,31 +25,24 @@ public class NativeBlurGenerator extends BlurGenerator{
 //    }
 
     @Override
-    public Bitmap doBlur(Bitmap input) {
-        if (input == null) {
-            throw new IllegalArgumentException("You must input a bitmap !");
+    protected Bitmap doInnerBlur(Bitmap scaledInBitmap) {
+        if (scaledInBitmap == null) {
+            return null;
         }
 
-        if (mRadius <= 0) {
-            return input;
-        }
-
-
-        final int w = input.getWidth();
-        final int h = input.getHeight();
+        final int w = scaledInBitmap.getWidth();
+        final int h = scaledInBitmap.getHeight();
         final int[] pixels = new int[w * h];
-        input.getPixels(pixels, 0, w, 0, 0, w, h);
+        scaledInBitmap.getPixels(pixels, 0, w, 0, 0, w, h);
 
         if (mBlurMode == Blur.BlurMode.BOX) {
             nativeBoxBlur(pixels, w, h, mRadius);
         } else if (mBlurMode == Blur.BlurMode.STACK) {
             nativeStackBlur(pixels, w, h, mRadius);
         } else if (mBlurMode == Blur.BlurMode.GAUSSIAN) {
-            nativeStackBlur(pixels, w, h, mRadius);
+            nativeGaussianBlur(pixels, w, h, mRadius);
         }
-        final Bitmap blurred = Bitmap.createBitmap(pixels, 0, w, w, h, Bitmap.Config.ARGB_8888);
-
-        return blurred;
+        return Bitmap.createBitmap(pixels, 0, w, w, h, Bitmap.Config.ARGB_8888);
     }
 
 //    public static void release() {

@@ -1,6 +1,7 @@
 package com.xiangpi.blurlibrary;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.xiangpi.blurlibrary.generator.IBlur;
 import com.xiangpi.blurlibrary.generator.NativeBlurGenerator;
@@ -26,7 +27,7 @@ public class Blur {
     private static final BlurMode DEFAULT_MODE = BlurMode.GAUSSIAN;
     private static final BlurScheme DEFAULT_SCHEME = BlurScheme.RENDER_SCRIPT;
     private static final int DEFAULT_BLUR_RADIUS = 5;
-    private static final float DEFAULT_SAMPLE_FACTOR = 1.0f;
+    private static final float DEFAULT_SAMPLE_FACTOR = 5.0f;
 
     private static volatile Blur sHelper;
 
@@ -35,7 +36,7 @@ public class Blur {
     private BlurMode mBlurMode = DEFAULT_MODE;
     private BlurScheme mBlurScheme = DEFAULT_SCHEME;
     private int mRadius = DEFAULT_BLUR_RADIUS;
-    private float mSampleFactor;
+    private float mSampleFactor = DEFAULT_SAMPLE_FACTOR;
 
 
     private Blur(Context context) {
@@ -69,7 +70,7 @@ public class Blur {
         return sHelper;
     }
 
-    public Blur setSampleFactor(float factor) {
+    public Blur sampleFactor(float factor) {
         mSampleFactor = factor;
         return sHelper;
     }
@@ -79,6 +80,8 @@ public class Blur {
      * @return
      */
     public IBlur getBlurGenerator() {
+        long start = System.currentTimeMillis();
+
 
         IBlur generator = null;
 
@@ -95,7 +98,10 @@ public class Blur {
         if (generator != null) {
             generator.setBlurMode(mBlurMode);
             generator.setBlurRadius(mRadius);
+            generator.setSampleFactor(mSampleFactor);
         }
+        long stop = System.currentTimeMillis();
+        Log.d("generate duration", stop - start + "ms");
 
         return generator;
 

@@ -179,10 +179,7 @@ public class OffScreenRectangle {
                 "{ \n" +
                 "return 1.0f / sqrt(2.0 * 3.1415926f * delta * delta) * exp(-(currentPos * currentPos) / (2.0 * delta * delta)); \n" +
                 "}  \n" +
-
-                "void main() {   \n" +
-                ShaderUtil.getOffsetInitCode(radius);
-//                    ShaderUtil.getKernelInitCode(KernelUtil.getGaussianKernel(5)) +;
+                "void main() {   \n";
 
         if (mode == Blur.BlurMode.BOX) {
             code += (ShaderUtil.getBoxSampleCode(radius) + "}   \n");

@@ -8,6 +8,7 @@
 #include <jni.h>
 #include "math.h"
 #include "include/BoxBlurFilter.h"
+#include <android/log.h>
 
 
 void JNICALL Java_com_xiangpi_blurlibrary_generator_NativeBlurGenerator_nativeGaussianBlur
@@ -29,8 +30,8 @@ void JNICALL Java_com_xiangpi_blurlibrary_generator_NativeBlurGenerator_nativeGa
 
     c_kernelArray = makeKernel(j_radius);
 
-    gaussianBlurHorizontal(c_kernelArray, c_inArray, c_outArray, j_w, j_h);
-    gaussianBlurHorizontal(c_kernelArray, c_outArray, c_inArray, j_h, j_w);
+    gaussianBlurHorizontal(c_kernelArray, c_inArray, c_outArray, j_w, j_h, j_radius);
+    gaussianBlurHorizontal(c_kernelArray, c_outArray, c_inArray, j_h, j_w, j_radius);
 
     env->SetIntArrayRegion(j_inArray, 0, arr_len, c_inArray);
 
@@ -39,17 +40,18 @@ void JNICALL Java_com_xiangpi_blurlibrary_generator_NativeBlurGenerator_nativeGa
     free(c_kernelArray);
 }
 
-void gaussianBlurHorizontal(float *kernel, jint *inPixels, jint *outPixels, jint width, jint height) {
-    jint cols = sizeof(kernel) / sizeof(float);
+void gaussianBlurHorizontal(float *kernel, jint *inPixels, jint *outPixels, jint width, jint height, jint radius) {
+    jint cols = 2 * radius + 1;
     jint cols2 = cols / 2;
+    jint x, y, col;
 
-    for (jint y = 0; y < height; y++) {
+    for (y = 0; y < height; y++) {
         jint index = y;
         jint ioffset = y * width;
-        for (jint x = 0; x < width; x++) {
+        for (x = 0; x < width; x++) {
             float r = 0, g = 0, b = 0;
             int moffset = cols2;
-            for (jint col = -cols2; col <= cols2; col++) {
+            for (col = -cols2; col <= cols2; col++) {
                 float f = kernel[moffset + col];
 
                 if (f != 0) {

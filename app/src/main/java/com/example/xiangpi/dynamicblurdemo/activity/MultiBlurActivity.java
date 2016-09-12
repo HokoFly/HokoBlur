@@ -5,22 +5,31 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.os.Bundle;
+import android.support.v4.view.animation.FastOutLinearInInterpolator;
+import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.Interpolator;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.example.xiangpi.dynamicblurdemo.R;
 import com.example.xiangpi.dynamicblurdemo.util.ImageUtils;
 import com.xiangpi.blurlibrary.Blur;
+import com.xiangpi.blurlibrary.generator.IBlur;
+import com.xiangpi.blurlibrary.util.BitmapUtil;
 
 public class MultiBlurActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
-    private static final int SAMPLE_FACTOR = 4;
+    private static final float SAMPLE_FACTOR = 5.0f;
 
     private Spinner mSchemeSpinner;
     private Spinner mModeSpinner;
@@ -31,9 +40,13 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
     private Button mResetBtn;
     private Button mAnimBtn;
 
+    private TextView mRadiusText;
+
     private ImageView mImageView;
 
     private Blur mBlur;
+
+    private IBlur mGenerator;
 
     private Bitmap mInBitmap;
 
@@ -42,7 +55,7 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_multi_blur);
 
-        mBlur = Blur.with(this);
+        mBlur = Blur.with(this).sampleFactor(SAMPLE_FACTOR);
 
         mImageView = (ImageView) findViewById(R.id.photo);
         mSchemeSpinner = (Spinner) findViewById(R.id.scheme_spinner);
@@ -51,6 +64,8 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
         mBlurBtn = (Button) findViewById(R.id.blur_btn);
         mResetBtn = (Button) findViewById(R.id.reset_btn);
         mAnimBtn = (Button) findViewById(R.id.anim_btn);
+
+        mRadiusText = (TextView) findViewById(R.id.blur_radius);
 
         ArrayAdapter<CharSequence> schemeAdapter = ArrayAdapter.createFromResource(this,
                 R.array.blur_schemes, android.R.layout.simple_spinner_item);
@@ -74,10 +89,9 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
 
         mImageView.setImageResource(ImageUtils.testImageRes);
 
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inSampleSize = SAMPLE_FACTOR;
-        options.inScaled = true;   // No pre-scaling
-        mInBitmap = BitmapFactory.decodeResource(getResources(), ImageUtils.testImageRes, options);
+        mInBitmap = BitmapFactory.decodeResource(getResources(), ImageUtils.testImageRes);
+
+        mSeekBar.setProgress(0);
     }
 
 
@@ -105,7 +119,10 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
                 case 2: mBlur.mode(Blur.BlurMode.BOX);
                     break;
             }
+
         }
+
+        mGenerator = mBlur.getBlurGenerator();
     }
 
     @Override
@@ -118,20 +135,23 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
         final int id = v.getId();
         switch (id) {
             case R.id.blur_btn:
+                long start = System.currentTimeMillis();
+
                 //// TODO: 2016/9/11 new thread
                 if (mInBitmap != null && !mInBitmap.isRecycled()) {
-                    Bitmap output = mBlur.getBlurGenerator().doBlur(mInBitmap);
-                    Matrix matrix = new Matrix();
-                    matrix.setScale(SAMPLE_FACTOR, SAMPLE_FACTOR);
-                    output = Bitmap.createBitmap(output, 0, 0, mInBitmap.getWidth(), mInBitmap.getHeight(), matrix, false);
+                    Bitmap output = mGenerator.doBlur(mInBitmap);
                     mImageView.setImageBitmap(output);
                 }
+
+                long stop = System.currentTimeMillis();
+                Log.d("all duration", stop - start + "ms");
                 break;
             case R.id.reset_btn:
                 mImageView.setImageResource(ImageUtils.testImageRes);
                 break;
             case R.id.anim_btn:
                 ValueAnimator animator = ValueAnimator.ofInt(0, 10, 0);
+                animator.setInterpolator(new AccelerateDecelerateInterpolator());
                 animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                     @Override
                     public void onAnimationUpdate(ValueAnimator animation) {
@@ -141,10 +161,8 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
                         }
 
                         if (mInBitmap != null && !mInBitmap.isRecycled()) {
-                            Bitmap output = mBlur.radius((Integer) animation.getAnimatedValue()).getBlurGenerator().doBlur(mInBitmap);
-                            Matrix matrix = new Matrix();
-                            matrix.setScale(SAMPLE_FACTOR, SAMPLE_FACTOR);
-                            output = Bitmap.createBitmap(output, 0, 0, mInBitmap.getWidth(), mInBitmap.getHeight(), matrix, false);
+                            mGenerator.setBlurRadius((Integer) animation.getAnimatedValue());
+                            Bitmap output = mGenerator.doBlur(mInBitmap);
                             mImageView.setImageBitmap(output);
                         }
                     }
@@ -153,16 +171,19 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
                 animator.start();
                 break;
         }
+
+
+
     }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        mRadiusText.setText("模糊半径: " + progress);
         if (mInBitmap != null && !mInBitmap.isRecycled()) {
-            Bitmap output = mBlur.radius(progress).getBlurGenerator().doBlur(mInBitmap);
-            Matrix matrix = new Matrix();
-            matrix.setScale(SAMPLE_FACTOR, SAMPLE_FACTOR);
-            output = Bitmap.createBitmap(output, 0, 0, mInBitmap.getWidth(), mInBitmap.getHeight(), matrix, false);
+            mGenerator.setBlurRadius(progress);
+            Bitmap output = mGenerator.doBlur(mInBitmap);
             mImageView.setImageBitmap(output);
+            Log.d("blur radius", progress + "");
         }
     }
 

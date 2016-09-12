@@ -6,6 +6,7 @@ import com.xiangpi.blurlibrary.Blur;
 import com.xiangpi.blurlibrary.origin.BoxBlurFilter;
 import com.xiangpi.blurlibrary.origin.GaussianBlurFilter;
 import com.xiangpi.blurlibrary.origin.StackBlurFilter;
+import com.xiangpi.blurlibrary.util.BitmapUtil;
 
 /**
  * Created by xiangpi on 16/9/7.
@@ -27,21 +28,18 @@ public class OriginBlurGenerator extends BlurGenerator{
 //    }
 
     @Override
-    public Bitmap doBlur(Bitmap input) {
-        if (input == null) {
-            throw new IllegalArgumentException("You must input a bitmap !");
+    protected Bitmap doInnerBlur(Bitmap scaledInBitmap) {
+        if (scaledInBitmap == null) {
+            return null;
         }
 
-        if (mRadius <= 0) {
-            return input;
-        }
+        Bitmap scaledOutBitmap = null;
 
-        Bitmap output = null;
         try {
-            final int w = input.getWidth();
-            final int h = input.getHeight();
+            final int w = scaledInBitmap.getWidth();
+            final int h = scaledInBitmap.getHeight();
             final int[] pixels = new int[w * h];
-            input.getPixels(pixels, 0, w, 0, 0, w, h);
+            scaledInBitmap.getPixels(pixels, 0, w, 0, 0, w, h);
 
             if (mBlurMode == Blur.BlurMode.BOX) {
                 BoxBlurFilter.doBlur(pixels, w, h, mRadius);
@@ -51,13 +49,13 @@ public class OriginBlurGenerator extends BlurGenerator{
                 GaussianBlurFilter.doBlur(pixels, w, h, mRadius);
             }
 
-            output = Bitmap.createBitmap(pixels, 0, w, w, h, Bitmap.Config.ARGB_8888);
+            scaledOutBitmap = Bitmap.createBitmap(pixels, 0, w, w, h, Bitmap.Config.ARGB_8888);
         } catch (Exception e) {
             e.printStackTrace();
-            output = input;
+            scaledOutBitmap = scaledInBitmap;
         }
 
-        return output;
+        return scaledOutBitmap;
     }
 
 //    public static void release() {

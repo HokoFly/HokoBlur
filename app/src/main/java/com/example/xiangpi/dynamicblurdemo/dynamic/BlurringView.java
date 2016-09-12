@@ -48,16 +48,15 @@ public class BlurringView extends View {
     private void init() {
         mGenerator = Blur.with(getContext())
                 .scheme(Blur.BlurScheme.NATIVE)
-                .mode(Blur.BlurMode.STACK)
-                .radius(2)
+                .mode(Blur.BlurMode.GAUSSIAN)
+                .radius(5)
+                .sampleFactor(1.0f)
                 .getBlurGenerator();
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        long start = System.currentTimeMillis();
-
 
         if (mBlurredView != null) {
 
@@ -70,11 +69,7 @@ public class BlurringView extends View {
                 }
 
                 mBlurredView.draw(mBlurringCanvas);
-//
-//                mBlurredBitmap = OpenGLBlurGenerator.getInstance().doBlur(mToBlurBitmap, BLUR_KERNEL_RADIUS);
                 mBlurredBitmap = mGenerator.doBlur(mToBlurBitmap);
-
-//                mBlurredBitmap = mBlurHelper.doBlur(mToBlurBitmap, BLUR_KERNEL_RADIUS);
 
                 canvas.save();
                 canvas.translate(mBlurredView.getX() - getX(), mBlurredView.getY() - getY());
@@ -84,12 +79,6 @@ public class BlurringView extends View {
             }
 
         }
-
-        long stop = System.currentTimeMillis();
-
-        Log.d("Init Opengl", (stop - start)  + "us" );
-
-
 
     }
 

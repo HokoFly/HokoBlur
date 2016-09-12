@@ -18,34 +18,64 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:scrollbars="none"
+        android:layout_marginTop="5dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-            <TextView
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="选择模糊方案"/>
+                android:orientation="horizontal"
+                android:layout_marginBottom="10dp">
 
-            <Spinner
-                android:id="@+id/scheme_spinner"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginBottom="20dp"/>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/black"
+                        android:text="选择模糊方案"/>
+
+                    <Spinner
+                        android:id="@+id/scheme_spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/black"
+                        android:text="选择模糊算法"/>
+
+                    <Spinner
+                        android:id="@+id/mode_spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"/>
+                </LinearLayout>
+        </LinearLayout>
 
             <TextView
+                android:id="@+id/blur_radius"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="选择模糊算法"/>
-
-            <Spinner
-                android:id="@+id/mode_spinner"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginBottom="30dp"/>
-
+                android:textColor="@android:color/black"
+                android:text="模糊半径: 0"/>
             <SeekBar
                 android:id="@+id/radius_seekbar"
                 android:layout_width="match_parent"
