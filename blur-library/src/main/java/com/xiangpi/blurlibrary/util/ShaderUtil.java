@@ -63,6 +63,38 @@ public class ShaderUtil {
         return sb.toString().replace("KERNEL_SIZE", d + "");
     }
 
+    /**
+     * 预先设置Kernel权重数组，出现GPU寄存器不足，无法计算，这里在代码中直接计算kernel
+     */
+    public static String getStackSampleCode(int radius) {
+        StringBuilder sb = new StringBuilder();
+
+        int d = radius * 2 + 1;
+
+        sb.append("  vec3 sampleTex[KERNEL_SIZE];\n")
+                .append("  vec3 col;  \n")
+                .append("  float weightSum = 0.0f; \n")
+                .append("  for(int i = 0; i < KERNEL_SIZE; i++) {\n")
+                .append("   vec2 offset = vec2(float(i - ")
+                .append(radius).append(") * uWidthOffset, float(i - ")
+                .append(radius).append(") * uHeightOffset);\n")
+                .append("        sampleTex[i] = vec3(texture2D(uTexture, (vTexCoord.st + offset)));\n")
+                .append("  } \n")
+                .append("  for(int i = 0; i < KERNEL_SIZE; i++) { \n")
+                .append("       float index = float(i); \n")
+                .append("       float boxWeight = float(")
+                .append(radius)
+                .append(") + 1.0f - abs(index - float(")
+                .append(radius)
+                .append(")); \n")
+                .append("       col += sampleTex[i] * boxWeight; \n")
+                .append("       weightSum += boxWeight;\n")
+                .append("  }   \n")
+                .append("  gl_FragColor = vec4(col / weightSum, 1.0);   \n");
+
+        return sb.toString().replace("KERNEL_SIZE", d + "");
+    }
+
     // 获得初始化模糊核部分的代码
     public static String getKernelInitCode(float[] kernel) {
         if (kernel == null || kernel.length == 0) {

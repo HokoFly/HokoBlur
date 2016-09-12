@@ -184,10 +184,11 @@ public class OffScreenRectangle {
         if (mode == Blur.BlurMode.BOX) {
             code += (ShaderUtil.getBoxSampleCode(radius) + "}   \n");
             Log.d("opengl", "blur_box");
-        } else {
-            //暂不支持StackBlur，统一为高斯模糊
+        } else if (mode == Blur.BlurMode.GAUSSIAN) {
             code += (ShaderUtil.getGaussianSampleCode(radius) + "}   \n");
             Log.d("opengl", "blur_gaussian");
+        } else if (mode == Blur.BlurMode.STACK) {
+            code += (ShaderUtil.getStackSampleCode(radius) + "}   \n");
         }
 
         return code;

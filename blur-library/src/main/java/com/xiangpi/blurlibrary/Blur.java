@@ -80,9 +80,6 @@ public class Blur {
      * @return
      */
     public IBlur getBlurGenerator() {
-        long start = System.currentTimeMillis();
-
-
         IBlur generator = null;
 
         if (mBlurScheme == BlurScheme.RENDER_SCRIPT) {
@@ -100,8 +97,6 @@ public class Blur {
             generator.setBlurRadius(mRadius);
             generator.setSampleFactor(mSampleFactor);
         }
-        long stop = System.currentTimeMillis();
-        Log.d("generate duration", stop - start + "ms");
 
         return generator;
 

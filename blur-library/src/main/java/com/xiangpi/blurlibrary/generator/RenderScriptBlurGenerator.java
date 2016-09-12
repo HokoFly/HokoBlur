@@ -7,10 +7,9 @@ import android.support.v8.renderscript.Element;
 import android.support.v8.renderscript.RenderScript;
 import android.support.v8.renderscript.ScriptIntrinsicBlur;
 
-import com.example.xiangpi.dynamicblurdemo.activity.ScriptC_boxblur;
-import com.example.xiangpi.dynamicblurdemo.activity.ScriptC_stackblur;
 import com.xiangpi.blurlibrary.Blur;
-import com.xiangpi.blurlibrary.util.BitmapUtil;
+import com.xiangpi.blurlibrary.renderscript.ScriptC_boxblur;
+import com.xiangpi.blurlibrary.renderscript.ScriptC_stackblur;
 
 /**
  * Created by xiangpi on 16/9/7.
@@ -101,30 +100,18 @@ public class RenderScriptBlurGenerator extends BlurGenerator {
     }
 
     private void doStackBlur(Bitmap input) {
+
         mStackBlurScript.set_input(mAllocationIn);
         mStackBlurScript.set_output(mAllocationOut);
         mStackBlurScript.set_width(input.getWidth());
         mStackBlurScript.set_height(input.getHeight());
         mStackBlurScript.set_radius(mRadius);
+        mStackBlurScript.forEach_stackblur2_v(mAllocationIn);
 
-        int[] rowIndices = new int[input.getHeight()];
-        int[] colIndices = new int[input.getWidth()];
-
-        for (int i = 0; i < input.getHeight(); i++) {
-            rowIndices[i] = i;
-        }
-
-        for (int i = 0; i < input.getWidth(); i++) {
-            colIndices[i] = i;
-        }
-
-        Allocation rows = Allocation.createSized(mRenderScript, Element.U32(mRenderScript), input.getHeight(), Allocation.USAGE_SCRIPT);
-        Allocation cols = Allocation.createSized(mRenderScript, Element.U32(mRenderScript), input.getWidth(), Allocation.USAGE_SCRIPT);
-
-        rows.copyFrom(rowIndices);
-        cols.copyFrom(colIndices);
-        mStackBlurScript.forEach_blur_h(rows);
-        mStackBlurScript.forEach_blur_v(cols);
+        mStackBlurScript.set_input(mAllocationOut);
+        mStackBlurScript.set_output(mAllocationIn);
+        mStackBlurScript.forEach_stackblur2_h(mAllocationOut);
+        mAllocationOut = mAllocationIn;
     }
 
 }
