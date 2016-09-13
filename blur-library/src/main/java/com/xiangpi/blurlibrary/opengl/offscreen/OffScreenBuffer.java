@@ -2,6 +2,7 @@ package com.xiangpi.blurlibrary.opengl.offscreen;
 
 import android.graphics.Bitmap;
 import android.opengl.GLES20;
+import android.util.Log;
 
 import java.nio.IntBuffer;
 
@@ -32,7 +33,7 @@ public class OffScreenBuffer {
     private static final int EGL_OPENGL_ES2_BIT = 4;
 
     private EGLConfig[] mEglConfigs = new EGLConfig[1];
-
+    private int[] mContextAttribs;
     private int mWidth;
     private int mHeight;
 
@@ -69,11 +70,12 @@ public class OffScreenBuffer {
 
         mEgl.eglChooseConfig(mEGLDisplay, configAttribs, mEglConfigs, 1, numConfigs);
 
-        int []contextAttribs = {
+        mContextAttribs = new int[] {
                 EGL_CONTEXT_CLIENT_VERSION, 2,
                 EGL10.EGL_NONE
         };
-        mEGLContext = mEgl.eglCreateContext(mEGLDisplay, mEglConfigs[0], EGL10.EGL_NO_CONTEXT, contextAttribs);
+
+        mEGLContext = mEgl.eglCreateContext(mEGLDisplay, mEglConfigs[0], EGL10.EGL_NO_CONTEXT, mContextAttribs);
 
     }
 
@@ -109,7 +111,7 @@ public class OffScreenBuffer {
             mEgl.eglSwapBuffers(mEGLDisplay, mEGLSurface);
         }
         convertToBitmap();
-
+        unbindEglCurrent();
         return mOutputBitmap;
 
     }
@@ -130,5 +132,15 @@ public class OffScreenBuffer {
 
         mOutputBitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
         mOutputBitmap.copyPixelsFromBuffer(IntBuffer.wrap(ia));
+    }
+
+    /**
+     * 在当前线程结束一系列渲染和像素读取操作之后，需要将EGLContext与当前线程解绑，
+     * 这样才能在下次模糊操作的另一个线程中，继续使用当前EGLContext，达到共享EGLContext的目的。
+     * 当前线程绑定EGLContext，只需调用eglMakeCurrent()
+     */
+    private void unbindEglCurrent() {
+        mEgl.eglMakeCurrent(mEGLDisplay, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);
+
     }
 }

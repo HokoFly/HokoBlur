@@ -93,6 +93,10 @@ public class RenderScriptBlurGenerator extends BlurGenerator {
     }
 
     private void doGaussianBlur(Bitmap input) {
+        // 模糊核半径太大，RenderScript失效，这里做发限制
+        if (mRadius > 25) {
+            mRadius = 25;
+        }
         mGaussianBlurScirpt.setRadius(mRadius);
 //        mAllocationIn.copyFrom(input);
         mGaussianBlurScirpt.setInput(mAllocationIn);

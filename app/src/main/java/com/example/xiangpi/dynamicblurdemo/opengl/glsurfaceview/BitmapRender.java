@@ -34,7 +34,7 @@ public class BitmapRender implements GLSurfaceView.Renderer{
         mCtx = context;
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inScaled = false;   // No pre-scaling
-        mBitmap = BitmapFactory.decodeResource(mCtx.getResources(), R.mipmap.test_wallpaper, options);
+        mBitmap = BitmapFactory.decodeResource(mCtx.getResources(), R.mipmap.sample1, options);
     }
 
     @Override
@@ -58,12 +58,9 @@ public class BitmapRender implements GLSurfaceView.Renderer{
 
     @Override
     public void onDrawFrame(GL10 gl10) {
-        final long start = System.currentTimeMillis();
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
         Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mVMatrix, 0);
 
         mRectangle.draw(mMVPMatrix);
-        final long stop = System.currentTimeMillis();
-        Log.d("opengl_glsurfaceview", ((float)(stop - start))  + "ms");
     }
 }

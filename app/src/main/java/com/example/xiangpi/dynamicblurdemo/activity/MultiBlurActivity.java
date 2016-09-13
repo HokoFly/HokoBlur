@@ -4,7 +4,9 @@ import android.animation.ValueAnimator;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.DrawableRes;
 import android.support.v4.view.animation.FastOutLinearInInterpolator;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v7.app.AppCompatActivity;
@@ -29,7 +31,13 @@ import com.xiangpi.blurlibrary.util.BitmapUtil;
 
 public class MultiBlurActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
-    private static final float SAMPLE_FACTOR = 5.0f;
+    private static final float SAMPLE_FACTOR = 8.0f;
+
+    private static int[] testImageRes = {R.mipmap.sample, R.mipmap.sample1, R.mipmap.sample2};
+
+    private int mCurrentImageRes = testImageRes[0];
+
+    private int index = 0;
 
     private Spinner mSchemeSpinner;
     private Spinner mModeSpinner;
@@ -49,6 +57,8 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
     private IBlur mGenerator;
 
     private Bitmap mInBitmap;
+
+    private BlurTask mLatestTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,13 +97,24 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
         mResetBtn.setOnClickListener(this);
         mAnimBtn.setOnClickListener(this);
 
-        mImageView.setImageResource(ImageUtils.testImageRes);
+        mImageView.setOnClickListener(this);
 
-        mInBitmap = BitmapFactory.decodeResource(getResources(), ImageUtils.testImageRes);
+        setImage(mCurrentImageRes);
 
         mSeekBar.setProgress(0);
     }
 
+
+    private void setImage(@DrawableRes final int id) {
+        mImageView.setImageResource(id);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mInBitmap = BitmapFactory.decodeResource(getResources(), id);
+
+            }
+        }).start();
+    }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -135,19 +156,10 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
         final int id = v.getId();
         switch (id) {
             case R.id.blur_btn:
-                long start = System.currentTimeMillis();
-
-                //// TODO: 2016/9/11 new thread
-                if (mInBitmap != null && !mInBitmap.isRecycled()) {
-                    Bitmap output = mGenerator.doBlur(mInBitmap);
-                    mImageView.setImageBitmap(output);
-                }
-
-                long stop = System.currentTimeMillis();
-                Log.d("all duration", stop - start + "ms");
+                updateImage(mGenerator.getBlurRadius());
                 break;
             case R.id.reset_btn:
-                mImageView.setImageResource(ImageUtils.testImageRes);
+                mImageView.setImageResource(mCurrentImageRes);
                 break;
             case R.id.anim_btn:
                 ValueAnimator animator = ValueAnimator.ofInt(0, 10, 0);
@@ -155,20 +167,15 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
                 animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                     @Override
                     public void onAnimationUpdate(ValueAnimator animation) {
-                        if ((Integer)animation.getAnimatedValue() <= 0) {
-                            mImageView.setImageResource(ImageUtils.testImageRes);
-                            return;
-                        }
-
-                        if (mInBitmap != null && !mInBitmap.isRecycled()) {
-                            mGenerator.setBlurRadius((Integer) animation.getAnimatedValue());
-                            Bitmap output = mGenerator.doBlur(mInBitmap);
-                            mImageView.setImageBitmap(output);
-                        }
+                    updateImage((Integer) animation.getAnimatedValue());
                     }
                 });
                 animator.setDuration(2000);
                 animator.start();
+                break;
+            case R.id.photo:
+                mCurrentImageRes = testImageRes[++index % testImageRes.length];
+                setImage(mCurrentImageRes);
                 break;
         }
 
@@ -178,13 +185,9 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        mRadiusText.setText("模糊半径: " + progress);
-        if (mInBitmap != null && !mInBitmap.isRecycled()) {
-            mGenerator.setBlurRadius(progress);
-            Bitmap output = mGenerator.doBlur(mInBitmap);
-            mImageView.setImageBitmap(output);
-            Log.d("blur radius", progress + "");
-        }
+        final int radius = (int) (progress / 1000f * 25);
+        mRadiusText.setText("模糊半径: " + radius);
+        updateImage(radius);
     }
 
     @Override
@@ -195,5 +198,52 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
 
+    }
+
+    private void updateImage(int radius) {
+        if (mLatestTask != null) {
+            mLatestTask.cancel(false);
+        }
+
+        mLatestTask = new BlurTask();
+        mLatestTask.execute(radius);
+    }
+
+    private class BlurTask extends AsyncTask<Integer, Void, Bitmap> {
+        private boolean mIssued = false;
+
+        @Override
+        protected Bitmap doInBackground(Integer... params) {
+            Bitmap output = null;
+
+            if (!isCancelled()) {
+                mIssued = true;
+                int radius = params[0];
+                if (mInBitmap != null && !mInBitmap.isRecycled()) {
+                    mGenerator.setBlurRadius(radius);
+                    long start = System.nanoTime();
+                    output = mGenerator.doBlur(mInBitmap);
+                    long stop = System.nanoTime();
+                    Log.i("Total elapsed time", (stop - start) / 1000000f + "ms");
+                }
+            }
+
+            return output;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            if (bitmap == null) {
+                return;
+            }
+            mImageView.setImageBitmap(bitmap);
+        }
+
+        @Override
+        protected void onCancelled(Bitmap bitmap) {
+            if (mIssued && bitmap != null) {
+                mImageView.setImageBitmap(bitmap);
+            }
+        }
     }
 }

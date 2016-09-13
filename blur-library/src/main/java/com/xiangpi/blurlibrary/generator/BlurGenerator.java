@@ -39,6 +39,21 @@ public abstract class BlurGenerator implements IBlur {
     }
 
     @Override
+    public Blur.BlurMode getBlurMode() {
+        return mBlurMode;
+    }
+
+    @Override
+    public int getBlurRadius() {
+        return mRadius;
+    }
+
+    @Override
+    public float getSampleFactor() {
+        return mSampleFactor;
+    }
+
+    @Override
     public Bitmap doBlur(Bitmap inBitmap) {
         if (inBitmap == null) {
             throw new IllegalArgumentException("You must input a bitmap !");

@@ -21,4 +21,10 @@ public interface IBlur {
 
     void setSampleFactor(float factor);
 
+    Blur.BlurMode getBlurMode();
+
+    int getBlurRadius();
+
+    float getSampleFactor();
+
 }

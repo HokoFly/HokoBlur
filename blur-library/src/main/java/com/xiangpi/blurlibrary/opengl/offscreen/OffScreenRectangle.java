@@ -168,30 +168,29 @@ public class OffScreenRectangle {
 
     private String getFragmentShaderCode(int radius, Blur.BlurMode mode) {
 
-        String code = "precision mediump float;   \n" +
-                "uniform vec4 vColor;   \n" +
-                "varying vec2 vTexCoord;   \n" +
-                "uniform sampler2D uTexture;   \n" +
-                "uniform float uWidthOffset;  \n" +
-                "uniform float uHeightOffset;  \n" +
-
-                "mediump float getGaussWeight(mediump float currentPos, mediump float delta) \n" +
-                "{ \n" +
-                "return 1.0f / sqrt(2.0 * 3.1415926f * delta * delta) * exp(-(currentPos * currentPos) / (2.0 * delta * delta)); \n" +
-                "}  \n" +
-                "void main() {   \n";
+        StringBuilder sb = new StringBuilder();
+        sb.append("precision mediump float;   \n")
+                .append("uniform vec4 vColor;   \n")
+                .append("varying vec2 vTexCoord;   \n")
+                .append("uniform sampler2D uTexture;   \n")
+                .append("uniform float uWidthOffset;  \n")
+                .append("uniform float uHeightOffset;  \n")
+                .append("mediump float getGaussWeight(mediump float currentPos, mediump float sigma) \n")
+                .append("{ \n")
+                .append("   return 1.0f / sigma * exp(-(currentPos * currentPos) / (2.0 * sigma * sigma)); \n")
+                .append("} \n")
+                .append("void main() {   \n");
 
         if (mode == Blur.BlurMode.BOX) {
-            code += (ShaderUtil.getBoxSampleCode(radius) + "}   \n");
-            Log.d("opengl", "blur_box");
+            sb.append(ShaderUtil.getBoxSampleCode(radius));
         } else if (mode == Blur.BlurMode.GAUSSIAN) {
-            code += (ShaderUtil.getGaussianSampleCode(radius) + "}   \n");
-            Log.d("opengl", "blur_gaussian");
+            sb.append(ShaderUtil.getGaussianSampleCode(radius));
         } else if (mode == Blur.BlurMode.STACK) {
-            code += (ShaderUtil.getStackSampleCode(radius) + "}   \n");
+            sb.append(ShaderUtil.getStackSampleCode(radius));
         }
+        sb.append("}   \n");
 
-        return code;
+        return sb.toString();
     }
 
     private int loadTexture(Bitmap bitmap) {

@@ -32,6 +32,8 @@ public class GLProducerThread extends Thread {
 
     private GL mGL;
 
+    private EGLConfig[] mEglConfigs;
+
     private static final int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
 
     private static final int EGL_OPENGL_ES2_BIT = 4;
@@ -41,6 +43,7 @@ public class GLProducerThread extends Thread {
         mGLRenderer = glRenderer;
         mSurfaceTexture = surfaceTexture;
         mRunDraw = runDraw;
+        initGL();
 
     }
 
@@ -66,22 +69,26 @@ public class GLProducerThread extends Thread {
 
         int []numConfigs = new int[1];
 
-        EGLConfig []configs = new EGLConfig[1];
+        mEglConfigs = new EGLConfig[1];
 
-        mEgl.eglChooseConfig(mEGLDisplay, configAttribs, configs, 1, numConfigs);
+        mEgl.eglChooseConfig(mEGLDisplay, configAttribs, mEglConfigs, 1, numConfigs);
 
         int []contextAttribs = {
                 EGL_CONTEXT_CLIENT_VERSION, 2,
                 EGL10.EGL_NONE
         };
 
-        mEGLContext = mEgl.eglCreateContext(mEGLDisplay, configs[0], EGL10.EGL_NO_CONTEXT, contextAttribs);
-        mEGLSurface = mEgl.eglCreateWindowSurface(mEGLDisplay, configs[0], mSurfaceTexture, null);
-
-        mEgl.eglMakeCurrent(mEGLDisplay, mEGLSurface, mEGLSurface, mEGLContext);
+        mEGLContext = mEgl.eglCreateContext(mEGLDisplay, mEglConfigs[0], EGL10.EGL_NO_CONTEXT, contextAttribs);
 
         mGL = mEGLContext.getGL();
 
+
+    }
+
+    private void initSurface() {
+        mEGLSurface = mEgl.eglCreateWindowSurface(mEGLDisplay, mEglConfigs[0], mSurfaceTexture, null);
+
+        mEgl.eglMakeCurrent(mEGLDisplay, mEGLSurface, mEGLSurface, mEGLContext);
 
     }
 
@@ -94,15 +101,12 @@ public class GLProducerThread extends Thread {
 
     @Override
     public void run() {
-        initGL();
-
+        initSurface();
         ((GLRendererImpl)mGLRenderer).initGLRenderer();
 
         while(mRunDraw) {
-            final long start = System.currentTimeMillis();
             mGLRenderer.onDrawFrame();
             mEgl.eglSwapBuffers(mEGLDisplay, mEGLSurface);
-            final long stop = System.currentTimeMillis();
             try {
                 sleep(5);
             } catch(InterruptedException e) {
