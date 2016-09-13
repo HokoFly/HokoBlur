@@ -1,1 +1,1 @@
-include ':app', ':blur-library'
+include ':app', ':hoko-blur'

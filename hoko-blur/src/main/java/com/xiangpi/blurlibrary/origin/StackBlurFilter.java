@@ -4,10 +4,10 @@ package com.xiangpi.blurlibrary.origin;
  *  Stack Blur v1.0 from
  * http://www.quasimondo.com/StackBlurForCanvas/StackBlurDemo.html
  *
- * Java Author: Mario Klingemann <mario at quasimondo.com>
+ * Java Author: Mario Klingemann <a href="mailto:mario@quasimondo.com">mario@quasimondo.com</a>
  * http://incubator.quasimondo.com
  * created Feburary 29, 2004
- * Android port : Yahel Bouaziz <yahel at kayenko.com>
+ * Android port : Yahel Bouaziz  <a href="mailto:yahel@kayenko.com">yahel@kayenko.com</a>
  * http://www.kayenko.com
  * ported april 5th, 2012
  *
@@ -27,7 +27,7 @@ package com.xiangpi.blurlibrary.origin;
  * If you are using this algorithm in your code please add
  * the following line:
  *
- * Stack Blur Algorithm by Mario Klingemann <mario@quasimondo.com>
+ * Stack Blur Algorithm by Mario Klingemann  <a href="mailto:mario@quasimondo.com">mario@quasimondo.com</a>
  **/
 public class StackBlurFilter {
 
