@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
-import android.util.Log;
 
 import com.example.xiangpi.dynamicblurdemo.R;
 import com.example.xiangpi.dynamicblurdemo.opengl.shape.Rectangle;
@@ -34,7 +33,7 @@ public class BitmapRender implements GLSurfaceView.Renderer{
         mCtx = context;
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inScaled = false;   // No pre-scaling
-        mBitmap = BitmapFactory.decodeResource(mCtx.getResources(), R.mipmap.sample1, options);
+        mBitmap = BitmapFactory.decodeResource(mCtx.getResources(), R.mipmap.sample5, options);
     }
 
     @Override

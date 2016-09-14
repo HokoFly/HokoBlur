@@ -1,20 +1,16 @@
 package com.example.xiangpi.dynamicblurdemo.activity;
 
+import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
-import android.support.v4.view.animation.FastOutLinearInInterpolator;
-import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
-import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -24,16 +20,15 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.xiangpi.dynamicblurdemo.R;
-import com.example.xiangpi.dynamicblurdemo.util.ImageUtils;
 import com.xiangpi.blurlibrary.Blur;
 import com.xiangpi.blurlibrary.generator.IBlur;
-import com.xiangpi.blurlibrary.util.BitmapUtil;
 
 public class MultiBlurActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
     private static final float SAMPLE_FACTOR = 8.0f;
+    private static final int INIT_RADIUS = 5;
 
-    private static int[] testImageRes = {R.mipmap.sample, R.mipmap.sample1, R.mipmap.sample2};
+    private static int[] testImageRes = {R.mipmap.sample1, R.mipmap.sample2, R.mipmap.sample3, R.mipmap.sample4, R.mipmap.sample5};
 
     private int mCurrentImageRes = testImageRes[0];
 
@@ -44,7 +39,6 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
 
     private SeekBar mSeekBar;
 
-    private Button mBlurBtn;
     private Button mResetBtn;
     private Button mAnimBtn;
 
@@ -60,10 +54,20 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
 
     private BlurTask mLatestTask;
 
+    private int mRadius = INIT_RADIUS;
+
+    private ValueAnimator mAnimator;
+
+    private boolean mIsBlurAnimating;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_multi_blur);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
 
         mBlur = Blur.with(this).sampleFactor(SAMPLE_FACTOR);
 
@@ -71,7 +75,6 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
         mSchemeSpinner = (Spinner) findViewById(R.id.scheme_spinner);
         mModeSpinner = (Spinner) findViewById(R.id.mode_spinner);
         mSeekBar = (SeekBar) findViewById(R.id.radius_seekbar);
-        mBlurBtn = (Button) findViewById(R.id.blur_btn);
         mResetBtn = (Button) findViewById(R.id.reset_btn);
         mAnimBtn = (Button) findViewById(R.id.anim_btn);
 
@@ -93,7 +96,6 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
 
         mSeekBar.setOnSeekBarChangeListener(this);
 
-        mBlurBtn.setOnClickListener(this);
         mResetBtn.setOnClickListener(this);
         mAnimBtn.setOnClickListener(this);
 
@@ -101,7 +103,6 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
 
         setImage(mCurrentImageRes);
 
-        mSeekBar.setProgress(0);
     }
 
 
@@ -110,7 +111,50 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
         new Thread(new Runnable() {
             @Override
             public void run() {
+                mIsBlurAnimating = true;
                 mInBitmap = BitmapFactory.decodeResource(getResources(), id);
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mAnimator != null && mAnimator.isRunning()) {
+                            mAnimator.end();
+                        }
+                        mAnimator = ValueAnimator.ofInt(0, mRadius);
+                        mAnimator.setInterpolator(new LinearInterpolator());
+                        mAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                            @Override
+                            public void onAnimationUpdate(ValueAnimator animation) {
+                                updateImage((Integer) animation.getAnimatedValue());
+                            }
+
+                        });
+
+                        mAnimator.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                mIsBlurAnimating = false;
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+
+                            }
+                        });
+                        mAnimator.setDuration(300);
+                        mAnimator.start();
+                    }
+                });
 
             }
         }).start();
@@ -144,6 +188,9 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
         }
 
         mGenerator = mBlur.getBlurGenerator();
+        mGenerator.setBlurRadius(mRadius);
+        updateImage(mRadius);
+
     }
 
     @Override
@@ -155,27 +202,28 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
     public void onClick(View v) {
         final int id = v.getId();
         switch (id) {
-            case R.id.blur_btn:
-                updateImage(mGenerator.getBlurRadius());
-                break;
             case R.id.reset_btn:
                 mImageView.setImageResource(mCurrentImageRes);
+                mSeekBar.setProgress(0);
                 break;
             case R.id.anim_btn:
-                ValueAnimator animator = ValueAnimator.ofInt(0, 10, 0);
-                animator.setInterpolator(new AccelerateDecelerateInterpolator());
+                ValueAnimator animator = ValueAnimator.ofInt(0, 25, 0);
+                animator.setInterpolator(new LinearInterpolator());
                 animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                     @Override
                     public void onAnimationUpdate(ValueAnimator animation) {
-                    updateImage((Integer) animation.getAnimatedValue());
+                        int r = (int) animation.getAnimatedValue();
+                        updateImage(r);
                     }
                 });
-                animator.setDuration(2000);
+                animator.setDuration(1000);
                 animator.start();
                 break;
             case R.id.photo:
-                mCurrentImageRes = testImageRes[++index % testImageRes.length];
-                setImage(mCurrentImageRes);
+                if (!mIsBlurAnimating) {
+                    mCurrentImageRes = testImageRes[++index % testImageRes.length];
+                    setImage(mCurrentImageRes);
+                }
                 break;
         }
 
@@ -201,6 +249,8 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
     }
 
     private void updateImage(int radius) {
+        mRadius = radius;
+        mSeekBar.setProgress((int) (mRadius / 25f * 1000));
         if (mLatestTask != null) {
             mLatestTask.cancel(false);
         }
@@ -244,6 +294,14 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
             if (mIssued && bitmap != null) {
                 mImageView.setImageBitmap(bitmap);
             }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mLatestTask != null) {
+            mLatestTask.cancel(true);
         }
     }
 }
