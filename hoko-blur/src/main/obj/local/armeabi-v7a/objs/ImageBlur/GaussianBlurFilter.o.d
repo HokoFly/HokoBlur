@@ -1,4 +1,4 @@
-/Users/xiangpi/Documents/xiangpi/Project/DynamicBlur/blur-library/src/main/obj/local/armeabi-v7a/objs/ImageBlur/GaussianBlurFilter.o: \
+/Users/xiangpi/Documents/xiangpi/Project/DynamicBlur/hoko-blur/src/main/obj/local/armeabi-v7a/objs/ImageBlur/GaussianBlurFilter.o: \
  GaussianBlurFilter.cpp include/GaussianBlurFilter.h \
  include/BoxBlurFilter.h
 

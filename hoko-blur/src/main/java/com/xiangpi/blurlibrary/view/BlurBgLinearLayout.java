@@ -1,0 +1,121 @@
+package com.xiangpi.blurlibrary.view;
+
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.util.AttributeSet;
+import android.util.Log;
+import android.view.View;
+import android.view.ViewTreeObserver;
+import android.widget.LinearLayout;
+
+import com.xiangpi.blurlibrary.Blur;
+import com.xiangpi.blurlibrary.generator.IBlur;
+
+/**
+ * Created by xiangpi on 16/9/18.
+ */
+public class BlurBgLinearLayout extends LinearLayout {
+
+    private static final int DEFAULT_BLUR_RADIUS = 5;
+
+    private static final float DEFAULT_BITMAP_SAMPLE_FACTOR = 5.0f;
+
+    private int[] mLocationInWindow;
+
+    private IBlur mGenerator;
+
+    private Bitmap mBitmap;
+
+    private Canvas mCanvas;
+
+    private final ViewTreeObserver.OnPreDrawListener mOnPreDrawListener = new ViewTreeObserver.OnPreDrawListener() {
+        @Override
+        public boolean onPreDraw() {
+            if (getVisibility() == View.VISIBLE) {
+                prepare();
+            }
+            return true;
+        }
+    };
+
+    public BlurBgLinearLayout(Context context) {
+        super(context);
+        init();
+    }
+
+    public BlurBgLinearLayout(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init();
+    }
+
+    public BlurBgLinearLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init();
+    }
+
+    private void init() {
+        mCanvas = new Canvas();
+        mLocationInWindow = new int[2];
+        mGenerator = Blur.with(getContext()).sampleFactor(DEFAULT_BITMAP_SAMPLE_FACTOR).getBlurGenerator();
+        setBlurRadius(DEFAULT_BLUR_RADIUS);
+
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        getViewTreeObserver().addOnPreDrawListener(mOnPreDrawListener);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        getViewTreeObserver().removeOnPreDrawListener(mOnPreDrawListener);
+    }
+
+    @Override
+    protected void dispatchDraw(Canvas canvas) {
+        if (mCanvas == canvas) {
+            mBitmap = mGenerator.doBlur(mBitmap);
+        } else {
+            if (mBitmap != null) {
+                canvas.drawBitmap(mBitmap, new Matrix(), null);
+            }
+            super.dispatchDraw(canvas);
+        }
+    }
+
+    public void setBlurRadius(int radius) {
+        mGenerator.setBlurRadius(radius);
+        invalidate();
+    }
+
+    public void setSampleFactor(float factor) {
+        mGenerator.setSampleFactor(factor);
+        invalidate();
+    }
+
+    private void prepare() {
+        int width = getWidth();
+        int height = getHeight();
+
+        // Width and height must be > 0
+        width = Math.max(width, 1);
+        height = Math.max(height, 1);
+
+        if (mBitmap == null || mBitmap.getWidth() != width || mBitmap.getHeight() != height) {
+            mBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        }
+
+        getLocationInWindow(mLocationInWindow);
+        mCanvas.restoreToCount(1);
+        mCanvas.setBitmap(mBitmap);
+        mCanvas.setMatrix(new Matrix());
+        mCanvas.translate(-mLocationInWindow[0], -mLocationInWindow[1]);
+        mCanvas.save();
+        getRootView().draw(mCanvas);
+    }
+
+}

@@ -1,14 +1,17 @@
 package com.example.xiangpi.dynamicblurdemo.activity;
 
+import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 
 import com.example.xiangpi.dynamicblurdemo.R;
+import com.xiangpi.blurlibrary.view.BlurBgLinearLayout;
 
 import java.util.List;
 
@@ -18,7 +21,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button mOpenGLBtn;
     private Button mTexBtn;
     private Button mDynamicBtn;
+    private Button mLayoutBtn;
 
+    private BlurBgLinearLayout mBlurLayout;
+
+    private boolean mHasBlurred;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,15 +35,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initView() {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
+
         mMultiBlurBtn = (Button) findViewById(R.id.multi_blur);
         mOpenGLBtn = (Button) findViewById(R.id.opengl_blur);
         mTexBtn = (Button) findViewById(R.id.tex_blur);
         mDynamicBtn = (Button) findViewById(R.id.dynamic_blur);
+        mLayoutBtn = (Button) findViewById(R.id.layout_blur);
+        mBlurLayout = (BlurBgLinearLayout) findViewById(R.id.blur_layout);
 
         mMultiBlurBtn.setOnClickListener(this);
         mOpenGLBtn.setOnClickListener(this);
         mTexBtn.setOnClickListener(this);
         mDynamicBtn.setOnClickListener(this);
+        mLayoutBtn.setOnClickListener(this);
 
     }
 
@@ -57,6 +71,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.dynamic_blur:
                 intent.setClass(MainActivity.this, DynamicBlurActivity.class);
                 break;
+            case R.id.layout_blur:
+                changeBg();
+                break;
         }
 
         List<ResolveInfo> list = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
@@ -66,4 +83,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    private void changeBg() {
+        mBlurLayout.setBackgroundResource(R.mipmap.sample7);
+        blurBackground();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (mHasBlurred) {
+            return;
+        }
+
+        mHasBlurred = true;
+        blurBackground();
+
+    }
+
+    private void blurBackground() {
+        mBlurLayout.setBlurRadius(0);
+        ValueAnimator animator = ValueAnimator.ofInt(0, 8);
+        animator.setInterpolator(new LinearInterpolator());
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                int r = (int) animation.getAnimatedValue();
+                mBlurLayout.setBlurRadius(r);
+            }
+        });
+        animator.setDuration(1000);
+        animator.start();
+    }
 }

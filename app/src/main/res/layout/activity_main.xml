@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.xiangpi.blurlibrary.view.BlurBgLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,6 +8,8 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
+    android:id="@+id/blur_layout"
+    android:background="@mipmap/sample6"
     tools:context=".activity.MainActivity">
 
     <Button
@@ -34,5 +36,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Dynamic Blur"/>
+    <Button
+        android:id="@+id/layout_blur"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Layout Blur"/>
 
-</LinearLayout>
+</com.xiangpi.blurlibrary.view.BlurBgLinearLayout>

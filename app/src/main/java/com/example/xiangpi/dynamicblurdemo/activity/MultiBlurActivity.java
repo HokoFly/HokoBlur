@@ -269,7 +269,7 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
             if (!isCancelled()) {
                 mIssued = true;
                 int radius = params[0];
-                if (mInBitmap != null && !mInBitmap.isRecycled()) {
+                if (mInBitmap != null && !mInBitmap.isRecycled() && mGenerator != null) {
                     mGenerator.setBlurRadius(radius);
                     long start = System.nanoTime();
                     output = mGenerator.doBlur(mInBitmap);

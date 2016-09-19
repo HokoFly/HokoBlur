@@ -26,7 +26,7 @@ public class ShaderUtil {
                 .append("  for(int i = 0; i < KERNEL_SIZE; i++) { \n")
                 .append("       float index = float(i); \n")
                 .append("       float gaussWeight = getGaussWeight(index - float(KERNEL_SIZE - 1)/2.0,")
-                .append(GAUSSIAN_SIGMA + "); \n")
+                .append("           (float(KERNEL_SIZE - 1)/2.0 + 1.0f) / 2.0f); \n")
                 .append("       col += sampleTex[i] * gaussWeight; \n")
                 .append("       weightSum += gaussWeight;\n")
                 .append("  }   \n")

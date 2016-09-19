@@ -35,13 +35,18 @@ public class NativeBlurGenerator extends BlurGenerator{
         final int[] pixels = new int[w * h];
         scaledInBitmap.getPixels(pixels, 0, w, 0, 0, w, h);
 
-        if (mBlurMode == Blur.BlurMode.BOX) {
-            nativeBoxBlur(pixels, w, h, mRadius);
-        } else if (mBlurMode == Blur.BlurMode.STACK) {
-            nativeStackBlur(pixels, w, h, mRadius);
-        } else if (mBlurMode == Blur.BlurMode.GAUSSIAN) {
-            nativeGaussianBlur(pixels, w, h, mRadius);
+        switch (mBlurMode) {
+            case BOX:
+                nativeBoxBlur(pixels, w, h, mRadius);
+                break;
+            case STACK:
+                nativeStackBlur(pixels, w, h, mRadius);
+                break;
+            case GAUSSIAN:
+                nativeGaussianBlur(pixels, w, h, mRadius);
+                break;
         }
+
         return Bitmap.createBitmap(pixels, 0, w, w, h, Bitmap.Config.ARGB_8888);
     }
 

@@ -1,4 +1,4 @@
-package com.example.xiangpi.dynamicblurdemo.dynamic;
+package com.xiangpi.blurlibrary.view;
 
 import android.content.Context;
 import android.graphics.Bitmap;

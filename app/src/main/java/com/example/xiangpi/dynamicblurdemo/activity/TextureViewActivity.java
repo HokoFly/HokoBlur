@@ -54,7 +54,6 @@ public class TextureViewActivity extends AppCompatActivity implements TextureVie
 
     @Override
     protected void onDestroy() {
-        mRunDraw = false;
         super.onDestroy();
     }
 
@@ -73,7 +72,9 @@ public class TextureViewActivity extends AppCompatActivity implements TextureVie
     @Override
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
         mRunDraw = false;
+        mGLThread.stopDraw();
         mGLThread = null;
+
         return true;
     }
 

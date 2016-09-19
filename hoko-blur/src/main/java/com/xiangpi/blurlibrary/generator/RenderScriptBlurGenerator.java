@@ -8,6 +8,9 @@ import android.support.v8.renderscript.RenderScript;
 import android.support.v8.renderscript.ScriptIntrinsicBlur;
 
 import com.xiangpi.blurlibrary.Blur;
+import com.xiangpi.blurlibrary.origin.BoxBlurFilter;
+import com.xiangpi.blurlibrary.origin.GaussianBlurFilter;
+import com.xiangpi.blurlibrary.origin.StackBlurFilter;
 import com.xiangpi.blurlibrary.renderscript.ScriptC_boxblur;
 import com.xiangpi.blurlibrary.renderscript.ScriptC_stackblur;
 
@@ -62,12 +65,16 @@ public class RenderScriptBlurGenerator extends BlurGenerator {
         mAllocationOut = Allocation.createFromBitmap(mRenderScript, scaledOutBitmap);
 
         try {
-            if (mBlurMode == Blur.BlurMode.BOX) {
-                doBoxBlur(scaledInBitmap);
-            } else if (mBlurMode == Blur.BlurMode.STACK) {
-                doStackBlur(scaledInBitmap);
-            } else if (mBlurMode == Blur.BlurMode.GAUSSIAN) {
-                doGaussianBlur(scaledInBitmap);
+            switch (mBlurMode) {
+                case BOX:
+                    doBoxBlur(scaledInBitmap);
+                    break;
+                case STACK:
+                    doStackBlur(scaledInBitmap);
+                    break;
+                case GAUSSIAN:
+                    doGaussianBlur(scaledInBitmap);
+                    break;
             }
 
             mAllocationOut.copyTo(scaledOutBitmap);

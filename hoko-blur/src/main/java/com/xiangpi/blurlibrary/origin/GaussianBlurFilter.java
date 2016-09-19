@@ -6,6 +6,7 @@ package com.xiangpi.blurlibrary.origin;
 public class GaussianBlurFilter {
 
     public static void doBlur(int[] in, int width, int height, int radius) {
+
         int[] result = new int[width * height];
         float[] kernel = makeKernel(radius);
 
@@ -56,7 +57,7 @@ public class GaussianBlurFilter {
         int rows = r * 2 + 1;
         float[] matrix = new float[rows];
         // TODO: 16/9/13 sigma 设置
-        float sigma = 3.0f;
+        float sigma = (r + 1) / 2.0f;
         float sigma22 = 2 * sigma * sigma;
         float sigmaPi2 = (float) (2 * Math.PI * sigma);
         float sqrtSigmaPi2 = (float) Math.sqrt(sigmaPi2);

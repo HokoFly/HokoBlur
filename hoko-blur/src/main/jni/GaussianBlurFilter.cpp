@@ -81,7 +81,7 @@ float * makeKernel(jint r) {
     jint i, row;
     jint rows = r * 2 + 1;
     float * matrix = (float *) malloc(sizeof(float) * rows);
-    float sigma = 3.0f;
+    float sigma = (r + 1) / 2.0f;
     //todo sigma定义
     float sigma22 = 2 * sigma * sigma;
     float sigmaPi2 = (float) (2 * M_PI * sigma);

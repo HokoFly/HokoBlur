@@ -1,6 +1,7 @@
 package com.xiangpi.blurlibrary.generator;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.xiangpi.blurlibrary.Blur;
 import com.xiangpi.blurlibrary.origin.BoxBlurFilter;
@@ -41,12 +42,18 @@ public class OriginBlurGenerator extends BlurGenerator{
             final int[] pixels = new int[w * h];
             scaledInBitmap.getPixels(pixels, 0, w, 0, 0, w, h);
 
-            if (mBlurMode == Blur.BlurMode.BOX) {
-                BoxBlurFilter.doBlur(pixels, w, h, mRadius);
-            } else if (mBlurMode == Blur.BlurMode.STACK) {
-                StackBlurFilter.doBlur(pixels, w, h, mRadius);
-            } else if (mBlurMode == Blur.BlurMode.GAUSSIAN) {
-                GaussianBlurFilter.doBlur(pixels, w, h, mRadius);
+            switch (mBlurMode) {
+                case BOX:
+                    BoxBlurFilter.doBlur(pixels, w, h, mRadius);
+                    break;
+                case STACK:
+                    StackBlurFilter.doBlur(pixels, w, h, mRadius);
+                    break;
+                case GAUSSIAN:
+
+                    GaussianBlurFilter.doBlur(pixels, w, h, mRadius);
+
+                    break;
             }
 
             scaledOutBitmap = Bitmap.createBitmap(pixels, 0, w, w, h, Bitmap.Config.ARGB_8888);

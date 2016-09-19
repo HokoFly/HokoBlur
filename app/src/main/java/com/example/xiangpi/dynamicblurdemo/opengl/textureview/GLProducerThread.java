@@ -1,6 +1,7 @@
 package com.example.xiangpi.dynamicblurdemo.opengl.textureview;
 
 import android.graphics.SurfaceTexture;
+import android.util.Log;
 
 import com.xiangpi.blurlibrary.opengl.offscreen.GLRenderer;
 
@@ -29,8 +30,6 @@ public class GLProducerThread extends Thread {
     private EGLContext mEGLContext = EGL10.EGL_NO_CONTEXT;
 
     private EGLSurface mEGLSurface = EGL10.EGL_NO_SURFACE;
-
-    private GL mGL;
 
     private EGLConfig[] mEglConfigs;
 
@@ -80,15 +79,7 @@ public class GLProducerThread extends Thread {
 
         mEGLContext = mEgl.eglCreateContext(mEGLDisplay, mEglConfigs[0], EGL10.EGL_NO_CONTEXT, contextAttribs);
 
-        mGL = mEGLContext.getGL();
-
-
-    }
-
-    private void initSurface() {
         mEGLSurface = mEgl.eglCreateWindowSurface(mEGLDisplay, mEglConfigs[0], mSurfaceTexture, null);
-
-        mEgl.eglMakeCurrent(mEGLDisplay, mEGLSurface, mEGLSurface, mEGLContext);
 
     }
 
@@ -101,10 +92,12 @@ public class GLProducerThread extends Thread {
 
     @Override
     public void run() {
-        initSurface();
+        mEgl.eglMakeCurrent(mEGLDisplay, mEGLSurface, mEGLSurface, mEGLContext);
+
         ((GLRendererImpl)mGLRenderer).initGLRenderer();
 
         while(mRunDraw) {
+
             mGLRenderer.onDrawFrame();
             mEgl.eglSwapBuffers(mEGLDisplay, mEGLSurface);
             try {
@@ -115,5 +108,13 @@ public class GLProducerThread extends Thread {
         }
         destoryGL();
 
+    }
+
+    public void stopDraw() {
+        mRunDraw = false;
+    }
+
+    public void startDraw() {
+        mRunDraw = true;
     }
 }
