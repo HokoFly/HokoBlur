@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.xiangpi.blurlibrary.view.BlurBgLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.hoko.blurlibrary.view.BlurBgLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -16,30 +16,35 @@
         android:id="@+id/multi_blur"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="各类模糊算法"/>
+        android:textAllCaps="false"
+        android:text="@string/blur_algorithm"/>
 
 
     <Button
         android:id="@+id/opengl_blur"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="OpenGL Blur"/>
+        android:textAllCaps="false"
+        android:text="@string/glsurfaceview"/>
 
     <Button
         android:id="@+id/tex_blur"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextureView Blur"/>
+        android:textAllCaps="false"
+        android:text="@string/textureview"/>
 
     <Button
         android:id="@+id/dynamic_blur"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Dynamic Blur"/>
+        android:textAllCaps="false"
+        android:text="@string/dynamic_blur"/>
     <Button
         android:id="@+id/layout_blur"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Layout Blur"/>
+        android:textAllCaps="false"
+        android:text="@string/layout_blur"/>
 
-</com.xiangpi.blurlibrary.view.BlurBgLinearLayout>
+</com.hoko.blurlibrary.view.BlurBgLinearLayout>

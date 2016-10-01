@@ -8,7 +8,7 @@ import android.opengl.Matrix;
 
 import com.example.xiangpi.dynamicblurdemo.R;
 import com.example.xiangpi.dynamicblurdemo.opengl.shape.Rectangle;
-import com.xiangpi.blurlibrary.opengl.offscreen.GLRenderer;
+import com.hoko.blurlibrary.opengl.offscreen.GLRenderer;
 
 /**
  * Created by xiangpi on 16/8/17.

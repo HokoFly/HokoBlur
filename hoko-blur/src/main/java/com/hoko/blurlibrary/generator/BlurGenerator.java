@@ -1,31 +1,24 @@
-package com.xiangpi.blurlibrary.generator;
+package com.hoko.blurlibrary.generator;
 
 import android.graphics.Bitmap;
-import android.util.Log;
 
-import com.xiangpi.blurlibrary.Blur;
-import com.xiangpi.blurlibrary.util.BitmapUtil;
+import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.util.BitmapUtil;
 
 /**
  * Created by xiangpi on 16/9/8.
  */
 public abstract class BlurGenerator implements IBlur {
 
-//    private static final int DEFAULT_BLUR_KERNEL_RADIUS = 5;
-
-//    private static final Blur.BlurMode DEFAULT_BLUR_MODE = Blur.BlurMode.GAUSSIAN;
-
-//    private static final float DEFAULT_SAMPLE_FACTOR = 5.0f;
-
     protected int mRadius;
 
-    protected Blur.BlurMode mBlurMode;
+    protected @Blur.BlurMode int mMode;
 
     protected float mSampleFactor;
 
     @Override
-    public void setBlurMode(Blur.BlurMode mode) {
-        mBlurMode = mode;
+    public void setBlurMode(@Blur.BlurMode int mode) {
+        mMode = mode;
     }
 
     @Override
@@ -39,8 +32,9 @@ public abstract class BlurGenerator implements IBlur {
     }
 
     @Override
-    public Blur.BlurMode getBlurMode() {
-        return mBlurMode;
+    @Blur.BlurMode
+    public int getBlurMode() {
+        return mMode;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.xiangpi.blurlibrary.util;
+package com.hoko.blurlibrary.util;
 
 import android.graphics.Bitmap;
 import android.graphics.Matrix;

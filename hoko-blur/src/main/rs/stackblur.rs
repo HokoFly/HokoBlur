@@ -1,6 +1,6 @@
 #pragma version(1)
 
-#pragma rs java_package_name(com.xiangpi.blurlibrary.renderscript)
+#pragma rs java_package_name(com.hoko.blurlibrary.renderscript)
 
 #pragma rs_fp_relaxed
 
@@ -13,7 +13,7 @@ int height;
 int radius;
 
 
-void __attribute__((kernel)) stackblur2_h(uchar4 in, uint32_t x, uint32_t y) {
+void __attribute__((kernel)) stackblur_h(uchar4 in, uint32_t x, uint32_t y) {
 
     float4 sum = 0;
     uchar4 result;
@@ -40,7 +40,7 @@ void __attribute__((kernel)) stackblur2_h(uchar4 in, uint32_t x, uint32_t y) {
 
 }
 
-void __attribute__((kernel)) stackblur2_v(uchar4 in, uint32_t x, uint32_t y) {
+void __attribute__((kernel)) stackblur_v(uchar4 in, uint32_t x, uint32_t y) {
 
     float4 sum = 0;
     uchar4 result;

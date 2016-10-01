@@ -1,8 +1,8 @@
-package com.xiangpi.blurlibrary.generator;
+package com.hoko.blurlibrary.generator;
 
 import android.graphics.Bitmap;
 
-import com.xiangpi.blurlibrary.Blur;
+import com.hoko.blurlibrary.Blur;
 
 /**
  * Created by xiangpi on 16/9/8.
@@ -15,13 +15,13 @@ public interface IBlur {
      */
     Bitmap doBlur(Bitmap inBitmap);
 
-    void setBlurMode(Blur.BlurMode mode);
+    void setBlurMode(@Blur.BlurMode int mode);
 
     void setBlurRadius(int radius);
 
     void setSampleFactor(float factor);
 
-    Blur.BlurMode getBlurMode();
+    @Blur.BlurMode int getBlurMode();
 
     int getBlurRadius();
 

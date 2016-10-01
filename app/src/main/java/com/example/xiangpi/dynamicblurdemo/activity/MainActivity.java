@@ -1,9 +1,8 @@
 package com.example.xiangpi.dynamicblurdemo.activity;
 
 import android.animation.ValueAnimator;
+import android.content.ComponentName;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -11,9 +10,7 @@ import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 
 import com.example.xiangpi.dynamicblurdemo.R;
-import com.xiangpi.blurlibrary.view.BlurBgLinearLayout;
-
-import java.util.List;
+import com.hoko.blurlibrary.view.BlurBgLinearLayout;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -76,8 +73,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
 
-        List<ResolveInfo> list = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
-        if (list != null && list.size() > 0) {
+        ComponentName componentName = intent.resolveActivity(getPackageManager());
+        if (componentName != null) {
             startActivity(intent);
         }
 

@@ -1,8 +1,7 @@
-package com.xiangpi.blurlibrary.opengl.offscreen;
+package com.hoko.blurlibrary.opengl.offscreen;
 
 import android.graphics.Bitmap;
 import android.opengl.GLES20;
-import android.util.Log;
 
 import java.nio.IntBuffer;
 

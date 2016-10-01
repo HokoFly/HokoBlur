@@ -29,7 +29,7 @@
 
     </RelativeLayout>
 
-    <com.xiangpi.blurlibrary.view.BlurringView
+    <com.hoko.blurlibrary.view.BlurringView
         android:id="@+id/blurring"
         android:layout_width="200dp"
         android:layout_height="200dp"

@@ -1,11 +1,10 @@
-package com.xiangpi.blurlibrary.generator;
+package com.hoko.blurlibrary.generator;
 
 import android.graphics.Bitmap;
 
-import com.xiangpi.blurlibrary.opengl.offscreen.GLRenderer;
-import com.xiangpi.blurlibrary.opengl.offscreen.OffScreenBuffer;
-import com.xiangpi.blurlibrary.opengl.offscreen.OffScreenRendererImpl;
-import com.xiangpi.blurlibrary.util.BitmapUtil;
+import com.hoko.blurlibrary.opengl.offscreen.GLRenderer;
+import com.hoko.blurlibrary.opengl.offscreen.OffScreenBuffer;
+import com.hoko.blurlibrary.opengl.offscreen.OffScreenRendererImpl;
 
 
 /**
@@ -44,7 +43,7 @@ public class OpenGLBlurGenerator extends BlurGenerator{
         if (scaledInBitmap == null) {
             return null;
         }
-        mGLRenderer = new OffScreenRendererImpl(scaledInBitmap, mRadius, mBlurMode);
+        mGLRenderer = new OffScreenRendererImpl(scaledInBitmap, mRadius, mMode);
         mOffScreenBuffer.setRenderer(mGLRenderer);
         return mOffScreenBuffer.getBitmap();
     }

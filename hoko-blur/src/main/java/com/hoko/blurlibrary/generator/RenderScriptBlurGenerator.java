@@ -1,4 +1,4 @@
-package com.xiangpi.blurlibrary.generator;
+package com.hoko.blurlibrary.generator;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -7,12 +7,10 @@ import android.support.v8.renderscript.Element;
 import android.support.v8.renderscript.RenderScript;
 import android.support.v8.renderscript.ScriptIntrinsicBlur;
 
-import com.xiangpi.blurlibrary.Blur;
-import com.xiangpi.blurlibrary.origin.BoxBlurFilter;
-import com.xiangpi.blurlibrary.origin.GaussianBlurFilter;
-import com.xiangpi.blurlibrary.origin.StackBlurFilter;
-import com.xiangpi.blurlibrary.renderscript.ScriptC_boxblur;
-import com.xiangpi.blurlibrary.renderscript.ScriptC_stackblur;
+import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.renderscript.ScriptC_BoxblurHorizontal;
+import com.hoko.blurlibrary.renderscript.ScriptC_BoxblurVertical;
+import com.hoko.blurlibrary.renderscript.ScriptC_Stackblur;
 
 /**
  * Created by xiangpi on 16/9/7.
@@ -23,8 +21,9 @@ public class RenderScriptBlurGenerator extends BlurGenerator {
 
     private RenderScript mRenderScript;
     private ScriptIntrinsicBlur mGaussianBlurScirpt;
-    private ScriptC_boxblur mBoxBlurScript;
-    private ScriptC_stackblur mStackBlurScript;
+    private ScriptC_BoxblurHorizontal mBoxBlurScriptH;
+    private ScriptC_BoxblurVertical mBoxBlurScriptV;
+    private ScriptC_Stackblur mStackBlurScript;
 
     private Allocation mAllocationIn;
     private Allocation mAllocationOut;
@@ -37,8 +36,9 @@ public class RenderScriptBlurGenerator extends BlurGenerator {
     private void init(Context context) {
         mRenderScript = RenderScript.create(context.getApplicationContext());
         mGaussianBlurScirpt = ScriptIntrinsicBlur.create(mRenderScript, Element.U8_4(mRenderScript));
-        mBoxBlurScript = new ScriptC_boxblur(mRenderScript);
-        mStackBlurScript = new ScriptC_stackblur(mRenderScript);
+        mBoxBlurScriptH = new ScriptC_BoxblurHorizontal(mRenderScript);
+        mBoxBlurScriptV = new ScriptC_BoxblurVertical(mRenderScript);
+        mStackBlurScript = new ScriptC_Stackblur(mRenderScript);
     }
 
 //    public static RenderScriptBlurGenerator getInstance(Context context) {
@@ -65,14 +65,14 @@ public class RenderScriptBlurGenerator extends BlurGenerator {
         mAllocationOut = Allocation.createFromBitmap(mRenderScript, scaledOutBitmap);
 
         try {
-            switch (mBlurMode) {
-                case BOX:
+            switch (mMode) {
+                case Blur.MODE_BOX:
                     doBoxBlur(scaledInBitmap);
                     break;
-                case STACK:
+                case Blur.MODE_STACK:
                     doStackBlur(scaledInBitmap);
                     break;
-                case GAUSSIAN:
+                case Blur.MODE_GAUSSIAN:
                     doGaussianBlur(scaledInBitmap);
                     break;
             }
@@ -91,12 +91,20 @@ public class RenderScriptBlurGenerator extends BlurGenerator {
 //    }
 
     private void doBoxBlur(Bitmap input) {
-        mBoxBlurScript.set_input(mAllocationIn);
-        mBoxBlurScript.set_output(mAllocationOut);
-        mBoxBlurScript.set_radius(mRadius);
-        mBoxBlurScript.set_width(input.getWidth());
-        mBoxBlurScript.set_height(input.getHeight());
-        mBoxBlurScript.forEach_boxblur(mAllocationIn);
+        mBoxBlurScriptH.set_input(mAllocationIn);
+        mBoxBlurScriptH.set_output(mAllocationOut);
+        mBoxBlurScriptH.set_width(input.getWidth());
+        mBoxBlurScriptH.set_height(input.getHeight());
+        mBoxBlurScriptH.set_radius(mRadius);
+        mBoxBlurScriptH.forEach_boxblur_h(mAllocationIn);
+
+        mBoxBlurScriptV.set_input(mAllocationOut);
+        mBoxBlurScriptV.set_output(mAllocationIn);
+        mBoxBlurScriptV.set_width(input.getWidth());
+        mBoxBlurScriptV.set_height(input.getHeight());
+        mBoxBlurScriptV.set_radius(mRadius);
+        mBoxBlurScriptV.forEach_boxblur_v(mAllocationOut);
+        mAllocationOut = mAllocationIn;
     }
 
     private void doGaussianBlur(Bitmap input) {
@@ -117,11 +125,11 @@ public class RenderScriptBlurGenerator extends BlurGenerator {
         mStackBlurScript.set_width(input.getWidth());
         mStackBlurScript.set_height(input.getHeight());
         mStackBlurScript.set_radius(mRadius);
-        mStackBlurScript.forEach_stackblur2_v(mAllocationIn);
+        mStackBlurScript.forEach_stackblur_v(mAllocationIn);
 
         mStackBlurScript.set_input(mAllocationOut);
         mStackBlurScript.set_output(mAllocationIn);
-        mStackBlurScript.forEach_stackblur2_h(mAllocationOut);
+        mStackBlurScript.forEach_stackblur_h(mAllocationOut);
         mAllocationOut = mAllocationIn;
     }
 

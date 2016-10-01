@@ -1,4 +1,4 @@
-package com.xiangpi.blurlibrary.opengl.offscreen;
+package com.hoko.blurlibrary.opengl.offscreen;
 
 import android.graphics.Bitmap;
 

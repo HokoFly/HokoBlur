@@ -1,13 +1,12 @@
-package com.xiangpi.blurlibrary.opengl.offscreen;
+package com.hoko.blurlibrary.opengl.offscreen;
 
 import android.graphics.Bitmap;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
-import android.util.Log;
 
 
-import com.xiangpi.blurlibrary.Blur;
-import com.xiangpi.blurlibrary.util.ShaderUtil;
+import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.util.ShaderUtil;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -96,7 +95,7 @@ public class OffScreenRectangle {
     private int mWidth;
     private int mHeight;
 
-    public OffScreenRectangle(int blurRadius, Blur.BlurMode mode) {
+    public OffScreenRectangle(int blurRadius, @Blur.BlurMode int mode) {
 
         fragmentShaderCode = getFragmentShaderCode(blurRadius, mode);
 
@@ -166,7 +165,7 @@ public class OffScreenRectangle {
         return shader;
     }
 
-    private String getFragmentShaderCode(int radius, Blur.BlurMode mode) {
+    private String getFragmentShaderCode(int radius, @Blur.BlurMode int mode) {
 
         StringBuilder sb = new StringBuilder();
         sb.append("precision mediump float;   \n")
@@ -181,11 +180,11 @@ public class OffScreenRectangle {
                 .append("} \n")
                 .append("void main() {   \n");
 
-        if (mode == Blur.BlurMode.BOX) {
+        if (mode == Blur.MODE_BOX) {
             sb.append(ShaderUtil.getBoxSampleCode(radius));
-        } else if (mode == Blur.BlurMode.GAUSSIAN) {
+        } else if (mode == Blur.MODE_GAUSSIAN) {
             sb.append(ShaderUtil.getGaussianSampleCode(radius));
-        } else if (mode == Blur.BlurMode.STACK) {
+        } else if (mode == Blur.MODE_STACK) {
             sb.append(ShaderUtil.getStackSampleCode(radius));
         }
         sb.append("}   \n");

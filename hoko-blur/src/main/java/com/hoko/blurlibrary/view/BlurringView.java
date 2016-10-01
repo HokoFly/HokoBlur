@@ -1,4 +1,4 @@
-package com.xiangpi.blurlibrary.view;
+package com.hoko.blurlibrary.view;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -7,13 +7,11 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.xiangpi.blurlibrary.Blur;
-import com.xiangpi.blurlibrary.generator.IBlur;
-import com.xiangpi.blurlibrary.generator.RenderScriptBlurGenerator;
+import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.generator.IBlur;
 
 
 /**
@@ -47,8 +45,8 @@ public class BlurringView extends View {
 
     private void init() {
         mGenerator = Blur.with(getContext())
-                .scheme(Blur.BlurScheme.NATIVE)
-                .mode(Blur.BlurMode.GAUSSIAN)
+                .scheme(Blur.SCHEME_NATIVE)
+                .mode(Blur.MODE_GAUSSIAN)
                 .radius(5)
                 .sampleFactor(1.0f)
                 .getBlurGenerator();

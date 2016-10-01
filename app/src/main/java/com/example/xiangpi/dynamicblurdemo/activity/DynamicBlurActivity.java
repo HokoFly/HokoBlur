@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.example.xiangpi.dynamicblurdemo.R;
-import com.xiangpi.blurlibrary.view.BlurringView;
+import com.hoko.blurlibrary.view.BlurringView;
 
 public class DynamicBlurActivity extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package com.xiangpi.blurlibrary.origin;
+package com.hoko.blurlibrary.origin;
 
 /**
  *  Stack Blur v1.0 from

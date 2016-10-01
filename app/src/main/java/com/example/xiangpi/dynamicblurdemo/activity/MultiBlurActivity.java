@@ -20,8 +20,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.xiangpi.dynamicblurdemo.R;
-import com.xiangpi.blurlibrary.Blur;
-import com.xiangpi.blurlibrary.generator.IBlur;
+import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.generator.IBlur;
 
 public class MultiBlurActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
@@ -165,23 +165,23 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
         final int spinnerId = parent.getId();
         if (spinnerId == R.id.scheme_spinner) {
             switch (position) {
-                case 0: mBlur.scheme(Blur.BlurScheme.RENDER_SCRIPT);
+                case 0: mBlur.scheme(Blur.SCHEME_RENDER_SCRIPT);
                     break;
-                case 1: mBlur.scheme(Blur.BlurScheme.OPENGL);
+                case 1: mBlur.scheme(Blur.SCHEME_OPENGL);
                     break;
-                case 2: mBlur.scheme(Blur.BlurScheme.NATIVE);
+                case 2: mBlur.scheme(Blur.SCHEME_NATIVE);
                     break;
-                case 3: mBlur.scheme(Blur.BlurScheme.JAVA);
+                case 3: mBlur.scheme(Blur.SCHEME_JAVA);
                     break;
             }
 
         } else if (spinnerId == R.id.mode_spinner) {
             switch (position) {
-                case 0: mBlur.mode(Blur.BlurMode.GAUSSIAN);
+                case 0: mBlur.mode(Blur.MODE_GAUSSIAN);
                     break;
-                case 1: mBlur.mode(Blur.BlurMode.STACK);
+                case 1: mBlur.mode(Blur.MODE_STACK);
                     break;
-                case 2: mBlur.mode(Blur.BlurMode.BOX);
+                case 2: mBlur.mode(Blur.MODE_BOX);
                     break;
             }
 

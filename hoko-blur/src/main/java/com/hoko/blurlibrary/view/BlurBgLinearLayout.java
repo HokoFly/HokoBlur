@@ -1,17 +1,16 @@
-package com.xiangpi.blurlibrary.view;
+package com.hoko.blurlibrary.view;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 
-import com.xiangpi.blurlibrary.Blur;
-import com.xiangpi.blurlibrary.generator.IBlur;
+import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.generator.IBlur;
 
 /**
  * Created by xiangpi on 16/9/18.
@@ -101,7 +100,6 @@ public class BlurBgLinearLayout extends LinearLayout {
         int width = getWidth();
         int height = getHeight();
 
-        // Width and height must be > 0
         width = Math.max(width, 1);
         height = Math.max(height, 1);
 

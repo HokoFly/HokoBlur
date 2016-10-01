@@ -1,10 +1,10 @@
-package com.xiangpi.blurlibrary.opengl.offscreen;
+package com.hoko.blurlibrary.opengl.offscreen;
 
 import android.graphics.Bitmap;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 
-import com.xiangpi.blurlibrary.Blur;
+import com.hoko.blurlibrary.Blur;
 
 
 /**
@@ -20,7 +20,7 @@ public class OffScreenRendererImpl implements GLRenderer {
     private float[] mProjMatrix = new float[16];
     private float[] mMVPMatrix = new float[16];
 
-    public OffScreenRendererImpl(Bitmap bitmap, int radius, Blur.BlurMode mode) {
+    public OffScreenRendererImpl(Bitmap bitmap, int radius, @Blur.BlurMode int mode) {
         mBitmap = bitmap;
         mRectangle = new OffScreenRectangle(radius, mode);
     }

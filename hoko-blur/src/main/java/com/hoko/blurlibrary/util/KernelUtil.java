@@ -1,4 +1,4 @@
-package com.xiangpi.blurlibrary.util;
+package com.hoko.blurlibrary.util;
 
 /**
  * Created by xiangpi on 16/9/4.

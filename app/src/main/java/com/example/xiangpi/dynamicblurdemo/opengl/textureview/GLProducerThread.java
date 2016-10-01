@@ -1,16 +1,14 @@
 package com.example.xiangpi.dynamicblurdemo.opengl.textureview;
 
 import android.graphics.SurfaceTexture;
-import android.util.Log;
 
-import com.xiangpi.blurlibrary.opengl.offscreen.GLRenderer;
+import com.hoko.blurlibrary.opengl.offscreen.GLRenderer;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLContext;
 import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
-import javax.microedition.khronos.opengles.GL;
 
 /**
  * Created by xiangpi on 16/8/17.

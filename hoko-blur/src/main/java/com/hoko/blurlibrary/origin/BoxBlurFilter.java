@@ -1,4 +1,4 @@
-package com.xiangpi.blurlibrary.origin;
+package com.hoko.blurlibrary.origin;
 
 /**
  * Created by 余晓飞 on 2016/7/24.

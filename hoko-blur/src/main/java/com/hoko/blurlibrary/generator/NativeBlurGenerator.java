@@ -1,9 +1,8 @@
-package com.xiangpi.blurlibrary.generator;
+package com.hoko.blurlibrary.generator;
 
 import android.graphics.Bitmap;
 
-import com.xiangpi.blurlibrary.Blur;
-import com.xiangpi.blurlibrary.util.BitmapUtil;
+import com.hoko.blurlibrary.Blur;
 
 /**
  * Created by xiangpi on 16/9/7.
@@ -35,14 +34,14 @@ public class NativeBlurGenerator extends BlurGenerator{
         final int[] pixels = new int[w * h];
         scaledInBitmap.getPixels(pixels, 0, w, 0, 0, w, h);
 
-        switch (mBlurMode) {
-            case BOX:
+        switch (mMode) {
+            case Blur.MODE_BOX:
                 nativeBoxBlur(pixels, w, h, mRadius);
                 break;
-            case STACK:
+            case Blur.MODE_STACK:
                 nativeStackBlur(pixels, w, h, mRadius);
                 break;
-            case GAUSSIAN:
+            case Blur.MODE_GAUSSIAN:
                 nativeGaussianBlur(pixels, w, h, mRadius);
                 break;
         }

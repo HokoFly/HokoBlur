@@ -1,4 +1,4 @@
-package com.xiangpi.blurlibrary;
+package com.hoko.blurlibrary;
 
 import org.junit.Test;
 

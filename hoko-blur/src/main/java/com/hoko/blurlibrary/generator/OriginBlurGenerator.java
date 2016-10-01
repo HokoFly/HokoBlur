@@ -1,13 +1,11 @@
-package com.xiangpi.blurlibrary.generator;
+package com.hoko.blurlibrary.generator;
 
 import android.graphics.Bitmap;
-import android.util.Log;
 
-import com.xiangpi.blurlibrary.Blur;
-import com.xiangpi.blurlibrary.origin.BoxBlurFilter;
-import com.xiangpi.blurlibrary.origin.GaussianBlurFilter;
-import com.xiangpi.blurlibrary.origin.StackBlurFilter;
-import com.xiangpi.blurlibrary.util.BitmapUtil;
+import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.origin.BoxBlurFilter;
+import com.hoko.blurlibrary.origin.GaussianBlurFilter;
+import com.hoko.blurlibrary.origin.StackBlurFilter;
 
 /**
  * Created by xiangpi on 16/9/7.
@@ -42,17 +40,15 @@ public class OriginBlurGenerator extends BlurGenerator{
             final int[] pixels = new int[w * h];
             scaledInBitmap.getPixels(pixels, 0, w, 0, 0, w, h);
 
-            switch (mBlurMode) {
-                case BOX:
+            switch (mMode) {
+                case Blur.MODE_BOX:
                     BoxBlurFilter.doBlur(pixels, w, h, mRadius);
                     break;
-                case STACK:
+                case Blur.MODE_STACK:
                     StackBlurFilter.doBlur(pixels, w, h, mRadius);
                     break;
-                case GAUSSIAN:
-
+                case Blur.MODE_GAUSSIAN:
                     GaussianBlurFilter.doBlur(pixels, w, h, mRadius);
-
                     break;
             }
 
