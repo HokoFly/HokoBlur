@@ -14,7 +14,7 @@ extern "C" {
 float * makeKernel(jint r);
 void gaussianBlurHorizontal(float *, jint *, jint *, jint, jint, jint);
 
-JNIEXPORT void JNICALL Java_com_xiangpi_blurlibrary_generator_NativeBlurGenerator_nativeGaussianBlur
+JNIEXPORT void JNICALL Java_com_hoko_blurlibrary_generator_NativeBlurGenerator_nativeGaussianBlur
         (JNIEnv *, jobject, jintArray, jint, jint, jint);
 
 

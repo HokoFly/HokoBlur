@@ -47,7 +47,6 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:24.0.0'
-    compile project(path: ':hoko-blur')
-//    compile 'com.yuxiaofei:hoko-blur:0.0.1'
-
+    //    compile 'com.yuxiaofei:hoko-blur:0.0.1'
+    compile project(':hoko-blur')
 }

@@ -120,12 +120,14 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
                         if (mAnimator != null && mAnimator.isRunning()) {
                             mAnimator.end();
                         }
-                        mAnimator = ValueAnimator.ofInt(0, mRadius);
+                        mAnimator = ValueAnimator.ofInt(0, (int) (mRadius / 25f * 1000));
                         mAnimator.setInterpolator(new LinearInterpolator());
                         mAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                             @Override
                             public void onAnimationUpdate(ValueAnimator animation) {
-                                updateImage((Integer) animation.getAnimatedValue());
+                                mSeekBar.setProgress((Integer) animation.getAnimatedValue());
+                                updateImage((int) ((Integer) animation.getAnimatedValue() / 1000f * 25f));
+
                             }
 
                         });
@@ -207,13 +209,17 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
                 mSeekBar.setProgress(0);
                 break;
             case R.id.anim_btn:
-                ValueAnimator animator = ValueAnimator.ofInt(0, 25, 0);
+                ValueAnimator animator = ValueAnimator.ofInt(0, 1000, 0);
                 animator.setInterpolator(new LinearInterpolator());
                 animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                     @Override
                     public void onAnimationUpdate(ValueAnimator animation) {
-                        int r = (int) animation.getAnimatedValue();
-                        updateImage(r);
+                        mSeekBar.setProgress((int) animation.getAnimatedValue());
+
+                        final int radius = (int) ((int) animation.getAnimatedValue() / 1000f * 25);
+
+                        updateImage(radius);
+
                     }
                 });
                 animator.setDuration(1000);
@@ -250,7 +256,7 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
 
     private void updateImage(int radius) {
         mRadius = radius;
-        mSeekBar.setProgress((int) (mRadius / 25f * 1000));
+//        mSeekBar.setProgress((int) (mRadius / 25f * 1000));
         if (mLatestTask != null) {
             mLatestTask.cancel(false);
         }

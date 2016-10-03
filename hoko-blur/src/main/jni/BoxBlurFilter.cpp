@@ -9,7 +9,7 @@
 #include <android/log.h>
 
 
-JNIEXPORT void JNICALL Java_com_xiangpi_blurlibrary_generator_NativeBlurGenerator_nativeBoxBlur
+JNIEXPORT void JNICALL Java_com_hoko_blurlibrary_generator_NativeBlurGenerator_nativeBoxBlur
         (JNIEnv * env, jobject j_object, jintArray j_inArray, jint j_w, jint j_h, jint j_radius) {
 
     jint *c_inArray;

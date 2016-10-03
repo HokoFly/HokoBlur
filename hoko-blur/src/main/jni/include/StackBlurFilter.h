@@ -2,8 +2,8 @@
 #include <jni.h>
 /* Header for class com_example_xiangpi_dynamicblurdemo_activity_StackBlurActivity */
 
-#ifndef _Included_com_xiangpi_blurlibrary_generator_NativeBlurGenerator
-#define _Included_com_xiangpi_blurlibrary_generator_NativeBlurGenerator
+#ifndef _Included_com_hoko_blurlibrary_generator_NativeBlurGenerator
+#define _Included_com_hoko_blurlibrary_generator_NativeBlurGenerator
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -11,7 +11,7 @@ extern "C" {
 #define max(a, b) ((a)>(b)?(a):(b))
 #define min(a, b) ((a)<(b)?(a):(b))
 
-JNIEXPORT void JNICALL Java_com_xiangpi_blurlibrary_generator_NativeBlurGenerator_nativeStackBlur
+JNIEXPORT void JNICALL Java_com_hoko_blurlibrary_generator_NativeBlurGenerator_nativeStackBlur
         (JNIEnv *, jobject, jintArray, jint, jint, jint);
 
 void doInnerBlur(jint *, jint , jint , jint);

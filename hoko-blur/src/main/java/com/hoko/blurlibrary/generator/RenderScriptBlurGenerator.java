@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.v8.renderscript.Allocation;
 import android.support.v8.renderscript.Element;
+import android.support.v8.renderscript.RSRuntimeException;
 import android.support.v8.renderscript.RenderScript;
 import android.support.v8.renderscript.ScriptIntrinsicBlur;
 
@@ -34,11 +35,16 @@ public class RenderScriptBlurGenerator extends BlurGenerator {
     }
 
     private void init(Context context) {
-        mRenderScript = RenderScript.create(context.getApplicationContext());
-        mGaussianBlurScirpt = ScriptIntrinsicBlur.create(mRenderScript, Element.U8_4(mRenderScript));
-        mBoxBlurScriptH = new ScriptC_BoxblurHorizontal(mRenderScript);
-        mBoxBlurScriptV = new ScriptC_BoxblurVertical(mRenderScript);
-        mStackBlurScript = new ScriptC_Stackblur(mRenderScript);
+        try {
+            mRenderScript = RenderScript.create(context.getApplicationContext());
+            mGaussianBlurScirpt = ScriptIntrinsicBlur.create(mRenderScript, Element.U8_4(mRenderScript));
+            mBoxBlurScriptH = new ScriptC_BoxblurHorizontal(mRenderScript);
+            mBoxBlurScriptV = new ScriptC_BoxblurVertical(mRenderScript);
+            mStackBlurScript = new ScriptC_Stackblur(mRenderScript);
+        } catch (RSRuntimeException e) {
+            e.printStackTrace();
+        }
+
     }
 
 //    public static RenderScriptBlurGenerator getInstance(Context context) {
@@ -91,6 +97,10 @@ public class RenderScriptBlurGenerator extends BlurGenerator {
 //    }
 
     private void doBoxBlur(Bitmap input) {
+        if (mBoxBlurScriptH == null || mBoxBlurScriptV == null) {
+            mAllocationOut = mAllocationIn;
+            return;
+        }
         mBoxBlurScriptH.set_input(mAllocationIn);
         mBoxBlurScriptH.set_output(mAllocationOut);
         mBoxBlurScriptH.set_width(input.getWidth());
@@ -108,6 +118,10 @@ public class RenderScriptBlurGenerator extends BlurGenerator {
     }
 
     private void doGaussianBlur(Bitmap input) {
+        if (mGaussianBlurScirpt == null) {
+            mAllocationOut = mAllocationIn;
+            return;
+        }
         // 模糊核半径太大，RenderScript失效，这里做发限制
         if (mRadius > 25) {
             mRadius = 25;
@@ -119,6 +133,10 @@ public class RenderScriptBlurGenerator extends BlurGenerator {
     }
 
     private void doStackBlur(Bitmap input) {
+        if (mStackBlurScript == null) {
+            mAllocationOut = mAllocationIn;
+            return;
+        }
 
         mStackBlurScript.set_input(mAllocationIn);
         mStackBlurScript.set_output(mAllocationOut);
