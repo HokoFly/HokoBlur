@@ -401,7 +401,7 @@ OpenGL的实现方案可以总结为：
 
 <img src="./graphic/opengl_offscreen_blur.jpg" />
 
-OpenGL的模糊过程如下：
+OpenGL的模糊过程如下，其中使用了FrameBufferObject实现离屏渲染：
 
 <img src="./graphic/opengl_offscreen_render.jpg" />
 
@@ -447,75 +447,160 @@ OpenGL的模糊过程如下：
 	GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, mDrawListBuffer);
 	
 	```
+	
+### 2.6 高斯模糊的参数选择
+在高斯模糊当中，影响模糊效果的除了半径外，还有方差σ。在本文介绍的所有高斯模糊方案中，标准差```σ = (radius + 1) / 2```。这是由于固定取值的σ，随着模糊半径增加到一定值时，亲测会出现模糊效果不再改变的情况，继续增加半径不再有效。这里不再贴图，大家可以自测试试。
 
 
+## 三 毛玻璃效果的实现
+Android开发中的模糊需求主要是产生毛玻璃效果。毛玻璃效果实际上是对原图片的严重劣化，突出的就是朦胧感。毛玻璃效果与单纯的模糊图像不同的是，在模糊图像之前会对会对原图resize。Resize操作一般使用缩放因子（Sample Factor）衡量，缩放因子为s时的毛玻璃处理为：
 
-## III 性能对比与分析
-### 模糊耗时
-模糊1080×675图片10次耗时对比（并未做resize）,模糊核半径10
+	原图-->缩放尺寸到原来1/s的缩放图-->模糊处理-->恢复到原图尺寸
+
+
+再优秀的模糊方案，当图片尺寸较大，且模糊核半径较大时，仍然会有性能上的问题。尺寸的缩小可大幅提高提高模糊的效率，实际缩放因子为5时，已能获得较好的毛玻璃效果和计算效率。
+
+<img src="./graphic/blurred_img_s_0.jpg" width=300/>
+<img src="./graphic/blurred_img_s_8.jpg" width=300/>
+
+左图为无缩放的模糊图，右图缩放因子为8的模糊图，两图模糊半径10.
+
+## 四 性能对比与分析
+
+
+> 测试机型：小米note
+
+### 4.1 模糊尺寸的影响
+模糊1669×1080图片10次耗时对比（并未做resize）,模糊核半径10
+
+- 缩放因子2，模糊核半径10
 
 |   |Java|Native|RenderScript|OpenGL|
 |---|:---:|:---:|:---:|:---:|
-|Box Blur| 19982ms |12394ms|30ms|1ms
-|Stack Blur|3972ms|3234ms|192ms|——|
-|Gaussian Blur|22394ms|13942ms|213ms|1ms
+|Box Blur| 1226ms |880ms|765ms|2730ms
+|Stack Blur|2690ms|1484ms|810ms|2780ms|
+|Gaussian Blur|6747ms|3204ms|569ms|2686ms
 
 
-- **这里OpenGL的耗时为调用onDrawFrame所需时间，并非实际GPU计算耗时**
-- 测试机型：小米note
+- 缩放因子10，模糊核半径10
 
+|   |Java|Native|RenderScript|OpenGL|
+|---|:---:|:---:|:---:|:---:|
+|Box Blur| 325ms | 298ms |277ms|545ms
+|Stack Blur|393ms| 356ms |294ms|516ms|
+|Gaussian Blur|762ms|428ms| 272ms | 568ms
+
+可以看到，当原图尺寸较大的情况下，模糊只能达到30帧的效果。影响模糊耗时有两个因素
+
+- 在获得模糊图像后，需要将图像尺寸回复至原图尺寸，这一步实际较为耗时；
+- OpenGL方案之所以性能稍差，是因为从纹理提取像素的操作，```GlES20.glReadPixels()```是一个相当耗时的操作。
+
+但实际应用模糊效果时，实际需要的Bitmap尺寸要小一些。对于1000×600的图像，则能达到60帧。
+
+- 缩放因子10，模糊核半径10
+
+|   |Java|Native|RenderScript|OpenGL|
+|---|:---:|:---:|:---:|:---:|
+|Box Blur| 183ms | 172ms |178ms|278ms
+|Stack Blur|181ms| 181ms |185ms|297ms|
+|Gaussian Blur|213ms|195ms| 142ms | 301ms
 
 模糊效果： Box < Stack < Gaussian 
 
-### 对大尺寸图片的处理
-即便是用RenderScript，当图片尺寸较大，且模糊核半径较大时，仍然会有性能上的问题。因此传入的Bitmap需要做Resize。
+### 4.2 缩放因子的影响
+
+原图1000×600，模糊核半径10，10次模糊的耗时。
+
+<img src="./graphic/blur_time_with_sample_factor_a.jpg" width=500/>
+
+在模糊之前进行所放能大幅提高模糊性能。
+
+<img src="./graphic/blurred_img_sample_factor_a.jpg" width=300/>
+<img src="./graphic/blurred_img_sample_factor_b.jpg" width=300/>
+
+左图缩放因子5，右图缩放因子10
 
 
-### 方案优缺点分析
-1. Java和Native方案，与其他方案相比具有更好的兼容性，其中Native方案比Java方案模糊效率稍高一些，但总体而言，与RenderScript和OpenGL方案相比，运算耗时更久；
-2. RenderScript方案的优点在于相当可观的模糊效率，但部分机型系统尤其是低版本系统会出现兼容性问题，常见为librsjni.so和libRSSupportIO.so缺失引起的错误，对于高斯模糊，RenderScript在模糊半径大于25时会失效；
-3. OpenGL方案同样具有较好的模糊效率，采用该方案要求设备开启GPU功能，GPU的寄存器相对有限，部分低端机型在模糊半径较大时，由于寄存器不足而渲染失败
+### 4.3 模糊半径的影响
+原图1000×600，缩放银子10，10次模糊的耗时。
+<img src="./graphic/blur_time_with_radius.jpg" width=500/>
 
-### 方案优先级
-1. 在实现图像模糊时，一般使用RenderScript方案实现高斯模糊即可解决问题，针对RenderScript有兼容性问题的机型，可以采用OpenGL的高斯模糊方案，如果该方案仍然失效，最后使用Native方案实现的Stack模糊。
-2. 而针对一些低端机型，在RenderScript和OpenGL方案失效时，建议还是别考虑模糊了。 毕竟模糊是一个运算量大且相对耗时的工作。
+实际模糊性能受模糊半径选择影响较小，
+
+### 4.4 内存占用
+原图1000×600，缩放因子10，模糊核半径10。左为模糊10次，右为100次的内存占用情况。
+
+- Java
+
+<img src="./graphic/java_mem_10.jpg" width=300 height=100/>
+<img src="./graphic/java_mem_100.jpg" width=300 height=100/>
+
+- Native
+
+<img src="./graphic/native_mem_10.jpg" width=300 height=100/>
+<img src="./graphic/native_mem_100.jpg" width=300 height=100/>
+
+- RenderScript
+
+<img src="./graphic/renderscript_mem_10.jpg" width=300 height=100/>
+<img src="./graphic/renderscript_mem_100.jpg" width=300 height=100/>
+
+- OpenGL
+
+<img src="./graphic/opengl_mem_10.jpg" width=300 height=100/>
+<img src="./graphic/opengl_mem_100.jpg" width=300 height=100/>
+
+	处理小图片时，算法的内存占用差异不大。
+
+原图1920×1080，缩放因子1，模糊核半径10。
+
+- Java
+
+<img src="./graphic/java_big_mem_10.jpg" />
+
+- Native
+
+<img src="./graphic/native_big_mem_10.jpg"/>
+
+- RenderScript
+
+<img src="./graphic/renderscript_big_mem_10.jpg" />
+
+- OpenGL
+
+<img src="./graphic/opengl_big_mem_10.jpg" />
+
+	当原图尺寸较大时，RenderScript具有更低的内存占用，
+
+### 4.5 方案优缺点分析
+1. Java和Native方案，与其他方案相比具有更好的兼容性，其中Native方案比Java方案模糊效率稍高一些，但总体而言，与RenderScript相比，运算耗时更久；
+2. RenderScript方案的优点在于相当可观的模糊效率，但部分机型系统尤其是低版本系统会出现兼容性问题，常见为librsjni.so和libRSSupportIO.so缺失引起的错误。另外，对于高斯模糊，RenderScript在模糊半径大于25时会失效；
+3. OpenGL方案的模糊效率相对较低，当在使用高斯模糊，以及大尺寸图像时，采用该方案会比Native高效一些。OpenGL方案要求设备开启GPU功能，GPU的寄存器相对有限，部分低端机型在模糊半径较大时，由于寄存器不足而渲染失败。
+
+### 4.6 方案优先级
+1. 在实现图像模糊时，一般使用RenderScript方案实现高斯模糊即可解决问题，针对RenderScript有兼容性问题的机型，可以采用使用Native方案实现的Stack模糊。
+2. 当图像尺寸较大且要求模糊质量较高的情况下，如果RenderScript方案失效，可以考虑OpenGL的高斯模糊方案。
+2. 而针对一些低端机型，在RenderScript方案失效时，还是需要评估Native的效果，低端机应该慎重考虑是否应用模糊，毕竟模糊是一个运算量大且相对耗时的工作。
 3. 对于模糊质量要求不高的场景，可以使用Box Blur替代Gaussian Blur，当然Stack Blur也是不错的选择。
 
-## V 动态模糊
+## 五 动态模糊
 
-### RenderScript的实现方式
-从上面的测试数据可以看出，Java和Native实现的方案模糊耗时明显要高于RenderScript方案。RenderScript的方案可以满足动态模糊的要求。下图是对应的demo，如果想要实现毛玻璃效果，不仅需要加大模糊半径，同时需要缩放图像至原图的1/10~1/5
+一般而言，每秒30~60帧的帧率能给人流畅的感觉，实现动态模糊应该尽量满足30~60帧的要求。
+
+### 5.1 动画
+可以实现逐步模糊的动画。虽然前面OpenGL方案的数据没有完全满足30~60帧的要求，但实际感受仍比较流畅。
+
+<img src="./graphic/animation_blur_progress.gif" width = "370" height = "619" alt="动态模糊" />
+
+### 5.2 任意部位模糊
+
+较高的模糊处理效率，可以实现任意部位的实时模糊。
 
 <img src="./graphic/dynamic_blur.gif" width = "370" height = "600" alt="动态模糊" />
 
-> *因截屏gif帧率不高，且已做缩放，看上去会有模糊和卡顿。*
+## 六 注意事项
 
-### OpenGL的实现方式
-
-需要解决以下难点：
-
-1. 拖动过程中Bitmap的截取，需要截获View所处范围内的像素数据
-2. 性能问题，虽然OpenGL运算效率较高，但是获得bitmap，模糊， 设置bitmap这些操作都是相对耗时的，动态性有待验证。（可能会比RenderScript慢。。）
-
-### 毛玻璃效果的补充
-毛玻璃效果实际上是对原图片的严重裂化，突出的就是朦胧感。因此实现毛玻璃效果时，一般会对原图做较大缩放因子的resize，这可进一步提高模糊的效率。除了上述的两种方式，Native方式实现的StackBlur也可以做到。
-
-## VI 总结
-- 完成Java、Native和RenderScript的BoxBlur、StackBlur和Gaussian Blur算法实现；
-- 对不同算法、不同实现方案进行了测试；
-- 完成OpenGL方式的BoxBlur简单实现；
-- 实现RenderScript方案的动态模糊，有较好性能。
-
-## 注意事项
-1. 实践表明， Native方案实现时，需要注意生成数组malloc，同时及时释放，对于像素的操作一般采用short类型变量
-2. opengl的shader的写法（动态生成offset等，不是罗列数组的形式）大模糊半径无法渲染
-3. 共享context opengl（context建立费时，shader的写法，不要出现数组赋值的情况
-4. renderscript 不能够大于25
-5. 增大半径不如2次模糊
-
-## 实际应用
-
-### OpenGL ES Context在多线程环境下的管理
+### 6.1 OpenGL ES Context在多线程环境下的管理
 OpenGL在多线程环境下工作需要额外的处理，为了正常工作需要遵守两条规则：
 
 - 一个线程只能有一个渲染上下文（Render context）
@@ -529,12 +614,40 @@ OpenGL在多线程环境下工作需要额外的处理，为了正常工作需�
 4. 将context与线程2绑定: ```eglMakeCurrent(display, surface, surface, context);```
 5. 在线程2执行OpenGL操作…
 
+### 6.2 最佳实践
+
+
+1. Native方案实现时，需要注意内存的分配方式，直接使用数组存储像素容易造成OOM，建议malloc动态分配，同时别忘了及时释放。对于像素的操作一般采用short类型变量存储。
+2. OpenGL方案中编写的shader代码需要注意临时变量的设置，
+
+	```glsl
+	for(int i = 0; i < KERNEL_SIZE; i++) {
+		...
+		vec2 offset = vec2(float(i - radius) * uWidthOffset, float(i - radius) * uHeightOffset);
+	    sampleTex[i] = vec3(texture2D(uTexture, (vTexCoord.st + offset)));
+		...
+	}
+	```
+这里避免使用数组存储offset，offset是在每次循环中重新计算的，不要出现
+
+	```glsl
+	float offset[9];
+	offset[0] = 1 / 1000;
+	...
+	```
+这样的写法，此外，模糊核权重也应该实时计算获得，而不是提前存储于数组。这是由于GPU寄存器资源本身有限，且随着模糊半径增加，offset数组尺寸提高，需要更多寄存器，当半径增大到一定值时，渲染将失败（亲测使用数组，模糊半径只能取到10，而计算的方式增大到25+仍没有问题）。
+3. 增大半径仍然不能满足模糊度需求是，不如考虑2次模糊
+
+
+## TODO
+1. 实际测试可以发现，模糊图像尺寸upscale为原图尺寸，还是占用了一定的耗时，进一步优化效率可以从这方面入手；
+2. OpenGL方案中GLES20.glReadPixels()效率太低，可以考虑两种解决方案：
+	- 对于支持OpenGL ES 3.0的Android 4.3以上系统，可以使用Pixel Buffer Object获取像素值；
+	- Android 4.3以下系统，则采用EGL_KHR_image_base的解决方案。
+
 ## 参考
-1. http://malideveloper.arm.com/resources/sample-code/thread-synchronization/
+1. [http://malideveloper.arm.com/resources/sample-code/thread-synchronization/](http://malideveloper.arm.com/resources/sample-code/thread-synchronization/)
+2. [http://blog.ivank.net/fastest-gaussian-blur.html](http://blog.ivank.net/fastest-gaussian-blur.html)
+3. [http://blog.iangclifton.com/2011/08/24/renderscript-101-part-1-renderscript-basics-tutorial/](http://blog.iangclifton.com/2011/08/24/renderscript-101-part-1-renderscript-basics-tutorial/)
+4. [http://www.learnopengles.com/android-lesson-one-getting-started/](http://www.learnopengles.com/android-lesson-one-getting-started/)
 
-
-## VII TODO
-- 被模糊的图像实际不需要太高的图像质量，可以适当降低。动态模糊中，对Bitmap适当缩放，进一步提高性能；（因为没做缩放，示例毛玻璃效果不明显）；
-- 有时间会做StackBlur的毛玻璃实现，其实就是提高缩放因子，可以套用RenderScript实现动态模糊的方式；
-- OpenGL实现方式中，将模糊核以动态的方式引入，实现动态模糊（拖动的方式，或者带模糊效果的Layout）。
-- 完善文档，包括基本概念以及更多的验证结果和数据。

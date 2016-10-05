@@ -7,7 +7,7 @@ android {
     defaultConfig {
         applicationId "com.example.xiangpi.dynamicblurdemo"
         minSdkVersion 15
-        targetSdkVersion 24
+        targetSdkVersion 18
         versionCode 1
         versionName "1.0"
 

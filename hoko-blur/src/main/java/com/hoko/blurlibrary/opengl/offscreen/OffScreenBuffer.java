@@ -2,6 +2,7 @@ package com.hoko.blurlibrary.opengl.offscreen;
 
 import android.graphics.Bitmap;
 import android.opengl.GLES20;
+import android.opengl.GLES30;
 
 import java.nio.IntBuffer;
 
@@ -116,7 +117,6 @@ public class OffScreenBuffer {
     }
 
     private void convertToBitmap() {
-        int[] iat = new int[mWidth * mHeight];
         IntBuffer ib = IntBuffer.allocate(mWidth * mHeight);
         GLES20.glReadPixels(0, 0, mWidth, mHeight, GL_RGBA, GL_UNSIGNED_BYTE, ib);
         int[] ia = ib.array();

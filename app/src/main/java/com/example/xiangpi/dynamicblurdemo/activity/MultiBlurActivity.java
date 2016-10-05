@@ -222,7 +222,7 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
 
                     }
                 });
-                animator.setDuration(1000);
+                animator.setDuration(2000);
                 animator.start();
                 break;
             case R.id.photo:
