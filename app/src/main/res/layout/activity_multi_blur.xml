@@ -15,6 +15,13 @@
         android:layout_width="match_parent"
         android:layout_height="250dp"/>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#848184"
+        android:layout_marginBottom="15dp"
+        android:text="* 点击图片进行切换"/>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -81,6 +88,7 @@
                 android:layout_height="30dp"
                 android:layout_marginBottom="30dp"
                 android:max="1000" />
+
 
             <Button
                 android:id="@+id/reset_btn"

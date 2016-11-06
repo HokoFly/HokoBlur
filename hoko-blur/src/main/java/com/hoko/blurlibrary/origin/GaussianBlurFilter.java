@@ -56,7 +56,6 @@ public class GaussianBlurFilter {
     private static float[] makeKernel(int r) {
         int rows = r * 2 + 1;
         float[] matrix = new float[rows];
-        // TODO: 16/9/13 sigma 设置
         float sigma = (r + 1) / 2.0f;
         float sigma22 = 2 * sigma * sigma;
         float sigmaPi2 = (float) (2 * Math.PI * sigma);

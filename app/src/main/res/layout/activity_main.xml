@@ -10,6 +10,7 @@
     android:orientation="vertical"
     android:id="@+id/blur_layout"
     android:background="@mipmap/sample6"
+    android:gravity="center"
     tools:context=".activity.MainActivity">
 
     <Button

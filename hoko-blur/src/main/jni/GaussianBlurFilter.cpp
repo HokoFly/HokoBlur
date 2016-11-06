@@ -40,7 +40,8 @@ void JNICALL Java_com_hoko_blurlibrary_generator_NativeBlurGenerator_nativeGauss
     free(c_kernelArray);
 }
 
-void gaussianBlurHorizontal(float *kernel, jint *inPixels, jint *outPixels, jint width, jint height, jint radius) {
+void gaussianBlurHorizontal(float *kernel, jint *inPixels, jint *outPixels, jint width, jint height,
+                            jint radius) {
     jint cols = 2 * radius + 1;
     jint cols2 = cols / 2;
     jint x, y, col;
@@ -77,12 +78,11 @@ void gaussianBlurHorizontal(float *kernel, jint *inPixels, jint *outPixels, jint
     }
 }
 
-float * makeKernel(jint r) {
+float *makeKernel(jint r) {
     jint i, row;
     jint rows = r * 2 + 1;
-    float * matrix = (float *) malloc(sizeof(float) * rows);
+    float *matrix = (float *) malloc(sizeof(float) * rows);
     float sigma = (r + 1) / 2.0f;
-    //todo sigma定义
     float sigma22 = 2 * sigma * sigma;
     float sigmaPi2 = (float) (2 * M_PI * sigma);
     float sqrtSigmaPi2 = (float) sqrt(sigmaPi2);
