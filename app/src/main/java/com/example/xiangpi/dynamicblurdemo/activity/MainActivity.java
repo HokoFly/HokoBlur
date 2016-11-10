@@ -10,6 +10,7 @@ import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 
 import com.example.xiangpi.dynamicblurdemo.R;
+import com.hoko.blurlibrary.functor.DrawFunctor;
 import com.hoko.blurlibrary.view.BlurBgLinearLayout;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
@@ -69,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 intent.setClass(MainActivity.this, DynamicBlurActivity.class);
                 break;
             case R.id.layout_blur:
+//                intent.setClass(MainActivity.this, BlurDrawableActivity.class);
                 changeBg();
                 break;
         }

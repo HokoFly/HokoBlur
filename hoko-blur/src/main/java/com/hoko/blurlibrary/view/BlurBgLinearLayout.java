@@ -57,7 +57,7 @@ public class BlurBgLinearLayout extends LinearLayout {
     private void init() {
         mCanvas = new Canvas();
         mLocationInWindow = new int[2];
-        mGenerator = Blur.with(getContext()).sampleFactor(DEFAULT_BITMAP_SAMPLE_FACTOR).getBlurGenerator();
+        mGenerator = Blur.with(getContext()).scheme(Blur.SCHEME_NATIVE).sampleFactor(DEFAULT_BITMAP_SAMPLE_FACTOR).getBlurGenerator();
         setBlurRadius(DEFAULT_BLUR_RADIUS);
 
     }

@@ -3,6 +3,7 @@ package com.hoko.blurlibrary.opengl.offscreen;
 import android.graphics.Bitmap;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
+import android.util.Log;
 
 
 import com.hoko.blurlibrary.Blur;
@@ -168,15 +169,16 @@ public class OffScreenRectangle {
     private String getFragmentShaderCode(int radius, @Blur.BlurMode int mode) {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("precision mediump float;   \n")
-                .append("uniform vec4 vColor;   \n")
+        sb.append(" \n")
+        .append("precision mediump float;")
+//                .append("uniform vec4 vColor;   \n")
                 .append("varying vec2 vTexCoord;   \n")
                 .append("uniform sampler2D uTexture;   \n")
                 .append("uniform float uWidthOffset;  \n")
                 .append("uniform float uHeightOffset;  \n")
                 .append("mediump float getGaussWeight(mediump float currentPos, mediump float sigma) \n")
                 .append("{ \n")
-                .append("   return 1.0f / sigma * exp(-(currentPos * currentPos) / (2.0 * sigma * sigma)); \n")
+                .append("   return 1.0 / sigma * exp(-(currentPos * currentPos) / (2.0 * sigma * sigma)); \n")
                 .append("} \n")
                 .append("void main() {   \n");
 
