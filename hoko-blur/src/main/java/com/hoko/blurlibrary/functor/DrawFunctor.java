@@ -25,6 +25,8 @@ public class DrawFunctor {
     }
 
     private static void postEventFromNative(WeakReference<DrawFunctor> functor, DrawFunctor.GLInfo info, int what) {
+        Log.e("DrawFunctor", "---------------postEventFromNative----------------");
+
         if(functor != null && functor.get() != null) {
             DrawFunctor d = (DrawFunctor)functor.get();
             if(info != null) {
@@ -40,7 +42,6 @@ public class DrawFunctor {
         Toast.makeText(mCtx, canvas.isHardwareAccelerated() + "---------------doDraw----------------" + canvas.getClass().getSimpleName(), Toast.LENGTH_SHORT).show();
 
         if (canvas.isHardwareAccelerated()) {
-            Log.d("DrawFunctor", "--------isHardware--------");
 
             try {
                 Class clazz = Class.forName("android.view.HardwareCanvas");
@@ -64,13 +65,13 @@ public class DrawFunctor {
 
     private void onInvoke(int what) {
         Log.d("DrawFunctor", "---------------onInvoke----------------");
-        Toast.makeText(mCtx, "---------------onInvoke----------------", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(mCtx, "---------------onInvoke----------------", Toast.LENGTH_SHORT).show();
         System.out.println("---------------onInvoke----------------");
     }
 
     private void onDraw(GLInfo info) {
         Log.d("DrawFunctor", "---------------onDraw----------------");
-        Toast.makeText(mCtx, "---------------onDraw----------------", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(mCtx, "---------------onDraw----------------", Toast.LENGTH_SHORT).show();
 
         System.out.println("---------------onDraw----------------");
 

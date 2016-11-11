@@ -10,9 +10,13 @@
 extern "C" {
 #endif
 
+JavaVM *javaVM;
+jobject mFunctorClazz;
+
 JNIEXPORT jlong JNICALL
         Java_com_hoko_blurlibrary_functor_DrawFunctor_createNativeFunctor(JNIEnv *env, jobject clazz,
                                                                           jobject functor);
+void postEventFromNativeC(jobject weakRefFunctor, int mode, void *info);
 #ifdef __cplusplus
 }
 #endif
