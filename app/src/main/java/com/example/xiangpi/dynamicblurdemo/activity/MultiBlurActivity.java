@@ -2,6 +2,7 @@ package com.example.xiangpi.dynamicblurdemo.activity;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
