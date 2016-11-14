@@ -71,8 +71,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 intent.setClass(MainActivity.this, DynamicBlurActivity.class);
                 break;
             case R.id.layout_blur:
-                intent.setClass(MainActivity.this, BlurDrawableActivity.class);
-//                changeBg();
+//                intent.setClass(MainActivity.this, BlurDrawableActivity.class);
+                changeBg();
                 break;
         }
 

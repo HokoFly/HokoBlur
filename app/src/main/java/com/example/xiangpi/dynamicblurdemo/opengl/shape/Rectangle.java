@@ -36,27 +36,27 @@ public class Rectangle {
 
                     "void main() {   \n" +
                     "  vec2 offsets[9]; \n" +
-                    "  float offset = 0.003f; \n" +
+                    "  float offset = 0.003; \n" +
                     "  offsets[0] = vec2(-offset, offset); \n" +
-                    "  offsets[1] = vec2(0.0f, offset); \n" +
+                    "  offsets[1] = vec2(0.0, offset); \n" +
                     "  offsets[2] = vec2(offset, offset); \n" +
-                    "  offsets[3] = vec2(-offset, 0.0f); \n" +
-                    "  offsets[4] = vec2(0.0f, 0.0f); \n" +
-                    "  offsets[5] = vec2(offset, 0.0f); \n" +
+                    "  offsets[3] = vec2(-offset, 0.0); \n" +
+                    "  offsets[4] = vec2(0.0, 0.0); \n" +
+                    "  offsets[5] = vec2(offset, 0.0); \n" +
                     "  offsets[6] = vec2(-offset, -offset); \n" +
-                    "  offsets[7] = vec2(0.0f, -offset); \n" +
+                    "  offsets[7] = vec2(0.0, -offset); \n" +
                     "  offsets[8] = vec2(offset, -offset); \n" +
 
                     "  float kernel[9];\n" +
-                    "  kernel[0] = 0.1f; \n" +
-                    "  kernel[1] = 0.1f; \n" +
-                    "  kernel[2] = 0.1f; \n" +
-                    "  kernel[3] = 0.1f; \n" +
-                    "  kernel[4] = 0.2f; \n" +
-                    "  kernel[5] = 0.1f; \n" +
-                    "  kernel[6] = 0.1f; \n" +
-                    "  kernel[7] = 0.1f; \n" +
-                    "  kernel[8] = 0.1f; \n" +
+                    "  kernel[0] = 0.1; \n" +
+                    "  kernel[1] = 0.1; \n" +
+                    "  kernel[2] = 0.1; \n" +
+                    "  kernel[3] = 0.1; \n" +
+                    "  kernel[4] = 0.2; \n" +
+                    "  kernel[5] = 0.1; \n" +
+                    "  kernel[6] = 0.1; \n" +
+                    "  kernel[7] = 0.1; \n" +
+                    "  kernel[8] = 0.1; \n" +
                     "  vec3 sampleTex[9];\n" +
                     "  for(int i = 0; i < 9; i++) {\n" +
                     "        sampleTex[i] = vec3(texture2D(uTexture,  (vTexCoord.st + offsets[i])));\n" +
