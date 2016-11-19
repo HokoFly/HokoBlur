@@ -48,4 +48,11 @@
         android:textAllCaps="false"
         android:text="@string/layout_blur"/>
 
+    <Button
+        android:id="@+id/drawable_blur"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAllCaps="false"
+        android:text="@string/drawable_blur"/>
+
 </com.hoko.blurlibrary.view.BlurBgLinearLayout>

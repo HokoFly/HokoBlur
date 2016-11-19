@@ -19,4 +19,5 @@
     <string name="textureview">基于TextureView</string>
     <string name="dynamic_blur">动态模糊</string>
     <string name="layout_blur">布局背景模糊</string>
+    <string name="drawable_blur">基于Drawable</string>
 </resources>

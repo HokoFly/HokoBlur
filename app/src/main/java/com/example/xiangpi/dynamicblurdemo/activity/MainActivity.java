@@ -1,7 +1,6 @@
 package com.example.xiangpi.dynamicblurdemo.activity;
 
 import android.animation.ValueAnimator;
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -11,7 +10,6 @@ import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 
 import com.example.xiangpi.dynamicblurdemo.R;
-import com.hoko.blurlibrary.functor.DrawFunctor;
 import com.hoko.blurlibrary.view.BlurBgLinearLayout;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
@@ -21,6 +19,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button mTexBtn;
     private Button mDynamicBtn;
     private Button mLayoutBtn;
+    private Button mDrawableBtn;
 
     private BlurBgLinearLayout mBlurLayout;
 
@@ -44,12 +43,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mDynamicBtn = (Button) findViewById(R.id.dynamic_blur);
         mLayoutBtn = (Button) findViewById(R.id.layout_blur);
         mBlurLayout = (BlurBgLinearLayout) findViewById(R.id.blur_layout);
+        mDrawableBtn = (Button) findViewById(R.id.drawable_blur);
 
         mMultiBlurBtn.setOnClickListener(this);
         mOpenGLBtn.setOnClickListener(this);
         mTexBtn.setOnClickListener(this);
         mDynamicBtn.setOnClickListener(this);
         mLayoutBtn.setOnClickListener(this);
+        mDrawableBtn.setOnClickListener(this);
 
     }
 
@@ -71,9 +72,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 intent.setClass(MainActivity.this, DynamicBlurActivity.class);
                 break;
             case R.id.layout_blur:
-//                intent.setClass(MainActivity.this, BlurDrawableActivity.class);
                 changeBg();
                 break;
+            case R.id.drawable_blur:
+                intent.setClass(MainActivity.this, BlurDrawableActivity.class);
+                break;
+
         }
 
         ComponentName componentName = intent.resolveActivity(getPackageManager());

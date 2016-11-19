@@ -1,13 +1,12 @@
-package com.hoko.blurlibrary.functor;
+package com.hoko.blurlibrary.opengl.functor;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.opengl.Matrix;
+import android.os.Build;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -25,8 +24,6 @@ public class DrawFunctor {
     }
 
     private static void postEventFromNative(WeakReference<DrawFunctor> functor, DrawFunctor.GLInfo info, int what) {
-        Log.e("DrawFunctor", "---------------postEventFromNative----------------");
-
         if(functor != null && functor.get() != null) {
             DrawFunctor d = (DrawFunctor)functor.get();
             if(info != null) {
@@ -39,24 +36,24 @@ public class DrawFunctor {
     }
 
     public void doDraw(Canvas canvas) {
-        Toast.makeText(mCtx, canvas.isHardwareAccelerated() + "---------------doDraw----------------" + canvas.getClass().getSimpleName(), Toast.LENGTH_SHORT).show();
-
         if (canvas.isHardwareAccelerated()) {
 
             try {
-                Class clazz = Class.forName("android.view.HardwareCanvas");
+                Class canvasClazz = null;
+                Method callDrawGLFunctionMethod = null;
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+                    canvasClazz = Class.forName("android.view.DisplayListCanvas");
+                    callDrawGLFunctionMethod = canvasClazz.getMethod("callDrawGLFunction2", long.class);
+                    callDrawGLFunctionMethod.setAccessible(true);
+                    callDrawGLFunctionMethod.invoke(canvas, mNativeFunctor);
+                } else {
+                    canvasClazz = Class.forName("android.view.HardwareCanvas");
+                    callDrawGLFunctionMethod = canvasClazz.getMethod("callDrawGLFunction", int.class);
+                    callDrawGLFunctionMethod.setAccessible(true);
+                    callDrawGLFunctionMethod.invoke(canvas, (int)mNativeFunctor);
+                }
 
-                Method callDrawGLFunctionMethod = clazz.getMethod("callDrawGLFunction", int.class);
-                callDrawGLFunctionMethod.setAccessible(true);
-                callDrawGLFunctionMethod.invoke(canvas, (int)mNativeFunctor);
-
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
@@ -64,17 +61,11 @@ public class DrawFunctor {
     }
 
     private void onInvoke(int what) {
-        Log.d("DrawFunctor", "---------------onInvoke----------------");
-//        Toast.makeText(mCtx, "---------------onInvoke----------------", Toast.LENGTH_SHORT).show();
-        System.out.println("---------------onInvoke----------------");
+        Log.e("DrawFunctor", "---------------onInvoke----------------");
     }
 
     private void onDraw(GLInfo info) {
-        Log.d("DrawFunctor", "---------------onDraw----------------");
-//        Toast.makeText(mCtx, "---------------onDraw----------------", Toast.LENGTH_SHORT).show();
-
-        System.out.println("---------------onDraw----------------");
-
+        Log.e("DrawFunctor", "---------------onDraw----------------");
     }
 
     public static class GLInfo {

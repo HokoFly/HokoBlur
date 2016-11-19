@@ -3,28 +3,24 @@
 //
 #include <android/log.h>
 #include "Functor.h"
+
 #ifndef DYNAMICBLUR_DRAWFUNCTOR_H
 #define DYNAMICBLUR_DRAWFUNCTOR_H
 
 
-namespace  android {
+namespace android {
 
-    class DrawFunctor : public Functor
-    {
-        public:
-            DrawFunctor(jobject weakReferFunctor) {
-                mWeakReferFunctor = weakReferFunctor;
-            }
-            ~DrawFunctor() {}
+    class DrawFunctor : public Functor {
+    public:
+        DrawFunctor() { }
 
+        ~DrawFunctor() { }
 
-
-            status_t operator ()(int mode, void* info);
+        status_t operator()(int mode, void *info);
 
 
     private:
-            jobject mWeakReferFunctor;
-            void operate(int mode, void *info);
+        void operate(int mode, void *info);
 
 
     };

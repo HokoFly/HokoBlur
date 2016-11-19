@@ -2,6 +2,8 @@
 // Created by 橡皮 on 16/11/9.
 //
 #include <jni.h>
+#include "DrawGlInfo.h"
+
 
 #ifndef DYNAMICBLUR_BLURDRAWABLE_H
 #define DYNAMICBLUR_BLURDRAWABLE_H
@@ -10,13 +12,22 @@
 extern "C" {
 #endif
 
+using namespace android;
+using namespace uirenderer;
+
 JavaVM *javaVM;
-jobject mFunctorClazz;
+jclass mFunctorClazz;
+jclass mGlInfoClazz;
+
+jobject mWeakRefFunctor;
 
 JNIEXPORT jlong JNICALL
-        Java_com_hoko_blurlibrary_functor_DrawFunctor_createNativeFunctor(JNIEnv *env, jobject clazz,
+        Java_com_hoko_blurlibrary_opengl_functor_DrawFunctor_createNativeFunctor(JNIEnv *env, jobject clazz,
                                                                           jobject functor);
-void postEventFromNativeC(jobject weakRefFunctor, int mode, void *info);
+void postEventFromNativeC(int mode, void *info);
+
+jobject * copyGlInfo(jobject * j_info, DrawGlInfo *c_info);
+
 #ifdef __cplusplus
 }
 #endif

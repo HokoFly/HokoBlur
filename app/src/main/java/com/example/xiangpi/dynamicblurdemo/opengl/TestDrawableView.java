@@ -5,7 +5,7 @@ import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.hoko.blurlibrary.functor.DrawFunctor;
+import com.hoko.blurlibrary.opengl.functor.DrawFunctor;
 
 /**
  * Created by xiangpi on 16/11/9.
