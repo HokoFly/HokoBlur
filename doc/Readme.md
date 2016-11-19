@@ -120,6 +120,18 @@ Stack Blur是对高斯模糊的一种近似，与均值模糊相比具有更好�
 ### 2.1 分步模糊
 为获得较好的模糊算法效率，一般不直接采用二维模糊核对图像进行处理，而是采用分步的方式，将模糊过程分为水平方向和垂直方向依次处理，因此每次模糊只需要一维模糊核即可。对于模糊核半径为r下，采用二维模糊核的复杂度为O(n * r <sup>2</sup>)，而分步模糊的方式可以将复杂度减少至O(n * r)，当模糊核半径提高时，分步模糊的优势将逐渐明显。
 
+<img src="./graphic/blur_with_two_steps.png"  />
+
+下面是分步模糊的最终结果
+
+- 横向模糊和纵向模糊
+
+<img src="./graphic/blurred_img_horizontal.jpg" width = "400" height = "250" /> <img src="./graphic/blurred_img_vertical.jpg" width = "400" height = "250" />
+
+- 双向模糊
+
+<img src="./graphic/blurred_img_both_direction.jpg"  width = "400" height = "250"/>
+
 模糊的实现方案有很多，这里主要选择如下方案实现。
 
 - Java
@@ -362,7 +374,7 @@ GLSurfaceView是SurfaceView的一种扩展，它加入了EGL的管理，同时GL
 
 离屏渲染同样需要EGL的管理，但从EGLSurface，EGLDisplay和EGLContext的创建和设置，都需要程序自行实现。
 
-从渲染方式看，图像模糊更适合离屏渲染，一方面屏上渲染必须创建GLSurfaceView或TextureView，缺少灵活性，另一方面屏上渲染也存在几点不足，首先，创建GLSurfaceView和TextureView本身会消耗一定的系统资源，其次TextureView的getBitmap()并不能实际获得原尺寸大小的纹理内容，而是获得与当前TextureView尺寸相同的Bitmap，并不能满足模糊本身的需求。
+由于本文的目标在于直接获得模糊后的Bitmap，这选择离屏渲染的方式。当然也可以采用屏上渲染，但必须创建GLSurfaceView或TextureView，本身会消耗一定的系统资源。
 
 ### 实现流程
 OpenGL的实现方案可以总结为：
@@ -464,7 +476,7 @@ Android开发中的模糊需求主要是产生毛玻璃效果。毛玻璃效果�
 > 测试机型：小米note
 
 ### 4.1 模糊尺寸的影响
-模糊1669×1080图片10次耗时对比,模糊核半径10
+模糊1669×1080图片**10**次耗时对比,模糊核半径10
 
 - 缩放因子2，模糊核半径10
 
@@ -491,7 +503,7 @@ Android开发中的模糊需求主要是产生毛玻璃效果。毛玻璃效果�
 
 但实际应用模糊效果时，实际需要的Bitmap尺寸要小一些。对于1000×600的图像，则能达到60帧。
 
-- 缩放因子10，模糊核半径10
+- 模糊1000×600图片**10**次耗时对比，缩放因子10，模糊核半径10
 
 |   |Java|Native|RenderScript|OpenGL|
 |---|:---:|:---:|:---:|:---:|
@@ -503,11 +515,11 @@ Android开发中的模糊需求主要是产生毛玻璃效果。毛玻璃效果�
 
 ### 4.2 缩放因子的影响
 
-原图1000×600，模糊核半径10，10次模糊的耗时。
+原图1000×600，模糊核半径10，**10**次模糊的耗时。
 
 <img src="./graphic/blur_time_with_sample_factor_a.jpg" width=500/>
 
-在模糊之前进行所放能大幅提高模糊性能。
+在模糊之前进行缩放能大幅提高模糊性能。
 
 <img src="./graphic/blurred_img_sample_factor_a.jpg" width=300/>
 <img src="./graphic/blurred_img_sample_factor_b.jpg" width=300/>
@@ -569,27 +581,29 @@ Android开发中的模糊需求主要是产生毛玻璃效果。毛玻璃效果�
 
 ### 4.5 方案优缺点分析
 1. Java和Native方案，与其他方案相比具有更好的兼容性，其中Native方案比Java方案模糊效率稍高一些，但总体而言，与RenderScript相比，运算耗时更久，且在低端机型环境下，更容易引起OOM；
-2. RenderScript方案的优点在于相当可观的模糊效率，但部分机型系统尤其是低版本系统会出现兼容性问题，常见为librsjni.so和libRSSupportIO.so缺失引起的错误。另外，对于高斯模糊，RenderScript在模糊半径大于25时会失效；
-3. OpenGL方案的模糊效率相对低一些，当在使用高斯模糊，以及大尺寸图像时，采用该方案会比Native高效一些。OpenGL方案要求设备开启GPU功能，GPU的寄存器相对有限，部分低端机型在模糊半径较大时，由于寄存器不足而渲染失败。
+2. RenderScript方案的优点在于相当可观的模糊效率，但部分机型系统尤其是低版本系统会出现兼容性问题，常见为librsjni.so和libRSSupportIO.so缺失引起的错误。（BuildToolsVersion为23.0.2时，在Android4.x版本上部分机型会出现，选择BuildToolsVersion为24或22正常）另外，对于高斯模糊，RenderScript在模糊半径大于25时会失效；
+3. OpenGL方案的模糊效率相对低一些，当在使用高斯模糊，以及大尺寸图像时，采用该方案会比Native高效一些。缺点是GPU的寄存器相对有限，部分低端机型在模糊半径较大时，由于寄存器不足而渲染失败。还有一个需要注意的问题，一个应用程序进程可以上传的OpenGL纹理是有大小限制的。
 
 ### 4.6 方案优先级
 1. 在实现图像模糊时，一般使用RenderScript方案实现高斯模糊即可解决问题，针对RenderScript有兼容性问题的机型，可以采用使用Native方案实现的Stack模糊。
-2. 当图像尺寸较大且要求模糊质量较高的情况下，如果RenderScript方案失效，可以考虑OpenGL的高斯模糊方案。
+
 2. 而针对一些低端机型，在RenderScript方案失效时，还是需要评估Native的效果，低端机应该慎重考虑是否应用模糊，毕竟模糊是一个运算量大且相对耗时的工作。
 3. 对于模糊质量要求不高的场景，可以使用Box Blur替代Gaussian Blur，当然Stack Blur也是不错的选择。
+4. 并不能就此说明OpenGL是一个较差的实现方案，因为这里是通过获得模糊的Bitmap来实现模糊效果的展示，OpenGL模糊图片的操作并不耗时，但像素提取操作GLES20.glReadPixels()并不高效，利用OpenGL实现模糊可以使用其他方式，比如直接TextureView上的渲染，或者GLES20Canvas(HardwareCanvas)或者DisplayListCanvas的渲染嵌入实现。
+5. 实际模糊性能还和机型有关，在小米Note上，OpenGL的方案相对效率低一些，但是在美图M4上OpenGL方案明显好于Native。
 
 ## 五 动态模糊
 
 一般而言，每秒30~60帧的帧率能给人流畅的感觉，实现动态模糊应该尽量满足30~60帧的要求。
 
 ### 5.1 动画
-可以实现逐步模糊的动画。虽然前面OpenGL方案的数据没有完全满足30~60帧的要求，但实际感受仍比较流畅。
+可以实现逐步模糊的动画。虽然前面OpenGL方案的数据没有完全满足30~60帧的要求，但实际感受仍比较流畅。这里原图1699*1080，并未做Resize处理。
 
 <img src="./graphic/animation_blur_progress.gif" width = "370" height = "619" alt="动态模糊" />
 
 ### 5.2 任意部位模糊
 
-较高的模糊处理效率，可以实现任意部位的实时模糊。
+较高的模糊处理效率，可以实现任意部位的实时模糊。实际并不需要特别大尺寸的图只需要选取屏幕的一部分即可。
 
 <img src="./graphic/dynamic_blur.gif" width = "370" height = "600" alt="动态模糊" />
 
@@ -633,7 +647,7 @@ OpenGL在多线程环境下工作需要额外的处理，为了正常工作需�
 	...
 	```
 这样的写法，此外，模糊核权重也应该实时计算获得，而不是提前存储于数组。这是由于GPU寄存器资源本身有限，且随着模糊半径增加，offset数组尺寸提高，需要更多寄存器，当半径增大到一定值时，渲染将失败（亲测使用数组，模糊半径只能取到10，而计算的方式增大到25+仍没有问题）。
-3. 增大半径仍然不能满足模糊度需求是，不如考虑2次模糊;
+3. 增大半径仍然不能满足模糊度需求时，不如考虑2次模糊;
 4. targetSdkVersion不要用高版本编译的程序运行到低版本系统上（亲测targetSdkVersion = 23在4.4系统上无法跑RenderScript)
 
 ## 七 使用姿势
