@@ -17,6 +17,8 @@ Java_com_hoko_blurlibrary_opengl_functor_DrawFunctor_createNativeFunctor(JNIEnv 
     DrawFunctor *drawFunctor = new DrawFunctor();
     mWeakRefFunctor = env->NewGlobalRef(functor);
 
+    env->DeleteLocalRef(functor);
+
     return (jlong) drawFunctor;
 
 }
@@ -43,6 +45,8 @@ void postEventFromNativeC(int mode, void *info) {
     copyGlInfo(&jDrawGlInfo, c_drawGlInfo);
 
     env->CallStaticVoidMethod((jclass) mFunctorClazz, mPostMethodID, mWeakRefFunctor, jDrawGlInfo, mode);
+
+    env->DeleteLocalRef(jDrawGlInfo);
 
 }
 

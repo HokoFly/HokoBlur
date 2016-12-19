@@ -2,8 +2,11 @@ package com.hoko.blurlibrary.opengl.functor;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.opengl.GLES20;
 import android.opengl.Matrix;
 import android.os.Build;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.util.Log;
 
 import java.lang.ref.WeakReference;
@@ -16,11 +19,12 @@ public class DrawFunctor {
 
     private long mNativeFunctor;
 
-    private Context mCtx;
+    private OnScreenRect mOnScreenRect;
 
-    public DrawFunctor(Context context) {
-        mCtx = context;
+    public DrawFunctor() {
         mNativeFunctor = createNativeFunctor(new WeakReference<DrawFunctor>(this));
+        mOnScreenRect = new OnScreenRect();
+
     }
 
     private static void postEventFromNative(WeakReference<DrawFunctor> functor, DrawFunctor.GLInfo info, int what) {
@@ -64,8 +68,29 @@ public class DrawFunctor {
         Log.e("DrawFunctor", "---------------onInvoke----------------");
     }
 
-    private void onDraw(GLInfo info) {
+    private void onDraw(final GLInfo info) {
         Log.e("DrawFunctor", "---------------onDraw----------------");
+        Log.e("DrawFunctor", "bottom: " + info.clipBottom);
+        Log.e("DrawFunctor", "left: " + info.clipLeft);
+        Log.e("DrawFunctor", "right: " + info.clipRight);
+        Log.e("DrawFunctor", "top: " + info.clipTop);
+
+
+        mOnScreenRect.handleGlInfo(info);
+
+
+//        Thread thread = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                if (mOnScreenRect != null) {
+//
+//                }
+//
+//
+//
+//            }
+//        });
+//        thread.start();
     }
 
     public static class GLInfo {

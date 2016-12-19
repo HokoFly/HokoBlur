@@ -2,16 +2,18 @@ package com.example.xiangpi.dynamicblurdemo.opengl;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.hoko.blurlibrary.opengl.drawable.BlurDrawable;
 import com.hoko.blurlibrary.opengl.functor.DrawFunctor;
 
 /**
  * Created by xiangpi on 16/11/9.
  */
 public class TestDrawableView extends View{
-    private DrawFunctor mDrawFunctor;
+    private BlurDrawable mBlurDrawable;
 
     public TestDrawableView(Context context) {
         super(context);
@@ -29,12 +31,13 @@ public class TestDrawableView extends View{
     }
 
     private void init() {
-        mDrawFunctor = new DrawFunctor(getContext());
+        mBlurDrawable = new BlurDrawable();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            setBackground(mBlurDrawable);
+        } else {
+            setBackgroundDrawable(mBlurDrawable);
+        }
+
     }
 
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        mDrawFunctor.doDraw(canvas);
-    }
 }
