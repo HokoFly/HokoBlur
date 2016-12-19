@@ -33,27 +33,27 @@ public class OnScreenRect {
     private int mWidth = 200;
     private int mHeight = 200;
 
+//    private final String vertexShaderCode =
+//            "uniform mat4 uMVPMatrix;   \n" +
+////                    "attribute vec2 aTexCoord;   \n" +
+//                    "attribute vec4 aPosition;  \n" +
+////                    "varying vec2 vTexCoord;  \n" +
+//                    "void main() {              \n" +
+//            "  gl_Position = uMVPMatrix * aPosition; \n" +
+////                    "  gl_Position = aPosition; \n" +
+////                    "  vTexCoord = aTexCoord; \n" +
+//                    "}  \n";
+
     private final String vertexShaderCode =
             "uniform mat4 uMVPMatrix;   \n" +
-//                    "attribute vec2 aTexCoord;   \n" +
+                    "attribute vec2 aTexCoord;   \n" +
                     "attribute vec4 aPosition;  \n" +
-//                    "varying vec2 vTexCoord;  \n" +
+                    "varying vec2 vTexCoord;  \n" +
                     "void main() {              \n" +
             "  gl_Position = uMVPMatrix * aPosition; \n" +
 //                    "  gl_Position = aPosition; \n" +
-//                    "  vTexCoord = aTexCoord; \n" +
+                    "  vTexCoord = aTexCoord; \n" +
                     "}  \n";
-
-//    private final String vertexShaderCode =
-////            "uniform mat4 uMVPMatrix;   \n" +
-//                    "attribute vec2 aTexCoord;   \n" +
-//                    "attribute vec4 aPosition;  \n" +
-//                    "varying vec2 vTexCoord;  \n" +
-//                    "void main() {              \n" +
-////            "  gl_Position = uMVPMatrix * aPosition; \n" +
-//                    "  gl_Position = aPosition; \n" +
-//                    "  vTexCoord = aTexCoord; \n" +
-//                    "}  \n";
 
 
     private  String fragmentShaderCode =
@@ -107,17 +107,17 @@ public class OnScreenRect {
     private int vertexStride = COORDS_PER_VERTEX * 4;
 
     private int mHorizontalTextureId;
-    private int mVerticalTextureId;
+//    private int mVerticalTextureId;
     private int mTextureId;
     private int mTextureUniformHandle;
 
     private int mHorizontalFrameBuffer;
-    private int mVerticalFrameBuffer;
+//    private int mVerticalFrameBuffer;
 
     private boolean inited = false;
 
     public OnScreenRect() {
-//        fragmentShaderCode = getFragmentShaderCode(2, Blur.MODE_GAUSSIAN);
+        fragmentShaderCode = getFragmentShaderCode(6, Blur.MODE_GAUSSIAN);
 
         ByteBuffer bb = ByteBuffer.allocateDirect(squareCoords.length * 4);
         bb.order(ByteOrder.nativeOrder());
@@ -138,7 +138,10 @@ public class OnScreenRect {
         mTexCoordBuffer.position(0);
 
         Matrix.setLookAtM(mVMatrix, 0, 0, 0, -3, 0, 0, 0, 0, 1, 0);
-        Matrix.frustumM(mProjMatrix, 0, -1, 1, -1, 1, 3, 7);
+//        Matrix.frustumM(mProjMatrix, 0, -1, 1, -1, 1, 3, 7);
+        // TODO: 16/12/19 调整尺寸和比例
+        Matrix.frustumM(mProjMatrix, 0, -1.4f, 1.4f, -1.4f, 1.4f, 3, 7);
+
         Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mVMatrix, 0);
 
 
@@ -150,13 +153,16 @@ public class OnScreenRect {
         GLES20.glAttachShader(mProgram, mVertexShader);
         GLES20.glAttachShader(mProgram, mFragmentShader);
         GLES20.glLinkProgram(mProgram);
-
-        GLES20.glUseProgram(mProgram);
-
     }
 
     public void handleGlInfo(DrawFunctor.GLInfo info) {
 
+        mWidth = info.clipRight - info.clipLeft;
+        mHeight = info.clipBottom - info.clipTop;
+
+        if (mWidth <= 0 || mHeight <= 0) {
+            return;
+        }
 
         if (!inited) {
             EGLContext context = ((EGL10)EGLContext.getEGL()).eglGetCurrentContext();
@@ -164,35 +170,27 @@ public class OnScreenRect {
                 Log.e(TAG, "This thread is no EGLContext.");
                 return;
             }
+
+            GLES20.glViewport(0, 0, mWidth, mHeight);
+
+            GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+
             mVertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
 
             mFragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
 
             initProgram();
-//            inited = true;
+
+            // 获得当前绑定的FBO（屏上）
+            int[] displayFbo = new int[1];
+            GLES20.glGetIntegerv(GLES20.GL_FRAMEBUFFER_BINDING, displayFbo, 0);
+            mTargetFboId = displayFbo[0];
+
+            inited = true;
 
         }
 
-
-
-
-
-
-
-        mWidth = info.clipRight - info.clipLeft;
-        mHeight = info.clipBottom - info.clipTop;
-
-        GLES20.glViewport(0, 0, mWidth, mHeight);
-
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-
-        // 获得当前绑定的FBO（屏上）
-        int[] displayFbo = new int[1];
-        GLES20.glGetIntegerv(GLES20.GL_FRAMEBUFFER_BINDING, displayFbo, 0);
-        mTargetFboId = displayFbo[0];
-
-        GLES20.glClearColor(1.0F, 1.0F, 0F, 1.0F);
-
+        GLES20.glUseProgram(mProgram);
 
         // TODO: 16/12/7 尺寸
         mTextureId = loadTexture(mWidth, mHeight);
@@ -208,8 +206,12 @@ public class OnScreenRect {
         drawVerticalBlur(mMVPMatrix);
         resetAllBuffer();
 
-//            mEgl.eglSwapBuffers(mEGLDisplay, mEGLSurface);
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mTargetFboId);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+        GLES20.glUseProgram(0);
+        GLES20.glDeleteTextures(2, new int[] {mTextureId, mHorizontalTextureId}, 0);
+        GLES20.glDeleteFramebuffers(1, new int[] {mHorizontalFrameBuffer}, 0);
+
 
     }
 
@@ -265,27 +267,27 @@ public class OnScreenRect {
         GLES20.glEnableVertexAttribArray(mPositionHandle);
         GLES20.glVertexAttribPointer(mPositionHandle, COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, vertexStride, mVertexBuffer);
 
-        mColorHandle = GLES20.glGetUniformLocation(mProgram, "vColor");
-        GLES20.glUniform4fv(mColorHandle, 1, fragmentColor, 0);
+//        mColorHandle = GLES20.glGetUniformLocation(mProgram, "vColor");
+//        GLES20.glUniform4fv(mColorHandle, 1, fragmentColor, 0);
 
         mMVPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix");
         GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0);
 
-//        mTexCoordHandle = GLES20.glGetAttribLocation(mProgram, "aTexCoord");
-//        GLES20.glEnableVertexAttribArray(mTexCoordHandle);
-//        GLES20.glVertexAttribPointer(mTexCoordHandle, 2, GLES20.GL_FLOAT, false, 0, mTexCoordBuffer);
+        mTexCoordHandle = GLES20.glGetAttribLocation(mProgram, "aTexCoord");
+        GLES20.glEnableVertexAttribArray(mTexCoordHandle);
+        GLES20.glVertexAttribPointer(mTexCoordHandle, 2, GLES20.GL_FLOAT, false, 0, mTexCoordBuffer);
 
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mHorizontalFrameBuffer);
 
-//        mTextureUniformHandle = GLES20.glGetUniformLocation(mProgram, "uTexture");
-//        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-//        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureId);
-//        GLES20.glUniform1i(mTextureUniformHandle, 0);
+        mTextureUniformHandle = GLES20.glGetUniformLocation(mProgram, "uTexture");
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureId);
+        GLES20.glUniform1i(mTextureUniformHandle, 0);
 
-//        mWidthOffsetHandle = GLES20.glGetUniformLocation(mProgram, "uWidthOffset");
-//        mHeightOffsetHandle = GLES20.glGetUniformLocation(mProgram, "uHeightOffset");
-//        GLES20.glUniform1f(mWidthOffsetHandle, 0f / mWidth);
-//        GLES20.glUniform1f(mHeightOffsetHandle, 1f / mHeight);
+        mWidthOffsetHandle = GLES20.glGetUniformLocation(mProgram, "uWidthOffset");
+        mHeightOffsetHandle = GLES20.glGetUniformLocation(mProgram, "uHeightOffset");
+        GLES20.glUniform1f(mWidthOffsetHandle, 0f / mWidth);
+        GLES20.glUniform1f(mHeightOffsetHandle, 1f / mHeight);
 
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, mDrawListBuffer);
 //        GLES20.glDisableVertexAttribArray(mPositionHandle);
@@ -307,26 +309,23 @@ public class OnScreenRect {
         GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0);
 
 //        mColorHandle = GLES20.glGetUniformLocation(mProgram, "vColor");
-        GLES20.glUniform4fv(mColorHandle, 1, fragmentColor, 0);
+//        GLES20.glUniform4fv(mColorHandle, 1, fragmentColor, 0);
 
-//        mTexCoordBuffer.clear();
-//        mTexCoordBuffer.put(mTexVerticalCoords);
-//        mTexCoordBuffer.position(0);
 //        mTexCoordHandle = GLES20.glGetAttribLocation(mProgram, "aTexCoord");
 //        GLES20.glEnableVertexAttribArray(mTexCoordHandle);
-//        GLES20.glVertexAttribPointer(mTexCoordHandle, 2, GLES20.GL_FLOAT, false, 0, mTexCoordBuffer);
+        GLES20.glVertexAttribPointer(mTexCoordHandle, 2, GLES20.GL_FLOAT, false, 0, mTexCoordBuffer);
 
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mTargetFboId);
 
 //        mTextureUniformHandle = GLES20.glGetUniformLocation(mProgram, "uTexture");
-//        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-//        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mHorizontalTextureId);
-//        GLES20.glUniform1i(mTextureUniformHandle, 0);
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mHorizontalTextureId);
+        GLES20.glUniform1i(mTextureUniformHandle, 0);
 
 //        mWidthOffsetHandle = GLES20.glGetUniformLocation(mProgram, "uWidthOffset");
 //        mHeightOffsetHandle = GLES20.glGetUniformLocation(mProgram, "uHeightOffset");
-//        GLES20.glUniform1f(mWidthOffsetHandle, 1f / mWidth);
-//        GLES20.glUniform1f(mHeightOffsetHandle, 0f / mHeight);
+        GLES20.glUniform1f(mWidthOffsetHandle, 1f / mWidth);
+        GLES20.glUniform1f(mHeightOffsetHandle, 0f / mHeight);
 
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, mDrawListBuffer);
 //        GLES20.glDisableVertexAttribArray(mPositionHandle);
@@ -376,5 +375,6 @@ public class OnScreenRect {
         GLES20.glCompileShader(shader);
         return shader;
     }
+
 
 }
