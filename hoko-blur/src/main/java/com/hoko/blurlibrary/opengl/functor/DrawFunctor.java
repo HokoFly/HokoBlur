@@ -74,23 +74,13 @@ public class DrawFunctor {
         Log.e("DrawFunctor", "left: " + info.clipLeft);
         Log.e("DrawFunctor", "right: " + info.clipRight);
         Log.e("DrawFunctor", "top: " + info.clipTop);
-
+        Log.e("DrawFunctor", "viewportW: " + info.viewportWidth);
+        Log.e("DrawFunctor", "viewportH: " + info.viewportHeight);
+        Log.e("DrawFunctor", "transform[12]" + info.transform[12]);
+        Log.e("DrawFunctor", "transform[13]" + info.transform[13]);
 
         mOnScreenRect.handleGlInfo(info);
 
-
-//        Thread thread = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                if (mOnScreenRect != null) {
-//
-//                }
-//
-//
-//
-//            }
-//        });
-//        thread.start();
     }
 
     public static class GLInfo {

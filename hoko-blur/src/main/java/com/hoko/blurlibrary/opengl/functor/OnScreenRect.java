@@ -23,9 +23,11 @@ public class OnScreenRect {
 
     private static final String TAG = "OnScreenRect";
 
+    private float[] mModelMatrix = new float[16];
     private float[] mVMatrix = new float[16];
     private float[] mProjMatrix = new float[16];
     private float[] mMVPMatrix = new float[16];
+    private float[] mScreenMVPMatrix = new float[16];
 
     private int mTargetFboId;
 
@@ -50,13 +52,13 @@ public class OnScreenRect {
                     "attribute vec4 aPosition;  \n" +
                     "varying vec2 vTexCoord;  \n" +
                     "void main() {              \n" +
-            "  gl_Position = uMVPMatrix * aPosition; \n" +
+                    "  gl_Position = uMVPMatrix * aPosition; \n" +
 //                    "  gl_Position = aPosition; \n" +
                     "  vTexCoord = aTexCoord; \n" +
                     "}  \n";
 
 
-    private  String fragmentShaderCode =
+    private String fragmentShaderCode =
             "precision mediump float;   \n" +
                     "uniform vec4 vColor;   \n" +
 //                    "varying vec2 vTexCoord;   \n" +
@@ -76,10 +78,10 @@ public class OnScreenRect {
     private static final int COORDS_PER_VERTEX = 3;
 
     private float squareCoords[] = {
-            -1f,  1f, 0.0f,   // top left
-            -1f, -1f, 0.0f,   // bottom left
-            1f, -1f, 0.0f,   // bottom right
-            1f,  1f, 0.0f }; // top right
+            0.0F, 1.0F, 0.0F, // top left
+            0.0F, 0.0F, 0.0F, // bottom left
+            1.0F, 0.0F, 0.0F, // bottom right
+            1.0F, 1.0F, 0.0F}; // top right
 
     private static float mTexHorizontalCoords[] = {
             1.0f, 1.0f,
@@ -89,7 +91,7 @@ public class OnScreenRect {
 
     private short drawOrder[] = { 0, 1, 2, 0, 2, 3 };
 
-    private float fragmentColor[] = {00.2f, 0.709803922f, 0.898039216f, 1.0f };
+    private float fragmentColor[] = {0.2f, 0.709803922f, 0.898039216f, 1.0f};
 
     private int mVertexShader;
     private int mFragmentShader;
@@ -107,7 +109,7 @@ public class OnScreenRect {
     private int vertexStride = COORDS_PER_VERTEX * 4;
 
     private int mHorizontalTextureId;
-//    private int mVerticalTextureId;
+    //    private int mVerticalTextureId;
     private int mTextureId;
     private int mTextureUniformHandle;
 
@@ -136,14 +138,18 @@ public class OnScreenRect {
         mTexCoordBuffer = tcb.asFloatBuffer();
         mTexCoordBuffer.put(mTexHorizontalCoords);
         mTexCoordBuffer.position(0);
-
-        Matrix.setLookAtM(mVMatrix, 0, 0, 0, -3, 0, 0, 0, 0, 1, 0);
-//        Matrix.frustumM(mProjMatrix, 0, -1, 1, -1, 1, 3, 7);
-        // TODO: 16/12/19 调整尺寸和比例
-        Matrix.frustumM(mProjMatrix, 0, -1.4f, 1.4f, -1.4f, 1.4f, 3, 7);
-
-        Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mVMatrix, 0);
-
+//
+//        Matrix.setIdentityM(mVMatrix, 0);
+////
+////        Matrix.setLookAtM(mVMatrix, 0, 0, 0, -3, 0, 0, 0, 0, 1, 0);
+//
+//            Matrix.frustumM(mProjMatrix, 0, -1, 1, -1, 1, 3, 7);
+//        // TODO: 16/12/19 调整尺寸和比例
+//        Matrix.scaleM(mProjMatrix, 0, 0.6f, 0.55f, 1f);
+////        Matrix.translateM(mProjMatrix, 0, -0.2f, -0.327f, 0);
+//
+//        Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mVMatrix, 0);
+//
 
 
     }
@@ -165,11 +171,44 @@ public class OnScreenRect {
         }
 
         if (!inited) {
-            EGLContext context = ((EGL10)EGLContext.getEGL()).eglGetCurrentContext();
+            EGLContext context = ((EGL10) EGLContext.getEGL()).eglGetCurrentContext();
             if (context.equals(EGL10.EGL_NO_CONTEXT)) {
                 Log.e(TAG, "This thread is no EGLContext.");
                 return;
             }
+
+            /**
+             *
+             *  Model                View           Projection
+             * transform            Identity        Width Height
+             * scaled Width Height  Identity        viewport Width Height
+             */
+
+
+//            Matrix.setLookAtM(mVMatrix, 0, 0, 0, -3, 0, 0, 0, 0, 1, 0);
+            Matrix.setIdentityM(mVMatrix, 0);
+            Matrix.setIdentityM(mModelMatrix, 0);
+            Matrix.scaleM(mModelMatrix, 0, mWidth, mHeight, 1.0f);
+//            Matrix.scaleM(mModelMatrix, 0, 0.4f, 0.4f, 1.0f);
+
+            Matrix.setIdentityM(mProjMatrix, 0);
+            Matrix.orthoM(mProjMatrix, 0, 0, mWidth, 0, mHeight, -100f, 100f);
+//            Matrix.frustumM(mProjMatrix, 0, -1, 1, -1, 1, 3, 7);
+            // TODO: 16/12/19 调整尺寸和比例
+//        Matrix.scaleM(mProjMatrix, 0, 0.6f, 0.55f, 1f);
+//        Matrix.translateM(mProjMatrix, 0, -0.2f, -0.327f, 0);
+
+            Matrix.multiplyMM(mMVPMatrix, 0, mVMatrix, 0, mModelMatrix, 0);
+            Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mMVPMatrix, 0);
+
+
+            System.arraycopy(info.transform, 0, mModelMatrix, 0, 16);
+            Matrix.scaleM(mModelMatrix, 0, mWidth, mHeight, 1f);
+            Matrix.setIdentityM(mProjMatrix, 0);
+            Matrix.orthoM(mProjMatrix, 0, 0, info.viewportWidth, info.viewportHeight, 0, -100f, 100f);
+
+            Matrix.multiplyMM(mScreenMVPMatrix, 0, mVMatrix, 0, mModelMatrix, 0);
+            Matrix.multiplyMM(mScreenMVPMatrix, 0, mProjMatrix, 0, mScreenMVPMatrix, 0);
 
             GLES20.glViewport(0, 0, mWidth, mHeight);
 
@@ -190,27 +229,35 @@ public class OnScreenRect {
 
         }
 
+        for (int i = 0; i < mScreenMVPMatrix.length; i++) {
+            Log.e(TAG, "handleGlInfo: mvpmatrix[" + i + "] = " + mScreenMVPMatrix[i]);
+        }
+
         GLES20.glUseProgram(mProgram);
+
+        GLES20.glViewport(0, 0, mWidth, mHeight);
 
         // TODO: 16/12/7 尺寸
         mTextureId = loadTexture(mWidth, mHeight);
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureId);
-        GLES20.glCopyTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, 0, 0, 0, mWidth, mHeight);
+        GLES20.glCopyTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, 0, info.clipLeft, info.viewportHeight - info.clipBottom, mWidth, mHeight);
 
         mHorizontalTextureId = loadTexture(mWidth, mHeight);
         mHorizontalFrameBuffer = genFrameBuffer(mHorizontalTextureId);
 
         drawHorizontalBlur(mMVPMatrix);
         resetAllBuffer();
-        drawVerticalBlur(mMVPMatrix);
+        GLES20.glViewport(0, 0, info.viewportWidth, info.viewportHeight);
+
+        drawVerticalBlur(mScreenMVPMatrix);
         resetAllBuffer();
 
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mTargetFboId);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
         GLES20.glUseProgram(0);
-        GLES20.glDeleteTextures(2, new int[] {mTextureId, mHorizontalTextureId}, 0);
-        GLES20.glDeleteFramebuffers(1, new int[] {mHorizontalFrameBuffer}, 0);
+        GLES20.glDeleteTextures(2, new int[]{mTextureId, mHorizontalTextureId}, 0);
+        GLES20.glDeleteFramebuffers(1, new int[]{mHorizontalFrameBuffer}, 0);
 
 
     }
@@ -219,8 +266,8 @@ public class OnScreenRect {
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureId);
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
-        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D,  GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
-        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D,  GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
+        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
+        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
     }
 
     private int loadTexture(int width, int height) {
@@ -230,7 +277,7 @@ public class OnScreenRect {
 
         if (textureId[0] != 0) {
             initTexParameter(textureId[0]);
-            GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, width, height, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, (Buffer)null);
+            GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, width, height, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, (Buffer) null);
 
         }
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
@@ -255,7 +302,7 @@ public class OnScreenRect {
         }
 
 //        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
-        return  frameBufferIds[0];
+        return frameBufferIds[0];
 
     }
 

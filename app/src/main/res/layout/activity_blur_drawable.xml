@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -18,60 +18,87 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <ImageView
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="120dp"
                 android:layout_marginBottom="10dp"
                 android:scaleType="centerCrop"
-                android:src="@mipmap/cat"/>
-            <ImageView
+                android:text="0"
+                android:gravity="center"
+                android:textSize="30dp"
+                android:background="#ff0000"/>
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="120dp"
                 android:layout_marginBottom="10dp"
                 android:scaleType="centerCrop"
-                android:src="@mipmap/cat"/>
-            <ImageView
+                android:text="1"
+                android:gravity="center"
+                android:textSize="30dp"
+                android:background="#9479af"/>
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="120dp"
                 android:layout_marginBottom="10dp"
                 android:scaleType="centerCrop"
-                android:src="@mipmap/cat"/>
-            <ImageView
+                android:text="2"
+                android:gravity="center"
+                android:textSize="30dp"
+                android:background="#ccaf65"/>
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="120dp"
                 android:layout_marginBottom="10dp"
                 android:scaleType="centerCrop"
-                android:src="@mipmap/cat"/>
-            <ImageView
+                android:text="3"
+                android:gravity="center"
+                android:textSize="30dp"
+                android:background="#83b96a"/>
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="120dp"
                 android:layout_marginBottom="10dp"
                 android:scaleType="centerCrop"
-                android:src="@mipmap/cat"/>
-            <ImageView
+                android:text="4"
+                android:gravity="center"
+                android:textSize="30dp"
+                android:background="#3fc285"/>
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="120dp"
                 android:layout_marginBottom="10dp"
                 android:scaleType="centerCrop"
-                android:src="@mipmap/cat"/>
-            <ImageView
+                android:text="5"
+                android:gravity="center"
+                android:textSize="30dp"
+                android:background="#64a4d9"/>
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="120dp"
                 android:layout_marginBottom="10dp"
                 android:scaleType="centerCrop"
-                android:src="@mipmap/cat"/>
-            <ImageView
+                android:text="6"
+                android:gravity="center"
+                android:textSize="30dp"
+                android:background="#8053ae"/>
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="120dp"
                 android:layout_marginBottom="10dp"
                 android:scaleType="centerCrop"
-                android:src="@mipmap/cat"/>
-            <ImageView
+                android:text="7"
+                android:gravity="center"
+                android:textSize="30dp"
+                android:background="#6c6a6c"/>
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="120dp"
                 android:layout_marginBottom="10dp"
                 android:scaleType="centerCrop"
-                android:src="@mipmap/cat"/>
+                android:text="8"
+                android:gravity="center"
+                android:textSize="30dp"
+                android:background="#ffffff"/>
 
         </LinearLayout>
     </ScrollView>
@@ -79,5 +106,7 @@
     <com.example.xiangpi.dynamicblurdemo.opengl.TestDrawableView
         android:layout_width="300dp"
         android:layout_height="match_parent"
-        android:layout_marginTop="100dp"/>
-</RelativeLayout>
+        android:layout_marginTop="100dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="50dp"/>
+</FrameLayout>

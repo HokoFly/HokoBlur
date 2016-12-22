@@ -66,6 +66,7 @@ jobject *copyGlInfo(jobject *j_info, DrawGlInfo *c_info) {
     jfieldID widthFieldId = env->GetFieldID(mGlInfoClazz, "viewportWidth", "I");
     jfieldID heightFieldId = env->GetFieldID(mGlInfoClazz, "viewportHeight", "I");
     jfieldID isLayerFieldId = env->GetFieldID(mGlInfoClazz, "isLayer", "Z");
+    jfieldID transformFieldId = env->GetFieldID(mGlInfoClazz, "transform", "[F");
 
     env->SetIntField(*j_info, clipLeftFieldId, c_info->clipLeft);
     env->SetIntField(*j_info, clipTopFieldId, c_info->clipTop);
@@ -75,6 +76,10 @@ jobject *copyGlInfo(jobject *j_info, DrawGlInfo *c_info) {
     env->SetIntField(*j_info, heightFieldId, c_info->height);
     env->SetBooleanField(*j_info, isLayerFieldId, c_info->isLayer);
 
+    jobject jTransform = env->GetObjectField(*j_info, transformFieldId);
+    int len = sizeof(c_info->transform) / sizeof(float);
+    env->SetFloatArrayRegion((jfloatArray) jTransform, 0, len, c_info->transform);
+    env->DeleteLocalRef(jTransform);
     return j_info;
 
 }
