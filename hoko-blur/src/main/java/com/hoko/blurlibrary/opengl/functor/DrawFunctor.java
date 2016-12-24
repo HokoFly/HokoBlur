@@ -57,6 +57,8 @@ public class DrawFunctor {
                     callDrawGLFunctionMethod.invoke(canvas, (int)mNativeFunctor);
                 }
 
+                mOnScreenRect.initSourceBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
