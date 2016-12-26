@@ -38,7 +38,7 @@ public class OnScreenRect {
     private int mWidth = 200;
     private int mHeight = 200;
 
-    private float factor = 0.2f;
+    private float factor = 0.25f;
 
     private RectF bound1;
     private RectF bound2;
@@ -101,9 +101,11 @@ public class OnScreenRect {
 
     private int mVertexShader;
     private int mFragmentShader;
+    private int mCopyFragmentShader;
 
 
     private int mProgram;
+    private int mCopyProgram;
 
     private int mPositionHandle;
     private int mColorHandle;
@@ -122,7 +124,7 @@ public class OnScreenRect {
     private int vertexStride = COORDS_PER_VERTEX * 4;
 
     private int mHorizontalTextureId;
-        private int mVerticalTextureId;
+    private int mVerticalTextureId;
     private int mTextureId;
     private int mTextureUniformHandle;
 
@@ -136,7 +138,7 @@ public class OnScreenRect {
     private Rect mTargetBounds = new Rect();
 
     public OnScreenRect() {
-        fragmentShaderCode = getFragmentShaderCode(5, Blur.MODE_GAUSSIAN);
+        fragmentShaderCode = getFragmentShaderCode(8, Blur.MODE_GAUSSIAN);
 
         ByteBuffer bb = ByteBuffer.allocateDirect(squareCoords.length * 4);
         bb.order(ByteOrder.nativeOrder());
@@ -163,6 +165,11 @@ public class OnScreenRect {
         GLES20.glAttachShader(mProgram, mVertexShader);
         GLES20.glAttachShader(mProgram, mFragmentShader);
         GLES20.glLinkProgram(mProgram);
+
+        mCopyProgram = GLES20.glCreateProgram();
+        GLES20.glAttachShader(mCopyProgram, mVertexShader);
+        GLES20.glAttachShader(mCopyProgram, mCopyFragmentShader);
+        GLES20.glLinkProgram(mCopyProgram);
     }
 
     public void handleGlInfo(DrawFunctor.GLInfo info) {
@@ -221,6 +228,7 @@ public class OnScreenRect {
             mVertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
 
             mFragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
+            mCopyFragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, getCopyFragmentCode());
 
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 
@@ -250,22 +258,35 @@ public class OnScreenRect {
         mHorizontalTextureId = loadTexture(mW, mH);
         mHorizontalFrameBuffer = genFrameBuffer(mHorizontalTextureId);
 
-        getTexMatrix(false);
+        mVerticalTextureId = loadTexture(mW, mH);
+        mVerticalFrameBuffer = genFrameBuffer(mVerticalTextureId);
+
         GLES20.glViewport(0, 0, mW, mH);
+
+        getTexMatrix(false);
+        downscale(mMVPMatrix, mTexMatrix);
+        resetAllBuffer();
+
+        getTexMatrix(false);
         drawHorizontalBlur(mMVPMatrix, mTexMatrix);
         resetAllBuffer();
 
-        getTexMatrix(true);
+        getTexMatrix(false);
+        drawVerticalBlur(mMVPMatrix, mTexMatrix);
+        resetAllBuffer();
+
         GLES20.glViewport(0, 0, info.viewportWidth, info.viewportHeight);
-        drawVerticalBlur(mScreenMVPMatrix, mTexMatrix);
+        getTexMatrix(true);
+        upscale(mScreenMVPMatrix, mTexMatrix);
         resetAllBuffer();
 
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mTargetFboId);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
         GLES20.glUseProgram(0);
-        GLES20.glDeleteTextures(2, new int[]{mTextureId, mHorizontalTextureId}, 0);
-        GLES20.glDeleteFramebuffers(1, new int[]{mHorizontalFrameBuffer}, 0);
+        GLES20.glDeleteTextures(3, new int[]{mTextureId, mHorizontalTextureId, mVerticalTextureId}, 0);
+        GLES20.glDeleteFramebuffers(2, new int[]{mHorizontalFrameBuffer, mVerticalFrameBuffer}, 0);
         GLES20.glDeleteProgram(mProgram);
+        GLES20.glDeleteProgram(mCopyProgram);
 
 
     }
@@ -339,13 +360,15 @@ public class OnScreenRect {
 
         mTextureUniformHandle = GLES20.glGetUniformLocation(mProgram, "uTexture");
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureId);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mVerticalTextureId);
         GLES20.glUniform1i(mTextureUniformHandle, 0);
 
         mWidthOffsetHandle = GLES20.glGetUniformLocation(mProgram, "uWidthOffset");
         mHeightOffsetHandle = GLES20.glGetUniformLocation(mProgram, "uHeightOffset");
-        GLES20.glUniform1f(mWidthOffsetHandle, 0f / mWidth);
-        GLES20.glUniform1f(mHeightOffsetHandle, 1f / mHeight);
+        GLES20.glUniform1f(mWidthOffsetHandle, (bound1.right - bound1.left) / mWidth / factor);
+//        GLES20.glUniform1f(mWidthOffsetHandle, 0 / mWidth / factor);
+        GLES20.glUniform1f(mHeightOffsetHandle, 0f / mHeight / factor);
+//        GLES20.glUniform1f(mHeightOffsetHandle, (bound2.bottom - bound2.top) / mHeight / factor);
 
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, mDrawListBuffer);
 //        GLES20.glDrawArrays(5, 0, 4);
@@ -376,17 +399,17 @@ public class OnScreenRect {
 //        GLES20.glEnableVertexAttribArray(mTexCoordHandle);
         GLES20.glVertexAttribPointer(mTexCoordHandle, 2, GLES20.GL_FLOAT, false, 0, mTexCoordBuffer);
 
-        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mTargetFboId);
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mVerticalFrameBuffer);
 
 //        mTextureUniformHandle = GLES20.glGetUniformLocation(mProgram, "uTexture");
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mHorizontalTextureId);
         GLES20.glUniform1i(mTextureUniformHandle, 0);
 
-//        mWidthOffsetHandle = GLES20.glGetUniformLocation(mProgram, "uWidthOffset");
-//        mHeightOffsetHandle = GLES20.glGetUniformLocation(mProgram, "uHeightOffset");
-        GLES20.glUniform1f(mWidthOffsetHandle, 1f / mWidth);
-        GLES20.glUniform1f(mHeightOffsetHandle, 0f / mHeight);
+        mWidthOffsetHandle = GLES20.glGetUniformLocation(mProgram, "uWidthOffset");
+        mHeightOffsetHandle = GLES20.glGetUniformLocation(mProgram, "uHeightOffset");
+        GLES20.glUniform1f(mWidthOffsetHandle, 0f / mWidth / factor);
+        GLES20.glUniform1f(mHeightOffsetHandle, (bound2.bottom - bound2.top) / mHeight / factor);
 
 //        GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, mDrawListBuffer);
         GLES20.glDrawArrays(5, 0, 4);
@@ -399,6 +422,78 @@ public class OnScreenRect {
 
 
     }
+    private void upscale(float[] mvpMatrix, float[] texMatrix) {
+        GLES20.glUseProgram(mCopyProgram);
+
+        mPositionHandle = GLES20.glGetAttribLocation(mCopyProgram, "aPosition");
+        GLES20.glEnableVertexAttribArray(mPositionHandle);
+        GLES20.glVertexAttribPointer(mPositionHandle, COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, vertexStride, mVertexBuffer);
+
+        mMVPMatrixHandle = GLES20.glGetUniformLocation(mCopyProgram, "uMVPMatrix");
+        GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0);
+
+        mTexMatrixHandle = GLES20.glGetUniformLocation(mCopyProgram, "uTexMatrix");
+        GLES20.glUniformMatrix4fv(mTexMatrixHandle, 1, false, texMatrix, 0);
+
+        mTexCoordHandle = GLES20.glGetAttribLocation(mCopyProgram, "aTexCoord");
+        GLES20.glEnableVertexAttribArray(mTexCoordHandle);
+        GLES20.glVertexAttribPointer(mTexCoordHandle, 2, GLES20.GL_FLOAT, false, 0, mTexCoordBuffer);
+
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mTargetFboId);
+
+        mTextureUniformHandle = GLES20.glGetUniformLocation(mCopyProgram, "uTexture");
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mVerticalTextureId);
+        GLES20.glUniform1i(mTextureUniformHandle, 0);
+
+//        GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, mDrawListBuffer);
+        GLES20.glDrawArrays(5, 0, 4);
+
+//        GLES20.glDisableVertexAttribArray(mPositionHandle);
+//        GLES20.glDisableVertexAttribArray(mTexCoordHandle);
+//        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+//        GLES20.glUseProgram(0);
+
+
+
+    }
+
+    private void downscale(float[] mvpMatrix, float[] texMatrix) {
+        GLES20.glUseProgram(mCopyProgram);
+
+        mPositionHandle = GLES20.glGetAttribLocation(mCopyProgram, "aPosition");
+        GLES20.glEnableVertexAttribArray(mPositionHandle);
+        GLES20.glVertexAttribPointer(mPositionHandle, COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, vertexStride, mVertexBuffer);
+
+        mMVPMatrixHandle = GLES20.glGetUniformLocation(mCopyProgram, "uMVPMatrix");
+        GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0);
+
+        mTexMatrixHandle = GLES20.glGetUniformLocation(mCopyProgram, "uTexMatrix");
+        GLES20.glUniformMatrix4fv(mTexMatrixHandle, 1, false, texMatrix, 0);
+
+        mTexCoordHandle = GLES20.glGetAttribLocation(mCopyProgram, "aTexCoord");
+        GLES20.glEnableVertexAttribArray(mTexCoordHandle);
+        GLES20.glVertexAttribPointer(mTexCoordHandle, 2, GLES20.GL_FLOAT, false, 0, mTexCoordBuffer);
+
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mVerticalFrameBuffer);
+
+        mTextureUniformHandle = GLES20.glGetUniformLocation(mCopyProgram, "uTexture");
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureId);
+        GLES20.glUniform1i(mTextureUniformHandle, 0);
+
+//        GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, mDrawListBuffer);
+        GLES20.glDrawArrays(5, 0, 4);
+
+//        GLES20.glDisableVertexAttribArray(mPositionHandle);
+//        GLES20.glDisableVertexAttribArray(mTexCoordHandle);
+//        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+//        GLES20.glUseProgram(0);
+
+
+
+    }
+
 
     private void resetAllBuffer() {
         mVertexBuffer.rewind();
@@ -535,6 +630,20 @@ public class OnScreenRect {
             float bottom = b - m[13];
             dst.set((int)(left + 0.5F), (int)(top + 0.5F), (int)(right + 0.5F), (int)(bottom + 0.5F));
         }
+    }
+
+    private String getCopyFragmentCode() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(" \n")
+                .append("precision mediump float;")
+                .append("varying vec2 vTexCoord;   \n")
+                .append("uniform sampler2D uTexture;   \n")
+                .append("void main() {   \n")
+                .append("  vec3 col = vec3(texture2D(uTexture, vTexCoord.st));\n")
+                .append("  gl_FragColor = vec4(col, 1.0);   \n")
+                .append("}   \n");
+        return sb.toString();
+
     }
 
 
