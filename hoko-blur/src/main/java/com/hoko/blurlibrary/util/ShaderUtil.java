@@ -21,7 +21,7 @@ public class ShaderUtil {
                 .append("   vec2 offset = vec2(float(i - ")
                 .append(radius).append(") * uWidthOffset, float(i - ")
                 .append(radius).append(") * uHeightOffset);\n")
-                .append("        sampleTex[i] = vec3(texture2D(uTexture, (vTexCoord.st + offset)));\n")
+                .append("        sampleTex[i] = vec3(texture2D(uTexture, getTexCoord(vTexCoord.st, offset)));\n")
                 .append("  } \n")
                 .append("  for(int i = 0; i < KERNEL_SIZE; i++) { \n")
                 .append("       float index = float(i); \n")
