@@ -38,20 +38,13 @@ public class OnScreenRect {
     private int mWidth = 200;
     private int mHeight = 200;
 
-    private float minFactor = 0.1f;
-    private float factor = 0.1f;
+    private float factor = 0.2f;
 
     private RectF bound1;
     private RectF bound2;
 
-    private int mViewportW;
-    private int mViewportH;
-
     private int mW;
     private int mH;
-
-    private int mFboW;
-    private int mFboH;
 
     private final String vertexShaderCode =
             "uniform mat4 uMVPMatrix;   \n" +
@@ -143,7 +136,7 @@ public class OnScreenRect {
     private Rect mTargetBounds = new Rect();
 
     public OnScreenRect() {
-        fragmentShaderCode = getFragmentShaderCode(6, Blur.MODE_STACK);
+        fragmentShaderCode = getFragmentShaderCode(5, Blur.MODE_GAUSSIAN);
 
         ByteBuffer bb = ByteBuffer.allocateDirect(squareCoords.length * 4);
         bb.order(ByteOrder.nativeOrder());
@@ -178,6 +171,9 @@ public class OnScreenRect {
         mWidth = info.clipRight - info.clipLeft;
         mHeight = info.clipBottom - info.clipTop;
 
+        mW = (int) (mWidth * factor);
+        mH = (int) (mHeight * factor);
+
         if (mWidth <= 0 || mHeight <= 0) {
             return;
         }
@@ -203,10 +199,10 @@ public class OnScreenRect {
             Matrix.setIdentityM(mMVPMatrix, 0);
             Matrix.setIdentityM(mVMatrix, 0);
             Matrix.setIdentityM(mModelMatrix, 0);
-            Matrix.scaleM(mModelMatrix, 0, mFboW, mFboH, 1.0f);
+            Matrix.scaleM(mModelMatrix, 0, mW, mH, 1.0f);
 
             Matrix.setIdentityM(mProjMatrix, 0);
-            Matrix.orthoM(mProjMatrix, 0, 0, mFboW,  0, mFboH, -100f, 100f);
+            Matrix.orthoM(mProjMatrix, 0, 0, mW,  0, mH, -100f, 100f);
 
             Matrix.multiplyMM(mMVPMatrix, 0, mVMatrix, 0, mModelMatrix, 0);
             Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mMVPMatrix, 0);
@@ -251,11 +247,11 @@ public class OnScreenRect {
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureId);
         copyFbo();
 
-        mHorizontalTextureId = loadTexture(mFboW, mFboH);
+        mHorizontalTextureId = loadTexture(mW, mH);
         mHorizontalFrameBuffer = genFrameBuffer(mHorizontalTextureId);
 
         getTexMatrix(false);
-        GLES20.glViewport(0, 0, mFboW, mFboH);
+        GLES20.glViewport(0, 0, mW, mH);
         drawHorizontalBlur(mMVPMatrix, mTexMatrix);
         resetAllBuffer();
 
@@ -389,7 +385,7 @@ public class OnScreenRect {
 
 //        mWidthOffsetHandle = GLES20.glGetUniformLocation(mProgram, "uWidthOffset");
 //        mHeightOffsetHandle = GLES20.glGetUniformLocation(mProgram, "uHeightOffset");
-        GLES20.glUniform1f(mWidthOffsetHandle, 1f / mWidth / minFactor);
+        GLES20.glUniform1f(mWidthOffsetHandle, 1f / mWidth);
         GLES20.glUniform1f(mHeightOffsetHandle, 0f / mHeight);
 
 //        GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, mDrawListBuffer);
@@ -458,33 +454,32 @@ public class OnScreenRect {
     }
 
     private void initSize() {
-        mViewportW = (int) (mWidth * factor);
-        mViewportH = (int) (mHeight * factor);
+        int viewportW = mWidth;
+        int viewportH = mHeight;
 
-        mW = mViewportW + 8;
-        mH = mViewportH + 8;
+        int fboW = nextMultipleN(mWidth + 8.0f, 4);
+        int fboH = nextMultipleN(mHeight + 8.0f, 4);
 
-        mFboW = nextMultipleN(mWidth * minFactor + 8.0f, 4);
-        mFboH = nextMultipleN(mHeight * minFactor + 8.0f, 4);
+        Log.e(TAG, "getBound: viewportW: " + viewportW);
+        Log.e(TAG, "getBound: viewportH: " + viewportH);
+        Log.e(TAG, "getBound: fboW: " + fboW);
+        Log.e(TAG, "getBound: fboH: " + fboH);
 
-        Log.e(TAG, "getTexMatrix: viewportW: " + mViewportW);
-        Log.e(TAG, "getTexMatrix: viewportH: " + mViewportH);
-        Log.e(TAG, "getTexMatrix: fboW: " + mFboW);
-        Log.e(TAG, "getTexMatrix: fboH: " + mFboH);
+        float right = (float)viewportW / (float)fboW;
+        float bottom = (float)viewportH / (float)fboH;
+        int width = viewportW + 8;
+        int height = viewportH + 8;
+        float scaleX = (float)width / (float)(width - 8);
+        float scaleY = (float)height / (float)(height - 8);
 
-        float right = (float)mViewportW / (float)mFboW;
-        float bottom = (float)mViewportH / (float)mFboH;
-
-        float scaleX = (float)mW / (float)(mW - 8);
-        float scaleY = (float)mH / (float)(mH - 8);
+        Log.e(TAG, "getBound: right: " + right);
+        Log.e(TAG, "getBound: bottom: " + bottom);
+        Log.e(TAG, "getBound: scaleX: " + scaleX);
+        Log.e(TAG, "getBound: scaleY: " + scaleY);
 
         bound1 = new RectF(0, 0, scaleX * right, scaleY * bottom);
         bound2 = new RectF(0, 0, scaleX, scaleY);
 
-        Log.e(TAG, "getTexMatrix: right: " + right);
-        Log.e(TAG, "getTexMatrix: bottom: " + bottom);
-        Log.e(TAG, "getTexMatrix: scaleX: " + scaleX);
-        Log.e(TAG, "getTexMatrix: scaleY: " + scaleY);
     }
 
     private void getTexMatrix(boolean flipY){
