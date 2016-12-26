@@ -35,7 +35,6 @@ public class OnScreenRect {
 
     private float[] mTexMatrix = new float[16];
 
-
     private int mWidth;
     private int mHeight;
 

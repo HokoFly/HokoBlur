@@ -1,7 +1,9 @@
 package com.hoko.blurlibrary.opengl.drawable;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ColorFilter;
+import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 
@@ -16,14 +18,20 @@ public class BlurDrawable extends Drawable {
 
     private int alpha;
 
+    private Paint mPaint;
+
     public BlurDrawable() {
         mDrawFunctor = new DrawFunctor();
+        mPaint = new Paint();
     }
 
     @Override
     public void draw(Canvas canvas) {
         if (canvas.isHardwareAccelerated()) {
             mDrawFunctor.doDraw(canvas);
+        } else {
+            mPaint.setColor(Color.TRANSPARENT);
+            canvas.drawRect(getBounds(), mPaint);
         }
     }
 
