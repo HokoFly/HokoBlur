@@ -1,12 +1,8 @@
 package com.example.xiangpi.dynamicblurdemo.opengl.shape;
 
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
-
-import com.example.xiangpi.dynamicblurdemo.R;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
