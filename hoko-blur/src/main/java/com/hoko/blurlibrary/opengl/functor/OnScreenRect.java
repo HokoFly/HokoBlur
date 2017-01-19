@@ -190,10 +190,11 @@ public class OnScreenRect {
             mDisplayFrameBuffer = displayFbo[0];
 
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-            GLES20.glClearColor(1f, 1f, 1f, 1f);
             mInited = true;
 
         }
+
+        GLES20.glClearColor(1f, 1f, 1f, 1f);
 
         initProgram();
 
@@ -215,6 +216,8 @@ public class OnScreenRect {
 
         GLES20.glViewport(0, 0, info.viewportWidth, info.viewportHeight);
         getTexMatrix(true);
+//        GLES20.glEnable(GLES20.GL_SCISSOR_TEST);
+
         upscale(mScreenMVPMatrix, mTexMatrix);
 
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mDisplayFrameBuffer);

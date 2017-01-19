@@ -45,8 +45,19 @@ public class DrawFunctor {
             try {
                 Class canvasClazz = null;
                 Method callDrawGLFunctionMethod = null;
-                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
                     canvasClazz = Class.forName("android.view.DisplayListCanvas");
+                    callDrawGLFunctionMethod = canvasClazz.getMethod("callDrawGLFunction2", long.class);
+                    callDrawGLFunctionMethod.setAccessible(true);
+                    callDrawGLFunctionMethod.invoke(canvas, mNativeFunctor);
+                } else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP){
+                    canvasClazz = Class.forName("android.view.HardwareCanvas");
+                    callDrawGLFunctionMethod = canvasClazz.getMethod("callDrawGLFunction", long.class);
+                    callDrawGLFunctionMethod.setAccessible(true);
+                    callDrawGLFunctionMethod.invoke(canvas, mNativeFunctor);
+                } else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP_MR1) {
+                    canvasClazz = Class.forName("android.view.HardwareCanvas");
                     callDrawGLFunctionMethod = canvasClazz.getMethod("callDrawGLFunction2", long.class);
                     callDrawGLFunctionMethod.setAccessible(true);
                     callDrawGLFunctionMethod.invoke(canvas, mNativeFunctor);
