@@ -1,17 +1,14 @@
 package com.hoko.blurlibrary.opengl.cache;
 
-import com.hoko.blurlibrary.opengl.texture.ISize;
+import com.hoko.blurlibrary.opengl.size.ISize;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.Map;
 
 /**
  * Created by xiangpi on 2017/1/21.
  */
 
-public class CachePool<T extends ISize> {
+public abstract class CachePool<K, T extends K> {
 
     private static final int MAX_SIZE = 1024;
 
@@ -31,18 +28,18 @@ public class CachePool<T extends ISize> {
         mList = new LinkedList<>();
     }
 
-    public final T get(ISize size) {
-        if (size == null) {
+    public final T get(K key) {
+        if (key == null) {
             throw new NullPointerException("size == null");
         }
 
-        T listValue = remove(size);
+        T listValue = remove(key);
         if (listValue != null) {
             return listValue;
         }
 
         //listValue is null
-        return create(size);
+        return create(key);
     }
 
     public final void put(T t) {
@@ -59,15 +56,19 @@ public class CachePool<T extends ISize> {
 
     }
 
-    public final T remove(ISize size) {
-        if (size == null) {
+    private T remove(K key) {
+        if (key == null) {
             throw new NullPointerException("size == null");
         }
 
         T previous = null;
         synchronized (this) {
             for (T t : mList) {
-                if (t != null && t.getWidth() == size.getWidth() && t.getHeight() == size.getHeight()) {
+//                if (t != null && t.getWidth() == size.getWidth() && t.getHeight() == size.getHeight()) {
+//                    previous = mList.remove(mList.indexOf(t));
+//                    break;
+//                }
+                if (checkHit(key, t)) {
                     previous = mList.remove(mList.indexOf(t));
                     break;
                 }
@@ -77,9 +78,26 @@ public class CachePool<T extends ISize> {
         return previous;
     }
 
-    protected T create(ISize size) {
+    public void delete(K key) {
+        if (key == null) {
+            throw new NullPointerException("size == null");
+        }
+
+        T removed = remove(key);
+        if (removed != null) {
+            entryDeleted(removed);
+        }
+    }
+
+    protected T create(K key) {
         return null;
     }
+
+    protected void entryDeleted(T t) {
+
+    }
+
+    protected abstract boolean checkHit(K a, T b);
 
     private void trimToSize(int maxSize) {
         while(true) {
@@ -88,7 +106,11 @@ public class CachePool<T extends ISize> {
                     break;
                 }
 
-                mList.removeFirst();
+                T removed = mList.removeFirst();
+                if (removed != null) {
+                    entryDeleted(removed);
+                }
+
             }
         }
     }
@@ -100,9 +122,5 @@ public class CachePool<T extends ISize> {
     public final void evictAll() {
        trimToSize(-1);
     }
-
-
-
-
 
 }

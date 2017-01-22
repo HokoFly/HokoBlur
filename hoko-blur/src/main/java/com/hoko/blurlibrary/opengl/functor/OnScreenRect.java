@@ -6,7 +6,10 @@ import android.opengl.Matrix;
 import android.util.Log;
 
 import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.opengl.cache.FrameBufferCache;
 import com.hoko.blurlibrary.opengl.cache.TextureCache;
+import com.hoko.blurlibrary.opengl.framebuffer.FrameBufferFactory;
+import com.hoko.blurlibrary.opengl.framebuffer.IFrameBuffer;
 import com.hoko.blurlibrary.opengl.texture.ITexture;
 import com.hoko.blurlibrary.util.ShaderUtil;
 
@@ -93,13 +96,14 @@ public class OnScreenRect {
     private ITexture mVerticalTexture;
     private ITexture mDisplayTexture;
 
-    private int mDisplayFrameBuffer;
-    private int mHorizontalFrameBuffer;
-    private int mVerticalFrameBuffer;
+    private IFrameBuffer mDisplayFrameBuffer;
+    private IFrameBuffer mHorizontalFrameBuffer;
+    private IFrameBuffer mVerticalFrameBuffer;
 
     private boolean mInited = false;
     private DrawFunctor.GLInfo mInfo;
     private TextureCache mTextureCache = TextureCache.getInstance();
+    private FrameBufferCache mFrameBufferCache = FrameBufferCache.getInstance();
     //    private Rect mClipBounds = new Rect();
 //    private Rect mSourceBounds = new Rect();
 //    private Rect mTargetBounds = new Rect();
@@ -186,11 +190,7 @@ public class OnScreenRect {
             Matrix.multiplyMM(mScreenMVPMatrix, 0, mViewMatrix, 0, mModelMatrix, 0);
             Matrix.multiplyMM(mScreenMVPMatrix, 0, mProjMatrix, 0, mScreenMVPMatrix, 0);
 
-
-            // 获得当前绑定的FBO（屏上）
-            int[] displayFbo = new int[1];
-            GLES20.glGetIntegerv(GLES20.GL_FRAMEBUFFER_BINDING, displayFbo, 0);
-            mDisplayFrameBuffer = displayFbo[0];
+            mDisplayFrameBuffer = mFrameBufferCache.getDisplayFrameBuffer();
 
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
             mInited = true;
@@ -208,12 +208,14 @@ public class OnScreenRect {
         mHorizontalTexture = mTextureCache.getTexture(mScaleW, mScaleH);
         mVerticalTexture = mTextureCache.getTexture(mScaleW, mScaleH);
 
-        if (mHorizontalTexture != null) {
-            mHorizontalFrameBuffer = genFrameBuffer(mHorizontalTexture.getId());
+        mHorizontalFrameBuffer = mFrameBufferCache.getFrameBuffer();
+        if (mHorizontalFrameBuffer != null) {
+            mHorizontalFrameBuffer.bindTexture(mHorizontalTexture);
         }
 
-        if (mVerticalTexture != null) {
-            mVerticalFrameBuffer = genFrameBuffer(mVerticalTexture.getId());
+        mVerticalFrameBuffer = mFrameBufferCache.getFrameBuffer();
+        if (mVerticalFrameBuffer != null) {
+            mVerticalFrameBuffer.bindTexture(mVerticalTexture);
         }
 
         copyFBO();
@@ -230,62 +232,23 @@ public class OnScreenRect {
 
         upscale(mScreenMVPMatrix, mTexMatrix);
 
-        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mDisplayFrameBuffer);
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mDisplayFrameBuffer.getId());
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
         GLES20.glUseProgram(0);
 
         mTextureCache.recycleTexture(mDisplayTexture);
         mTextureCache.recycleTexture(mHorizontalTexture);
         mTextureCache.recycleTexture(mVerticalTexture);
+
+        mFrameBufferCache.recycleFrameBuffer(mHorizontalFrameBuffer);
+        mFrameBufferCache.recycleFrameBuffer(mVerticalFrameBuffer);
+
+        // TODO: 2017/1/22 统一delete
 //        GLES20.glDeleteTextures(3, new int[]{mDisplayTexture, mHorizontalTexture, mVerticalTexture}, 0);
 //        GLES20.glDeleteFramebuffers(2, new int[]{mHorizontalFrameBuffer, mVerticalFrameBuffer}, 0);
 
         GLES20.glDeleteProgram(mBlurProgram);
         GLES20.glDeleteProgram(mCopyProgram);
-
-    }
-
-    private void initTexParameter(int textureId) {
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureId);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
-        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
-        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
-    }
-
-    private int loadTexture(int width, int height) {
-        final int[] textureId = new int[1];
-
-        GLES20.glGenTextures(1, textureId, 0);
-
-        if (textureId[0] != 0) {
-            initTexParameter(textureId[0]);
-            GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, width, height, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, (Buffer) null);
-
-        }
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
-
-        return textureId[0];
-
-    }
-
-
-    private int genFrameBuffer(int texture) {
-        final int[] frameBufferIds = new int[1];
-
-        GLES20.glGenFramebuffers(1, frameBufferIds, 0);
-
-        if (frameBufferIds[0] != 0) {
-            GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, frameBufferIds[0]);
-        }
-
-        if (texture != 0) {
-            GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0,
-                    GLES20.GL_TEXTURE_2D, texture, 0);
-        }
-
-        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
-        return frameBufferIds[0];
 
     }
 
@@ -310,7 +273,7 @@ public class OnScreenRect {
         GLES20.glEnableVertexAttribArray(mTexCoordId);
         GLES20.glVertexAttribPointer(mTexCoordId, 2, GLES20.GL_FLOAT, false, 0, mTexCoordBuffer);
 
-        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mHorizontalFrameBuffer);
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mHorizontalFrameBuffer.getId());
 
         mTextureUniformId = GLES20.glGetUniformLocation(mBlurProgram, "uTexture");
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
@@ -349,7 +312,7 @@ public class OnScreenRect {
 //        GLES20.glEnableVertexAttribArray(mTexCoordId);
         GLES20.glVertexAttribPointer(mTexCoordId, 2, GLES20.GL_FLOAT, false, 0, mTexCoordBuffer);
 
-        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mVerticalFrameBuffer);
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mVerticalFrameBuffer.getId());
 
 //        mTextureUniformId = GLES20.glGetUniformLocation(mBlurProgram, "uTexture");
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
@@ -385,7 +348,7 @@ public class OnScreenRect {
         GLES20.glEnableVertexAttribArray(mTexCoordId);
         GLES20.glVertexAttribPointer(mTexCoordId, 2, GLES20.GL_FLOAT, false, 0, mTexCoordBuffer);
 
-        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mDisplayFrameBuffer);
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mDisplayFrameBuffer.getId());
 
         mTextureUniformId = GLES20.glGetUniformLocation(mCopyProgram, "uTexture");
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);

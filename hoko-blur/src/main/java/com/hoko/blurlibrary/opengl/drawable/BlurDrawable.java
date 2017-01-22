@@ -50,4 +50,5 @@ public class BlurDrawable extends Drawable {
     public int getOpacity() {
         return alpha == 255 ? PixelFormat.OPAQUE : PixelFormat.TRANSLUCENT;
     }
+
 }

@@ -1,6 +1,4 @@
-package com.hoko.blurlibrary.util;
-
-import com.hoko.blurlibrary.opengl.texture.ISize;
+package com.hoko.blurlibrary.opengl.size;
 
 /**
  * Created by xiangpi on 2017/1/22.

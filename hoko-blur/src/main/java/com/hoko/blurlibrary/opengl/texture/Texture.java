@@ -56,6 +56,13 @@ public abstract class Texture implements ITexture {
     protected abstract void initTexture(int width, int height);
 
     @Override
+    public void delete() {
+        if (mTextureId != 0) {
+            GLES20.glDeleteTextures(1, new int[]{mTextureId}, 0);
+        }
+    }
+
+    @Override
     public void setId(int textureId) {
         mTextureId = textureId;
     }

@@ -9,7 +9,7 @@ import java.nio.Buffer;
  * Created by xiangpi on 17/1/20.
  */
 
-public class BlurTexture extends Texture {
+class BlurTexture extends Texture {
 
     BlurTexture(int width, int height) {
         super(width, height);

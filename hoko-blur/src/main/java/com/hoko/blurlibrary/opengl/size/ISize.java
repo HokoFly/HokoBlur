@@ -1,4 +1,4 @@
-package com.hoko.blurlibrary.opengl.texture;
+package com.hoko.blurlibrary.opengl.size;
 
 /**
  * Created by xiangpi on 2017/1/22.
