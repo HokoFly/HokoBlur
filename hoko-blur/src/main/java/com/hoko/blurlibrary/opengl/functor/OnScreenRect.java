@@ -201,11 +201,13 @@ public class OnScreenRect {
         // fuck scissor leads to bugfix for one week !!
         GLES20.glDisable(GLES20.GL_SCISSOR_TEST);
 
-        mDisplayTexture = loadTexture(mWidth, mHeight);
-        mHorizontalTexture = loadTexture(mScaleW, mScaleH);
-        mHorizontalFrameBuffer = genFrameBuffer(mHorizontalTexture);
-        mVerticalTexture = loadTexture(mScaleW, mScaleH);
-        mVerticalFrameBuffer = genFrameBuffer(mVerticalTexture);
+        if (mDisplayTexture == 0) {
+            mDisplayTexture = loadTexture(mWidth, mHeight);
+            mHorizontalTexture = loadTexture(mScaleW, mScaleH);
+            mHorizontalFrameBuffer = genFrameBuffer(mHorizontalTexture);
+            mVerticalTexture = loadTexture(mScaleW, mScaleH);
+            mVerticalFrameBuffer = genFrameBuffer(mVerticalTexture);
+        }
 
         copyFBO();
 
@@ -217,14 +219,15 @@ public class OnScreenRect {
         GLES20.glViewport(0, 0, info.viewportWidth, info.viewportHeight);
         getTexMatrix(true);
 //        GLES20.glEnable(GLES20.GL_SCISSOR_TEST);
+//        mVerticalTexture = mDisplayTexture;
 
         upscale(mScreenMVPMatrix, mTexMatrix);
 
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mDisplayFrameBuffer);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
         GLES20.glUseProgram(0);
-        GLES20.glDeleteTextures(3, new int[]{mDisplayTexture, mHorizontalTexture, mVerticalTexture}, 0);
-        GLES20.glDeleteFramebuffers(2, new int[]{mHorizontalFrameBuffer, mVerticalFrameBuffer}, 0);
+//        GLES20.glDeleteTextures(3, new int[]{mDisplayTexture, mHorizontalTexture, mVerticalTexture}, 0);
+//        GLES20.glDeleteFramebuffers(2, new int[]{mHorizontalFrameBuffer, mVerticalFrameBuffer}, 0);
         GLES20.glDeleteProgram(mBlurProgram);
         GLES20.glDeleteProgram(mCopyProgram);
 
@@ -454,11 +457,17 @@ public class OnScreenRect {
         float bottom = (float) viewportH / (float) fboH;
         int width = viewportW + 8;
         int height = viewportH + 8;
-        float scaleX = (float) width / (float) (width - 8);
-        float scaleY = (float) height / (float) (height - 8);
+//        float scaleX = (float) width / (float) (width - 8);
+//        float scaleY = (float) height / (float) (height - 8);
 
-        mBound1 = new RectF(0, 0, scaleX * right, scaleY * bottom);
-        mBound2 = new RectF(0, 0, scaleX, scaleY);
+        float scaleX = 1.0f;
+        float scaleY = 1.0f;
+
+        mBound1 = new RectF(0, 0, 1, 1);
+        mBound2 = new RectF(0, 0, 1, 1);
+//
+//        mBound1 = new RectF(0, 0, scaleX * right, scaleY * bottom);
+//        mBound2 = new RectF(0, 0, scaleX, scaleY);
     }
 
     private void getTexMatrix(boolean flipY) {

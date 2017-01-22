@@ -8,6 +8,7 @@ import android.view.View;
 
 import com.hoko.blurlibrary.opengl.drawable.BlurDrawable;
 import com.hoko.blurlibrary.opengl.functor.DrawFunctor;
+import com.hoko.blurlibrary.opengl.texture.Texture;
 
 /**
  * Created by xiangpi on 16/11/9.
@@ -37,7 +38,6 @@ public class TestDrawableView extends View{
         } else {
             setBackgroundDrawable(mBlurDrawable);
         }
-
     }
 
 }
