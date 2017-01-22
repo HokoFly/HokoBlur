@@ -1,10 +1,12 @@
 package com.hoko.blurlibrary.util;
 
+import com.hoko.blurlibrary.opengl.texture.ISize;
+
 /**
  * Created by xiangpi on 2017/1/22.
  */
 
-public final class Size {
+public final class Size implements ISize{
 
     private int mWidth;
 
@@ -26,18 +28,22 @@ public final class Size {
         mHeight = size.getHeight();
     }
 
+    @Override
     public int getWidth() {
         return mWidth;
     }
 
+    @Override
     public void setWidth(int mWidth) {
         this.mWidth = mWidth;
     }
 
+    @Override
     public int getHeight() {
         return mHeight;
     }
 
+    @Override
     public void setHeight(int mHeight) {
         this.mHeight = mHeight;
     }

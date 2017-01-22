@@ -6,6 +6,8 @@ import android.opengl.Matrix;
 import android.util.Log;
 
 import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.opengl.cache.TextureCache;
+import com.hoko.blurlibrary.opengl.texture.ITexture;
 import com.hoko.blurlibrary.util.ShaderUtil;
 
 import java.nio.Buffer;
@@ -87,9 +89,9 @@ public class OnScreenRect {
     private int mHeightOffsetId;
     private int mTextureUniformId;
 
-    private int mHorizontalTexture;
-    private int mVerticalTexture;
-    private int mDisplayTexture;
+    private ITexture mHorizontalTexture;
+    private ITexture mVerticalTexture;
+    private ITexture mDisplayTexture;
 
     private int mDisplayFrameBuffer;
     private int mHorizontalFrameBuffer;
@@ -97,7 +99,8 @@ public class OnScreenRect {
 
     private boolean mInited = false;
     private DrawFunctor.GLInfo mInfo;
-//    private Rect mClipBounds = new Rect();
+    private TextureCache mTextureCache = TextureCache.getInstance();
+    //    private Rect mClipBounds = new Rect();
 //    private Rect mSourceBounds = new Rect();
 //    private Rect mTargetBounds = new Rect();
 
@@ -201,12 +204,16 @@ public class OnScreenRect {
         // fuck scissor leads to bugfix for one week !!
         GLES20.glDisable(GLES20.GL_SCISSOR_TEST);
 
-        if (mDisplayTexture == 0) {
-            mDisplayTexture = loadTexture(mWidth, mHeight);
-            mHorizontalTexture = loadTexture(mScaleW, mScaleH);
-            mHorizontalFrameBuffer = genFrameBuffer(mHorizontalTexture);
-            mVerticalTexture = loadTexture(mScaleW, mScaleH);
-            mVerticalFrameBuffer = genFrameBuffer(mVerticalTexture);
+        mDisplayTexture = mTextureCache.getTexture(mWidth, mHeight);
+        mHorizontalTexture = mTextureCache.getTexture(mScaleW, mScaleH);
+        mVerticalTexture = mTextureCache.getTexture(mScaleW, mScaleH);
+
+        if (mHorizontalTexture != null) {
+            mHorizontalFrameBuffer = genFrameBuffer(mHorizontalTexture.getId());
+        }
+
+        if (mVerticalTexture != null) {
+            mVerticalFrameBuffer = genFrameBuffer(mVerticalTexture.getId());
         }
 
         copyFBO();
@@ -226,8 +233,13 @@ public class OnScreenRect {
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mDisplayFrameBuffer);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
         GLES20.glUseProgram(0);
+
+        mTextureCache.recycleTexture(mDisplayTexture);
+        mTextureCache.recycleTexture(mHorizontalTexture);
+        mTextureCache.recycleTexture(mVerticalTexture);
 //        GLES20.glDeleteTextures(3, new int[]{mDisplayTexture, mHorizontalTexture, mVerticalTexture}, 0);
 //        GLES20.glDeleteFramebuffers(2, new int[]{mHorizontalFrameBuffer, mVerticalFrameBuffer}, 0);
+
         GLES20.glDeleteProgram(mBlurProgram);
         GLES20.glDeleteProgram(mCopyProgram);
 
@@ -302,7 +314,7 @@ public class OnScreenRect {
 
         mTextureUniformId = GLES20.glGetUniformLocation(mBlurProgram, "uTexture");
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mDisplayTexture);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mDisplayTexture.getId());
         GLES20.glUniform1i(mTextureUniformId, 0);
 
         mWidthOffsetId = GLES20.glGetUniformLocation(mBlurProgram, "uWidthOffset");
@@ -341,7 +353,7 @@ public class OnScreenRect {
 
 //        mTextureUniformId = GLES20.glGetUniformLocation(mBlurProgram, "uTexture");
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mHorizontalTexture);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mHorizontalTexture.getId());
         GLES20.glUniform1i(mTextureUniformId, 0);
 
         mWidthOffsetId = GLES20.glGetUniformLocation(mBlurProgram, "uWidthOffset");
@@ -377,7 +389,7 @@ public class OnScreenRect {
 
         mTextureUniformId = GLES20.glGetUniformLocation(mCopyProgram, "uTexture");
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mVerticalTexture);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mVerticalTexture.getId());
         GLES20.glUniform1i(mTextureUniformId, 0);
 
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, mDrawListBuffer);
@@ -489,7 +501,7 @@ public class OnScreenRect {
 
     private void copyFBO() {
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mDisplayTexture);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mDisplayTexture.getId());
 //        window2View(mInfo.transform, (float) mInfo.clipLeft, (float) mInfo.clipTop, (float) mInfo.clipRight, (float) mInfo.clipBottom, this.mClipBounds);
 //        mClipBounds.intersect(this.mSourceBounds);
 //        view2Window(mInfo.transform, this.mClipBounds, this.mTargetBounds);
@@ -527,8 +539,6 @@ public class OnScreenRect {
 //            dst.set((int) (left + 0.5F), (int) (top + 0.5F), (int) (right + 0.5F), (int) (bottom + 0.5F));
 //        }
 //    }
-
-
 
 
 }

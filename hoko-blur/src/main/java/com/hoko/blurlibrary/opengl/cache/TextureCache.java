@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.util.SparseArray;
 
 import com.hoko.blurlibrary.opengl.texture.BlurTexture;
+import com.hoko.blurlibrary.opengl.texture.ISize;
 import com.hoko.blurlibrary.opengl.texture.ITexture;
 import com.hoko.blurlibrary.opengl.texture.TextureFactory;
 import com.hoko.blurlibrary.util.Size;
@@ -16,12 +17,12 @@ public class TextureCache {
 
     private static volatile TextureCache sInstance;
 
-    private CachePool<Size, ITexture> mTextures;
+    private CachePool<ITexture> mTextures;
 
     private TextureCache() {
-        mTextures = new CachePool<Size, ITexture>() {
+        mTextures = new CachePool<ITexture>() {
             @Override
-            protected ITexture create(Size size) {
+            protected ITexture create(ISize size) {
                 if (size == null) {
                     return null;
                 }
@@ -54,5 +55,11 @@ public class TextureCache {
     public ITexture getTexture(Bitmap bitmap) {
         // TODO: 2017/1/22
         return null;
+    }
+
+    public void recycleTexture(ITexture texture) {
+        if (texture != null) {
+            mTextures.put(texture);
+        }
     }
 }

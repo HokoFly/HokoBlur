@@ -6,17 +6,10 @@ import android.graphics.Bitmap;
  * Created by xiangpi on 17/1/20.
  */
 
-public interface ITexture {
-
-    void setId(int textureId);
+public interface ITexture extends ISize {
 
     int getId();
 
-    void setWidth(int width);
+    void setId(int textureId);
 
-    int getWidth();
-
-    void setHeight(int height);
-
-    int getHeight();
 }
