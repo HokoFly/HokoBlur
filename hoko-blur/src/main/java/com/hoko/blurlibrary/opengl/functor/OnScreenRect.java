@@ -18,11 +18,11 @@ import java.nio.ShortBuffer;
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLContext;
 
+import static com.hoko.blurlibrary.util.ShaderUtil.checkGLError;
 import static com.hoko.blurlibrary.util.ShaderUtil.createProgram;
 import static com.hoko.blurlibrary.util.ShaderUtil.getCopyFragmentCode;
 import static com.hoko.blurlibrary.util.ShaderUtil.getFragmentShaderCode;
 import static com.hoko.blurlibrary.util.ShaderUtil.getVetexCode;
-import static com.hoko.blurlibrary.util.ShaderUtil.loadShader;
 
 /**
  * Created by xiangpi on 16/11/23.
@@ -96,9 +96,6 @@ public class OnScreenRect {
     private DrawFunctor.GLInfo mInfo;
     private TextureCache mTextureCache = TextureCache.getInstance();
     private FrameBufferCache mFrameBufferCache = FrameBufferCache.getInstance();
-    //    private Rect mClipBounds = new Rect();
-//    private Rect mSourceBounds = new Rect();
-//    private Rect mTargetBounds = new Rect();
 
     public OnScreenRect() {
         ByteBuffer bb = ByteBuffer.allocateDirect(squareCoords.length * 4);
@@ -121,11 +118,6 @@ public class OnScreenRect {
 
     }
 
-    private void initProgram() {
-        mBlurProgram = createProgram(getVetexCode(), getFragmentShaderCode(6, Blur.MODE_GAUSSIAN));
-        mCopyProgram = createProgram(getVetexCode(), getCopyFragmentCode());
-    }
-
     public void handleGlInfo(DrawFunctor.GLInfo info) {
         mInfo = info;
 
@@ -139,46 +131,41 @@ public class OnScreenRect {
             return;
         }
 
+        if (!prepare()) { //渲染环境错误返回
+            return;
+        }
+
+        copyTextureFromScreen(mInfo);
+        drawHorizontalBlur(mMVPMatrix, mTexMatrix);
+        drawVerticalBlur(mMVPMatrix, mTexMatrix);
+        upscale(mScreenMVPMatrix, mTexMatrix);
+
+        onPostBlur();
+
+    }
+
+
+    private boolean prepare() {
         if (!mInited) {
             EGLContext context = ((EGL10) EGLContext.getEGL()).eglGetCurrentContext();
             if (context.equals(EGL10.EGL_NO_CONTEXT)) {
                 Log.e(TAG, "This thread is no EGLContext.");
-                return;
+                return false;
             }
 
-            /**
-             * MVP的取值
-             *  Model                            View           Projection
-             * transform + scaled Width&Height   Identity       viewport
-             * scaled Width&Height               Identity       scaled Width&Height
-             */
-
-            Matrix.setIdentityM(mModelMatrix, 0);
-            Matrix.setIdentityM(mViewMatrix, 0);
-            Matrix.setIdentityM(mProjMatrix, 0);
-            Matrix.scaleM(mModelMatrix, 0, mScaleW, mScaleH, 1.0f);
-            Matrix.orthoM(mProjMatrix, 0, 0, mScaleW, 0, mScaleH, -100f, 100f);
-            Matrix.multiplyMM(mMVPMatrix, 0, mViewMatrix, 0, mModelMatrix, 0);
-            Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mMVPMatrix, 0);
-
-            System.arraycopy(info.transform, 0, mModelMatrix, 0, 16);
-            Matrix.scaleM(mModelMatrix, 0, mWidth, mHeight, 1f);
-            Matrix.setIdentityM(mProjMatrix, 0);
-            Matrix.orthoM(mProjMatrix, 0, 0, info.viewportWidth, info.viewportHeight, 0, -100f, 100f);
-            Matrix.multiplyMM(mScreenMVPMatrix, 0, mViewMatrix, 0, mModelMatrix, 0);
-            Matrix.multiplyMM(mScreenMVPMatrix, 0, mProjMatrix, 0, mScreenMVPMatrix, 0);
-
-            mDisplayFrameBuffer = mFrameBufferCache.getDisplayFrameBuffer();
+            initMVPMatrix(mInfo);
 
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
             mInited = true;
+        }
 
+        mBlurProgram = createProgram(getVetexCode(), getFragmentShaderCode(6, Blur.MODE_GAUSSIAN));
+        mCopyProgram = createProgram(getVetexCode(), getCopyFragmentCode());
+        if (mBlurProgram == 0 || mCopyProgram == 0) {
+            return false;
         }
 
         GLES20.glClearColor(1f, 1f, 1f, 1f);
-
-        initProgram();
-
         // fuck scissor leads to bugfix for one week !!
         GLES20.glDisable(GLES20.GL_SCISSOR_TEST);
 
@@ -186,46 +173,53 @@ public class OnScreenRect {
         mHorizontalTexture = mTextureCache.getTexture(mScaleW, mScaleH);
         mVerticalTexture = mTextureCache.getTexture(mScaleW, mScaleH);
 
+        mDisplayFrameBuffer = mFrameBufferCache.getDisplayFrameBuffer();
         mHorizontalFrameBuffer = mFrameBufferCache.getFrameBuffer();
+        mVerticalFrameBuffer = mFrameBufferCache.getFrameBuffer();
         if (mHorizontalFrameBuffer != null) {
             mHorizontalFrameBuffer.bindTexture(mHorizontalTexture);
         }
-
-        mVerticalFrameBuffer = mFrameBufferCache.getFrameBuffer();
         if (mVerticalFrameBuffer != null) {
             mVerticalFrameBuffer.bindTexture(mVerticalTexture);
         }
 
-        copyFBO();
-
-        GLES20.glViewport(0, 0, mScaleW, mScaleH);
-        getTexMatrix(false);
-        drawHorizontalBlur(mMVPMatrix, mTexMatrix);
-        drawVerticalBlur(mMVPMatrix, mTexMatrix);
-
-        GLES20.glViewport(0, 0, info.viewportWidth, info.viewportHeight);
-        getTexMatrix(true);
-        upscale(mScreenMVPMatrix, mTexMatrix);
-
-
-        mDisplayFrameBuffer.bindSelf();
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
-        GLES20.glUseProgram(0);
-
-        mTextureCache.recycleTexture(mDisplayTexture);
-        mTextureCache.recycleTexture(mHorizontalTexture);
-        mTextureCache.recycleTexture(mVerticalTexture);
-
-        mFrameBufferCache.recycleFrameBuffer(mHorizontalFrameBuffer);
-        mFrameBufferCache.recycleFrameBuffer(mVerticalFrameBuffer);
-
-        GLES20.glDeleteProgram(mBlurProgram);
-        GLES20.glDeleteProgram(mCopyProgram);
+        return checkGLError("Prepare to blurring");
 
     }
 
 
+    /**
+     * MVP的取值
+     *  Model                            View           Projection
+     * transform + scaled Width&Height   Identity       viewport
+     * scaled Width&Height               Identity       scaled Width&Height
+     */
+    private void initMVPMatrix(DrawFunctor.GLInfo info) {
+        if (info == null) {
+            return;
+        }
+
+        Matrix.setIdentityM(mModelMatrix, 0);
+        Matrix.setIdentityM(mViewMatrix, 0);
+        Matrix.setIdentityM(mProjMatrix, 0);
+        Matrix.scaleM(mModelMatrix, 0, mScaleW, mScaleH, 1.0f);
+        Matrix.orthoM(mProjMatrix, 0, 0, mScaleW, 0, mScaleH, -100f, 100f);
+        Matrix.multiplyMM(mMVPMatrix, 0, mViewMatrix, 0, mModelMatrix, 0);
+        Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mMVPMatrix, 0);
+
+        System.arraycopy(info.transform, 0, mModelMatrix, 0, 16);
+        Matrix.scaleM(mModelMatrix, 0, mWidth, mHeight, 1f);
+        Matrix.setIdentityM(mProjMatrix, 0);
+        Matrix.orthoM(mProjMatrix, 0, 0, info.viewportWidth, info.viewportHeight, 0, -100f, 100f);
+        Matrix.multiplyMM(mScreenMVPMatrix, 0, mViewMatrix, 0, mModelMatrix, 0);
+        Matrix.multiplyMM(mScreenMVPMatrix, 0, mProjMatrix, 0, mScreenMVPMatrix, 0);
+    }
+
+
     private void drawHorizontalBlur(float[] mvpMatrix, float[] texMatrix) {
+        GLES20.glViewport(0, 0, mScaleW, mScaleH);
+        getTexMatrix(false);
+
         GLES20.glUseProgram(mBlurProgram);
 //
         mPositionId = GLES20.glGetAttribLocation(mBlurProgram, "aPosition");
@@ -252,7 +246,7 @@ public class OnScreenRect {
         mWidthOffsetId = GLES20.glGetUniformLocation(mBlurProgram, "uWidthOffset");
         mHeightOffsetId = GLES20.glGetUniformLocation(mBlurProgram, "uHeightOffset");
         GLES20.glUniform1f(mWidthOffsetId, 1f / mWidth / FACTOR);
-        GLES20.glUniform1f(mHeightOffsetId, 0f / mHeight / FACTOR);
+        GLES20.glUniform1f(mHeightOffsetId, 0);
 
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, mDrawListBuffer);
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
@@ -270,25 +264,21 @@ public class OnScreenRect {
         GLES20.glEnableVertexAttribArray(mPositionId);
         GLES20.glVertexAttribPointer(mPositionId, COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, mVertexStride, mVertexBuffer);
 
-//        mMVPMatrixId = GLES20.glGetUniformLocation(mBlurProgram, "uMVPMatrix");
         GLES20.glUniformMatrix4fv(mMVPMatrixId, 1, false, mvpMatrix, 0);
 
         GLES20.glUniformMatrix4fv(mTexMatrixId, 1, false, texMatrix, 0);
 
-//        mTexCoordId = GLES20.glGetAttribLocation(mBlurProgram, "aTexCoord");
-//        GLES20.glEnableVertexAttribArray(mTexCoordId);
         GLES20.glVertexAttribPointer(mTexCoordId, 2, GLES20.GL_FLOAT, false, 0, mTexCoordBuffer);
 
         mVerticalFrameBuffer.bindSelf();
 
-//        mTextureUniformId = GLES20.glGetUniformLocation(mBlurProgram, "uTexture");
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mHorizontalTexture.getId());
         GLES20.glUniform1i(mTextureUniformId, 0);
 
         mWidthOffsetId = GLES20.glGetUniformLocation(mBlurProgram, "uWidthOffset");
         mHeightOffsetId = GLES20.glGetUniformLocation(mBlurProgram, "uHeightOffset");
-        GLES20.glUniform1f(mWidthOffsetId, 0f / mWidth / FACTOR);
+        GLES20.glUniform1f(mWidthOffsetId, 0);
         GLES20.glUniform1f(mHeightOffsetId, 1f / mHeight / FACTOR);
 
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, mDrawListBuffer);
@@ -299,6 +289,9 @@ public class OnScreenRect {
     }
 
     private void upscale(float[] mvpMatrix, float[] texMatrix) {
+        GLES20.glViewport(0, 0, mInfo.viewportWidth, mInfo.viewportHeight);
+        getTexMatrix(true);
+
         GLES20.glUseProgram(mCopyProgram);
 
         mPositionId = GLES20.glGetAttribLocation(mCopyProgram, "aPosition");
@@ -350,11 +343,30 @@ public class OnScreenRect {
         }
     }
 
-    private void copyFBO() {
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mDisplayTexture.getId());
-        GLES20.glCopyTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, 0, mInfo.clipLeft, mInfo.viewportHeight - mInfo.clipBottom, mWidth, mHeight);
+    private void copyTextureFromScreen(DrawFunctor.GLInfo info) {
+        if (info != null && mDisplayTexture != null && mDisplayTexture.getId() != 0) {
+            GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mDisplayTexture.getId());
+            GLES20.glCopyTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, 0, info.clipLeft, info.viewportHeight - info.clipBottom, mWidth, mHeight);
+        }
 
+    }
+
+
+    private void onPostBlur() {
+        mDisplayFrameBuffer.bindSelf();
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+        GLES20.glUseProgram(0);
+
+        mTextureCache.recycleTexture(mDisplayTexture);
+        mTextureCache.recycleTexture(mHorizontalTexture);
+        mTextureCache.recycleTexture(mVerticalTexture);
+
+        mFrameBufferCache.recycleFrameBuffer(mHorizontalFrameBuffer);
+        mFrameBufferCache.recycleFrameBuffer(mVerticalFrameBuffer);
+
+        GLES20.glDeleteProgram(mBlurProgram);
+        GLES20.glDeleteProgram(mCopyProgram);
     }
 
     public void destroy() {

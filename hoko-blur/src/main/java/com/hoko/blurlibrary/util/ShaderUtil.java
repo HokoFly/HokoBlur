@@ -74,11 +74,18 @@ public class ShaderUtil {
 
     }
 
-    public static void checkGLError(String msg) {
+    /**
+     * 返回true为GL无Error
+     * @param msg
+     * @return
+     */
+    public static boolean checkGLError(String msg) {
         int error = GLES20.glGetError();
         if (error != 0) {
             Log.e(TAG, "checkGLError: " + msg);
         }
+
+        return error == 0;
     }
 
     public static String getFragmentShaderCode(int radius, @Blur.BlurMode int mode) {

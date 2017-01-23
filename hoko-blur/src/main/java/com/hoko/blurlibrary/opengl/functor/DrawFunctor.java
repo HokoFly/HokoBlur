@@ -78,19 +78,17 @@ public class DrawFunctor {
     }
 
     private void onInvoke(int what) {
-        Log.e("DrawFunctor", "---------------onInvoke----------------");
     }
 
     private void onDraw(final GLInfo info) {
-        Log.e("DrawFunctor", "---------------onDraw----------------");
-        Log.e("DrawFunctor", "bottom: " + info.clipBottom);
-        Log.e("DrawFunctor", "left: " + info.clipLeft);
-        Log.e("DrawFunctor", "right: " + info.clipRight);
-        Log.e("DrawFunctor", "top: " + info.clipTop);
-        Log.e("DrawFunctor", "viewportW: " + info.viewportWidth);
-        Log.e("DrawFunctor", "viewportH: " + info.viewportHeight);
-        Log.e("DrawFunctor", "transform[12]" + info.transform[12]);
-        Log.e("DrawFunctor", "transform[13]" + info.transform[13]);
+//        Log.e("DrawFunctor", "bottom: " + info.clipBottom);
+//        Log.e("DrawFunctor", "left: " + info.clipLeft);
+//        Log.e("DrawFunctor", "right: " + info.clipRight);
+//        Log.e("DrawFunctor", "top: " + info.clipTop);
+//        Log.e("DrawFunctor", "viewportW: " + info.viewportWidth);
+//        Log.e("DrawFunctor", "viewportH: " + info.viewportHeight);
+//        Log.e("DrawFunctor", "transform[12]" + info.transform[12]);
+//        Log.e("DrawFunctor", "transform[13]" + info.transform[13]);
 
         mOnScreenRect.handleGlInfo(info);
 
