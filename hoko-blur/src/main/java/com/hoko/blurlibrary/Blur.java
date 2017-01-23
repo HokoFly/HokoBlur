@@ -3,7 +3,7 @@ package com.hoko.blurlibrary;
 import android.content.Context;
 import android.support.annotation.IntDef;
 
-import com.hoko.blurlibrary.generator.IBlur;
+import com.hoko.blurlibrary.generator.IBitmapBlur;
 import com.hoko.blurlibrary.generator.NativeBlurGenerator;
 import com.hoko.blurlibrary.generator.OpenGLBlurGenerator;
 import com.hoko.blurlibrary.generator.OriginBlurGenerator;
@@ -91,8 +91,8 @@ public class Blur {
      * 创建不同的模糊发生器
      * @return
      */
-    public IBlur getBlurGenerator() {
-        IBlur generator = null;
+    public IBitmapBlur getBlurGenerator() {
+        IBitmapBlur generator = null;
 
         switch (mBlurScheme) {
             case Blur.SCHEME_RENDER_SCRIPT:

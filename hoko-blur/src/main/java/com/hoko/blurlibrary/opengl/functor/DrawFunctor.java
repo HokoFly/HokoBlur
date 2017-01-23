@@ -1,13 +1,8 @@
 package com.hoko.blurlibrary.opengl.functor;
 
-import android.content.Context;
 import android.graphics.Canvas;
-import android.opengl.GLES20;
 import android.opengl.Matrix;
 import android.os.Build;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.util.Log;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
@@ -19,11 +14,11 @@ public class DrawFunctor {
 
     private long mNativeFunctor;
 
-    private OnScreenRect mOnScreenRect;
+    private ScreenBlurRenderer mScreenBlurGenerator;
 
     public DrawFunctor() {
         mNativeFunctor = createNativeFunctor(new WeakReference<DrawFunctor>(this));
-        mOnScreenRect = new OnScreenRect();
+        mScreenBlurGenerator = new ScreenBlurRenderer();
 
     }
 
@@ -68,7 +63,7 @@ public class DrawFunctor {
                     callDrawGLFunctionMethod.invoke(canvas, (int)mNativeFunctor);
                 }
 
-//                mOnScreenRect.initSourceBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+//                mScreenBlurGenerator.initSourceBounds(0, 0, canvas.getWidth(), canvas.getHeight());
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -90,7 +85,7 @@ public class DrawFunctor {
 //        Log.e("DrawFunctor", "transform[12]" + info.transform[12]);
 //        Log.e("DrawFunctor", "transform[13]" + info.transform[13]);
 
-        mOnScreenRect.handleGlInfo(info);
+        mScreenBlurGenerator.doBlur(info);
 
     }
 

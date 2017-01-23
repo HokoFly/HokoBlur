@@ -16,7 +16,7 @@ import com.hoko.blurlibrary.renderscript.ScriptC_Stackblur;
 /**
  * Created by xiangpi on 16/9/7.
  */
-public class RenderScriptBlurGenerator extends BlurGenerator {
+public class RenderScriptBlurGenerator extends BitmapBlurGenerator {
 
 //    private static volatile RenderScriptBlurGenerator sGenerator;
 

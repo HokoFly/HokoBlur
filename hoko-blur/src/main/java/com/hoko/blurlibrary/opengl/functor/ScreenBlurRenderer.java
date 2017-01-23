@@ -27,9 +27,15 @@ import static com.hoko.blurlibrary.util.ShaderUtil.getVetexCode;
 /**
  * Created by xiangpi on 16/11/23.
  */
-public class OnScreenRect {
+public class ScreenBlurRenderer implements IScreenBlur{
 
-    private static final String TAG = "OnScreenRect";
+    private static final String TAG = "ScreenBlurRenderer";
+
+    private int mRadius;
+
+    private @Blur.BlurMode int mMode;
+
+    private float mSampleFactor;
 
     private float[] mModelMatrix = new float[16];
     private float[] mViewMatrix = new float[16];
@@ -94,7 +100,7 @@ public class OnScreenRect {
     private TextureCache mTextureCache = TextureCache.getInstance();
     private FrameBufferCache mFrameBufferCache = FrameBufferCache.getInstance();
 
-    public OnScreenRect() {
+    public ScreenBlurRenderer() {
         ByteBuffer bb = ByteBuffer.allocateDirect(squareCoords.length * 4);
         bb.order(ByteOrder.nativeOrder());
         mVertexBuffer = bb.asFloatBuffer();
@@ -115,11 +121,15 @@ public class OnScreenRect {
 
     }
 
-    public void handleGlInfo(DrawFunctor.GLInfo info) {
+
+    @Override
+    public void doBlur(DrawFunctor.GLInfo info) {
         mInfo = info;
 
         mWidth = info.clipRight - info.clipLeft;
         mHeight = info.clipBottom - info.clipTop;
+        
+        checkTextureSize();
 
         mScaleW = (int) (mWidth * FACTOR);
         mScaleH = (int) (mHeight * FACTOR);
@@ -140,9 +150,11 @@ public class OnScreenRect {
         upscale(mScreenMVPMatrix, mTexMatrix);
 
         onPostBlur();
-
     }
 
+    private void checkTextureSize() {
+        // TODO: 2017/1/23  
+    }
 
     private boolean prepare() {
         if (!mHasEGLContext) {
@@ -348,5 +360,33 @@ public class OnScreenRect {
     }
 
 
+    @Override
+    public void setBlurMode(@Blur.BlurMode int mode) {
+        mMode = mode;
+    }
 
+    @Override
+    public void setBlurRadius(int radius) {
+        mRadius = radius;
+    }
+
+    @Override
+    public void setSampleFactor(float factor) {
+        mSampleFactor = factor;
+    }
+
+    @Override
+    public int getBlurMode() {
+        return mMode;
+    }
+
+    @Override
+    public int getBlurRadius() {
+        return mRadius;
+    }
+
+    @Override
+    public float getSampleFactor() {
+        return mSampleFactor;
+    }
 }

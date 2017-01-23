@@ -2,7 +2,6 @@ package com.example.xiangpi.dynamicblurdemo.activity;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -22,7 +21,7 @@ import android.widget.TextView;
 
 import com.example.xiangpi.dynamicblurdemo.R;
 import com.hoko.blurlibrary.Blur;
-import com.hoko.blurlibrary.generator.IBlur;
+import com.hoko.blurlibrary.generator.IBitmapBlur;
 
 public class MultiBlurActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
@@ -49,7 +48,7 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
 
     private Blur mBlur;
 
-    private IBlur mGenerator;
+    private IBitmapBlur mGenerator;
 
     private Bitmap mInBitmap;
 

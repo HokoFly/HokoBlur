@@ -10,7 +10,7 @@ import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 
 import com.hoko.blurlibrary.Blur;
-import com.hoko.blurlibrary.generator.IBlur;
+import com.hoko.blurlibrary.generator.IBitmapBlur;
 
 /**
  * Created by xiangpi on 16/9/18.
@@ -23,7 +23,7 @@ public class BlurBgLinearLayout extends LinearLayout {
 
     private int[] mLocationInWindow;
 
-    private IBlur mGenerator;
+    private IBitmapBlur mGenerator;
 
     private Bitmap mBitmap;
 

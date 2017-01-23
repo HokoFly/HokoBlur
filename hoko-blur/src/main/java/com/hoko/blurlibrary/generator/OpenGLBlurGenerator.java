@@ -10,7 +10,7 @@ import com.hoko.blurlibrary.opengl.offscreen.OffScreenRendererImpl;
 /**
  * Created by xiangpi on 16/9/7.
  */
-public class OpenGLBlurGenerator extends BlurGenerator{
+public class OpenGLBlurGenerator extends BitmapBlurGenerator {
 
 //    private static volatile OpenGLBlurGenerator sGenerator;
 

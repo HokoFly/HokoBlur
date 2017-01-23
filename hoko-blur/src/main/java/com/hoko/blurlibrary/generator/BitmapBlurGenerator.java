@@ -8,13 +8,13 @@ import com.hoko.blurlibrary.util.BitmapUtil;
 /**
  * Created by xiangpi on 16/9/8.
  */
-public abstract class BlurGenerator implements IBlur {
+public abstract class BitmapBlurGenerator implements IBitmapBlur {
 
-    protected int mRadius;
+    int mRadius;
 
-    protected @Blur.BlurMode int mMode;
+    @Blur.BlurMode int mMode;
 
-    protected float mSampleFactor;
+    private float mSampleFactor;
 
     @Override
     public void setBlurMode(@Blur.BlurMode int mode) {
