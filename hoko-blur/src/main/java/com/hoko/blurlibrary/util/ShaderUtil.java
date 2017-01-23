@@ -1,11 +1,61 @@
 package com.hoko.blurlibrary.util;
 
+import android.opengl.GLES20;
+import android.util.Log;
+
 import com.hoko.blurlibrary.Blur;
 
 /**
  * Created by xiangpi on 16/9/4.
  */
 public class ShaderUtil {
+
+    private static final String TAG = ShaderUtil.class.getSimpleName();
+
+    public static int createProgram(String vertexShaderCode, String fragmentShaderCode) {
+        int vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
+        int fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
+
+        if (vertexShader == 0 || fragmentShader == 0) {
+            return 0;
+        }
+
+        int program = GLES20.glCreateProgram();
+        if (program != 0) {
+            GLES20.glAttachShader(program, vertexShader);
+            GLES20.glAttachShader(program, fragmentShader);
+            GLES20.glLinkProgram(program);
+            GLES20.glDeleteShader(vertexShader);
+            GLES20.glDeleteShader(fragmentShader);
+            checkGLError("Attach Shader");
+            final int[] linkStatus = new int[1];
+            GLES20.glGetProgramiv(program, GLES20.GL_LINK_STATUS, linkStatus, 0);
+            if (linkStatus[0] != 1)  {
+                Log.e(TAG, "Failed to link program");
+                GLES20.glDeleteProgram(program);
+                program = 0;
+            }
+
+        }
+        return program;
+    }
+
+    public static int loadShader(int type, String shaderCode) {
+        int shader = GLES20.glCreateShader(type);
+        if (shader != 0) {
+            GLES20.glShaderSource(shader, shaderCode);
+            GLES20.glCompileShader(shader);
+
+            final int[] compiled = new int[1];
+            GLES20.glGetShaderiv(shader, GLES20.GL_COMPILE_STATUS, compiled, 0);
+            if (compiled[0] == 0) {
+                Log.e(TAG, "Failed to compile the shader");
+                GLES20.glDeleteShader(shader);
+                shader = 0;
+            }
+        }
+        return shader;
+    }
 
     public static String getVetexCode() {
         StringBuilder sb = new StringBuilder();
@@ -22,6 +72,13 @@ public class ShaderUtil {
 
         return sb.toString();
 
+    }
+
+    public static void checkGLError(String msg) {
+        int error = GLES20.glGetError();
+        if (error != 0) {
+            Log.e(TAG, "checkGLError: " + msg);
+        }
     }
 
     public static String getFragmentShaderCode(int radius, @Blur.BlurMode int mode) {
@@ -60,7 +117,7 @@ public class ShaderUtil {
     /**
      * 预先设置Kernel权重数组，出现GPU寄存器不足，无法计算，这里在代码中直接计算kernel
      */
-    public static String getGaussianSampleCode(int radius) {
+    private static String getGaussianSampleCode(int radius) {
         int d = radius * 2 + 1;
 
         StringBuilder sb = new StringBuilder();
@@ -89,7 +146,7 @@ public class ShaderUtil {
     /**
      * 预先设置Kernel权重数组，出现GPU寄存器不足，无法计算，这里在代码中直接计算kernel
      */
-    public static String getBoxSampleCode(int radius) {
+    private static String getBoxSampleCode(int radius) {
         StringBuilder sb = new StringBuilder();
 
         int d = radius * 2 + 1;
@@ -117,7 +174,7 @@ public class ShaderUtil {
     /**
      * 预先设置Kernel权重数组，出现GPU寄存器不足，无法计算，这里在代码中直接计算kernel
      */
-    public static String getStackSampleCode(int radius) {
+    private static String getStackSampleCode(int radius) {
         StringBuilder sb = new StringBuilder();
 
         int d = radius * 2 + 1;

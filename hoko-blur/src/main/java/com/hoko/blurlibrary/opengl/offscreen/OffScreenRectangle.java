@@ -14,6 +14,8 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
+import static com.hoko.blurlibrary.util.ShaderUtil.loadShader;
+
 /**
  * Created by xiangpi on 16/8/10.
  */
@@ -158,14 +160,6 @@ public class OffScreenRectangle {
         mVerticalTexture = loadTexture(mWidth, mHeight);
 
     }
-
-    private int loadShader(int type, String shaderCode) {
-        int shader = GLES20.glCreateShader(type);
-        GLES20.glShaderSource(shader, shaderCode);
-        GLES20.glCompileShader(shader);
-        return shader;
-    }
-
 
     private int loadTexture(Bitmap bitmap) {
         final int[] textureHandle = new int[1];

@@ -75,6 +75,11 @@ public class FrameBufferCache {
         if (mCache != null) {
             mCache.evictAll();
         }
+
+        if (sDisplayFrameBuffer != null) {
+            sDisplayFrameBuffer.delete();
+            sDisplayFrameBuffer = null;
+        }
     }
 
 }

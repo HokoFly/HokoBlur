@@ -1,6 +1,5 @@
 package com.hoko.blurlibrary.opengl.functor;
 
-import android.graphics.RectF;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 import android.util.Log;
@@ -10,7 +9,6 @@ import com.hoko.blurlibrary.opengl.cache.FrameBufferCache;
 import com.hoko.blurlibrary.opengl.cache.TextureCache;
 import com.hoko.blurlibrary.opengl.framebuffer.IFrameBuffer;
 import com.hoko.blurlibrary.opengl.texture.ITexture;
-import com.hoko.blurlibrary.util.ShaderUtil;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -20,9 +18,11 @@ import java.nio.ShortBuffer;
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLContext;
 
+import static com.hoko.blurlibrary.util.ShaderUtil.createProgram;
 import static com.hoko.blurlibrary.util.ShaderUtil.getCopyFragmentCode;
 import static com.hoko.blurlibrary.util.ShaderUtil.getFragmentShaderCode;
 import static com.hoko.blurlibrary.util.ShaderUtil.getVetexCode;
+import static com.hoko.blurlibrary.util.ShaderUtil.loadShader;
 
 /**
  * Created by xiangpi on 16/11/23.
@@ -70,10 +70,6 @@ public class OnScreenRect {
     private short drawOrder[] = {0, 1, 2, 2, 3, 1};
 
     private int mVertexStride = COORDS_PER_VERTEX * 4;
-
-    private int mVertexShader;
-    private int mBlurFragmentShader;
-    private int mCopyFragmentShader;
 
     private int mBlurProgram;
     private int mCopyProgram;
@@ -126,20 +122,8 @@ public class OnScreenRect {
     }
 
     private void initProgram() {
-        mVertexShader = loadShader(GLES20.GL_VERTEX_SHADER, getVetexCode());
-        mBlurFragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, getFragmentShaderCode(6, Blur.MODE_GAUSSIAN));
-        mCopyFragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, getCopyFragmentCode());
-
-
-        mBlurProgram = GLES20.glCreateProgram();
-        GLES20.glAttachShader(mBlurProgram, mVertexShader);
-        GLES20.glAttachShader(mBlurProgram, mBlurFragmentShader);
-        GLES20.glLinkProgram(mBlurProgram);
-
-        mCopyProgram = GLES20.glCreateProgram();
-        GLES20.glAttachShader(mCopyProgram, mVertexShader);
-        GLES20.glAttachShader(mCopyProgram, mCopyFragmentShader);
-        GLES20.glLinkProgram(mCopyProgram);
+        mBlurProgram = createProgram(getVetexCode(), getFragmentShaderCode(6, Blur.MODE_GAUSSIAN));
+        mCopyProgram = createProgram(getVetexCode(), getCopyFragmentCode());
     }
 
     public void handleGlInfo(DrawFunctor.GLInfo info) {
@@ -221,10 +205,8 @@ public class OnScreenRect {
 
         GLES20.glViewport(0, 0, info.viewportWidth, info.viewportHeight);
         getTexMatrix(true);
-//        GLES20.glEnable(GLES20.GL_SCISSOR_TEST);
-//        mVerticalTexture = mDisplayTexture;
-
         upscale(mScreenMVPMatrix, mTexMatrix);
+
 
         mDisplayFrameBuffer.bindSelf();
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
@@ -236,10 +218,6 @@ public class OnScreenRect {
 
         mFrameBufferCache.recycleFrameBuffer(mHorizontalFrameBuffer);
         mFrameBufferCache.recycleFrameBuffer(mVerticalFrameBuffer);
-
-        // TODO: 2017/1/22 统一delete
-//        GLES20.glDeleteTextures(3, new int[]{mDisplayTexture, mHorizontalTexture, mVerticalTexture}, 0);
-//        GLES20.glDeleteFramebuffers(2, new int[]{mHorizontalFrameBuffer, mVerticalFrameBuffer}, 0);
 
         GLES20.glDeleteProgram(mBlurProgram);
         GLES20.glDeleteProgram(mCopyProgram);
@@ -360,15 +338,6 @@ public class OnScreenRect {
     }
 
 
-
-    private int loadShader(int type, String shaderCode) {
-        int shader = GLES20.glCreateShader(type);
-        GLES20.glShaderSource(shader, shaderCode);
-        GLES20.glCompileShader(shader);
-        return shader;
-    }
-
-
     private void getTexMatrix(boolean flipY) {
         Matrix.setIdentityM(mTexMatrix, 0);
 
@@ -389,6 +358,8 @@ public class OnScreenRect {
     }
 
     public void destroy() {
+        mTextureCache.deleteTextures();
+        mFrameBufferCache.deleteFrameBuffers();
         GLES20.glDisableVertexAttribArray(mPositionId);
         GLES20.glDisableVertexAttribArray(mTexCoordId);
     }
