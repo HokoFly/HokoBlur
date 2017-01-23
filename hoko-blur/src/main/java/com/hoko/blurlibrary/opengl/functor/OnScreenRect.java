@@ -8,12 +8,10 @@ import android.util.Log;
 import com.hoko.blurlibrary.Blur;
 import com.hoko.blurlibrary.opengl.cache.FrameBufferCache;
 import com.hoko.blurlibrary.opengl.cache.TextureCache;
-import com.hoko.blurlibrary.opengl.framebuffer.FrameBufferFactory;
 import com.hoko.blurlibrary.opengl.framebuffer.IFrameBuffer;
 import com.hoko.blurlibrary.opengl.texture.ITexture;
 import com.hoko.blurlibrary.util.ShaderUtil;
 
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -232,7 +230,7 @@ public class OnScreenRect {
 
         upscale(mScreenMVPMatrix, mTexMatrix);
 
-        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mDisplayFrameBuffer.getId());
+        mDisplayFrameBuffer.bindSelf();
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
         GLES20.glUseProgram(0);
 
@@ -273,7 +271,7 @@ public class OnScreenRect {
         GLES20.glEnableVertexAttribArray(mTexCoordId);
         GLES20.glVertexAttribPointer(mTexCoordId, 2, GLES20.GL_FLOAT, false, 0, mTexCoordBuffer);
 
-        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mHorizontalFrameBuffer.getId());
+        mHorizontalFrameBuffer.bindSelf();
 
         mTextureUniformId = GLES20.glGetUniformLocation(mBlurProgram, "uTexture");
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
@@ -312,7 +310,7 @@ public class OnScreenRect {
 //        GLES20.glEnableVertexAttribArray(mTexCoordId);
         GLES20.glVertexAttribPointer(mTexCoordId, 2, GLES20.GL_FLOAT, false, 0, mTexCoordBuffer);
 
-        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mVerticalFrameBuffer.getId());
+        mVerticalFrameBuffer.bindSelf();
 
 //        mTextureUniformId = GLES20.glGetUniformLocation(mBlurProgram, "uTexture");
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
@@ -348,7 +346,7 @@ public class OnScreenRect {
         GLES20.glEnableVertexAttribArray(mTexCoordId);
         GLES20.glVertexAttribPointer(mTexCoordId, 2, GLES20.GL_FLOAT, false, 0, mTexCoordBuffer);
 
-        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mDisplayFrameBuffer.getId());
+        mDisplayFrameBuffer.bindSelf();
 
         mTextureUniformId = GLES20.glGetUniformLocation(mCopyProgram, "uTexture");
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);

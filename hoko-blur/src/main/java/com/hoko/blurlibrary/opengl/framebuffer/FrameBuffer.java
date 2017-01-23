@@ -63,6 +63,11 @@ class FrameBuffer implements IFrameBuffer {
     }
 
     @Override
+    public void bindSelf() {
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFrameBufferId);
+    }
+
+    @Override
     public void delete() {
         GLES20.glDeleteFramebuffers(1, new int[]{mFrameBufferId}, 0);
 

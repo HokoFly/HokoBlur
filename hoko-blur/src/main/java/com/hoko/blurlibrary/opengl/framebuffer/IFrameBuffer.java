@@ -16,5 +16,7 @@ public interface IFrameBuffer{
 
     ITexture getBindTexture();
 
+    void bindSelf();
+
     void delete();
 }
