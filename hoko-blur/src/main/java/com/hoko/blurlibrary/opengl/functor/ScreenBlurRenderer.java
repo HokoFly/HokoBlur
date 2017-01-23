@@ -31,11 +31,15 @@ public class ScreenBlurRenderer implements IScreenBlur{
 
     private static final String TAG = "ScreenBlurRenderer";
 
-    private int mRadius;
+    private static final @Blur.BlurMode int DEFAULT_MODE = Blur.MODE_GAUSSIAN;
+    private static final int DEFAULT_BLUR_RADIUS = 5;
+    private static final float DEFAULT_SAMPLE_FACTOR = 4.0f;
 
-    private @Blur.BlurMode int mMode;
+    private int mRadius = DEFAULT_BLUR_RADIUS;
 
-    private float mSampleFactor;
+    private @Blur.BlurMode int mMode = DEFAULT_MODE;
+
+    private float mSampleFactor = DEFAULT_SAMPLE_FACTOR;
 
     private float[] mModelMatrix = new float[16];
     private float[] mViewMatrix = new float[16];
@@ -47,8 +51,6 @@ public class ScreenBlurRenderer implements IScreenBlur{
 
     private int mWidth;
     private int mHeight;
-
-    private static final float FACTOR = 0.25f;
 
     private int mScaleW;
     private int mScaleH;
@@ -96,6 +98,7 @@ public class ScreenBlurRenderer implements IScreenBlur{
     private IFrameBuffer mVerticalFrameBuffer;
 
     private boolean mHasEGLContext = false;
+    private boolean mNeedRelink = true;
     private DrawFunctor.GLInfo mInfo;
     private TextureCache mTextureCache = TextureCache.getInstance();
     private FrameBufferCache mFrameBufferCache = FrameBufferCache.getInstance();
@@ -131,8 +134,8 @@ public class ScreenBlurRenderer implements IScreenBlur{
         
         checkTextureSize();
 
-        mScaleW = (int) (mWidth * FACTOR);
-        mScaleH = (int) (mHeight * FACTOR);
+        mScaleW = (int) (mWidth / mSampleFactor);
+        mScaleH = (int) (mHeight / mSampleFactor);
 
         if (mWidth <= 0 || mHeight <= 0) {
             return;
@@ -153,7 +156,7 @@ public class ScreenBlurRenderer implements IScreenBlur{
     }
 
     private void checkTextureSize() {
-        // TODO: 2017/1/23  
+        // TODO: 2017/1/23
     }
 
     private boolean prepare() {
@@ -168,10 +171,17 @@ public class ScreenBlurRenderer implements IScreenBlur{
             mHasEGLContext = true;
         }
 
+
         initMVPMatrix(mInfo);
 
-        mBlurProgram = createProgram(getVetexCode(), getFragmentShaderCode(6, Blur.MODE_GAUSSIAN));
-        mCopyProgram = createProgram(getVetexCode(), getCopyFragmentCode());
+        if (mNeedRelink) {
+            deletePrograms();
+            mBlurProgram = createProgram(getVetexCode(), getFragmentShaderCode(mMode));
+            mCopyProgram = createProgram(getVetexCode(), getCopyFragmentCode());
+            mNeedRelink = false;
+        }
+
+
         if (mBlurProgram == 0 || mCopyProgram == 0) {
             return false;
         }
@@ -257,11 +267,13 @@ public class ScreenBlurRenderer implements IScreenBlur{
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, isHorizontal ? mDisplayTexture.getId() : mHorizontalTexture.getId());
         GLES20.glUniform1i(mTextureUniformId, 0);
 
+        int radiusId = GLES20.glGetUniformLocation(mBlurProgram, "uRadius");
         int widthOffsetId = GLES20.glGetUniformLocation(mBlurProgram, "uWidthOffset");
         int heightOffsetId = GLES20.glGetUniformLocation(mBlurProgram, "uHeightOffset");
 
-        GLES20.glUniform1f(widthOffsetId, isHorizontal ? 1f / mWidth / FACTOR : 0);
-        GLES20.glUniform1f(heightOffsetId, isHorizontal ? 0 : 1f / mHeight / FACTOR);
+        GLES20.glUniform1i(radiusId, mRadius);
+        GLES20.glUniform1f(widthOffsetId, isHorizontal ? 1f / mWidth * mSampleFactor : 0);
+        GLES20.glUniform1f(heightOffsetId, isHorizontal ? 0 : 1f / mHeight * mSampleFactor);
 
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, mDrawListBuffer);
 
@@ -347,9 +359,6 @@ public class ScreenBlurRenderer implements IScreenBlur{
 
         mFrameBufferCache.recycleFrameBuffer(mHorizontalFrameBuffer);
         mFrameBufferCache.recycleFrameBuffer(mVerticalFrameBuffer);
-
-        GLES20.glDeleteProgram(mBlurProgram);
-        GLES20.glDeleteProgram(mCopyProgram);
     }
 
     public void destroy() {
@@ -357,12 +366,22 @@ public class ScreenBlurRenderer implements IScreenBlur{
         mFrameBufferCache.deleteFrameBuffers();
         GLES20.glDisableVertexAttribArray(mPositionId);
         GLES20.glDisableVertexAttribArray(mTexCoordId);
+        deletePrograms();
     }
 
+    private void deletePrograms() {
+        if (mBlurProgram != 0) {
+            GLES20.glDeleteProgram(mBlurProgram);
+        }
+        if (mCopyProgram != 0) {
+            GLES20.glDeleteProgram(mCopyProgram);
+        }
+    }
 
     @Override
     public void setBlurMode(@Blur.BlurMode int mode) {
         mMode = mode;
+        mNeedRelink = true;
     }
 
     @Override

@@ -3,6 +3,11 @@ package com.hoko.blurlibrary.opengl.functor;
 import android.graphics.Canvas;
 import android.opengl.Matrix;
 import android.os.Build;
+import android.os.SystemClock;
+import android.util.Log;
+
+import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.generator.IBlur;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
@@ -10,22 +15,22 @@ import java.lang.reflect.Method;
 /**
  * Created by xiangpi on 16/11/9.
  */
-public class DrawFunctor {
+public class DrawFunctor implements IBlur {
 
     private long mNativeFunctor;
 
-    private ScreenBlurRenderer mScreenBlurGenerator;
+    private ScreenBlurRenderer mBlurRenderer;
 
     public DrawFunctor() {
         mNativeFunctor = createNativeFunctor(new WeakReference<DrawFunctor>(this));
-        mScreenBlurGenerator = new ScreenBlurRenderer();
+        mBlurRenderer = new ScreenBlurRenderer();
 
     }
 
     private static void postEventFromNative(WeakReference<DrawFunctor> functor, DrawFunctor.GLInfo info, int what) {
-        if(functor != null && functor.get() != null) {
-            DrawFunctor d = (DrawFunctor)functor.get();
-            if(info != null) {
+        if (functor != null && functor.get() != null) {
+            DrawFunctor d = (DrawFunctor) functor.get();
+            if (info != null) {
                 d.onDraw(info);
             } else {
                 d.onInvoke(what);
@@ -46,7 +51,7 @@ public class DrawFunctor {
                     callDrawGLFunctionMethod = canvasClazz.getMethod("callDrawGLFunction2", long.class);
                     callDrawGLFunctionMethod.setAccessible(true);
                     callDrawGLFunctionMethod.invoke(canvas, mNativeFunctor);
-                } else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP){
+                } else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP) {
                     canvasClazz = Class.forName("android.view.HardwareCanvas");
                     callDrawGLFunctionMethod = canvasClazz.getMethod("callDrawGLFunction", long.class);
                     callDrawGLFunctionMethod.setAccessible(true);
@@ -60,10 +65,8 @@ public class DrawFunctor {
                     canvasClazz = Class.forName("android.view.HardwareCanvas");
                     callDrawGLFunctionMethod = canvasClazz.getMethod("callDrawGLFunction", int.class);
                     callDrawGLFunctionMethod.setAccessible(true);
-                    callDrawGLFunctionMethod.invoke(canvas, (int)mNativeFunctor);
+                    callDrawGLFunctionMethod.invoke(canvas, (int) mNativeFunctor);
                 }
-
-//                mScreenBlurGenerator.initSourceBounds(0, 0, canvas.getWidth(), canvas.getHeight());
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -84,9 +87,43 @@ public class DrawFunctor {
 //        Log.e("DrawFunctor", "viewportH: " + info.viewportHeight);
 //        Log.e("DrawFunctor", "transform[12]" + info.transform[12]);
 //        Log.e("DrawFunctor", "transform[13]" + info.transform[13]);
+        long start = SystemClock.currentThreadTimeMillis();
+        mBlurRenderer.doBlur(info);
+        long stop = SystemClock.currentThreadTimeMillis();
 
-        mScreenBlurGenerator.doBlur(info);
+        Log.e("duration", "onDraw: " + (stop - start) + "ms");
 
+
+    }
+
+    @Override
+    public void setBlurMode(@Blur.BlurMode int mode) {
+        mBlurRenderer.setBlurMode(mode);
+    }
+
+    @Override
+    public void setBlurRadius(int radius) {
+        mBlurRenderer.setBlurRadius(radius);
+    }
+
+    @Override
+    public void setSampleFactor(float factor) {
+        mBlurRenderer.setSampleFactor(factor);
+    }
+
+    @Override
+    public int getBlurMode() {
+        return mBlurRenderer.getBlurMode();
+    }
+
+    @Override
+    public int getBlurRadius() {
+        return mBlurRenderer.getBlurRadius();
+    }
+
+    @Override
+    public float getSampleFactor() {
+        return mBlurRenderer.getSampleFactor();
     }
 
     public static class GLInfo {

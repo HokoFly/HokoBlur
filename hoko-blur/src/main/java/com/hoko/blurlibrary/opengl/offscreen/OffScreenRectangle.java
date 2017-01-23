@@ -3,6 +3,7 @@ package com.hoko.blurlibrary.opengl.offscreen;
 import android.graphics.Bitmap;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
+import android.os.SystemClock;
 import android.util.Log;
 
 
@@ -81,6 +82,7 @@ public class OffScreenRectangle {
     private int mMVPMatrixHandle;
     private int mTexCoordHandle;
 
+    private int mRadiusHandle;
     private int mWidthOffsetHandle;
     private int mHeightOffsetHandle;
 
@@ -98,9 +100,12 @@ public class OffScreenRectangle {
     private int mWidth;
     private int mHeight;
 
-    public OffScreenRectangle(int blurRadius, @Blur.BlurMode int mode) {
+    private int mRadius;
 
-        fragmentShaderCode = ShaderUtil.getFragmentShaderCode(blurRadius, mode);
+    public OffScreenRectangle(int blurRadius, @Blur.BlurMode int mode) {
+        mRadius = blurRadius;
+
+        fragmentShaderCode = ShaderUtil.getFragmentShaderCode(mode);
 
         ByteBuffer bb = ByteBuffer.allocateDirect(squareCoords.length * 4);
         bb.order(ByteOrder.nativeOrder());
@@ -250,8 +255,10 @@ public class OffScreenRectangle {
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mInputTexture);
         GLES20.glUniform1i(mTextureUniformHandle, 0);
 
+        mRadiusHandle = GLES20.glGetUniformLocation(mHorizontalProgram, "uRadius");
         mWidthOffsetHandle = GLES20.glGetUniformLocation(mHorizontalProgram, "uWidthOffset");
         mHeightOffsetHandle = GLES20.glGetUniformLocation(mHorizontalProgram, "uHeightOffset");
+        GLES20.glUniform1i(mRadiusHandle, mRadius);
         GLES20.glUniform1f(mWidthOffsetHandle, 0f / mWidth);
         GLES20.glUniform1f(mHeightOffsetHandle, 1f / mHeight);
 
@@ -286,8 +293,11 @@ public class OffScreenRectangle {
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mHorizontalTexture);
         GLES20.glUniform1i(mTextureUniformHandle, 0);
 
+        mRadiusHandle = GLES20.glGetUniformLocation(mHorizontalProgram, "uRadius");
         mWidthOffsetHandle = GLES20.glGetUniformLocation(mVerticalProgram, "uWidthOffset");
         mHeightOffsetHandle = GLES20.glGetUniformLocation(mVerticalProgram, "uHeightOffset");
+
+        GLES20.glUniform1i(mRadiusHandle, mRadius);
         GLES20.glUniform1f(mWidthOffsetHandle, 1f / mWidth);
         GLES20.glUniform1f(mHeightOffsetHandle, 0f / mHeight);
 

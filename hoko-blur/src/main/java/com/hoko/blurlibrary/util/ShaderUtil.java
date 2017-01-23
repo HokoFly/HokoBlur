@@ -1,6 +1,7 @@
 package com.hoko.blurlibrary.util;
 
 import android.opengl.GLES20;
+import android.os.SystemClock;
 import android.util.Log;
 
 import com.hoko.blurlibrary.Blur;
@@ -88,13 +89,14 @@ public class ShaderUtil {
         return error == 0;
     }
 
-    public static String getFragmentShaderCode(int radius, @Blur.BlurMode int mode) {
+    public static String getFragmentShaderCode(@Blur.BlurMode int mode) {
 
         StringBuilder sb = new StringBuilder();
         sb.append(" \n")
-                .append("precision mediump float;")
+                .append("precision mediump float;   \n")
                 .append("varying vec2 vTexCoord;   \n")
                 .append("uniform sampler2D uTexture;   \n")
+                .append("uniform int uRadius;   \n")
                 .append("uniform float uWidthOffset;  \n")
                 .append("uniform float uHeightOffset;  \n")
                 .append("mediump float getGaussWeight(mediump float currentPos, mediump float sigma) \n")
@@ -108,11 +110,11 @@ public class ShaderUtil {
                 .append("void main() {   \n");
 
         if (mode == Blur.MODE_BOX) {
-            sb.append(ShaderUtil.getBoxSampleCode(radius));
+            sb.append(ShaderUtil.getBoxSampleCode());
         } else if (mode == Blur.MODE_GAUSSIAN) {
-            sb.append(ShaderUtil.getGaussianSampleCode(radius));
+            sb.append(ShaderUtil.getGaussianSampleCode());
         } else if (mode == Blur.MODE_STACK) {
-            sb.append(ShaderUtil.getStackSampleCode(radius));
+            sb.append(ShaderUtil.getStackSampleCode());
         }
         sb.append("}   \n");
 
@@ -124,90 +126,72 @@ public class ShaderUtil {
     /**
      * 预先设置Kernel权重数组，出现GPU寄存器不足，无法计算，这里在代码中直接计算kernel
      */
-    private static String getGaussianSampleCode(int radius) {
-        int d = radius * 2 + 1;
+    private static String getGaussianSampleCode() {
 
         StringBuilder sb = new StringBuilder();
 
-        sb.append("  vec3 sampleTex[KERNEL_SIZE];\n")
+        sb.append("int diameter = 2 * uRadius + 1;  \n")
+                .append("  vec3 sampleTex;\n")
                 .append("  vec3 col;  \n")
                 .append("  float weightSum = 0.0; \n")
-                .append("  for(int i = 0; i < KERNEL_SIZE; i++) {\n")
-                .append("   vec2 offset = vec2(float(i - ")
-                .append(radius).append(") * uWidthOffset, float(i - ")
-                .append(radius).append(") * uHeightOffset);\n")
-                .append("        sampleTex[i] = vec3(texture2D(uTexture, vTexCoord.st+offset));\n")
-                .append("  } \n")
-                .append("  for(int i = 0; i < KERNEL_SIZE; i++) { \n")
+                .append("  for(int i = 0; i < diameter; i++) {\n")
+                .append("       vec2 offset = vec2(float(i - uRadius) * uWidthOffset, float(i - uRadius) * uHeightOffset);  \n")
+                .append("       sampleTex = vec3(texture2D(uTexture, vTexCoord.st+offset));\n")
                 .append("       float index = float(i); \n")
-                .append("       float gaussWeight = getGaussWeight(index - float(KERNEL_SIZE - 1)/2.0,")
-                .append("           (float(KERNEL_SIZE - 1)/2.0 + 1.0) / 2.0); \n")
-                .append("       col += sampleTex[i] * gaussWeight; \n")
+                .append("       float gaussWeight = getGaussWeight(index - float(diameter - 1)/2.0,")
+                .append("           (float(diameter - 1)/2.0 + 1.0) / 2.0); \n")
+                .append("       col += sampleTex * gaussWeight; \n")
                 .append("       weightSum += gaussWeight;\n")
                 .append("  }   \n")
                 .append("  gl_FragColor = vec4(col / weightSum, 1.0);   \n");
 
-        return sb.toString().replace("KERNEL_SIZE", d + "");
+        return sb.toString();
     }
 
     /**
      * 预先设置Kernel权重数组，出现GPU寄存器不足，无法计算，这里在代码中直接计算kernel
      */
-    private static String getBoxSampleCode(int radius) {
+    private static String getBoxSampleCode() {
         StringBuilder sb = new StringBuilder();
 
-        int d = radius * 2 + 1;
-
-        sb.append("  vec3 sampleTex[KERNEL_SIZE];\n")
+        sb.append("int diameter = 2 * uRadius + 1; \n")
+                .append("  vec3 sampleTex;\n")
                 .append("  vec3 col;  \n")
                 .append("  float weightSum = 0.0f; \n")
-                .append("  for(int i = 0; i < KERNEL_SIZE; i++) {\n")
-                .append("   vec2 offset = vec2(float(i - ")
-                .append(radius).append(") * uWidthOffset, float(i - ")
-                .append(radius).append(") * uHeightOffset);\n")
-                .append("        sampleTex[i] = vec3(texture2D(uTexture, vTexCoord.st+offset));\n")
-                .append("  } \n")
-                .append("  for(int i = 0; i < KERNEL_SIZE; i++) { \n")
+                .append("  for(int i = 0; i < diameter; i++) {\n")
+                .append("       vec2 offset = vec2(float(i - uRadius) * uWidthOffset, float(i - uRadius) * uHeightOffset);  \n")
+                .append("        sampleTex = vec3(texture2D(uTexture, vTexCoord.st+offset));\n")
                 .append("       float index = float(i); \n")
-                .append("       float boxWeight = 1.0f / float(KERNEL_SIZE); \n")
-                .append("       col += sampleTex[i] * boxWeight; \n")
+                .append("       float boxWeight = 1.0f / float(diameter); \n")
+                .append("       col += sampleTex * boxWeight; \n")
                 .append("       weightSum += boxWeight;\n")
                 .append("  }   \n")
                 .append("  gl_FragColor = vec4(col / weightSum, 1.0);   \n");
 
-        return sb.toString().replace("KERNEL_SIZE", d + "");
+        return sb.toString();
     }
 
     /**
      * 预先设置Kernel权重数组，出现GPU寄存器不足，无法计算，这里在代码中直接计算kernel
      */
-    private static String getStackSampleCode(int radius) {
+    private static String getStackSampleCode() {
         StringBuilder sb = new StringBuilder();
 
-        int d = radius * 2 + 1;
-
-        sb.append("  vec3 sampleTex[KERNEL_SIZE];\n")
+        sb.append("int diameter = 2 * uRadius + 1;  \n")
+                .append("  vec3 sampleTex;\n")
                 .append("  vec3 col;  \n")
                 .append("  float weightSum = 0.0; \n")
-                .append("  for(int i = 0; i < KERNEL_SIZE; i++) {\n")
-                .append("   vec2 offset = vec2(float(i - ")
-                .append(radius).append(") * uWidthOffset, float(i - ")
-                .append(radius).append(") * uHeightOffset);\n")
-                .append("        sampleTex[i] = vec3(texture2D(uTexture, vTexCoord.st+offset));\n")
-                .append("  } \n")
-                .append("  for(int i = 0; i < KERNEL_SIZE; i++) { \n")
+                .append("  for(int i = 0; i < diameter; i++) {\n")
+                .append("       vec2 offset = vec2(float(i - uRadius) * uWidthOffset, float(i - uRadius) * uHeightOffset);  \n")
+                .append("       sampleTex = vec3(texture2D(uTexture, vTexCoord.st+offset));\n")
                 .append("       float index = float(i); \n")
-                .append("       float boxWeight = float(")
-                .append(radius)
-                .append(") + 1.0 - abs(index - float(")
-                .append(radius)
-                .append(")); \n")
-                .append("       col += sampleTex[i] * boxWeight; \n")
+                .append("       float boxWeight = float(uRadius) + 1.0 - abs(index - float(uRadius)); \n")
+                .append("       col += sampleTex * boxWeight; \n")
                 .append("       weightSum += boxWeight;\n")
                 .append("  }   \n")
                 .append("  gl_FragColor = vec4(col / weightSum, 1.0);   \n");
 
-        return sb.toString().replace("KERNEL_SIZE", d + "");
+        return sb.toString();
     }
 
     // 获得初始化模糊核部分的代码
