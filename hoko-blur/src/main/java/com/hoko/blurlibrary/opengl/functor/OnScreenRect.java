@@ -78,10 +78,7 @@ public class OnScreenRect {
     private int mMVPMatrixId;
     private int mTexCoordId;
     private int mTexMatrixId;
-    private int mBoundsId;
 
-    private int mWidthOffsetId;
-    private int mHeightOffsetId;
     private int mTextureUniformId;
 
     private ITexture mHorizontalTexture;
@@ -92,7 +89,7 @@ public class OnScreenRect {
     private IFrameBuffer mHorizontalFrameBuffer;
     private IFrameBuffer mVerticalFrameBuffer;
 
-    private boolean mInited = false;
+    private boolean mHasEGLContext = false;
     private DrawFunctor.GLInfo mInfo;
     private TextureCache mTextureCache = TextureCache.getInstance();
     private FrameBufferCache mFrameBufferCache = FrameBufferCache.getInstance();
@@ -136,8 +133,10 @@ public class OnScreenRect {
         }
 
         copyTextureFromScreen(mInfo);
-        drawHorizontalBlur(mMVPMatrix, mTexMatrix);
-        drawVerticalBlur(mMVPMatrix, mTexMatrix);
+        getTexMatrix(false);
+        drawOneDimenBlur(mMVPMatrix, mTexMatrix, true);
+        drawOneDimenBlur(mMVPMatrix, mTexMatrix, false);
+        getTexMatrix(true);
         upscale(mScreenMVPMatrix, mTexMatrix);
 
         onPostBlur();
@@ -146,18 +145,18 @@ public class OnScreenRect {
 
 
     private boolean prepare() {
-        if (!mInited) {
+        if (!mHasEGLContext) {
             EGLContext context = ((EGL10) EGLContext.getEGL()).eglGetCurrentContext();
             if (context.equals(EGL10.EGL_NO_CONTEXT)) {
                 Log.e(TAG, "This thread is no EGLContext.");
                 return false;
             }
 
-            initMVPMatrix(mInfo);
-
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-            mInited = true;
+            mHasEGLContext = true;
         }
+
+        initMVPMatrix(mInfo);
 
         mBlurProgram = createProgram(getVetexCode(), getFragmentShaderCode(6, Blur.MODE_GAUSSIAN));
         mCopyProgram = createProgram(getVetexCode(), getCopyFragmentCode());
@@ -216,9 +215,8 @@ public class OnScreenRect {
     }
 
 
-    private void drawHorizontalBlur(float[] mvpMatrix, float[] texMatrix) {
+    private void drawOneDimenBlur(float[] mvpMatrix, float[] texMatrix, boolean isHorizontal) {
         GLES20.glViewport(0, 0, mScaleW, mScaleH);
-        getTexMatrix(false);
 
         GLES20.glUseProgram(mBlurProgram);
 //
@@ -236,61 +234,33 @@ public class OnScreenRect {
         GLES20.glEnableVertexAttribArray(mTexCoordId);
         GLES20.glVertexAttribPointer(mTexCoordId, 2, GLES20.GL_FLOAT, false, 0, mTexCoordBuffer);
 
-        mHorizontalFrameBuffer.bindSelf();
+        if (isHorizontal) {
+            mHorizontalFrameBuffer.bindSelf();
+        } else {
+            mVerticalFrameBuffer.bindSelf();
+        }
 
         mTextureUniformId = GLES20.glGetUniformLocation(mBlurProgram, "uTexture");
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mDisplayTexture.getId());
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, isHorizontal ? mDisplayTexture.getId() : mHorizontalTexture.getId());
         GLES20.glUniform1i(mTextureUniformId, 0);
 
-        mWidthOffsetId = GLES20.glGetUniformLocation(mBlurProgram, "uWidthOffset");
-        mHeightOffsetId = GLES20.glGetUniformLocation(mBlurProgram, "uHeightOffset");
-        GLES20.glUniform1f(mWidthOffsetId, 1f / mWidth / FACTOR);
-        GLES20.glUniform1f(mHeightOffsetId, 0);
+        int widthOffsetId = GLES20.glGetUniformLocation(mBlurProgram, "uWidthOffset");
+        int heightOffsetId = GLES20.glGetUniformLocation(mBlurProgram, "uHeightOffset");
+
+        GLES20.glUniform1f(widthOffsetId, isHorizontal ? 1f / mWidth / FACTOR : 0);
+        GLES20.glUniform1f(heightOffsetId, isHorizontal ? 0 : 1f / mHeight / FACTOR);
 
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, mDrawListBuffer);
-        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+
 
         resetAllBuffer();
 
     }
 
-
-    private void drawVerticalBlur(float[] mvpMatrix, float[] texMatrix) {
-        GLES20.glUseProgram(mBlurProgram);
-
-        mPositionId = GLES20.glGetAttribLocation(mBlurProgram, "aPosition");
-        GLES20.glEnableVertexAttribArray(mPositionId);
-        GLES20.glVertexAttribPointer(mPositionId, COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, mVertexStride, mVertexBuffer);
-
-        GLES20.glUniformMatrix4fv(mMVPMatrixId, 1, false, mvpMatrix, 0);
-
-        GLES20.glUniformMatrix4fv(mTexMatrixId, 1, false, texMatrix, 0);
-
-        GLES20.glVertexAttribPointer(mTexCoordId, 2, GLES20.GL_FLOAT, false, 0, mTexCoordBuffer);
-
-        mVerticalFrameBuffer.bindSelf();
-
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mHorizontalTexture.getId());
-        GLES20.glUniform1i(mTextureUniformId, 0);
-
-        mWidthOffsetId = GLES20.glGetUniformLocation(mBlurProgram, "uWidthOffset");
-        mHeightOffsetId = GLES20.glGetUniformLocation(mBlurProgram, "uHeightOffset");
-        GLES20.glUniform1f(mWidthOffsetId, 0);
-        GLES20.glUniform1f(mHeightOffsetId, 1f / mHeight / FACTOR);
-
-        GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, mDrawListBuffer);
-        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
-
-        resetAllBuffer();
-    }
 
     private void upscale(float[] mvpMatrix, float[] texMatrix) {
         GLES20.glViewport(0, 0, mInfo.viewportWidth, mInfo.viewportHeight);
-        getTexMatrix(true);
 
         GLES20.glUseProgram(mCopyProgram);
 
@@ -317,14 +287,15 @@ public class OnScreenRect {
 
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, mDrawListBuffer);
 
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
-        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
         resetAllBuffer();
 
 
     }
 
     private void resetAllBuffer() {
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+
         mVertexBuffer.rewind();
         mTexCoordBuffer.rewind();
         mDrawListBuffer.rewind();
