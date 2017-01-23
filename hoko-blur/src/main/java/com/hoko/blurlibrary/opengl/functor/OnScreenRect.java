@@ -21,6 +21,7 @@ import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLContext;
 
 import static com.hoko.blurlibrary.util.ShaderUtil.getCopyFragmentCode;
+import static com.hoko.blurlibrary.util.ShaderUtil.getFragmentShaderCode;
 import static com.hoko.blurlibrary.util.ShaderUtil.getVetexCode;
 
 /**
@@ -42,9 +43,6 @@ public class OnScreenRect {
     private int mHeight;
 
     private static final float FACTOR = 0.25f;
-
-    private RectF mBound1;
-    private RectF mBound2;
 
     private int mScaleW;
     private int mScaleH;
@@ -164,8 +162,6 @@ public class OnScreenRect {
                 return;
             }
 
-            initSize();
-
             /**
              * MVP的取值
              *  Model                            View           Projection
@@ -264,9 +260,6 @@ public class OnScreenRect {
         mTexMatrixId = GLES20.glGetUniformLocation(mBlurProgram, "uTexMatrix");
         GLES20.glUniformMatrix4fv(mTexMatrixId, 1, false, texMatrix, 0);
 
-        mBoundsId = GLES20.glGetUniformLocation(mBlurProgram, "uBounds");
-        GLES20.glUniform4f(mBoundsId, mBound1.left, mBound1.right, mBound1.top, mBound1.bottom);
-
         mTexCoordId = GLES20.glGetAttribLocation(mBlurProgram, "aTexCoord");
         GLES20.glEnableVertexAttribArray(mTexCoordId);
         GLES20.glVertexAttribPointer(mTexCoordId, 2, GLES20.GL_FLOAT, false, 0, mTexCoordBuffer);
@@ -280,7 +273,7 @@ public class OnScreenRect {
 
         mWidthOffsetId = GLES20.glGetUniformLocation(mBlurProgram, "uWidthOffset");
         mHeightOffsetId = GLES20.glGetUniformLocation(mBlurProgram, "uHeightOffset");
-        GLES20.glUniform1f(mWidthOffsetId, (mBound1.right - mBound1.left) / mWidth / FACTOR);
+        GLES20.glUniform1f(mWidthOffsetId, 1f / mWidth / FACTOR);
         GLES20.glUniform1f(mHeightOffsetId, 0f / mHeight / FACTOR);
 
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, mDrawListBuffer);
@@ -304,8 +297,6 @@ public class OnScreenRect {
 
         GLES20.glUniformMatrix4fv(mTexMatrixId, 1, false, texMatrix, 0);
 
-        GLES20.glUniform4f(mBoundsId, mBound2.left, mBound2.right, mBound2.top, mBound2.bottom);
-
 //        mTexCoordId = GLES20.glGetAttribLocation(mBlurProgram, "aTexCoord");
 //        GLES20.glEnableVertexAttribArray(mTexCoordId);
         GLES20.glVertexAttribPointer(mTexCoordId, 2, GLES20.GL_FLOAT, false, 0, mTexCoordBuffer);
@@ -320,7 +311,7 @@ public class OnScreenRect {
         mWidthOffsetId = GLES20.glGetUniformLocation(mBlurProgram, "uWidthOffset");
         mHeightOffsetId = GLES20.glGetUniformLocation(mBlurProgram, "uHeightOffset");
         GLES20.glUniform1f(mWidthOffsetId, 0f / mWidth / FACTOR);
-        GLES20.glUniform1f(mHeightOffsetId, (mBound2.bottom - mBound2.top) / mHeight / FACTOR);
+        GLES20.glUniform1f(mHeightOffsetId, 1f / mHeight / FACTOR);
 
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, mDrawListBuffer);
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
@@ -368,48 +359,6 @@ public class OnScreenRect {
         mDrawListBuffer.rewind();
     }
 
-    private String getFragmentShaderCode(int radius, @Blur.BlurMode int mode) {
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(" \n")
-                .append("precision mediump float;")
-//                .append("uniform vec4 uBounds;   \n")
-                .append("varying vec2 vTexCoord;   \n")
-                .append("uniform sampler2D uTexture;   \n")
-                .append("uniform float uWidthOffset;  \n")
-                .append("uniform float uHeightOffset;  \n")
-                .append("mediump float getGaussWeight(mediump float currentPos, mediump float sigma) \n")
-                .append("{ \n")
-                .append("   return 1.0 / sigma * exp(-(currentPos * currentPos) / (2.0 * sigma * sigma)); \n")
-                .append("} \n")
-
-                /**
-                 * Android 4.4一下系统编译器优化，这里注释暂时不用的GLSL代码
-                 */
-//                .append("float clip(float x,float min,float max) { \n")
-//                .append("    if (x>max) {\n")
-//                .append("       x=max;  \n")
-//                .append("    } else if (x<min) {\n")
-//                .append("       x=min;  \n")
-//                .append("    }\n")
-//                .append("    return x;  \n")
-//                .append("} ")
-//                .append("vec2 getTexCoord(vec2 texcoord,vec2 step) { \n")
-//                .append("return vec2(clip(texcoord.x+step.x,uBounds.x,uBounds.y), clip(texcoord.y+step.y,uBounds.z,uBounds.w));\n")
-//                .append("} ")
-                .append("void main() {   \n");
-
-        if (mode == Blur.MODE_BOX) {
-            sb.append(ShaderUtil.getBoxSampleCode(radius));
-        } else if (mode == Blur.MODE_GAUSSIAN) {
-            sb.append(ShaderUtil.getGaussianSampleCode(radius));
-        } else if (mode == Blur.MODE_STACK) {
-            sb.append(ShaderUtil.getStackSampleCode(radius));
-        }
-        sb.append("}   \n");
-
-        return sb.toString();
-    }
 
 
     private int loadShader(int type, String shaderCode) {
@@ -419,55 +368,22 @@ public class OnScreenRect {
         return shader;
     }
 
-    private void initSize() {
-        int viewportW = mWidth;
-        int viewportH = mHeight;
-
-        int fboW = nextMultipleN(mWidth + 8.0f, 4);
-        int fboH = nextMultipleN(mHeight + 8.0f, 4);
-
-        float right = (float) viewportW / (float) fboW;
-        float bottom = (float) viewportH / (float) fboH;
-        int width = viewportW + 8;
-        int height = viewportH + 8;
-//        float scaleX = (float) width / (float) (width - 8);
-//        float scaleY = (float) height / (float) (height - 8);
-
-        float scaleX = 1.0f;
-        float scaleY = 1.0f;
-
-        mBound1 = new RectF(0, 0, 1, 1);
-        mBound2 = new RectF(0, 0, 1, 1);
-//
-//        mBound1 = new RectF(0, 0, scaleX * right, scaleY * bottom);
-//        mBound2 = new RectF(0, 0, scaleX, scaleY);
-    }
 
     private void getTexMatrix(boolean flipY) {
         Matrix.setIdentityM(mTexMatrix, 0);
 
         if (flipY) {
-            Matrix.translateM(mTexMatrix, 0, mBound2.left, mBound2.bottom, 0);
-            Matrix.scaleM(mTexMatrix, 0, mBound2.width(), -mBound2.height(), 1.0F);
+            Matrix.translateM(mTexMatrix, 0, 0, 1.0f, 0);
+            Matrix.scaleM(mTexMatrix, 0, 1.0f, -1.0f, 1.0F);
         } else {
-            Matrix.translateM(mTexMatrix, 0, mBound1.left, mBound1.top, 0);
-            Matrix.scaleM(mTexMatrix, 0, mBound1.width(), mBound1.height(), 1.0F);
+            Matrix.translateM(mTexMatrix, 0, 0, 0, 0);
+            Matrix.scaleM(mTexMatrix, 0, 1.0f, 1.0f, 1.0F);
         }
     }
-
-    private int nextMultipleN(float value, int n) {
-        return (int) (value + (float) n - 1.0F) / n * n;
-    }
-
 
     private void copyFBO() {
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mDisplayTexture.getId());
-//        window2View(mInfo.transform, (float) mInfo.clipLeft, (float) mInfo.clipTop, (float) mInfo.clipRight, (float) mInfo.clipBottom, this.mClipBounds);
-//        mClipBounds.intersect(this.mSourceBounds);
-//        view2Window(mInfo.transform, this.mClipBounds, this.mTargetBounds);
-//        GLES20.glCopyTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, Math.abs(this.mClipBounds.left - this.mSourceBounds.left), Math.abs(this.mClipBounds.bottom - this.mSourceBounds.bottom),
-//                this.mTargetBounds.left, mInfo.viewportHeight - mTargetBounds.bottom, this.mTargetBounds.width(), this.mTargetBounds.height());
         GLES20.glCopyTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, 0, mInfo.clipLeft, mInfo.viewportHeight - mInfo.clipBottom, mWidth, mHeight);
 
     }
@@ -477,29 +393,6 @@ public class OnScreenRect {
         GLES20.glDisableVertexAttribArray(mTexCoordId);
     }
 
-//    public void initSourceBounds(int left, int top, int right, int bottom) {
-//        mSourceBounds.set(left, top, right, bottom);
-//    }
-
-//    public static void view2Window(float[] m, Rect src, Rect dst) {
-//        if (dst != null) {
-//            float left = (float) src.left + m[12];
-//            float top = (float) src.top + m[13];
-//            float right = (float) src.right + m[12];
-//            float bottom = (float) src.bottom + m[13];
-//            dst.set((int) (left + 0.5F), (int) (top + 0.5F), (int) (right + 0.5F), (int) (bottom + 0.5F));
-//        }
-//    }
-//
-//    public static void window2View(float[] m, float l, float t, float r, float b, Rect dst) {
-//        if (dst != null) {
-//            float left = l - m[12];
-//            float top = t - m[13];
-//            float right = r - m[12];
-//            float bottom = b - m[13];
-//            dst.set((int) (left + 0.5F), (int) (top + 0.5F), (int) (right + 0.5F), (int) (bottom + 0.5F));
-//        }
-//    }
 
 
 }

@@ -98,7 +98,7 @@ public class OffScreenRectangle {
 
     public OffScreenRectangle(int blurRadius, @Blur.BlurMode int mode) {
 
-        fragmentShaderCode = getFragmentShaderCode(blurRadius, mode);
+        fragmentShaderCode = ShaderUtil.getFragmentShaderCode(blurRadius, mode);
 
         ByteBuffer bb = ByteBuffer.allocateDirect(squareCoords.length * 4);
         bb.order(ByteOrder.nativeOrder());
@@ -166,33 +166,6 @@ public class OffScreenRectangle {
         return shader;
     }
 
-    private String getFragmentShaderCode(int radius, @Blur.BlurMode int mode) {
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(" \n")
-        .append("precision mediump float;")
-//                .append("uniform vec4 vColor;   \n")
-                .append("varying vec2 vTexCoord;   \n")
-                .append("uniform sampler2D uTexture;   \n")
-                .append("uniform float uWidthOffset;  \n")
-                .append("uniform float uHeightOffset;  \n")
-                .append("mediump float getGaussWeight(mediump float currentPos, mediump float sigma) \n")
-                .append("{ \n")
-                .append("   return 1.0 / sigma * exp(-(currentPos * currentPos) / (2.0 * sigma * sigma)); \n")
-                .append("} \n")
-                .append("void main() {   \n");
-
-        if (mode == Blur.MODE_BOX) {
-            sb.append(ShaderUtil.getBoxSampleCode(radius));
-        } else if (mode == Blur.MODE_GAUSSIAN) {
-            sb.append(ShaderUtil.getGaussianSampleCode(radius));
-        } else if (mode == Blur.MODE_STACK) {
-            sb.append(ShaderUtil.getStackSampleCode(radius));
-        }
-        sb.append("}   \n");
-
-        return sb.toString();
-    }
 
     private int loadTexture(Bitmap bitmap) {
         final int[] textureHandle = new int[1];

@@ -1,5 +1,7 @@
 package com.hoko.blurlibrary.util;
 
+import com.hoko.blurlibrary.Blur;
+
 /**
  * Created by xiangpi on 16/9/4.
  */
@@ -21,6 +23,40 @@ public class ShaderUtil {
         return sb.toString();
 
     }
+
+    public static String getFragmentShaderCode(int radius, @Blur.BlurMode int mode) {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(" \n")
+                .append("precision mediump float;")
+                .append("varying vec2 vTexCoord;   \n")
+                .append("uniform sampler2D uTexture;   \n")
+                .append("uniform float uWidthOffset;  \n")
+                .append("uniform float uHeightOffset;  \n")
+                .append("mediump float getGaussWeight(mediump float currentPos, mediump float sigma) \n")
+                .append("{ \n")
+                .append("   return 1.0 / sigma * exp(-(currentPos * currentPos) / (2.0 * sigma * sigma)); \n")
+                .append("} \n")
+
+                /**
+                 * Android 4.4一下系统编译器优化，这里注释暂时不用的GLSL代码
+                 */
+                .append("void main() {   \n");
+
+        if (mode == Blur.MODE_BOX) {
+            sb.append(ShaderUtil.getBoxSampleCode(radius));
+        } else if (mode == Blur.MODE_GAUSSIAN) {
+            sb.append(ShaderUtil.getGaussianSampleCode(radius));
+        } else if (mode == Blur.MODE_STACK) {
+            sb.append(ShaderUtil.getStackSampleCode(radius));
+        }
+        sb.append("}   \n");
+
+        return sb.toString();
+    }
+
+
+
     /**
      * 预先设置Kernel权重数组，出现GPU寄存器不足，无法计算，这里在代码中直接计算kernel
      */
