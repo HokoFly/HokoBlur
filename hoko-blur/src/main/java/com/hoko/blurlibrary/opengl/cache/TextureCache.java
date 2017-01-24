@@ -3,6 +3,7 @@ package com.hoko.blurlibrary.opengl.cache;
 import android.graphics.Bitmap;
 
 import com.hoko.blurlibrary.opengl.size.ISize;
+import com.hoko.blurlibrary.opengl.texture.BitmapTexture;
 import com.hoko.blurlibrary.opengl.texture.ITexture;
 import com.hoko.blurlibrary.opengl.texture.TextureFactory;
 import com.hoko.blurlibrary.opengl.size.Size;
@@ -61,11 +62,6 @@ public class TextureCache {
             return mCache.get(new Size(width, height));
         }
 
-        return null;
-    }
-
-    public ITexture getTexture(Bitmap bitmap) {
-        // TODO: 2017/1/22
         return null;
     }
 

@@ -12,13 +12,13 @@ public class TextureFactory {
             return null;
         }
 
-        return new BlurTexture(width, height);
+        return new SimpleTexture(width, height);
     }
 
     public static ITexture create(Bitmap bitmap) {
         if (bitmap == null) {
             return null;
         }
-        return new BlurTexture(bitmap);
+        return new BitmapTexture(bitmap);
     }
 }

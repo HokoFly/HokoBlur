@@ -15,25 +15,7 @@ public abstract class Texture implements ITexture {
 
     private int mHeight;
 
-    protected Texture(int width, int height) {
-
-        mWidth = width;
-
-        mHeight = height;
-
-        genTexture(width, height);
-
-    }
-
-    protected Texture(Bitmap bitmap) {
-        // TODO: 17/1/20
-    }
-
-
-    private void genTexture(int width, int height) {
-        if (width == 0 || height == 0) {
-            return;
-        }
+    protected void genTexture() {
 
         final int[] textureIds = new int[1];
 
@@ -43,17 +25,13 @@ public abstract class Texture implements ITexture {
 
         if (mTextureId != 0) {
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureId);
-            initTexture(width, height);
+            initTexture();
         }
 
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
     }
 
-    private void genTexture(Bitmap bitmap) {
-        // TODO: 2017/1/21
-    }
-
-    protected abstract void initTexture(int width, int height);
+    protected abstract void initTexture();
 
     @Override
     public void delete() {

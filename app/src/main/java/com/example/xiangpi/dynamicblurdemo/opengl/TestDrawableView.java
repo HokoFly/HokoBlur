@@ -53,12 +53,12 @@ public class TestDrawableView extends View{
             }
         });
 
-        setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                animator.start();
-            }
-        });
+//        setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                animator.start();
+//            }
+//        });
     }
 
     @Override

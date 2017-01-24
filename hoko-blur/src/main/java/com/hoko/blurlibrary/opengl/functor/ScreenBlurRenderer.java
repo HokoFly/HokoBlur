@@ -22,7 +22,7 @@ import static com.hoko.blurlibrary.util.ShaderUtil.checkGLError;
 import static com.hoko.blurlibrary.util.ShaderUtil.createProgram;
 import static com.hoko.blurlibrary.util.ShaderUtil.getCopyFragmentCode;
 import static com.hoko.blurlibrary.util.ShaderUtil.getFragmentShaderCode;
-import static com.hoko.blurlibrary.util.ShaderUtil.getVetexCode;
+import static com.hoko.blurlibrary.util.ShaderUtil.getVertexCode;
 
 /**
  * Created by xiangpi on 16/11/23.
@@ -176,8 +176,8 @@ public class ScreenBlurRenderer implements IScreenBlur{
 
         if (mNeedRelink) {
             deletePrograms();
-            mBlurProgram = createProgram(getVetexCode(), getFragmentShaderCode(mMode));
-            mCopyProgram = createProgram(getVetexCode(), getCopyFragmentCode());
+            mBlurProgram = createProgram(getVertexCode(), getFragmentShaderCode(mMode));
+            mCopyProgram = createProgram(getVertexCode(), getCopyFragmentCode());
             mNeedRelink = false;
         }
 
@@ -361,7 +361,7 @@ public class ScreenBlurRenderer implements IScreenBlur{
         mFrameBufferCache.recycleFrameBuffer(mVerticalFrameBuffer);
     }
 
-    public void destroy() {
+    public void free() {
         mTextureCache.deleteTextures();
         mFrameBufferCache.deleteFrameBuffers();
         GLES20.glDisableVertexAttribArray(mPositionId);

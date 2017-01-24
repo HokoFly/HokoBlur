@@ -155,8 +155,16 @@
 
     <com.example.xiangpi.dynamicblurdemo.opengl.TestDrawableView
         android:layout_width="300dp"
-        android:layout_height="match_parent"
-        android:layout_marginTop="100dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="20dp"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"/>
+
+    <com.example.xiangpi.dynamicblurdemo.opengl.TestDrawableView
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_marginTop="300dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:onClick="remove"/>
 </FrameLayout>

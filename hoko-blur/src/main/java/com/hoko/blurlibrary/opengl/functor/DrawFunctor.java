@@ -3,8 +3,6 @@ package com.hoko.blurlibrary.opengl.functor;
 import android.graphics.Canvas;
 import android.opengl.Matrix;
 import android.os.Build;
-import android.os.SystemClock;
-import android.util.Log;
 
 import com.hoko.blurlibrary.Blur;
 import com.hoko.blurlibrary.generator.IBlur;
@@ -84,7 +82,7 @@ public class DrawFunctor implements IBlur {
     }
 
     public void destroy() {
-        mBlurRenderer.destroy();
+        mBlurRenderer.free();
     }
 
     @Override

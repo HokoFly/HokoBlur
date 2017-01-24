@@ -58,7 +58,7 @@ public class ShaderUtil {
         return shader;
     }
 
-    public static String getVetexCode() {
+    public static String getVertexCode() {
         StringBuilder sb = new StringBuilder();
 
         sb.append("uniform mat4 uMVPMatrix;   \n")

@@ -9,25 +9,25 @@ import java.nio.Buffer;
  * Created by xiangpi on 17/1/20.
  */
 
-class BlurTexture extends Texture {
+class SimpleTexture extends Texture {
 
-    BlurTexture(int width, int height) {
-        super(width, height);
+    SimpleTexture(int width, int height) {
+        setWidth(width);
+        setHeight(height);
+        genTexture();
     }
-
-    BlurTexture(Bitmap bitmap) {
-        super(bitmap);
-    }
-
-
 
     @Override
-    protected void initTexture(int width, int height) {
+    protected void initTexture() {
+        if (getWidth() == 0 || getHeight() == 0) {
+            return;
+        }
+
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
         GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
         GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
-        GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, width, height, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, (Buffer) null);
+        GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, getWidth(), getHeight(), 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, (Buffer) null);
     }
 
 }
