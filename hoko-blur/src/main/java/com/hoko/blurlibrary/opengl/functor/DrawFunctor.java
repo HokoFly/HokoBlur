@@ -79,21 +79,12 @@ public class DrawFunctor implements IBlur {
     }
 
     private void onDraw(final GLInfo info) {
-//        Log.e("DrawFunctor", "bottom: " + info.clipBottom);
-//        Log.e("DrawFunctor", "left: " + info.clipLeft);
-//        Log.e("DrawFunctor", "right: " + info.clipRight);
-//        Log.e("DrawFunctor", "top: " + info.clipTop);
-//        Log.e("DrawFunctor", "viewportW: " + info.viewportWidth);
-//        Log.e("DrawFunctor", "viewportH: " + info.viewportHeight);
-//        Log.e("DrawFunctor", "transform[12]" + info.transform[12]);
-//        Log.e("DrawFunctor", "transform[13]" + info.transform[13]);
-        long start = SystemClock.currentThreadTimeMillis();
+//        Log.e("DrawFunctor", " left: " + info.clipLeft + " bottom: " + info.clipBottom + " right: " + info.clipRight + " top: " + info.clipTop);
         mBlurRenderer.doBlur(info);
-        long stop = SystemClock.currentThreadTimeMillis();
+    }
 
-        Log.e("duration", "onDraw: " + (stop - start) + "ms");
-
-
+    public void destroy() {
+        mBlurRenderer.destroy();
     }
 
     @Override

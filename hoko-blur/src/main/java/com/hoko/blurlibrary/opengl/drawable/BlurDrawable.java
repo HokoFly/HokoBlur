@@ -56,16 +56,19 @@ public class BlurDrawable extends Drawable implements IBlur{
     @Override
     public void setBlurMode(@Blur.BlurMode int mode) {
         mDrawFunctor.setBlurMode(mode);
+        invalidateSelf();
     }
 
     @Override
     public void setBlurRadius(int radius) {
         mDrawFunctor.setBlurRadius(radius);
+        invalidateSelf();
     }
 
     @Override
     public void setSampleFactor(float factor) {
         mDrawFunctor.setSampleFactor(factor);
+        invalidateSelf();
     }
 
     @Override
@@ -81,5 +84,11 @@ public class BlurDrawable extends Drawable implements IBlur{
     @Override
     public float getSampleFactor() {
         return mDrawFunctor.getSampleFactor();
+    }
+
+    public void destroy() {
+        if (mDrawFunctor != null) {
+            mDrawFunctor.destroy();
+        }
     }
 }

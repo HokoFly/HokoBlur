@@ -50,7 +50,6 @@ public class TestDrawableView extends View{
             public void onAnimationUpdate(ValueAnimator animation) {
                 int radius = (int) animation.getAnimatedValue();
                 mBlurDrawable.setBlurRadius(radius);
-                invalidate();
             }
         });
 
@@ -62,4 +61,9 @@ public class TestDrawableView extends View{
         });
     }
 
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        mBlurDrawable.destroy();
+    }
 }
