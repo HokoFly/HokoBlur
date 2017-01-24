@@ -20,9 +20,9 @@ public class OffScreenRendererImpl implements GLRenderer {
     private float[] mProjMatrix = new float[16];
     private float[] mMVPMatrix = new float[16];
 
-    public OffScreenRendererImpl(Bitmap bitmap, int radius, @Blur.BlurMode int mode) {
+    public OffScreenRendererImpl(Bitmap bitmap) {
         mBitmap = bitmap;
-        mRectangle = new OffScreenRectangle(radius, mode);
+        mRectangle = new OffScreenRectangle();
     }
 
     @Override
@@ -31,9 +31,7 @@ public class OffScreenRendererImpl implements GLRenderer {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
         Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mVMatrix, 0);
 //        mRectangle = new OffScreenRectangle(mBitmap);
-        mRectangle.setInputBitmap(mBitmap);
-
-        mRectangle.draw(mMVPMatrix);
+        mRectangle.doBlur(mBitmap, mMVPMatrix);
 
 
     }
@@ -55,5 +53,24 @@ public class OffScreenRendererImpl implements GLRenderer {
     @Override
     public Bitmap getInputBitmap() {
         return mBitmap;
+    }
+
+
+    public void setBlurMode(@Blur.BlurMode int mode) {
+        if (mRectangle != null) {
+            mRectangle.setBlurMode(mode);
+        }
+    }
+
+    public void setBlurRadius(int radius) {
+        if (mRectangle != null) {
+            mRectangle.setBlurRadius(radius);
+        }
+    }
+
+    public void free() {
+        if (mRectangle != null) {
+            mRectangle.free();
+        }
     }
 }

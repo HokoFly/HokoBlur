@@ -8,6 +8,8 @@ import com.hoko.blurlibrary.generator.NativeBlurGenerator;
 import com.hoko.blurlibrary.generator.OpenGLBlurGenerator;
 import com.hoko.blurlibrary.generator.OriginBlurGenerator;
 import com.hoko.blurlibrary.generator.RenderScriptBlurGenerator;
+import com.hoko.blurlibrary.opengl.cache.FrameBufferCache;
+import com.hoko.blurlibrary.opengl.cache.TextureCache;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

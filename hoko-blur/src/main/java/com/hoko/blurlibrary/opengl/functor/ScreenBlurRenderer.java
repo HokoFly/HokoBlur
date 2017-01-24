@@ -367,6 +367,7 @@ public class ScreenBlurRenderer implements IScreenBlur{
         GLES20.glDisableVertexAttribArray(mPositionId);
         GLES20.glDisableVertexAttribArray(mTexCoordId);
         deletePrograms();
+        mNeedRelink = true;
     }
 
     private void deletePrograms() {

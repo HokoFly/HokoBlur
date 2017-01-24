@@ -2,6 +2,8 @@ package com.hoko.blurlibrary.generator;
 
 import android.graphics.Bitmap;
 
+import com.hoko.blurlibrary.opengl.cache.FrameBufferCache;
+import com.hoko.blurlibrary.opengl.cache.TextureCache;
 import com.hoko.blurlibrary.opengl.offscreen.GLRenderer;
 import com.hoko.blurlibrary.opengl.offscreen.OffScreenBuffer;
 import com.hoko.blurlibrary.opengl.offscreen.OffScreenRendererImpl;
@@ -14,7 +16,7 @@ public class OpenGLBlurGenerator extends BitmapBlurGenerator {
 
 //    private static volatile OpenGLBlurGenerator sGenerator;
 
-    private GLRenderer mGLRenderer;
+    private OffScreenRendererImpl mGLRenderer;
 
     private OffScreenBuffer mOffScreenBuffer;
 
@@ -43,7 +45,11 @@ public class OpenGLBlurGenerator extends BitmapBlurGenerator {
         if (scaledInBitmap == null) {
             return null;
         }
-        mGLRenderer = new OffScreenRendererImpl(scaledInBitmap, mRadius, mMode);
+        if (mGLRenderer == null) {
+            mGLRenderer = new OffScreenRendererImpl(scaledInBitmap);
+        }
+        mGLRenderer.setBlurRadius(mRadius);
+        mGLRenderer.setBlurMode(mMode);
         mOffScreenBuffer.setRenderer(mGLRenderer);
         return mOffScreenBuffer.getBitmap();
     }
@@ -52,4 +58,15 @@ public class OpenGLBlurGenerator extends BitmapBlurGenerator {
 //        sGenerator = null;
 //    }
 
+
+    @Override
+    protected void free() {
+        if (mGLRenderer != null) {
+            mGLRenderer.free();
+        }
+
+        TextureCache.getInstance().deleteTextures();
+        FrameBufferCache.getInstance().deleteFrameBuffers();
+
+    }
 }

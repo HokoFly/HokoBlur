@@ -69,4 +69,8 @@ public abstract class BitmapBlurGenerator implements IBitmapBlur {
     }
 
     protected abstract Bitmap doInnerBlur(Bitmap bitmap);
+
+    protected void free() {
+
+    }
 }

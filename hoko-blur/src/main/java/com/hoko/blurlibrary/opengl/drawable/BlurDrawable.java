@@ -86,7 +86,7 @@ public class BlurDrawable extends Drawable implements IBlur{
         return mDrawFunctor.getSampleFactor();
     }
 
-    public void destroy() {
+    public void freeGLResource() {
         if (mDrawFunctor != null) {
             mDrawFunctor.destroy();
         }

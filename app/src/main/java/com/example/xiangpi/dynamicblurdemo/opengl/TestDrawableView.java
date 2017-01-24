@@ -2,15 +2,12 @@ package com.example.xiangpi.dynamicblurdemo.opengl;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.graphics.Canvas;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
 
 import com.hoko.blurlibrary.Blur;
 import com.hoko.blurlibrary.opengl.drawable.BlurDrawable;
-import com.hoko.blurlibrary.opengl.functor.DrawFunctor;
-import com.hoko.blurlibrary.opengl.texture.Texture;
 
 /**
  * Created by xiangpi on 16/11/9.
@@ -64,6 +61,6 @@ public class TestDrawableView extends View{
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        mBlurDrawable.destroy();
+        mBlurDrawable.freeGLResource();
     }
 }
