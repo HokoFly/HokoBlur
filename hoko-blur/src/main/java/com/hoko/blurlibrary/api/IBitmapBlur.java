@@ -1,8 +1,8 @@
-package com.hoko.blurlibrary.generator;
+package com.hoko.blurlibrary.api;
 
 import android.graphics.Bitmap;
 
-import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.api.IBlur;
 
 /**
  * Created by xiangpi on 16/9/8.

@@ -11,7 +11,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.hoko.blurlibrary.Blur;
-import com.hoko.blurlibrary.generator.IBitmapBlur;
+import com.hoko.blurlibrary.api.IBitmapBlur;
 
 
 /**

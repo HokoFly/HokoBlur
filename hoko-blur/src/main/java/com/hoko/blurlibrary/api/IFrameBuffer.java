@@ -1,7 +1,6 @@
-package com.hoko.blurlibrary.opengl.framebuffer;
+package com.hoko.blurlibrary.api;
 
-import com.hoko.blurlibrary.opengl.cache.CachePool;
-import com.hoko.blurlibrary.opengl.texture.ITexture;
+import com.hoko.blurlibrary.api.ITexture;
 
 /**
  * Created by xiangpi on 2017/1/22.

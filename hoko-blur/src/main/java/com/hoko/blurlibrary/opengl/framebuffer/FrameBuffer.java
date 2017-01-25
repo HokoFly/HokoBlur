@@ -2,7 +2,8 @@ package com.hoko.blurlibrary.opengl.framebuffer;
 
 import android.opengl.GLES20;
 
-import com.hoko.blurlibrary.opengl.texture.ITexture;
+import com.hoko.blurlibrary.api.IFrameBuffer;
+import com.hoko.blurlibrary.api.ITexture;
 
 /**
  * Created by xiangpi on 2017/1/22.

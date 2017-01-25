@@ -5,10 +5,12 @@ import android.opengl.Matrix;
 import android.util.Log;
 
 import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.api.BlurRenderListener;
+import com.hoko.blurlibrary.api.IScreenBlur;
 import com.hoko.blurlibrary.opengl.cache.FrameBufferCache;
 import com.hoko.blurlibrary.opengl.cache.TextureCache;
-import com.hoko.blurlibrary.opengl.framebuffer.IFrameBuffer;
-import com.hoko.blurlibrary.opengl.texture.ITexture;
+import com.hoko.blurlibrary.api.IFrameBuffer;
+import com.hoko.blurlibrary.api.ITexture;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -27,7 +29,7 @@ import static com.hoko.blurlibrary.util.ShaderUtil.getVertexCode;
 /**
  * Created by xiangpi on 16/11/23.
  */
-public class ScreenBlurRenderer implements IScreenBlur{
+public class ScreenBlurRenderer implements IScreenBlur {
 
     private static final String TAG = "ScreenBlurRenderer";
 
@@ -103,6 +105,8 @@ public class ScreenBlurRenderer implements IScreenBlur{
     private TextureCache mTextureCache = TextureCache.getInstance();
     private FrameBufferCache mFrameBufferCache = FrameBufferCache.getInstance();
 
+    private BlurRenderListener mRenderListener;
+
     public ScreenBlurRenderer() {
         ByteBuffer bb = ByteBuffer.allocateDirect(squareCoords.length * 4);
         bb.order(ByteOrder.nativeOrder());
@@ -132,8 +136,6 @@ public class ScreenBlurRenderer implements IScreenBlur{
         mWidth = info.clipRight - info.clipLeft;
         mHeight = info.clipBottom - info.clipTop;
         
-        checkTextureSize();
-
         mScaleW = (int) (mWidth / mSampleFactor);
         mScaleH = (int) (mHeight / mSampleFactor);
 
@@ -142,6 +144,9 @@ public class ScreenBlurRenderer implements IScreenBlur{
         }
 
         if (!prepare()) { //渲染环境错误返回
+            if (mRenderListener != null) {
+                mRenderListener.onRenderFailed();
+            }
             return;
         }
 
@@ -155,8 +160,8 @@ public class ScreenBlurRenderer implements IScreenBlur{
         onPostBlur();
     }
 
-    private void checkTextureSize() {
-        // TODO: 2017/1/23
+    private boolean checkBlurSize(int width, int height) {
+        return width <= 1800 && height <= 3200;
     }
 
     private boolean prepare() {
@@ -171,6 +176,9 @@ public class ScreenBlurRenderer implements IScreenBlur{
             mHasEGLContext = true;
         }
 
+        if (!checkBlurSize(mWidth, mHeight)) {
+            return false;
+        }
 
         initMVPMatrix(mInfo);
 
@@ -361,6 +369,7 @@ public class ScreenBlurRenderer implements IScreenBlur{
         mFrameBufferCache.recycleFrameBuffer(mVerticalFrameBuffer);
     }
 
+    @Override
     public void free() {
         mTextureCache.deleteTextures();
         mFrameBufferCache.deleteFrameBuffers();
@@ -409,4 +418,5 @@ public class ScreenBlurRenderer implements IScreenBlur{
     public float getSampleFactor() {
         return mSampleFactor;
     }
+
 }

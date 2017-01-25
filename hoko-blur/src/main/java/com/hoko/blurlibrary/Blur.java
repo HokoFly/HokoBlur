@@ -3,13 +3,11 @@ package com.hoko.blurlibrary;
 import android.content.Context;
 import android.support.annotation.IntDef;
 
-import com.hoko.blurlibrary.generator.IBitmapBlur;
+import com.hoko.blurlibrary.api.IBitmapBlur;
 import com.hoko.blurlibrary.generator.NativeBlurGenerator;
 import com.hoko.blurlibrary.generator.OpenGLBlurGenerator;
 import com.hoko.blurlibrary.generator.OriginBlurGenerator;
 import com.hoko.blurlibrary.generator.RenderScriptBlurGenerator;
-import com.hoko.blurlibrary.opengl.cache.FrameBufferCache;
-import com.hoko.blurlibrary.opengl.cache.TextureCache;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -121,6 +119,5 @@ public class Blur {
         return generator;
 
     }
-
 
 }

@@ -3,6 +3,7 @@ package com.hoko.blurlibrary.generator;
 import android.graphics.Bitmap;
 
 import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.api.IBitmapBlur;
 import com.hoko.blurlibrary.util.BitmapUtil;
 
 /**

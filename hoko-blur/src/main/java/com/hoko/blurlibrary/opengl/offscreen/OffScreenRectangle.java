@@ -6,8 +6,8 @@ import android.util.Log;
 
 import com.hoko.blurlibrary.Blur;
 import com.hoko.blurlibrary.opengl.cache.FrameBufferCache;
-import com.hoko.blurlibrary.opengl.framebuffer.IFrameBuffer;
-import com.hoko.blurlibrary.opengl.texture.ITexture;
+import com.hoko.blurlibrary.api.IFrameBuffer;
+import com.hoko.blurlibrary.api.ITexture;
 import com.hoko.blurlibrary.opengl.texture.TextureFactory;
 import com.hoko.blurlibrary.util.ShaderUtil;
 

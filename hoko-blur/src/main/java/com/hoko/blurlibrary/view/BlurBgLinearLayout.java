@@ -10,7 +10,7 @@ import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 
 import com.hoko.blurlibrary.Blur;
-import com.hoko.blurlibrary.generator.IBitmapBlur;
+import com.hoko.blurlibrary.api.IBitmapBlur;
 
 /**
  * Created by xiangpi on 16/9/18.

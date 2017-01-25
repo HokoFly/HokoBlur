@@ -1,10 +1,12 @@
 package com.hoko.blurlibrary.opengl.size;
 
+import com.hoko.blurlibrary.api.ISize;
+
 /**
  * Created by xiangpi on 2017/1/22.
  */
 
-public final class Size implements ISize{
+public final class Size implements ISize {
 
     private int mWidth;
 

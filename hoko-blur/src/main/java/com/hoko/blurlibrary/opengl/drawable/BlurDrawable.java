@@ -8,8 +8,11 @@ import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 
 import com.hoko.blurlibrary.Blur;
-import com.hoko.blurlibrary.generator.IBlur;
+import com.hoko.blurlibrary.api.BlurRenderListener;
+import com.hoko.blurlibrary.api.IBlur;
 import com.hoko.blurlibrary.opengl.functor.DrawFunctor;
+import com.hoko.blurlibrary.api.IScreenBlur;
+import com.hoko.blurlibrary.opengl.functor.ScreenBlurRenderer;
 
 /**
  * Created by xiangpi on 16/11/23.
@@ -18,13 +21,17 @@ public class BlurDrawable extends Drawable implements IBlur{
 
     private DrawFunctor mDrawFunctor;
 
+    private IScreenBlur mBlurRenderer;
+
     private int alpha;
 
     private Paint mPaint;
 
     public BlurDrawable() {
-        mDrawFunctor = new DrawFunctor();
+        mBlurRenderer = new ScreenBlurRenderer();
+        mDrawFunctor = new DrawFunctor(mBlurRenderer);
         mPaint = new Paint();
+        mPaint.setColor(Color.TRANSPARENT);
     }
 
     @Override
@@ -32,7 +39,6 @@ public class BlurDrawable extends Drawable implements IBlur{
         if (canvas.isHardwareAccelerated() && getBlurRadius() > 0) {
             mDrawFunctor.doDraw(canvas);
         } else {
-            mPaint.setColor(Color.TRANSPARENT);
             canvas.drawRect(getBounds(), mPaint);
         }
     }
@@ -55,40 +61,55 @@ public class BlurDrawable extends Drawable implements IBlur{
 
     @Override
     public void setBlurMode(@Blur.BlurMode int mode) {
-        mDrawFunctor.setBlurMode(mode);
-        invalidateSelf();
+        if (mBlurRenderer != null) {
+            mBlurRenderer.setBlurMode(mode);
+            invalidateSelf();
+        }
     }
 
     @Override
     public void setBlurRadius(int radius) {
-        mDrawFunctor.setBlurRadius(radius);
-        invalidateSelf();
+        if (mBlurRenderer != null) {
+            mBlurRenderer.setBlurRadius(radius);
+            invalidateSelf();
+        }
     }
 
     @Override
     public void setSampleFactor(float factor) {
-        mDrawFunctor.setSampleFactor(factor);
+        if (mBlurRenderer != null) {
+            mBlurRenderer.setSampleFactor(factor);
+        }
         invalidateSelf();
     }
 
     @Override
     public int getBlurMode() {
-        return mDrawFunctor.getBlurMode();
+        if (mBlurRenderer != null) {
+            return mBlurRenderer.getBlurMode();
+        }
+        return Blur.MODE_BOX;
     }
 
     @Override
     public int getBlurRadius() {
-        return mDrawFunctor.getBlurRadius();
+        if (mBlurRenderer != null) {
+            return mBlurRenderer.getBlurRadius();
+        }
+        return 0;
     }
 
     @Override
     public float getSampleFactor() {
-        return mDrawFunctor.getSampleFactor();
+        if (mBlurRenderer != null) {
+            return mBlurRenderer.getSampleFactor();
+        }
+        return 1.0f;
     }
 
     public void freeGLResource() {
-        if (mDrawFunctor != null) {
-            mDrawFunctor.destroy();
+        if (mBlurRenderer != null) {
+            mBlurRenderer.free();
         }
     }
 }

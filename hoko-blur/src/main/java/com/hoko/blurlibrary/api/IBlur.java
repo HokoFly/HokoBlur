@@ -1,4 +1,4 @@
-package com.hoko.blurlibrary.generator;
+package com.hoko.blurlibrary.api;
 
 import com.hoko.blurlibrary.Blur;
 

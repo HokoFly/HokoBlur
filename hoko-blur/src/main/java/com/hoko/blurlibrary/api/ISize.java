@@ -1,4 +1,4 @@
-package com.hoko.blurlibrary.opengl.size;
+package com.hoko.blurlibrary.api;
 
 /**
  * Created by xiangpi on 2017/1/22.

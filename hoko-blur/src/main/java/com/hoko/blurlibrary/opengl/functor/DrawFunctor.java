@@ -4,8 +4,7 @@ import android.graphics.Canvas;
 import android.opengl.Matrix;
 import android.os.Build;
 
-import com.hoko.blurlibrary.Blur;
-import com.hoko.blurlibrary.generator.IBlur;
+import com.hoko.blurlibrary.api.IScreenBlur;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
@@ -13,15 +12,15 @@ import java.lang.reflect.Method;
 /**
  * Created by xiangpi on 16/11/9.
  */
-public class DrawFunctor implements IBlur {
+public class DrawFunctor {
 
     private long mNativeFunctor;
 
-    private ScreenBlurRenderer mBlurRenderer;
+    private IScreenBlur mBlurRenderer;
 
-    public DrawFunctor() {
+    public DrawFunctor(IScreenBlur blurRenderer) {
         mNativeFunctor = createNativeFunctor(new WeakReference<DrawFunctor>(this));
-        mBlurRenderer = new ScreenBlurRenderer();
+        mBlurRenderer = blurRenderer;
 
     }
 
@@ -78,41 +77,13 @@ public class DrawFunctor implements IBlur {
 
     private void onDraw(final GLInfo info) {
 //        Log.e("DrawFunctor", " left: " + info.clipLeft + " bottom: " + info.clipBottom + " right: " + info.clipRight + " top: " + info.clipTop);
-        mBlurRenderer.doBlur(info);
+        if (mBlurRenderer != null) {
+            mBlurRenderer.doBlur(info);
+        }
     }
 
-    public void destroy() {
-        mBlurRenderer.free();
-    }
-
-    @Override
-    public void setBlurMode(@Blur.BlurMode int mode) {
-        mBlurRenderer.setBlurMode(mode);
-    }
-
-    @Override
-    public void setBlurRadius(int radius) {
-        mBlurRenderer.setBlurRadius(radius);
-    }
-
-    @Override
-    public void setSampleFactor(float factor) {
-        mBlurRenderer.setSampleFactor(factor);
-    }
-
-    @Override
-    public int getBlurMode() {
-        return mBlurRenderer.getBlurMode();
-    }
-
-    @Override
-    public int getBlurRadius() {
-        return mBlurRenderer.getBlurRadius();
-    }
-
-    @Override
-    public float getSampleFactor() {
-        return mBlurRenderer.getSampleFactor();
+    public IScreenBlur getRenderer() {
+        return mBlurRenderer;
     }
 
     public static class GLInfo {

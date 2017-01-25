@@ -1,9 +1,7 @@
 package com.hoko.blurlibrary.opengl.cache;
 
 import com.hoko.blurlibrary.opengl.framebuffer.FrameBufferFactory;
-import com.hoko.blurlibrary.opengl.framebuffer.IFrameBuffer;
-
-import java.util.Objects;
+import com.hoko.blurlibrary.api.IFrameBuffer;
 
 /**
  * Created by xiangpi on 2017/1/21.

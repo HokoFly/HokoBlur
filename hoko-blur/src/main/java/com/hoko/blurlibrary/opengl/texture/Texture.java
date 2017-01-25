@@ -1,7 +1,8 @@
 package com.hoko.blurlibrary.opengl.texture;
 
-import android.graphics.Bitmap;
 import android.opengl.GLES20;
+
+import com.hoko.blurlibrary.api.ITexture;
 
 /**
  * Created by xiangpi on 17/1/20.

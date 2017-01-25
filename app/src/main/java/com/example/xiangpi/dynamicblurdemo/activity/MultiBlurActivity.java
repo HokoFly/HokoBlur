@@ -21,7 +21,7 @@ import android.widget.TextView;
 
 import com.example.xiangpi.dynamicblurdemo.R;
 import com.hoko.blurlibrary.Blur;
-import com.hoko.blurlibrary.generator.IBitmapBlur;
+import com.hoko.blurlibrary.api.IBitmapBlur;
 
 public class MultiBlurActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 

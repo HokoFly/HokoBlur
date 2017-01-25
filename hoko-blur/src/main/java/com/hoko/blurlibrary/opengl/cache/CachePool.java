@@ -1,7 +1,5 @@
 package com.hoko.blurlibrary.opengl.cache;
 
-import com.hoko.blurlibrary.opengl.size.ISize;
-
 import java.util.LinkedList;
 
 /**

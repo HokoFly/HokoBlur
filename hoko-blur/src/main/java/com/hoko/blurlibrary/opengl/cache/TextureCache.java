@@ -1,10 +1,7 @@
 package com.hoko.blurlibrary.opengl.cache;
 
-import android.graphics.Bitmap;
-
-import com.hoko.blurlibrary.opengl.size.ISize;
-import com.hoko.blurlibrary.opengl.texture.BitmapTexture;
-import com.hoko.blurlibrary.opengl.texture.ITexture;
+import com.hoko.blurlibrary.api.ISize;
+import com.hoko.blurlibrary.api.ITexture;
 import com.hoko.blurlibrary.opengl.texture.TextureFactory;
 import com.hoko.blurlibrary.opengl.size.Size;
 
