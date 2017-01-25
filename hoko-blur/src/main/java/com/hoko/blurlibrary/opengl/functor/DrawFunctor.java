@@ -3,6 +3,7 @@ package com.hoko.blurlibrary.opengl.functor;
 import android.graphics.Canvas;
 import android.opengl.Matrix;
 import android.os.Build;
+import android.util.Log;
 
 import com.hoko.blurlibrary.api.IScreenBlur;
 
@@ -77,7 +78,14 @@ public class DrawFunctor {
 
     private void onDraw(final GLInfo info) {
 //        Log.e("DrawFunctor", " left: " + info.clipLeft + " bottom: " + info.clipBottom + " right: " + info.clipRight + " top: " + info.clipTop);
+//        Log.e("DrawFunctor", "transX: " + info.transform[12] + " transY: " + info.transform[13]);
         if (mBlurRenderer != null) {
+            if (info.transform[12] < 0) {
+                info.transform[12] = 0;
+            }
+            if (info.transform[13] < 0) {
+                info.transform[13] = info.clipTop;
+            }
             mBlurRenderer.doBlur(info);
         }
     }
