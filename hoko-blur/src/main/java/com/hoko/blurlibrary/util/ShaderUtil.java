@@ -1,7 +1,6 @@
 package com.hoko.blurlibrary.util;
 
 import android.opengl.GLES20;
-import android.os.SystemClock;
 import android.util.Log;
 
 import com.hoko.blurlibrary.Blur;

@@ -44,6 +44,7 @@ public class BlurDrawable extends Drawable implements IBlur{
     }
 
     @Override
+    @Deprecated
     public void setAlpha(int alpha) {
         this.alpha = alpha;
         invalidateSelf();
@@ -51,7 +52,7 @@ public class BlurDrawable extends Drawable implements IBlur{
 
     @Override
     public void setColorFilter(ColorFilter colorFilter) {
-
+        // TODO: 2017/1/25  
     }
 
     @Override

@@ -15,7 +15,7 @@ import com.hoko.blurlibrary.api.IBitmapBlur;
 /**
  * Created by xiangpi on 16/9/18.
  */
-public class BlurBgLinearLayout extends LinearLayout {
+public class RsBlurLinearLayout extends LinearLayout {
 
     private static final int DEFAULT_BLUR_RADIUS = 5;
 
@@ -39,17 +39,17 @@ public class BlurBgLinearLayout extends LinearLayout {
         }
     };
 
-    public BlurBgLinearLayout(Context context) {
+    public RsBlurLinearLayout(Context context) {
         super(context);
         init();
     }
 
-    public BlurBgLinearLayout(Context context, AttributeSet attrs) {
+    public RsBlurLinearLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public BlurBgLinearLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public RsBlurLinearLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }

@@ -10,7 +10,7 @@ import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 
 import com.example.xiangpi.dynamicblurdemo.R;
-import com.hoko.blurlibrary.view.BlurBgLinearLayout;
+import com.hoko.blurlibrary.view.RsBlurLinearLayout;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button mLayoutBtn;
     private Button mDrawableBtn;
 
-    private BlurBgLinearLayout mBlurLayout;
+    private RsBlurLinearLayout mBlurLayout;
 
     private boolean mHasBlurred;
     @Override
@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mTexBtn = (Button) findViewById(R.id.tex_blur);
         mDynamicBtn = (Button) findViewById(R.id.dynamic_blur);
         mLayoutBtn = (Button) findViewById(R.id.layout_blur);
-        mBlurLayout = (BlurBgLinearLayout) findViewById(R.id.blur_layout);
+        mBlurLayout = (RsBlurLinearLayout) findViewById(R.id.blur_layout);
         mDrawableBtn = (Button) findViewById(R.id.drawable_blur);
 
         mMultiBlurBtn.setOnClickListener(this);

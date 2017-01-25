@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.xiangpi.dynamicblurdemo.R;
+import com.hoko.blurlibrary.opengl.drawable.BlurDrawable;
 
 public class BlurDrawableActivity extends Activity {
 
@@ -14,6 +15,8 @@ public class BlurDrawableActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_blur_drawable);
+
+        findViewById(R.id.test_view).setBackgroundDrawable(new BlurDrawable());
 
 
     }

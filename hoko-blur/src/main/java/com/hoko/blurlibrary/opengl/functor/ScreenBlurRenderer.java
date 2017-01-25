@@ -105,8 +105,6 @@ public class ScreenBlurRenderer implements IScreenBlur {
     private TextureCache mTextureCache = TextureCache.getInstance();
     private FrameBufferCache mFrameBufferCache = FrameBufferCache.getInstance();
 
-    private BlurRenderListener mRenderListener;
-
     public ScreenBlurRenderer() {
         ByteBuffer bb = ByteBuffer.allocateDirect(squareCoords.length * 4);
         bb.order(ByteOrder.nativeOrder());
@@ -144,9 +142,7 @@ public class ScreenBlurRenderer implements IScreenBlur {
         }
 
         if (!prepare()) { //渲染环境错误返回
-            if (mRenderListener != null) {
-                mRenderListener.onRenderFailed();
-            }
+            Log.e(TAG, "doBlur: prepare");
             return;
         }
 

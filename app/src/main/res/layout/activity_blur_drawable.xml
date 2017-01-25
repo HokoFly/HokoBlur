@@ -153,14 +153,21 @@
         </LinearLayout>
     </ScrollView>
 
-    <com.example.xiangpi.dynamicblurdemo.opengl.TestDrawableView
+    <com.hoko.blurlibrary.view.BlurFrameLayout
         android:layout_width="300dp"
         android:layout_height="200dp"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"/>
+        android:layout_marginRight="30dp">
 
-    <com.example.xiangpi.dynamicblurdemo.opengl.TestDrawableView
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_launcher"/>
+    </com.hoko.blurlibrary.view.BlurFrameLayout>
+
+    <View
+        android:id="@+id/test_view"
         android:layout_width="300dp"
         android:layout_height="300dp"
         android:layout_marginTop="300dp"
