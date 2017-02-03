@@ -12,6 +12,8 @@ namespace android {
 
     class DrawFunctor : public Functor {
     public:
+        jobject mWeakRefFunctor;
+
         DrawFunctor() { }
 
         ~DrawFunctor() { }

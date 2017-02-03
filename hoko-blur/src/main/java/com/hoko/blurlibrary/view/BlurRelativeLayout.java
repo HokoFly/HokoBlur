@@ -43,4 +43,8 @@ public class BlurRelativeLayout extends RelativeLayout{
         super.onDetachedFromWindow();
         mBlurDrawable.freeGLResource();
     }
+
+    public BlurDrawable getBlurDrawable() {
+        return mBlurDrawable;
+    }
 }

@@ -19,12 +19,10 @@ JavaVM *javaVM;
 jclass mFunctorClazz;
 jclass mGlInfoClazz;
 
-jobject mWeakRefFunctor;
-
 JNIEXPORT jlong JNICALL
         Java_com_hoko_blurlibrary_opengl_functor_DrawFunctor_createNativeFunctor(JNIEnv *env, jobject clazz,
-                                                                          jobject functor);
-void postEventFromNativeC(int mode, void *info);
+                                                                          jobject weakRefFunctor);
+void postEventFromNativeC(int mode, void *info, jobject weakRefFunctor);
 
 jobject * copyGlInfo(jobject * j_info, DrawGlInfo *c_info);
 

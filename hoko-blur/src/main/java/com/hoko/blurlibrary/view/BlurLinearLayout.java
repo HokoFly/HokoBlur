@@ -43,4 +43,9 @@ public class BlurLinearLayout extends LinearLayout{
         super.onDetachedFromWindow();
         mBlurDrawable.freeGLResource();
     }
+
+
+    public BlurDrawable getBlurDrawable() {
+        return mBlurDrawable;
+    }
 }

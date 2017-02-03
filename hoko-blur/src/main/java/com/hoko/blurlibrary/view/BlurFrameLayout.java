@@ -42,4 +42,8 @@ public class BlurFrameLayout extends FrameLayout{
         super.onDetachedFromWindow();
         mBlurDrawable.freeGLResource();
     }
+
+    public BlurDrawable getBlurDrawable() {
+        return mBlurDrawable;
+    }
 }

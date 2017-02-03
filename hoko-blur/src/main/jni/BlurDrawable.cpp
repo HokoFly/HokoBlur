@@ -13,17 +13,17 @@ using namespace uirenderer;
 
 JNIEXPORT jlong JNICALL
 Java_com_hoko_blurlibrary_opengl_functor_DrawFunctor_createNativeFunctor(JNIEnv *env, jobject clazz,
-                                                                  jobject functor) {
+                                                                  jobject weakRefFunctor) {
     DrawFunctor *drawFunctor = new DrawFunctor();
-    mWeakRefFunctor = env->NewGlobalRef(functor);
+    drawFunctor->mWeakRefFunctor = env->NewGlobalRef(weakRefFunctor);
 
-    env->DeleteLocalRef(functor);
+    env->DeleteLocalRef(weakRefFunctor);
 
     return (jlong) drawFunctor;
 
 }
 
-void postEventFromNativeC(int mode, void *info) {
+void postEventFromNativeC(int mode, void *info, jobject functor) {
 
     if (mFunctorClazz == NULL || mGlInfoClazz == NULL) {
         return;
@@ -44,7 +44,7 @@ void postEventFromNativeC(int mode, void *info) {
 
     copyGlInfo(&jDrawGlInfo, c_drawGlInfo);
 
-    env->CallStaticVoidMethod((jclass) mFunctorClazz, mPostMethodID, mWeakRefFunctor, jDrawGlInfo, mode);
+    env->CallStaticVoidMethod((jclass) mFunctorClazz, mPostMethodID, functor, jDrawGlInfo, mode);
 
     env->DeleteLocalRef(jDrawGlInfo);
 

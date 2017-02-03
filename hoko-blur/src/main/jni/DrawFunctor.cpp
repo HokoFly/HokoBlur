@@ -9,7 +9,7 @@
 
 using namespace android;
 
-extern "C" void postEventFromNativeC(int mode, void *info);
+extern "C" void postEventFromNativeC(int, void *, jobject);
 
 status_t DrawFunctor::operator()(int mode, void *info) {
     operate(mode, info);
@@ -19,7 +19,7 @@ status_t DrawFunctor::operator()(int mode, void *info) {
 
 void DrawFunctor::operate(int mode, void *info) {
 
-    postEventFromNativeC(mode, info);
+    postEventFromNativeC(mode, info, mWeakRefFunctor);
 
     return;
 
