@@ -1,5 +1,7 @@
 package com.hoko.blurlibrary.origin;
 
+import static com.hoko.blurlibrary.util.BlurUtil.clamp;
+
 /**
  * Created by 余晓飞 on 2016/7/24.
  */
@@ -180,16 +182,5 @@ public class BoxBlurFilter {
 //            }
 //        }
 //    }
-
-    public static int clamp(int i, int minValue, int maxValue) {
-        if (i < minValue) {
-            return minValue;
-        } else if (i > maxValue) {
-            return maxValue;
-        } else {
-            return i;
-        }
-    }
-
 
 }

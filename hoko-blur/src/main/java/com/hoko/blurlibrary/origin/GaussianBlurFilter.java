@@ -1,5 +1,7 @@
 package com.hoko.blurlibrary.origin;
 
+import static com.hoko.blurlibrary.util.BlurUtil.clamp;
+
 /**
  * Created by xiangpi on 16/9/10.
  */
@@ -41,9 +43,9 @@ public class GaussianBlurFilter {
                     }
                 }
                 int ia = (inPixels[ioffset + x] >> 24) & 0xff;
-                int ir = clamp((int) (r + 0.5));
-                int ig = clamp((int) (g + 0.5));
-                int ib = clamp((int) (b + 0.5));
+                int ir = clamp((int) (r + 0.5), 0, 255);
+                int ig = clamp((int) (g + 0.5), 0, 255);
+                int ib = clamp((int) (b + 0.5), 0, 255);
                 outPixels[index] = (ia << 24) | (ir << 16) | (ig << 8) | ib;
                 index += height;
             }
@@ -76,16 +78,6 @@ public class GaussianBlurFilter {
             matrix[i] /= total;
 
         return matrix;
-    }
-
-    private static int clamp(int i) {
-        if (i < 0) {
-            return 0;
-        } else if (i > 255) {
-            return 255;
-        } else {
-            return i;
-        }
     }
 
 }

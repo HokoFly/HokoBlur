@@ -12,13 +12,12 @@ import com.hoko.blurlibrary.Blur;
 import com.hoko.blurlibrary.renderscript.ScriptC_BoxblurHorizontal;
 import com.hoko.blurlibrary.renderscript.ScriptC_BoxblurVertical;
 import com.hoko.blurlibrary.renderscript.ScriptC_Stackblur;
+import com.hoko.blurlibrary.util.BlurUtil;
 
 /**
  * Created by xiangpi on 16/9/7.
  */
 public class RenderScriptBlurGenerator extends BitmapBlurGenerator {
-
-//    private static volatile RenderScriptBlurGenerator sGenerator;
 
     private RenderScript mRenderScript;
     private ScriptIntrinsicBlur mGaussianBlurScirpt;
@@ -47,17 +46,6 @@ public class RenderScriptBlurGenerator extends BitmapBlurGenerator {
 
     }
 
-//    public static RenderScriptBlurGenerator getInstance(Context context) {
-//        if (sGenerator == null) {
-//            synchronized (RenderScriptBlurGenerator.class) {
-//                if (sGenerator == null) {
-//                    sGenerator = new RenderScriptBlurGenerator(context);
-//                }
-//            }
-//        }
-//
-//        return sGenerator;
-//    }
 
     @Override
     protected Bitmap doInnerBlur(Bitmap scaledInBitmap) {
@@ -123,9 +111,7 @@ public class RenderScriptBlurGenerator extends BitmapBlurGenerator {
             return;
         }
         // 模糊核半径太大，RenderScript失效，这里做发限制
-        if (mRadius > 25) {
-            mRadius = 25;
-        }
+        mRadius = BlurUtil.checkRadius(mRadius);
         mGaussianBlurScirpt.setRadius(mRadius);
 //        mAllocationIn.copyFrom(input);
         mGaussianBlurScirpt.setInput(mAllocationIn);

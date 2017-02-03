@@ -9,19 +9,6 @@ import com.hoko.blurlibrary.Blur;
  */
 public class NativeBlurGenerator extends BitmapBlurGenerator {
 
-//    private static volatile NativeBlurGenerator sGenerator;
-//
-//    public static NativeBlurGenerator getInstance() {
-//        if (sGenerator == null) {
-//            synchronized (NativeBlurGenerator.class) {
-//                if (sGenerator == null) {
-//                    sGenerator = new NativeBlurGenerator();
-//                }
-//            }
-//        }
-//
-//        return sGenerator;
-//    }
 
     @Override
     protected Bitmap doInnerBlur(Bitmap scaledInBitmap) {
@@ -48,10 +35,6 @@ public class NativeBlurGenerator extends BitmapBlurGenerator {
 
         return Bitmap.createBitmap(pixels, 0, w, w, h, Bitmap.Config.ARGB_8888);
     }
-
-//    public static void release() {
-//        sGenerator = null;
-//    }
 
 
     public native void nativeBoxBlur(int[] pixels, int width, int height, int radius);

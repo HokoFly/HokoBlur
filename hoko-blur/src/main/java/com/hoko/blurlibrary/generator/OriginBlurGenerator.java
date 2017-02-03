@@ -12,20 +12,6 @@ import com.hoko.blurlibrary.origin.StackBlurFilter;
  */
 public class OriginBlurGenerator extends BitmapBlurGenerator {
 
-//    private static volatile OriginBlurGenerator sGenerator;
-//
-//    public static OriginBlurGenerator getInstance() {
-//        if (sGenerator == null) {
-//            synchronized (OriginBlurGenerator.class) {
-//                if (sGenerator == null) {
-//                    sGenerator = new OriginBlurGenerator();
-//                }
-//            }
-//        }
-//
-//        return sGenerator;
-//    }
-
     @Override
     protected Bitmap doInnerBlur(Bitmap scaledInBitmap) {
         if (scaledInBitmap == null) {
@@ -60,11 +46,6 @@ public class OriginBlurGenerator extends BitmapBlurGenerator {
 
         return scaledOutBitmap;
     }
-
-//    public static void release() {
-//        sGenerator = null;
-//    }
-
 
     @Override
     public void setBlurRadius(int radius) {

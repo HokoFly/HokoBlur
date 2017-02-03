@@ -9,11 +9,11 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 
 import com.hoko.blurlibrary.Blur;
-import com.hoko.blurlibrary.api.BlurRenderListener;
 import com.hoko.blurlibrary.api.IBlur;
-import com.hoko.blurlibrary.opengl.functor.DrawFunctor;
 import com.hoko.blurlibrary.api.IScreenBlur;
+import com.hoko.blurlibrary.opengl.functor.DrawFunctor;
 import com.hoko.blurlibrary.opengl.functor.ScreenBlurRenderer;
+import com.hoko.blurlibrary.util.BlurUtil;
 
 /**
  * Created by xiangpi on 16/11/23.
@@ -73,7 +73,7 @@ public class BlurDrawable extends Drawable implements IBlur{
     @Override
     public void setBlurRadius(int radius) {
         if (mBlurRenderer != null) {
-            mBlurRenderer.setBlurRadius(radius);
+            mBlurRenderer.setBlurRadius(BlurUtil.checkRadius(radius));
             invalidateSelf();
         }
     }

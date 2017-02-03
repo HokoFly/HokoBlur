@@ -1,6 +1,5 @@
 package com.hoko.blurlibrary.opengl.texture;
 
-import android.graphics.Bitmap;
 import android.opengl.GLES20;
 
 import java.nio.Buffer;
