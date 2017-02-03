@@ -6,6 +6,7 @@ import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 
 import com.hoko.blurlibrary.Blur;
 import com.hoko.blurlibrary.api.BlurRenderListener;
@@ -35,7 +36,7 @@ public class BlurDrawable extends Drawable implements IBlur{
     }
 
     @Override
-    public void draw(Canvas canvas) {
+    public void draw(@NonNull Canvas canvas) {
         if (canvas.isHardwareAccelerated() && getBlurRadius() > 0) {
             mDrawFunctor.doDraw(canvas);
         } else {
@@ -46,6 +47,7 @@ public class BlurDrawable extends Drawable implements IBlur{
     @Override
     @Deprecated
     public void setAlpha(int alpha) {
+        // TODO: 2017/2/3
         this.alpha = alpha;
         invalidateSelf();
     }

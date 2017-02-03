@@ -50,8 +50,8 @@ public abstract class BitmapBlurGenerator implements IBitmapBlur {
 
     @Override
     public Bitmap doBlur(Bitmap inBitmap) {
-        if (inBitmap == null) {
-            throw new IllegalArgumentException("You must input a bitmap !");
+        if (inBitmap == null || inBitmap.isRecycled()) {
+            throw new IllegalArgumentException("You must input an unrecycled bitmap !");
         }
 
         if (mRadius <= 0) {
@@ -69,7 +69,7 @@ public abstract class BitmapBlurGenerator implements IBitmapBlur {
         return outBitmap;
     }
 
-    protected abstract Bitmap doInnerBlur(Bitmap bitmap);
+    protected abstract Bitmap doInnerBlur(Bitmap scaledBitmap);
 
     protected void free() {
 

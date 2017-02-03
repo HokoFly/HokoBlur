@@ -1,5 +1,6 @@
 package com.example.xiangpi.dynamicblurdemo.opengl.textureview;
 
+import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
 
 import com.hoko.blurlibrary.opengl.offscreen.GLRenderer;
@@ -34,6 +35,8 @@ public class GLProducerThread extends Thread {
     private static final int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
 
     private static final int EGL_OPENGL_ES2_BIT = 4;
+
+    private Bitmap mBitmap;
 
 
     public GLProducerThread(GLRenderer glRenderer, SurfaceTexture surfaceTexture, boolean runDraw) {
@@ -92,11 +95,9 @@ public class GLProducerThread extends Thread {
     public void run() {
         mEgl.eglMakeCurrent(mEGLDisplay, mEGLSurface, mEGLSurface, mEGLContext);
 
-        ((GLRendererImpl)mGLRenderer).initGLRenderer();
-
         while(mRunDraw) {
 
-            mGLRenderer.onDrawFrame();
+            mGLRenderer.onDrawFrame(mBitmap);
             mEgl.eglSwapBuffers(mEGLDisplay, mEGLSurface);
             try {
                 sleep(5);
@@ -106,6 +107,10 @@ public class GLProducerThread extends Thread {
         }
         destoryGL();
 
+    }
+
+    public void setBitmap(Bitmap bitmap) {
+        mBitmap = bitmap;
     }
 
     public void stopDraw() {

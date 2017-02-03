@@ -110,42 +110,7 @@ public class Rectangle {
     private int mWidth;
     private int mHeight;
 
-    public Rectangle(Bitmap bitmap) {
-        mBitmap = bitmap;
-
-        if (mBitmap != null) {
-            mWidth = mBitmap.getWidth();
-            mHeight = mBitmap.getHeight();
-        }
-        setSquareCoords();
-
-        mVertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
-        mFragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
-        mProgram = GLES20.glCreateProgram();
-        GLES20.glAttachShader(mProgram, mVertexShader);
-        GLES20.glAttachShader(mProgram, mFragmentShader);
-
-        GLES20.glLinkProgram(mProgram);
-
-        ByteBuffer bb = ByteBuffer.allocateDirect(squareCoords.length * 4);
-        bb.order(ByteOrder.nativeOrder());
-        mVertexBuffer = bb.asFloatBuffer();
-        mVertexBuffer.put(squareCoords);
-        mVertexBuffer.position(0);
-
-        ByteBuffer dlb = ByteBuffer.allocateDirect(drawOrder.length * 2);
-        dlb.order(ByteOrder.nativeOrder());
-        mDrawListBuffer = dlb.asShortBuffer();
-        mDrawListBuffer.put(drawOrder);
-        mDrawListBuffer.position(0);
-
-        ByteBuffer tcb = ByteBuffer.allocateDirect(texCoords.length * 4);
-        tcb.order(ByteOrder.nativeOrder());
-        mTexCoordBuffer = tcb.asFloatBuffer();
-        mTexCoordBuffer.put(texCoords);
-        mTexCoordBuffer.position(0);
-
-        mTextureDataHandle = loadTexture(mBitmap);
+    public Rectangle() {
 
     }
 
@@ -196,7 +161,11 @@ public class Rectangle {
 
     }
 
-    public void draw(float[] mvpMatrix) {
+    public void draw(Bitmap bitmap, float[] mvpMatrix) {
+        if (!prepare(bitmap)) {
+            return;
+        }
+
         GLES20.glUseProgram(mProgram);
 
         mPositionHandle = GLES20.glGetAttribLocation(mProgram, "aPosition");
@@ -222,5 +191,45 @@ public class Rectangle {
         GLES20.glDisableVertexAttribArray(mPositionHandle);
         GLES20.glDisableVertexAttribArray(mTexCoordHandle);
 
+    }
+
+    private boolean prepare(Bitmap bitmap) {
+        if (bitmap == null || bitmap.isRecycled()) {
+            return false;
+        }
+
+        mBitmap = bitmap;
+        mWidth = mBitmap.getWidth();
+        mHeight = mBitmap.getHeight();
+        setSquareCoords();
+
+        mVertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
+        mFragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
+        mProgram = GLES20.glCreateProgram();
+        GLES20.glAttachShader(mProgram, mVertexShader);
+        GLES20.glAttachShader(mProgram, mFragmentShader);
+
+        GLES20.glLinkProgram(mProgram);
+
+        ByteBuffer bb = ByteBuffer.allocateDirect(squareCoords.length * 4);
+        bb.order(ByteOrder.nativeOrder());
+        mVertexBuffer = bb.asFloatBuffer();
+        mVertexBuffer.put(squareCoords);
+        mVertexBuffer.position(0);
+
+        ByteBuffer dlb = ByteBuffer.allocateDirect(drawOrder.length * 2);
+        dlb.order(ByteOrder.nativeOrder());
+        mDrawListBuffer = dlb.asShortBuffer();
+        mDrawListBuffer.put(drawOrder);
+        mDrawListBuffer.position(0);
+
+        ByteBuffer tcb = ByteBuffer.allocateDirect(texCoords.length * 4);
+        tcb.order(ByteOrder.nativeOrder());
+        mTexCoordBuffer = tcb.asFloatBuffer();
+        mTexCoordBuffer.put(texCoords);
+        mTexCoordBuffer.position(0);
+
+        mTextureDataHandle = loadTexture(mBitmap);
+        return true;
     }
 }

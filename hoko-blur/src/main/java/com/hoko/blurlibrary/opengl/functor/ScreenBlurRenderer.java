@@ -5,12 +5,11 @@ import android.opengl.Matrix;
 import android.util.Log;
 
 import com.hoko.blurlibrary.Blur;
-import com.hoko.blurlibrary.api.BlurRenderListener;
+import com.hoko.blurlibrary.api.IFrameBuffer;
 import com.hoko.blurlibrary.api.IScreenBlur;
+import com.hoko.blurlibrary.api.ITexture;
 import com.hoko.blurlibrary.opengl.cache.FrameBufferCache;
 import com.hoko.blurlibrary.opengl.cache.TextureCache;
-import com.hoko.blurlibrary.api.IFrameBuffer;
-import com.hoko.blurlibrary.api.ITexture;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

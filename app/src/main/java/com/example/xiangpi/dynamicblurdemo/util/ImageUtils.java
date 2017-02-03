@@ -18,8 +18,6 @@ public class ImageUtils {
 
     public static final String mSaveDirPath = Environment.getExternalStorageDirectory() + File.separator + "DynamicBlur" + File.separator;
 
-    public static int blurCount = 1;
-
     public static void saveBlurredImage(Bitmap bitmap) {
         if (bitmap == null) {
             return;

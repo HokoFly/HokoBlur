@@ -7,12 +7,10 @@ import android.graphics.Bitmap;
  */
 public interface GLRenderer {
 
-    void onDrawFrame();
+    void onDrawFrame(Bitmap bitmap);
 
     void onSurfaceCreated();
 
     void onSurfaceChanged(int width, int height);
-
-    Bitmap getInputBitmap();
 
 }

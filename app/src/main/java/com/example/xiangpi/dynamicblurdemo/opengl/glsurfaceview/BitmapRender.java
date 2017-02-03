@@ -34,16 +34,13 @@ public class BitmapRender implements GLSurfaceView.Renderer{
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inScaled = false;   // No pre-scaling
         mBitmap = BitmapFactory.decodeResource(mCtx.getResources(), R.mipmap.sample5, options);
+        mRectangle = new Rectangle();
     }
 
     @Override
     public void onSurfaceCreated(GL10 gl10, EGLConfig eglConfig) {
         GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1f);
-//        mProgram = GLES20.glCreateProgram();
         Matrix.setLookAtM(mVMatrix, 0, 0, 0, -3, 0, 0, 0, 0, 1, 0);
-
-        mRectangle = new Rectangle(mBitmap);
-
     }
 
     @Override
@@ -60,6 +57,6 @@ public class BitmapRender implements GLSurfaceView.Renderer{
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
         Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mVMatrix, 0);
 
-        mRectangle.draw(mMVPMatrix);
+        mRectangle.draw(mBitmap, mMVPMatrix);
     }
 }

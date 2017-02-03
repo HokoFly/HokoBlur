@@ -2,7 +2,8 @@ package com.hoko.blurlibrary.opengl.offscreen;
 
 import android.graphics.Bitmap;
 import android.opengl.GLES20;
-import android.opengl.GLES30;
+
+import com.hoko.blurlibrary.Blur;
 
 import java.nio.IntBuffer;
 
@@ -18,7 +19,7 @@ import static javax.microedition.khronos.opengles.GL10.GL_UNSIGNED_BYTE;
 /**
  * Created by xiangpi on 16/8/29.
  */
-public class OffScreenBuffer {
+public class EglBuffer {
 
     private EGL10 mEgl;
 
@@ -37,12 +38,14 @@ public class OffScreenBuffer {
     private int mWidth;
     private int mHeight;
 
-    private GLRenderer mRenderer;
+    private OffScreenRendererImpl mRenderer;
 
     private Bitmap mOutputBitmap;
 
-    public OffScreenBuffer() {
+    public EglBuffer() {
         initGL();
+        mRenderer = new OffScreenRendererImpl();
+
     }
 
     private void initGL() {
@@ -92,22 +95,21 @@ public class OffScreenBuffer {
 
     }
 
-    public void setRenderer(GLRenderer renderer) {
-        mRenderer = renderer;
-        mWidth = mRenderer.getInputBitmap().getWidth();
-        mHeight = mRenderer.getInputBitmap().getHeight();
+
+    public Bitmap getBlurBitmap(Bitmap bitmap) {
+        if (bitmap == null || bitmap.isRecycled()) {
+            return null;
+        }
+
+        mWidth = bitmap.getWidth();
+        mHeight = bitmap.getHeight();
 
         initSurface();
 
         if (mRenderer != null) {
             mRenderer.onSurfaceCreated();
             mRenderer.onSurfaceChanged(mWidth, mHeight);
-        }
-    }
-
-    public Bitmap getBitmap() {
-        if (mRenderer != null) {
-            mRenderer.onDrawFrame();
+            mRenderer.onDrawFrame(bitmap);
             mEgl.eglSwapBuffers(mEGLDisplay, mEGLSurface);
         }
         convertToBitmap();
@@ -116,13 +118,23 @@ public class OffScreenBuffer {
 
     }
 
+    public void setBlurRadius(int radius) {
+        mRenderer.setBlurRadius(radius);
+    }
+
+    public void setBlurMode(@Blur.BlurMode int mode) {
+        mRenderer.setBlurMode(mode);
+    }
+
+    public void free() {
+        mRenderer.free();
+    }
+
     private void convertToBitmap() {
         IntBuffer ib = IntBuffer.allocate(mWidth * mHeight);
         GLES20.glReadPixels(0, 0, mWidth, mHeight, GL_RGBA, GL_UNSIGNED_BYTE, ib);
         int[] ia = ib.array();
 
-        // Convert upside down mirror-reversed image to right-side up normal
-        // image.
 //        for (int i = 0; i < mHeight; i++) {
 //            for (int j = 0; j < mWidth; j++) {
 //                iat[(mHeight - i - 1) * mWidth + j] = ia[i * mWidth + j];

@@ -1,7 +1,5 @@
 package com.hoko.blurlibrary.api;
 
-import com.hoko.blurlibrary.api.ITexture;
-
 /**
  * Created by xiangpi on 2017/1/22.
  */
