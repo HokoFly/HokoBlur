@@ -15,4 +15,6 @@ public interface IBitmapBlur extends IBlur {
      */
     Bitmap doBlur(Bitmap inBitmap);
 
+    void forceCopy(boolean isForceCopy);
+
 }

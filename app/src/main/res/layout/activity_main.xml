@@ -55,4 +55,11 @@
         android:textAllCaps="false"
         android:text="@string/drawable_blur"/>
 
+    <Button
+        android:id="@+id/blur_effect_maker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAllCaps="false"
+        android:text="@string/blur_effect_maker"/>
+
 </com.hoko.blurlibrary.view.RsBlurLinearLayout>

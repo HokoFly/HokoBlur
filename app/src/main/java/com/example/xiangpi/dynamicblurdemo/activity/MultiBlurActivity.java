@@ -189,7 +189,7 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
 
         }
 
-        mGenerator = mBlur.getBlurGenerator();
+        mGenerator = mBlur.blurGenerator();
         mGenerator.setBlurRadius(mRadius);
         updateImage(mRadius);
 

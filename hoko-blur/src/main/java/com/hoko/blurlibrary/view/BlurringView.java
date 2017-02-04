@@ -49,7 +49,7 @@ public class BlurringView extends View {
                 .mode(Blur.MODE_GAUSSIAN)
                 .radius(5)
                 .sampleFactor(1.0f)
-                .getBlurGenerator();
+                .blurGenerator();
     }
 
     @Override

@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button mDynamicBtn;
     private Button mLayoutBtn;
     private Button mDrawableBtn;
+    private Button mBlurMakerBtn;
 
     private RsBlurLinearLayout mBlurLayout;
 
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mLayoutBtn = (Button) findViewById(R.id.layout_blur);
         mBlurLayout = (RsBlurLinearLayout) findViewById(R.id.blur_layout);
         mDrawableBtn = (Button) findViewById(R.id.drawable_blur);
+        mBlurMakerBtn = (Button) findViewById(R.id.blur_effect_maker);
 
         mMultiBlurBtn.setOnClickListener(this);
         mOpenGLBtn.setOnClickListener(this);
@@ -51,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mDynamicBtn.setOnClickListener(this);
         mLayoutBtn.setOnClickListener(this);
         mDrawableBtn.setOnClickListener(this);
+        mBlurMakerBtn.setOnClickListener(this);
 
     }
 
@@ -76,6 +79,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.drawable_blur:
                 intent.setClass(MainActivity.this, BlurDrawableActivity.class);
+                break;
+            case R.id.blur_effect_maker:
+                intent.setClass(MainActivity.this, BlurEffectMakerActivity.class);
                 break;
 
         }

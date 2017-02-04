@@ -71,13 +71,13 @@ public class RenderScriptBlurGenerator extends BitmapBlurGenerator {
                     break;
             }
 
-            mAllocationOut.copyTo(scaledOutBitmap);
+            mAllocationOut.copyTo(scaledInBitmap);
         } catch (Exception e) {
             e.printStackTrace();
-            scaledOutBitmap = scaledInBitmap;
+//            scaledOutBitmap = scaledInBitmap;
         }
 
-        return scaledOutBitmap;
+        return scaledInBitmap;
     }
 
 //    public static void release() {

@@ -16,24 +16,32 @@ public class NativeBlurGenerator extends BitmapBlurGenerator {
             return null;
         }
 
-        final int w = scaledInBitmap.getWidth();
-        final int h = scaledInBitmap.getHeight();
-        final int[] pixels = new int[w * h];
-        scaledInBitmap.getPixels(pixels, 0, w, 0, 0, w, h);
+        try {
 
-        switch (mMode) {
-            case Blur.MODE_BOX:
-                nativeBoxBlur(pixels, w, h, mRadius);
-                break;
-            case Blur.MODE_STACK:
-                nativeStackBlur(pixels, w, h, mRadius);
-                break;
-            case Blur.MODE_GAUSSIAN:
-                nativeGaussianBlur(pixels, w, h, mRadius);
-                break;
+            final int w = scaledInBitmap.getWidth();
+            final int h = scaledInBitmap.getHeight();
+            final int[] pixels = new int[w * h];
+            scaledInBitmap.getPixels(pixels, 0, w, 0, 0, w, h);
+
+            switch (mMode) {
+                case Blur.MODE_BOX:
+                    nativeBoxBlur(pixels, w, h, mRadius);
+                    break;
+                case Blur.MODE_STACK:
+                    nativeStackBlur(pixels, w, h, mRadius);
+                    break;
+                case Blur.MODE_GAUSSIAN:
+                    nativeGaussianBlur(pixels, w, h, mRadius);
+                    break;
+            }
+            scaledInBitmap.setPixels(pixels, 0, w, 0, 0, w, h);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
         }
 
-        return Bitmap.createBitmap(pixels, 0, w, w, h, Bitmap.Config.ARGB_8888);
+        return scaledInBitmap;
     }
 
 

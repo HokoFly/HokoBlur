@@ -40,6 +40,7 @@ public class Blur {
     private static final @BlurScheme int DEFAULT_SCHEME = SCHEME_RENDER_SCRIPT;
     private static final int DEFAULT_BLUR_RADIUS = 5;
     private static final float DEFAULT_SAMPLE_FACTOR = 5.0f;
+    private static final boolean DEFAULT_FORCE_COPY = false;
 
     private static volatile Blur sHelper;
 
@@ -49,7 +50,7 @@ public class Blur {
     private @BlurScheme int mBlurScheme = DEFAULT_SCHEME;
     private int mRadius = DEFAULT_BLUR_RADIUS;
     private float mSampleFactor = DEFAULT_SAMPLE_FACTOR;
-
+    private boolean mIsForceCopy = DEFAULT_FORCE_COPY;
 
     private Blur(Context context) {
         mCtx = context.getApplicationContext();
@@ -87,11 +88,16 @@ public class Blur {
         return sHelper;
     }
 
+    public Blur forceCopy(boolean isForceCopy) {
+        mIsForceCopy = isForceCopy;
+        return sHelper;
+    }
+
     /**
      * 创建不同的模糊发生器
      * @return
      */
-    public IBitmapBlur getBlurGenerator() {
+    public IBitmapBlur blurGenerator() {
         IBitmapBlur generator = null;
 
         switch (mBlurScheme) {
@@ -114,6 +120,7 @@ public class Blur {
             generator.setBlurMode(mMode);
             generator.setBlurRadius(mRadius);
             generator.setSampleFactor(mSampleFactor);
+            generator.forceCopy(mIsForceCopy);
         }
 
         return generator;

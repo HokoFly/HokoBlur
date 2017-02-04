@@ -20,4 +20,5 @@
     <string name="dynamic_blur">动态模糊</string>
     <string name="layout_blur">布局背景模糊</string>
     <string name="drawable_blur">基于Drawable</string>
+    <string name="blur_effect_maker">Blur Effect Maker</string>
 </resources>

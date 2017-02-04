@@ -40,7 +40,7 @@ public class EglBuffer {
 
     private OffScreenRendererImpl mRenderer;
 
-    private Bitmap mOutputBitmap;
+//    private Bitmap mOutputBitmap;
 
     public EglBuffer() {
         initGL();
@@ -112,9 +112,9 @@ public class EglBuffer {
             mRenderer.onDrawFrame(bitmap);
             mEgl.eglSwapBuffers(mEGLDisplay, mEGLSurface);
         }
-        convertToBitmap();
+        convertToBitmap(bitmap);
         unbindEglCurrent();
-        return mOutputBitmap;
+        return bitmap;
 
     }
 
@@ -130,7 +130,7 @@ public class EglBuffer {
         mRenderer.free();
     }
 
-    private void convertToBitmap() {
+    private void convertToBitmap(Bitmap bitmap) {
         IntBuffer ib = IntBuffer.allocate(mWidth * mHeight);
         GLES20.glReadPixels(0, 0, mWidth, mHeight, GL_RGBA, GL_UNSIGNED_BYTE, ib);
         int[] ia = ib.array();
@@ -141,8 +141,9 @@ public class EglBuffer {
 //            }
 //        }
 
-        mOutputBitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
-        mOutputBitmap.copyPixelsFromBuffer(IntBuffer.wrap(ia));
+        bitmap.copyPixelsFromBuffer(IntBuffer.wrap(ia));
+//        mOutputBitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
+//        mOutputBitmap.copyPixelsFromBuffer(IntBuffer.wrap(ia));
     }
 
     /**

@@ -25,8 +25,11 @@
         <activity android:name=".activity.GLSurfaceActivity" />
         <activity android:name=".activity.TextureViewActivity" />
         <activity android:name=".activity.DynamicBlurActivity" />
-        <activity android:name=".activity.MultiBlurActivity" android:hardwareAccelerated="true" />
-        <activity android:name=".activity.BlurDrawableActivity"></activity>
+        <activity
+            android:name=".activity.MultiBlurActivity"
+            android:hardwareAccelerated="true" />
+        <activity android:name=".activity.BlurDrawableActivity" />
+        <activity android:name=".activity.BlurEffectMakerActivity"></activity>
     </application>
 
 </manifest>

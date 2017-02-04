@@ -18,8 +18,6 @@ public class OriginBlurGenerator extends BitmapBlurGenerator {
             return null;
         }
 
-        Bitmap scaledOutBitmap = null;
-
         try {
             final int w = scaledInBitmap.getWidth();
             final int h = scaledInBitmap.getHeight();
@@ -38,13 +36,12 @@ public class OriginBlurGenerator extends BitmapBlurGenerator {
                     break;
             }
 
-            scaledOutBitmap = Bitmap.createBitmap(pixels, 0, w, w, h, Bitmap.Config.ARGB_8888);
+            scaledInBitmap.setPixels(pixels, 0, w, 0, 0, w, h);
         } catch (Exception e) {
             e.printStackTrace();
-            scaledOutBitmap = scaledInBitmap;
         }
 
-        return scaledOutBitmap;
+        return scaledInBitmap;
     }
 
     @Override

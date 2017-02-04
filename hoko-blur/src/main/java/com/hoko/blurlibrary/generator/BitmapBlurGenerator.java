@@ -17,6 +17,8 @@ public abstract class BitmapBlurGenerator implements IBitmapBlur {
 
     private float mSampleFactor;
 
+    private boolean mIsForceCopy;
+
     @Override
     public void setBlurMode(@Blur.BlurMode int mode) {
         mMode = mode;
@@ -49,17 +51,26 @@ public abstract class BitmapBlurGenerator implements IBitmapBlur {
     }
 
     @Override
-    public Bitmap doBlur(Bitmap inBitmap) {
-        if (inBitmap == null || inBitmap.isRecycled()) {
+    public Bitmap doBlur(Bitmap bitmap) {
+        if (bitmap == null || bitmap.isRecycled()) {
             throw new IllegalArgumentException("You must input an unrecycled bitmap !");
         }
 
         if (mRadius <= 0) {
-            return inBitmap;
+            return bitmap;
         }
 
         if (mSampleFactor < 1.0f) {
             mSampleFactor = 1.0f;
+        }
+
+        Bitmap inBitmap = null;
+
+        //factor为1.0必须进行scale，因此bitmap不会是immutable
+        if (mIsForceCopy || (!bitmap.isMutable() && mSampleFactor == 1.0f)) {
+            inBitmap = bitmap.copy(bitmap.getConfig(), true);
+        } else {
+            inBitmap = bitmap;
         }
 
         Bitmap scaledInBitmap = BitmapUtil.getScaledBitmap(inBitmap, mSampleFactor);
@@ -70,6 +81,11 @@ public abstract class BitmapBlurGenerator implements IBitmapBlur {
     }
 
     protected abstract Bitmap doInnerBlur(Bitmap scaledBitmap);
+
+    @Override
+    public void forceCopy(boolean isForceCopy) {
+        mIsForceCopy = isForceCopy;
+    }
 
     protected void free() {
 

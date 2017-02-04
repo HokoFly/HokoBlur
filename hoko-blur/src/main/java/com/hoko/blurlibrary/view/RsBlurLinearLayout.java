@@ -57,7 +57,7 @@ public class RsBlurLinearLayout extends LinearLayout {
     private void init() {
         mCanvas = new Canvas();
         mLocationInWindow = new int[2];
-        mGenerator = Blur.with(getContext()).scheme(Blur.SCHEME_RENDER_SCRIPT).sampleFactor(DEFAULT_BITMAP_SAMPLE_FACTOR).getBlurGenerator();
+        mGenerator = Blur.with(getContext()).scheme(Blur.SCHEME_RENDER_SCRIPT).sampleFactor(DEFAULT_BITMAP_SAMPLE_FACTOR).blurGenerator();
         setBlurRadius(DEFAULT_BLUR_RADIUS);
 
     }
