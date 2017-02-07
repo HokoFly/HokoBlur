@@ -4,7 +4,12 @@ import android.graphics.Bitmap;
 
 import com.hoko.blurlibrary.Blur;
 import com.hoko.blurlibrary.api.IBitmapBlur;
+import com.hoko.blurlibrary.task.BlurTask;
+import com.hoko.blurlibrary.task.BlurTaskManager;
 import com.hoko.blurlibrary.util.BitmapUtil;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created by xiangpi on 16/9/8.
@@ -66,7 +71,7 @@ public abstract class BitmapBlurGenerator implements IBitmapBlur {
 
         Bitmap inBitmap = null;
 
-        //factor为1.0必须进行scale，因此bitmap不会是immutable
+        //factor不为1.0必须进行scale，因此bitmap不会是immutable
         if (mIsForceCopy || (!bitmap.isMutable() && mSampleFactor == 1.0f)) {
             inBitmap = bitmap.copy(bitmap.getConfig(), true);
         } else {
@@ -81,6 +86,10 @@ public abstract class BitmapBlurGenerator implements IBitmapBlur {
     }
 
     protected abstract Bitmap doInnerBlur(Bitmap scaledBitmap);
+
+    public void doAsyncBlur(Bitmap bitmap, BlurTask.CallBack callBack) {
+        BlurTaskManager.getInstance().submit(new BlurTask(this, bitmap, callBack));
+    }
 
     @Override
     public void forceCopy(boolean isForceCopy) {

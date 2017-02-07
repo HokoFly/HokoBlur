@@ -26,15 +26,6 @@ public class BlurEffectMaker {
 
     private static final ExecutorService BLUR_EXECUTOR = Executors.newFixedThreadPool(EXECUTOR_THREADS);
 
-    private static final BitmapBlurGenerator NATIVE_BLUR_GENERATOR = new NativeBlurGenerator();
-
-    static {
-        NATIVE_BLUR_GENERATOR.setBlurMode(Blur.MODE_STACK);
-        //旧代码包含scale操作，为兼容旧代码这里设置factor为1.0，不做scale
-        NATIVE_BLUR_GENERATOR.setSampleFactor(1.0f);
-        NATIVE_BLUR_GENERATOR.forceCopy(false);
-    }
-
     private static Bitmap drawBitmapOnView(View view, int width, int height, int translateX, int translateY, int downScale) {
         final float scale = 1.0f / downScale;
 
@@ -110,44 +101,33 @@ public class BlurEffectMaker {
     public static void makeBlur(Bitmap src, float radius) {
         int cores = EXECUTOR_THREADS;
 
-        NATIVE_BLUR_GENERATOR.setBlurRadius((int) radius);
-
-        ArrayList<NativeTask> horizontal = new ArrayList<NativeTask>(cores);
-        ArrayList<NativeTask> vertical = new ArrayList<NativeTask>(cores);
-        for (int i = 0; i < cores; i++) {
-            horizontal.add(new NativeTask(src, NATIVE_BLUR_GENERATOR, cores, i, 1));
-            vertical.add(new NativeTask(src, NATIVE_BLUR_GENERATOR, cores, i, 2));
-        }
+        ArrayList<NativeTask> tasks = new ArrayList<NativeTask>(cores);
+        tasks.add(new NativeTask(src, (int) radius));
 
         try {
-            BLUR_EXECUTOR.invokeAll(horizontal);
-        } catch (InterruptedException e) {
-        }
-
-        try {
-            BLUR_EXECUTOR.invokeAll(vertical);
+            BLUR_EXECUTOR.invokeAll(tasks);
         } catch (InterruptedException e) {
         }
     }
 
     private static class NativeTask implements Callable<Void> {
         private Bitmap _bitmapOut;
-        private final BitmapBlurGenerator _generatior;
-        private final int _totalCores;
-        private final int _coreIndex;
-        private final int _round;
+        private int _radius;
 
-        public NativeTask(Bitmap bitmapOut, BitmapBlurGenerator generatior, int totalCores, int coreIndex, int round) {
+        public NativeTask(Bitmap bitmapOut, int radius) {
             _bitmapOut = bitmapOut;
-            _generatior = generatior;
-            _totalCores = totalCores;
-            _coreIndex = coreIndex;
-            _round = round;
+            _radius = radius;
         }
 
         @Override
         public Void call() throws Exception {
-            _generatior.doBlur(_bitmapOut);
+            BitmapBlurGenerator generator = new NativeBlurGenerator();
+            generator.setBlurMode(Blur.MODE_STACK);
+            generator.forceCopy(false);
+            //旧代码包含scale操作，为兼容旧代码这里设置factor为1.0，不做scale
+            generator.setSampleFactor(1.0f);
+            generator.setBlurRadius(_radius);
+            generator.doBlur(_bitmapOut);
             return null;
         }
     }
