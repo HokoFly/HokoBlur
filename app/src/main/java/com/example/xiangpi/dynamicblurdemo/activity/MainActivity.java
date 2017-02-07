@@ -3,14 +3,15 @@ package com.example.xiangpi.dynamicblurdemo.activity;
 import android.animation.ValueAnimator;
 import android.content.ComponentName;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 
 import com.example.xiangpi.dynamicblurdemo.R;
-import com.hoko.blurlibrary.view.RsBlurLinearLayout;
+import com.hoko.blurlibrary.opengl.drawable.BlurDrawable;
+import com.hoko.blurlibrary.view.BlurLinearLayout;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -22,9 +23,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button mDrawableBtn;
     private Button mBlurMakerBtn;
 
-    private RsBlurLinearLayout mBlurLayout;
+    private BlurLinearLayout mBlurLayout;
 
     private boolean mHasBlurred;
+    private BlurDrawable mBlurDrawable;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mTexBtn = (Button) findViewById(R.id.tex_blur);
         mDynamicBtn = (Button) findViewById(R.id.dynamic_blur);
         mLayoutBtn = (Button) findViewById(R.id.layout_blur);
-        mBlurLayout = (RsBlurLinearLayout) findViewById(R.id.blur_layout);
+        mBlurLayout = (BlurLinearLayout) findViewById(R.id.blur_layout);
         mDrawableBtn = (Button) findViewById(R.id.drawable_blur);
         mBlurMakerBtn = (Button) findViewById(R.id.blur_effect_maker);
 
@@ -54,6 +57,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mLayoutBtn.setOnClickListener(this);
         mDrawableBtn.setOnClickListener(this);
         mBlurMakerBtn.setOnClickListener(this);
+
+        mBlurDrawable = mBlurLayout.getBlurDrawable();
 
     }
 
@@ -75,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 intent.setClass(MainActivity.this, DynamicBlurActivity.class);
                 break;
             case R.id.layout_blur:
-                changeBg();
+                blurBackground();
                 break;
             case R.id.drawable_blur:
                 intent.setClass(MainActivity.this, BlurDrawableActivity.class);
@@ -93,33 +98,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    private void changeBg() {
-        mBlurLayout.setBackgroundResource(R.mipmap.sample7);
-        blurBackground();
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
 
+
+    }
+
+    @Override
+    public void onAttachedToWindow() {
+
+
+        super.onAttachedToWindow();
         if (mHasBlurred) {
             return;
         }
 
         mHasBlurred = true;
-        blurBackground();
 
+        blurBackground();
     }
 
     private void blurBackground() {
-        mBlurLayout.setBlurRadius(0);
-        ValueAnimator animator = ValueAnimator.ofInt(0, 8);
+        ValueAnimator animator = ValueAnimator.ofInt(0, 10);
         animator.setInterpolator(new LinearInterpolator());
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 int r = (int) animation.getAnimatedValue();
-                mBlurLayout.setBlurRadius(r);
+                mBlurDrawable.setBlurRadius(r);
             }
         });
         animator.setDuration(1000);

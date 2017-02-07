@@ -145,12 +145,16 @@ public class ScreenBlurRenderer implements IScreenBlur {
             return;
         }
 
-        copyTextureFromScreen(mInfo);
-        getTexMatrix(false);
-        drawOneDimenBlur(mMVPMatrix, mTexMatrix, true);
-        drawOneDimenBlur(mMVPMatrix, mTexMatrix, false);
-        getTexMatrix(true);
-        upscale(mScreenMVPMatrix, mTexMatrix);
+        //半径为0也需要调用prepare()，这是为了下次模糊提供缓存，
+        // 否则在做动画时，半径从0到1时，会因为需要prepare的额外耗时，使得Drawable出现短暂的黑屏
+        if (mRadius > 0) {
+            copyTextureFromScreen(mInfo);
+            getTexMatrix(false);
+            drawOneDimenBlur(mMVPMatrix, mTexMatrix, true);
+            drawOneDimenBlur(mMVPMatrix, mTexMatrix, false);
+            getTexMatrix(true);
+            upscale(mScreenMVPMatrix, mTexMatrix);
+        }
 
         onPostBlur();
     }

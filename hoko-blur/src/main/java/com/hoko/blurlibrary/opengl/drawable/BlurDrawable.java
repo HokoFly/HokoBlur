@@ -37,7 +37,7 @@ public class BlurDrawable extends Drawable implements IBlur{
 
     @Override
     public void draw(@NonNull Canvas canvas) {
-        if (canvas.isHardwareAccelerated() && getBlurRadius() > 0) {
+        if (canvas.isHardwareAccelerated()) {
             mDrawFunctor.doDraw(canvas);
         } else {
             canvas.drawRect(getBounds(), mPaint);

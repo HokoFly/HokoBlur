@@ -1,65 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.hoko.blurlibrary.view.RsBlurLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:orientation="vertical"
-    android:id="@+id/blur_layout"
-    android:background="@mipmap/sample6"
-    android:gravity="center"
-    tools:context=".activity.MainActivity">
+    android:layout_width="match_parent"
+    >
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@mipmap/sample6"
+        android:scaleType="centerCrop"/>
 
-    <Button
-        android:id="@+id/multi_blur"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAllCaps="false"
-        android:text="@string/blur_algorithm"/>
+    <com.hoko.blurlibrary.view.BlurLinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:orientation="vertical"
+        android:id="@+id/blur_layout"
+        android:gravity="center"
+        tools:context=".activity.MainActivity">
+
+        <Button
+            android:id="@+id/multi_blur"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAllCaps="false"
+            android:text="@string/blur_algorithm"/>
 
 
-    <Button
-        android:id="@+id/opengl_blur"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAllCaps="false"
-        android:text="@string/glsurfaceview"/>
+        <Button
+            android:id="@+id/opengl_blur"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAllCaps="false"
+            android:text="@string/glsurfaceview"/>
 
-    <Button
-        android:id="@+id/tex_blur"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAllCaps="false"
-        android:text="@string/textureview"/>
+        <Button
+            android:id="@+id/tex_blur"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAllCaps="false"
+            android:text="@string/textureview"/>
 
-    <Button
-        android:id="@+id/dynamic_blur"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAllCaps="false"
-        android:text="@string/dynamic_blur"/>
-    <Button
-        android:id="@+id/layout_blur"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAllCaps="false"
-        android:text="@string/layout_blur"/>
+        <Button
+            android:id="@+id/dynamic_blur"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAllCaps="false"
+            android:text="@string/dynamic_blur"/>
+        <Button
+            android:id="@+id/layout_blur"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAllCaps="false"
+            android:text="@string/layout_blur"/>
 
-    <Button
-        android:id="@+id/drawable_blur"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAllCaps="false"
-        android:text="@string/drawable_blur"/>
+        <Button
+            android:id="@+id/drawable_blur"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAllCaps="false"
+            android:text="@string/drawable_blur"/>
 
-    <Button
-        android:id="@+id/blur_effect_maker"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAllCaps="false"
-        android:text="@string/blur_effect_maker"/>
+        <Button
+            android:id="@+id/blur_effect_maker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAllCaps="false"
+            android:text="@string/blur_effect_maker"/>
 
-</com.hoko.blurlibrary.view.RsBlurLinearLayout>
+    </com.hoko.blurlibrary.view.BlurLinearLayout>
+
+</FrameLayout>
