@@ -80,9 +80,6 @@ public class RenderScriptBlurGenerator extends BitmapBlurGenerator {
         return scaledInBitmap;
     }
 
-//    public static void release() {
-//        sGenerator = null;
-//    }
 
     private void doBoxBlur(Bitmap input) {
         if (mBoxBlurScriptH == null || mBoxBlurScriptV == null) {

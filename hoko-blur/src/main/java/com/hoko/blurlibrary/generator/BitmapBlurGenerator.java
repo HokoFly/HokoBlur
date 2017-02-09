@@ -8,9 +8,6 @@ import com.hoko.blurlibrary.task.BlurTask;
 import com.hoko.blurlibrary.task.BlurTaskManager;
 import com.hoko.blurlibrary.util.BitmapUtil;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 /**
  * Created by xiangpi on 16/9/8.
  */
@@ -18,7 +15,7 @@ public abstract class BitmapBlurGenerator implements IBitmapBlur {
 
     int mRadius;
 
-    @Blur.BlurMode int mMode;
+    @Blur.BlurMode int mMode = Blur.MODE_STACK;
 
     private float mSampleFactor;
 

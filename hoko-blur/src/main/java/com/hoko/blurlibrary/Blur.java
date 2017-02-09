@@ -36,8 +36,8 @@ public class Blur {
     @Retention(RetentionPolicy.SOURCE)
     public @interface BlurScheme {}
 
-    private static final @BlurMode int DEFAULT_MODE = MODE_GAUSSIAN;
-    private static final @BlurScheme int DEFAULT_SCHEME = SCHEME_RENDER_SCRIPT;
+    private static final @BlurMode int DEFAULT_MODE = MODE_STACK;
+    private static final @BlurScheme int DEFAULT_SCHEME = SCHEME_NATIVE;
     private static final int DEFAULT_BLUR_RADIUS = 5;
     private static final float DEFAULT_SAMPLE_FACTOR = 5.0f;
     private static final boolean DEFAULT_FORCE_COPY = false;
