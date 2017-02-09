@@ -127,6 +127,7 @@ public class BlurEffectMaker {
             //旧代码包含scale操作，为兼容旧代码这里设置factor为1.0，不做scale
             generator.setSampleFactor(1.0f);
             generator.setBlurRadius(_radius);
+            generator.needUpscale(false);
             generator.doBlur(_bitmapOut);
             return null;
         }

@@ -4,6 +4,7 @@ import android.opengl.GLES20;
 import android.util.Log;
 
 import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.anno.Mode;
 
 /**
  * Created by xiangpi on 16/9/4.
@@ -88,7 +89,7 @@ public class ShaderUtil {
         return error == 0;
     }
 
-    public static String getFragmentShaderCode(@Blur.Mode int mode) {
+    public static String getFragmentShaderCode(@Mode int mode) {
 
         StringBuilder sb = new StringBuilder();
         sb.append(" \n")

@@ -5,6 +5,7 @@ import android.opengl.GLES20;
 import android.util.Log;
 
 import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.anno.Mode;
 import com.hoko.blurlibrary.opengl.cache.FrameBufferCache;
 import com.hoko.blurlibrary.api.IFrameBuffer;
 import com.hoko.blurlibrary.api.ITexture;
@@ -85,8 +86,8 @@ public class OffScreenRendererImpl implements GLRenderer{
     private int mHeight;
 
     private int mRadius;
-    private @Blur.Mode
-    int mMode;
+    @Mode
+    private int mMode;
 
     private FrameBufferCache mFrameBufferCache = FrameBufferCache.getInstance();
     private boolean mHasEGLContext;
@@ -247,7 +248,7 @@ public class OffScreenRendererImpl implements GLRenderer{
     }
 
 
-    public void setBlurMode(@Blur.Mode int mode) {
+    public void setBlurMode(@Mode int mode) {
         mNeedRelink = true;
         mMode = mode;
     }

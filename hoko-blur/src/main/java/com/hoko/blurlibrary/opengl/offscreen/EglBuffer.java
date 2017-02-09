@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.opengl.GLES20;
 
 import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.anno.Mode;
 
 import java.nio.IntBuffer;
 
@@ -122,7 +123,7 @@ public class EglBuffer {
         mRenderer.setBlurRadius(radius);
     }
 
-    public void setBlurMode(@Blur.Mode int mode) {
+    public void setBlurMode(@Mode int mode) {
         mRenderer.setBlurMode(mode);
     }
 

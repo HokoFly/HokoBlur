@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 
 import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.anno.Mode;
 import com.hoko.blurlibrary.api.IBlur;
 import com.hoko.blurlibrary.api.IScreenBlur;
 import com.hoko.blurlibrary.opengl.functor.DrawFunctor;
@@ -66,7 +67,7 @@ public class BlurDrawable extends Drawable implements IBlur{
     }
 
     @Override
-    public void setBlurMode(@Blur.Mode int mode) {
+    public void setBlurMode(@Mode int mode) {
         if (mBlurRenderer != null) {
             mBlurRenderer.setBlurMode(mode);
             invalidateSelf();

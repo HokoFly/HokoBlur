@@ -3,6 +3,8 @@ package com.hoko.blurlibrary;
 import android.content.Context;
 import android.support.annotation.IntDef;
 
+import com.hoko.blurlibrary.anno.Mode;
+import com.hoko.blurlibrary.anno.Scheme;
 import com.hoko.blurlibrary.api.IBitmapBlur;
 import com.hoko.blurlibrary.generator.NativeBlurGenerator;
 import com.hoko.blurlibrary.generator.OpenGLBlurGenerator;
@@ -23,19 +25,10 @@ public class Blur {
     public static final int MODE_GAUSSIAN = 1;
     public static final int MODE_STACK = 2;
 
-    @IntDef({MODE_BOX, MODE_GAUSSIAN, MODE_STACK})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface Mode {}
-
     public static final int SCHEME_RENDER_SCRIPT = 1001;
     public static final int SCHEME_OPENGL = 1002;
     public static final int SCHEME_NATIVE = 1003;
     public static final int SCHEME_JAVA = 1004;
-
-    @IntDef({SCHEME_RENDER_SCRIPT, SCHEME_OPENGL, SCHEME_NATIVE, SCHEME_JAVA})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface Scheme {}
-
 
     public static BlurBuilder with(Context context) {
         return new BlurBuilder(context.getApplicationContext());
@@ -49,6 +42,7 @@ public class Blur {
         private static final int DEFAULT_BLUR_RADIUS = 5;
         private static final float DEFAULT_SAMPLE_FACTOR = 5.0f;
         private static final boolean DEFAULT_FORCE_COPY = false;
+        private static final boolean DEFAULT_UP_SCALE = true;
         @Mode
         private int mMode = DEFAULT_MODE;
         @Scheme
@@ -56,6 +50,7 @@ public class Blur {
         private int mRadius = DEFAULT_BLUR_RADIUS;
         private float mSampleFactor = DEFAULT_SAMPLE_FACTOR;
         private boolean mIsForceCopy = DEFAULT_FORCE_COPY;
+        private boolean mNeedUpscale = DEFAULT_UP_SCALE;
 
         private Context mCtx;
 
@@ -88,6 +83,11 @@ public class Blur {
             return this;
         }
 
+        public BlurBuilder needUpscale(boolean needUpscale) {
+            mNeedUpscale = needUpscale;
+            return this;
+        }
+
         /**
          * 创建不同的模糊发生器
          * @return
@@ -116,6 +116,7 @@ public class Blur {
                 generator.setBlurRadius(mRadius);
                 generator.setSampleFactor(mSampleFactor);
                 generator.forceCopy(mIsForceCopy);
+                generator.needUpscale(mNeedUpscale);
             }
 
             return generator;

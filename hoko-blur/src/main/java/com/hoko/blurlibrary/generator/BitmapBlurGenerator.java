@@ -3,6 +3,7 @@ package com.hoko.blurlibrary.generator;
 import android.graphics.Bitmap;
 
 import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.anno.Mode;
 import com.hoko.blurlibrary.api.IBitmapBlur;
 import com.hoko.blurlibrary.task.BlurTask;
 import com.hoko.blurlibrary.task.BlurTaskManager;
@@ -15,15 +16,17 @@ public abstract class BitmapBlurGenerator implements IBitmapBlur {
 
     int mRadius;
 
-    @Blur.Mode
+    @Mode
     int mMode = Blur.MODE_STACK;
 
     private float mSampleFactor;
 
     private boolean mIsForceCopy;
+    
+    private boolean mNeedUpscale = true;
 
     @Override
-    public void setBlurMode(@Blur.Mode int mode) {
+    public void setBlurMode(@Mode int mode) {
         mMode = mode;
     }
 
@@ -38,7 +41,7 @@ public abstract class BitmapBlurGenerator implements IBitmapBlur {
     }
 
     @Override
-    @Blur.Mode
+    @Mode
     public int getBlurMode() {
         return mMode;
     }
@@ -78,8 +81,8 @@ public abstract class BitmapBlurGenerator implements IBitmapBlur {
 
         Bitmap scaledInBitmap = BitmapUtil.getScaledBitmap(inBitmap, mSampleFactor);
         Bitmap scaledOutBitmap = doInnerBlur(scaledInBitmap);
-        Bitmap outBitmap = BitmapUtil.getScaledBitmap(scaledOutBitmap, 1f / mSampleFactor);
-
+        
+        Bitmap outBitmap = mNeedUpscale ? BitmapUtil.getScaledBitmap(scaledOutBitmap, 1f / mSampleFactor) : scaledOutBitmap;
         return outBitmap;
     }
 
@@ -92,6 +95,11 @@ public abstract class BitmapBlurGenerator implements IBitmapBlur {
     @Override
     public void forceCopy(boolean isForceCopy) {
         mIsForceCopy = isForceCopy;
+    }
+
+    @Override
+    public void needUpscale(boolean needUpscale) {
+        mNeedUpscale = needUpscale;
     }
 
     protected void free() {

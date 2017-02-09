@@ -22,4 +22,6 @@ public interface IBitmapBlur extends IBlur {
 
     void forceCopy(boolean isForceCopy);
 
+    void needUpscale(boolean needUpscale);
+
 }

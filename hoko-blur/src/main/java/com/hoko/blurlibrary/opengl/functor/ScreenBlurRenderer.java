@@ -5,6 +5,7 @@ import android.opengl.Matrix;
 import android.util.Log;
 
 import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.anno.Mode;
 import com.hoko.blurlibrary.api.IFrameBuffer;
 import com.hoko.blurlibrary.api.IScreenBlur;
 import com.hoko.blurlibrary.api.ITexture;
@@ -32,15 +33,15 @@ public class ScreenBlurRenderer implements IScreenBlur {
 
     private static final String TAG = "ScreenBlurRenderer";
 
-    private static final @Blur.Mode
-    int DEFAULT_MODE = Blur.MODE_GAUSSIAN;
+    @Mode
+    private static final int DEFAULT_MODE = Blur.MODE_GAUSSIAN;
     private static final int DEFAULT_BLUR_RADIUS = 5;
     private static final float DEFAULT_SAMPLE_FACTOR = 4.0f;
 
     private int mRadius = DEFAULT_BLUR_RADIUS;
 
-    private @Blur.Mode
-    int mMode = DEFAULT_MODE;
+    @Mode
+    private int mMode = DEFAULT_MODE;
 
     private float mSampleFactor = DEFAULT_SAMPLE_FACTOR;
 
@@ -390,7 +391,7 @@ public class ScreenBlurRenderer implements IScreenBlur {
     }
 
     @Override
-    public void setBlurMode(@Blur.Mode int mode) {
+    public void setBlurMode(@Mode int mode) {
         mMode = mode;
         mNeedRelink = true;
     }
