@@ -32,13 +32,15 @@ public class ScreenBlurRenderer implements IScreenBlur {
 
     private static final String TAG = "ScreenBlurRenderer";
 
-    private static final @Blur.BlurMode int DEFAULT_MODE = Blur.MODE_GAUSSIAN;
+    private static final @Blur.Mode
+    int DEFAULT_MODE = Blur.MODE_GAUSSIAN;
     private static final int DEFAULT_BLUR_RADIUS = 5;
     private static final float DEFAULT_SAMPLE_FACTOR = 4.0f;
 
     private int mRadius = DEFAULT_BLUR_RADIUS;
 
-    private @Blur.BlurMode int mMode = DEFAULT_MODE;
+    private @Blur.Mode
+    int mMode = DEFAULT_MODE;
 
     private float mSampleFactor = DEFAULT_SAMPLE_FACTOR;
 
@@ -388,7 +390,7 @@ public class ScreenBlurRenderer implements IScreenBlur {
     }
 
     @Override
-    public void setBlurMode(@Blur.BlurMode int mode) {
+    public void setBlurMode(@Blur.Mode int mode) {
         mMode = mode;
         mNeedRelink = true;
     }

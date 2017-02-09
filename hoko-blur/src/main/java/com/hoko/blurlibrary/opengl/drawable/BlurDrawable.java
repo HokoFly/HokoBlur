@@ -44,6 +44,9 @@ public class BlurDrawable extends Drawable implements IBlur{
         }
     }
 
+    /**
+     * BlurDrawable设置Alpha值暂时无效，之后将做进一步改进实现
+     */
     @Override
     @Deprecated
     public void setAlpha(int alpha) {
@@ -63,7 +66,7 @@ public class BlurDrawable extends Drawable implements IBlur{
     }
 
     @Override
-    public void setBlurMode(@Blur.BlurMode int mode) {
+    public void setBlurMode(@Blur.Mode int mode) {
         if (mBlurRenderer != null) {
             mBlurRenderer.setBlurMode(mode);
             invalidateSelf();

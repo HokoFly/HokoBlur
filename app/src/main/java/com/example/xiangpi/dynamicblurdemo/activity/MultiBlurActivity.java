@@ -46,7 +46,7 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
 
     private ImageView mImageView;
 
-    private Blur mBlur;
+    private Blur.BlurBuilder mBlurBuilder;
 
     private IBitmapBlur mGenerator;
 
@@ -69,7 +69,7 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
             getSupportActionBar().hide();
         }
 
-        mBlur = Blur.with(this).sampleFactor(SAMPLE_FACTOR);
+        mBlurBuilder = Blur.with(this).sampleFactor(SAMPLE_FACTOR);
 
         mImageView = (ImageView) findViewById(R.id.photo);
         mSchemeSpinner = (Spinner) findViewById(R.id.scheme_spinner);
@@ -167,29 +167,29 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
         final int spinnerId = parent.getId();
         if (spinnerId == R.id.scheme_spinner) {
             switch (position) {
-                case 0: mBlur.scheme(Blur.SCHEME_RENDER_SCRIPT);
+                case 0: mBlurBuilder.scheme(Blur.SCHEME_RENDER_SCRIPT);
                     break;
-                case 1: mBlur.scheme(Blur.SCHEME_OPENGL);
+                case 1: mBlurBuilder.scheme(Blur.SCHEME_OPENGL);
                     break;
-                case 2: mBlur.scheme(Blur.SCHEME_NATIVE);
+                case 2: mBlurBuilder.scheme(Blur.SCHEME_NATIVE);
                     break;
-                case 3: mBlur.scheme(Blur.SCHEME_JAVA);
+                case 3: mBlurBuilder.scheme(Blur.SCHEME_JAVA);
                     break;
             }
 
         } else if (spinnerId == R.id.mode_spinner) {
             switch (position) {
-                case 0: mBlur.mode(Blur.MODE_GAUSSIAN);
+                case 0: mBlurBuilder.mode(Blur.MODE_GAUSSIAN);
                     break;
-                case 1: mBlur.mode(Blur.MODE_STACK);
+                case 1: mBlurBuilder.mode(Blur.MODE_STACK);
                     break;
-                case 2: mBlur.mode(Blur.MODE_BOX);
+                case 2: mBlurBuilder.mode(Blur.MODE_BOX);
                     break;
             }
 
         }
 
-        mGenerator = mBlur.blurGenerator();
+        mGenerator = mBlurBuilder.blurGenerator();
         mGenerator.setBlurRadius(mRadius);
         updateImage(mRadius);
 

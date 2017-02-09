@@ -25,7 +25,7 @@ public class Blur {
 
     @IntDef({MODE_BOX, MODE_GAUSSIAN, MODE_STACK})
     @Retention(RetentionPolicy.SOURCE)
-    public @interface BlurMode {}
+    public @interface Mode {}
 
     public static final int SCHEME_RENDER_SCRIPT = 1001;
     public static final int SCHEME_OPENGL = 1002;
@@ -34,97 +34,100 @@ public class Blur {
 
     @IntDef({SCHEME_RENDER_SCRIPT, SCHEME_OPENGL, SCHEME_NATIVE, SCHEME_JAVA})
     @Retention(RetentionPolicy.SOURCE)
-    public @interface BlurScheme {}
+    public @interface Scheme {}
 
-    private static final @BlurMode int DEFAULT_MODE = MODE_STACK;
-    private static final @BlurScheme int DEFAULT_SCHEME = SCHEME_NATIVE;
-    private static final int DEFAULT_BLUR_RADIUS = 5;
-    private static final float DEFAULT_SAMPLE_FACTOR = 5.0f;
-    private static final boolean DEFAULT_FORCE_COPY = false;
 
-    private static volatile Blur sHelper;
-
-    private Context mCtx;
-
-    private @BlurMode int mMode = DEFAULT_MODE;
-    private @BlurScheme int mBlurScheme = DEFAULT_SCHEME;
-    private int mRadius = DEFAULT_BLUR_RADIUS;
-    private float mSampleFactor = DEFAULT_SAMPLE_FACTOR;
-    private boolean mIsForceCopy = DEFAULT_FORCE_COPY;
-
-    private Blur(Context context) {
-        mCtx = context.getApplicationContext();
+    public static BlurBuilder with(Context context) {
+        return new BlurBuilder(context.getApplicationContext());
     }
 
-    public static Blur with(Context context) {
-        if (sHelper == null) {
-            synchronized (Blur.class) {
-                if (sHelper == null) {
-                    sHelper = new Blur(context);
-                }
+    public static class BlurBuilder {
+        @Mode
+        private static final int DEFAULT_MODE = MODE_STACK;
+        @Scheme
+        private static final int DEFAULT_SCHEME = SCHEME_NATIVE;
+        private static final int DEFAULT_BLUR_RADIUS = 5;
+        private static final float DEFAULT_SAMPLE_FACTOR = 5.0f;
+        private static final boolean DEFAULT_FORCE_COPY = false;
+        @Mode
+        private int mMode = DEFAULT_MODE;
+        @Scheme
+        private int mBlurScheme = DEFAULT_SCHEME;
+        private int mRadius = DEFAULT_BLUR_RADIUS;
+        private float mSampleFactor = DEFAULT_SAMPLE_FACTOR;
+        private boolean mIsForceCopy = DEFAULT_FORCE_COPY;
+
+        private Context mCtx;
+
+        BlurBuilder(Context context) {
+            mCtx = context.getApplicationContext();
+        }
+
+        public BlurBuilder mode(@Mode int mode) {
+            mMode = mode;
+            return this;
+        }
+
+        public BlurBuilder scheme(@Scheme int scheme) {
+            mBlurScheme = scheme;
+            return this;
+        }
+
+        public BlurBuilder radius(int radius) {
+            mRadius = radius;
+            return this;
+        }
+
+        public BlurBuilder sampleFactor(float factor) {
+            mSampleFactor = factor;
+            return this;
+        }
+
+        public BlurBuilder forceCopy(boolean isForceCopy) {
+            mIsForceCopy = isForceCopy;
+            return this;
+        }
+
+        /**
+         * 创建不同的模糊发生器
+         * @return
+         */
+        public IBitmapBlur blurGenerator() {
+            IBitmapBlur generator = null;
+
+            switch (mBlurScheme) {
+                case Blur.SCHEME_RENDER_SCRIPT:
+                    generator = new RenderScriptBlurGenerator(mCtx);
+                    break;
+                case Blur.SCHEME_OPENGL:
+                    generator = new OpenGLBlurGenerator();
+                    break;
+                case Blur.SCHEME_NATIVE:
+                    generator = new NativeBlurGenerator();
+                    break;
+                case Blur.SCHEME_JAVA:
+                    generator = new OriginBlurGenerator();
+                    break;
+
             }
+
+            if (generator != null) {
+                generator.setBlurMode(mMode);
+                generator.setBlurRadius(mRadius);
+                generator.setSampleFactor(mSampleFactor);
+                generator.forceCopy(mIsForceCopy);
+            }
+
+            return generator;
         }
 
-        return sHelper;
-    }
-
-    public Blur mode(@BlurMode int mode) {
-        mMode = mode;
-        return sHelper;
-    }
-
-    public Blur scheme(@BlurScheme int scheme) {
-        mBlurScheme = scheme;
-        return sHelper;
-    }
-
-    public Blur radius(int radius) {
-        mRadius = radius;
-        return sHelper;
-    }
-
-    public Blur sampleFactor(float factor) {
-        mSampleFactor = factor;
-        return sHelper;
-    }
-
-    public Blur forceCopy(boolean isForceCopy) {
-        mIsForceCopy = isForceCopy;
-        return sHelper;
-    }
-
-    /**
-     * 创建不同的模糊发生器
-     * @return
-     */
-    public IBitmapBlur blurGenerator() {
-        IBitmapBlur generator = null;
-
-        switch (mBlurScheme) {
-            case Blur.SCHEME_RENDER_SCRIPT:
-                generator = new RenderScriptBlurGenerator(mCtx);
-                break;
-            case Blur.SCHEME_OPENGL:
-                generator = new OpenGLBlurGenerator();
-                break;
-            case Blur.SCHEME_NATIVE:
-                generator = new NativeBlurGenerator();
-                break;
-            case Blur.SCHEME_JAVA:
-                generator = new OriginBlurGenerator();
-                break;
-
+        private void reset() {
+            mMode = DEFAULT_MODE;
+            mBlurScheme = DEFAULT_SCHEME;
+            mRadius = DEFAULT_BLUR_RADIUS;
+            mSampleFactor = DEFAULT_SAMPLE_FACTOR;
+            mIsForceCopy = DEFAULT_FORCE_COPY;
         }
-
-        if (generator != null) {
-            generator.setBlurMode(mMode);
-            generator.setBlurRadius(mRadius);
-            generator.setSampleFactor(mSampleFactor);
-            generator.forceCopy(mIsForceCopy);
-        }
-
-        return generator;
-
     }
 
 }

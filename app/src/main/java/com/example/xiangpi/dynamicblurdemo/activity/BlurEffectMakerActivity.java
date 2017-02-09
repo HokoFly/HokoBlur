@@ -47,7 +47,7 @@ public class BlurEffectMakerActivity extends AppCompatActivity {
             public void onBlurFailed() {
             }
         });
-        Blur.with(this).forceCopy(false).scheme(Blur.SCHEME_RENDER_SCRIPT).sampleFactor(1.0f).radius(20).blurGenerator().doAsyncBlur(bitmap, new BlurTask.CallBack() {
+        Blur.with(this).blurGenerator().doAsyncBlur(bitmap, new BlurTask.CallBack() {
             @Override
             public void onBlurSuccess(Bitmap bitmap) {
                 imageView2.setImageBitmap(bitmap);

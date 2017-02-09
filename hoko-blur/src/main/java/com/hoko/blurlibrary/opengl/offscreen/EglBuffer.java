@@ -122,7 +122,7 @@ public class EglBuffer {
         mRenderer.setBlurRadius(radius);
     }
 
-    public void setBlurMode(@Blur.BlurMode int mode) {
+    public void setBlurMode(@Blur.Mode int mode) {
         mRenderer.setBlurMode(mode);
     }
 

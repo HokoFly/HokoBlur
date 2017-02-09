@@ -88,7 +88,7 @@ public class ShaderUtil {
         return error == 0;
     }
 
-    public static String getFragmentShaderCode(@Blur.BlurMode int mode) {
+    public static String getFragmentShaderCode(@Blur.Mode int mode) {
 
         StringBuilder sb = new StringBuilder();
         sb.append(" \n")

@@ -85,7 +85,8 @@ public class OffScreenRendererImpl implements GLRenderer{
     private int mHeight;
 
     private int mRadius;
-    private @Blur.BlurMode int mMode;
+    private @Blur.Mode
+    int mMode;
 
     private FrameBufferCache mFrameBufferCache = FrameBufferCache.getInstance();
     private boolean mHasEGLContext;
@@ -246,7 +247,7 @@ public class OffScreenRendererImpl implements GLRenderer{
     }
 
 
-    public void setBlurMode(@Blur.BlurMode int mode) {
+    public void setBlurMode(@Blur.Mode int mode) {
         mNeedRelink = true;
         mMode = mode;
     }

@@ -15,14 +15,15 @@ public abstract class BitmapBlurGenerator implements IBitmapBlur {
 
     int mRadius;
 
-    @Blur.BlurMode int mMode = Blur.MODE_STACK;
+    @Blur.Mode
+    int mMode = Blur.MODE_STACK;
 
     private float mSampleFactor;
 
     private boolean mIsForceCopy;
 
     @Override
-    public void setBlurMode(@Blur.BlurMode int mode) {
+    public void setBlurMode(@Blur.Mode int mode) {
         mMode = mode;
     }
 
@@ -37,7 +38,7 @@ public abstract class BitmapBlurGenerator implements IBitmapBlur {
     }
 
     @Override
-    @Blur.BlurMode
+    @Blur.Mode
     public int getBlurMode() {
         return mMode;
     }
