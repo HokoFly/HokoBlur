@@ -7,7 +7,7 @@ import com.hoko.blurlibrary.Blur;
 /**
  * Created by xiangpi on 16/9/7.
  */
-public class NativeBlurGenerator extends BitmapBlurGenerator {
+public class NativeBlurGenerator extends BlurGenerator {
 
 
     @Override

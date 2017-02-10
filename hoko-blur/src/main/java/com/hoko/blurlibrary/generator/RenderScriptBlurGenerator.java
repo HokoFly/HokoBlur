@@ -17,7 +17,7 @@ import com.hoko.blurlibrary.util.BlurUtil;
 /**
  * Created by xiangpi on 16/9/7.
  */
-public class RenderScriptBlurGenerator extends BitmapBlurGenerator {
+public class RenderScriptBlurGenerator extends BlurGenerator {
 
     private RenderScript mRenderScript;
     private ScriptIntrinsicBlur mGaussianBlurScirpt;

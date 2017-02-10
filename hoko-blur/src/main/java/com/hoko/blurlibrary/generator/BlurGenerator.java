@@ -12,7 +12,7 @@ import com.hoko.blurlibrary.util.BitmapUtil;
 /**
  * Created by xiangpi on 16/9/8.
  */
-public abstract class BitmapBlurGenerator implements IBlurGenerator {
+public abstract class BlurGenerator implements IBlurGenerator {
 
     int mRadius;
 

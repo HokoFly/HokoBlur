@@ -10,7 +10,7 @@ import com.hoko.blurlibrary.origin.StackBlurFilter;
 /**
  * Created by xiangpi on 16/9/7.
  */
-public class OriginBlurGenerator extends BitmapBlurGenerator {
+public class OriginBlurGenerator extends BlurGenerator {
 
     @Override
     protected Bitmap doInnerBlur(Bitmap scaledInBitmap) {

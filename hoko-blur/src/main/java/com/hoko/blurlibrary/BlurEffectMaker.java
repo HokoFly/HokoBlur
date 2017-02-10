@@ -6,7 +6,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.view.View;
 
-import com.hoko.blurlibrary.generator.BitmapBlurGenerator;
+import com.hoko.blurlibrary.generator.BlurGenerator;
 import com.hoko.blurlibrary.generator.NativeBlurGenerator;
 
 import java.util.ArrayList;
@@ -121,7 +121,7 @@ public class BlurEffectMaker {
 
         @Override
         public Void call() throws Exception {
-            BitmapBlurGenerator generator = new NativeBlurGenerator();
+            BlurGenerator generator = new NativeBlurGenerator();
             generator.setBlurMode(Blur.MODE_STACK);
             generator.forceCopy(false);
             //旧代码包含scale操作，为兼容旧代码这里设置factor为1.0，不做scale

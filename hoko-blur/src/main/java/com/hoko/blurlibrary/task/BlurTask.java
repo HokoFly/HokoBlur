@@ -50,7 +50,7 @@ public class BlurTask implements Runnable {
 
     }
 
-    public void setmResultDelivery(BlurResultDelivery resultDelivery) {
+    public void setResultDelivery(BlurResultDelivery resultDelivery) {
         mResultDelivery = resultDelivery;
     }
 
