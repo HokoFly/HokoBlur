@@ -8,7 +8,7 @@ import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 
 import com.example.xiangpi.dynamicblurdemo.R;
-import com.example.xiangpi.dynamicblurdemo.opengl.shape.Rectangle;
+import com.example.xiangpi.dynamicblurdemo.opengl.textureview.TextureViewRendererProxy;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -23,7 +23,7 @@ public class BitmapRender implements GLSurfaceView.Renderer{
     private float[] mProjMatrix = new float[16];
     private float[] mMVPMatrix = new float[16];
 
-    private Rectangle mRectangle;
+    private TextureViewRendererProxy mRectangle;
 
     private Context mCtx;
 
@@ -34,7 +34,7 @@ public class BitmapRender implements GLSurfaceView.Renderer{
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inScaled = false;   // No pre-scaling
         mBitmap = BitmapFactory.decodeResource(mCtx.getResources(), R.mipmap.sample5, options);
-        mRectangle = new Rectangle();
+        mRectangle = new TextureViewRendererProxy();
     }
 
     @Override

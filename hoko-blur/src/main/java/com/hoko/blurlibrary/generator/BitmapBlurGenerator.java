@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 
 import com.hoko.blurlibrary.Blur;
 import com.hoko.blurlibrary.anno.Mode;
-import com.hoko.blurlibrary.api.IBitmapBlur;
+import com.hoko.blurlibrary.api.IBlurGenerator;
 import com.hoko.blurlibrary.task.BlurTask;
 import com.hoko.blurlibrary.task.BlurTaskManager;
 import com.hoko.blurlibrary.util.BitmapUtil;
@@ -12,7 +12,7 @@ import com.hoko.blurlibrary.util.BitmapUtil;
 /**
  * Created by xiangpi on 16/9/8.
  */
-public abstract class BitmapBlurGenerator implements IBitmapBlur {
+public abstract class BitmapBlurGenerator implements IBlurGenerator {
 
     int mRadius;
 

@@ -5,10 +5,10 @@ import android.opengl.GLES20;
 import android.util.Log;
 
 import com.hoko.blurlibrary.anno.Mode;
-import com.hoko.blurlibrary.api.IBitmapRenderer;
-import com.hoko.blurlibrary.opengl.cache.FrameBufferCache;
 import com.hoko.blurlibrary.api.IFrameBuffer;
+import com.hoko.blurlibrary.api.IRenderer;
 import com.hoko.blurlibrary.api.ITexture;
+import com.hoko.blurlibrary.opengl.cache.FrameBufferCache;
 import com.hoko.blurlibrary.opengl.texture.TextureFactory;
 import com.hoko.blurlibrary.util.ShaderUtil;
 
@@ -25,8 +25,8 @@ import static com.hoko.blurlibrary.util.ShaderUtil.checkGLError;
 /**
  * Created by xiangpi on 16/8/10.
  */
-public class OffScreenRenderer implements IBitmapRenderer {
-    private final static String TAG = OffScreenRenderer.class.getSimpleName();
+public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
+    private final static String TAG = OffScreenBlurRenderer.class.getSimpleName();
 
     private final String vertexShaderCode =
                     "attribute vec2 aTexCoord;   \n" +
@@ -93,7 +93,7 @@ public class OffScreenRenderer implements IBitmapRenderer {
     private boolean mHasEGLContext;
     private boolean mNeedRelink;
 
-    public OffScreenRenderer() {
+    public OffScreenBlurRenderer() {
 
         ByteBuffer bb = ByteBuffer.allocateDirect(squareCoords.length * 4);
         bb.order(ByteOrder.nativeOrder());
@@ -257,11 +257,11 @@ public class OffScreenRenderer implements IBitmapRenderer {
         }
     }
 
+    @Override
     public void free() {
         mNeedRelink = true;
         deletePrograms();
     }
-
 
     public void setBlurMode(@Mode int mode) {
         mNeedRelink = true;

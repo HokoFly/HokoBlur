@@ -3,7 +3,7 @@ package com.example.xiangpi.dynamicblurdemo.opengl.textureview;
 import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
 
-import com.hoko.blurlibrary.api.IBitmapRenderer;
+import com.hoko.blurlibrary.api.IRenderer;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
@@ -14,11 +14,11 @@ import javax.microedition.khronos.egl.EGLSurface;
 /**
  * Created by xiangpi on 16/8/17.
  */
-public class GLProducerThread extends Thread {
+public class GLRenderThread extends Thread {
 
     private boolean mRunDraw = true;
 
-    private IBitmapRenderer mGLRenderer;
+    private IRenderer mGLRenderer;
 
     private SurfaceTexture mSurfaceTexture;
 
@@ -39,10 +39,9 @@ public class GLProducerThread extends Thread {
     private Bitmap mBitmap;
 
 
-    public GLProducerThread(IBitmapRenderer glRenderer, SurfaceTexture surfaceTexture, boolean runDraw) {
+    public GLRenderThread(IRenderer glRenderer, SurfaceTexture surfaceTexture) {
         mGLRenderer = glRenderer;
         mSurfaceTexture = surfaceTexture;
-        mRunDraw = runDraw;
         initGL();
 
     }
@@ -109,15 +108,14 @@ public class GLProducerThread extends Thread {
 
     }
 
-    public void setBitmap(Bitmap bitmap) {
-        mBitmap = bitmap;
-    }
-
     public void stopDraw() {
         mRunDraw = false;
     }
 
-    public void startDraw() {
+    public void startDraw(Bitmap bitmap) {
+        mBitmap = bitmap;
         mRunDraw = true;
+        start();
+
     }
 }

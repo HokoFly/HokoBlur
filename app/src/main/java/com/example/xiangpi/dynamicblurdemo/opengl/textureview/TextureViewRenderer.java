@@ -4,15 +4,14 @@ import android.graphics.Bitmap;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 
-import com.example.xiangpi.dynamicblurdemo.opengl.shape.Rectangle;
-import com.hoko.blurlibrary.api.IBitmapRenderer;
+import com.hoko.blurlibrary.api.IRenderer;
 
 /**
  * Created by xiangpi on 16/8/17.
  */
-public class TextureViewRenderer implements IBitmapRenderer {
+public class TextureViewRenderer implements IRenderer<Bitmap> {
 
-    private Rectangle mRectangle;
+    private TextureViewRendererProxy mRendererProxy;
 
     private float[] mVMatrix = new float[16];
     private float[] mProjMatrix = new float[16];
@@ -22,7 +21,7 @@ public class TextureViewRenderer implements IBitmapRenderer {
     private int mHeight;
 
     public TextureViewRenderer() {
-        mRectangle = new Rectangle();
+        mRendererProxy = new TextureViewRendererProxy();
     }
 
 
@@ -33,7 +32,7 @@ public class TextureViewRenderer implements IBitmapRenderer {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
         Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mVMatrix, 0);
 
-        mRectangle.draw(bitmap, mMVPMatrix);
+        mRendererProxy.draw(bitmap, mMVPMatrix);
 
     }
 
@@ -51,6 +50,13 @@ public class TextureViewRenderer implements IBitmapRenderer {
 
         float ratio = (float) width / height;
         Matrix.frustumM(mProjMatrix, 0, -ratio, ratio, -1, 1, 3, 7);
+    }
+
+    @Override
+    public void free() {
+        if (mRendererProxy != null) {
+            mRendererProxy.free();
+        }
     }
 
 }

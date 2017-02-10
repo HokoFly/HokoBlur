@@ -11,7 +11,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.hoko.blurlibrary.Blur;
-import com.hoko.blurlibrary.api.IBitmapBlur;
+import com.hoko.blurlibrary.api.IBlurGenerator;
 
 
 /**
@@ -29,7 +29,7 @@ public class BlurringView extends View {
     private Bitmap mToBlurBitmap;
     private Bitmap mBlurredBitmap;
     private Canvas mBlurringCanvas;
-    private IBitmapBlur mGenerator;
+    private IBlurGenerator mGenerator;
 
     public BlurringView(Context context) {
         super(context);

@@ -8,7 +8,7 @@ import com.hoko.blurlibrary.task.BlurTask;
 /**
  * Created by xiangpi on 16/9/8.
  */
-public interface IBitmapBlur extends IBlur {
+public interface IBlurGenerator extends IBlur {
     /**
      * 模糊操作
      *

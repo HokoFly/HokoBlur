@@ -1,4 +1,4 @@
-package com.example.xiangpi.dynamicblurdemo.opengl.shape;
+package com.example.xiangpi.dynamicblurdemo.opengl.textureview;
 
 import android.graphics.Bitmap;
 import android.opengl.GLES20;
@@ -12,7 +12,7 @@ import java.nio.ShortBuffer;
 /**
  * Created by xiangpi on 16/8/10.
  */
-public class Rectangle {
+public class TextureViewRendererProxy {
 
     private final String vertexShaderCode =
             "uniform mat4 uMVPMatrix;   \n" +
@@ -110,7 +110,7 @@ public class Rectangle {
     private int mWidth;
     private int mHeight;
 
-    public Rectangle() {
+    public TextureViewRendererProxy() {
 
     }
 
@@ -231,5 +231,9 @@ public class Rectangle {
 
         mTextureDataHandle = loadTexture(mBitmap);
         return true;
+    }
+
+    public void free() {
+        // TODO: 2017/2/10 demo的资源释放
     }
 }

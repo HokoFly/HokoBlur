@@ -10,16 +10,15 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.example.xiangpi.dynamicblurdemo.R;
-import com.example.xiangpi.dynamicblurdemo.opengl.textureview.GLProducerThread;
+import com.example.xiangpi.dynamicblurdemo.opengl.textureview.GLRenderThread;
 import com.example.xiangpi.dynamicblurdemo.opengl.textureview.TextureViewRenderer;
 
 public class TextureViewActivity extends AppCompatActivity implements TextureView.SurfaceTextureListener{
 
     private TextureView mTextureView;
     private TextureViewRenderer mGLRenderer;
-    private GLProducerThread mGLThread;
+    private GLRenderThread mGLThread;
 
-    private boolean mRunDraw = true;
     private Bitmap mBitmap;
 
     @Override
@@ -69,9 +68,8 @@ public class TextureViewActivity extends AppCompatActivity implements TextureVie
     public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int w, int h) {
         mGLRenderer.onSurfaceCreated();
         mGLRenderer.onSurfaceChanged(w, h);
-        mGLThread = new GLProducerThread(mGLRenderer, surfaceTexture, mRunDraw);
-        mGLThread.setBitmap(mBitmap);
-        mGLThread.start();
+        mGLThread = new GLRenderThread(mGLRenderer, surfaceTexture);
+        mGLThread.startDraw(mBitmap);
     }
 
     @Override
@@ -81,7 +79,6 @@ public class TextureViewActivity extends AppCompatActivity implements TextureVie
 
     @Override
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
-        mRunDraw = false;
         mGLThread.stopDraw();
         mGLThread = null;
 

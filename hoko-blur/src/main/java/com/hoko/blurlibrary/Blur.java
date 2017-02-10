@@ -1,25 +1,19 @@
 package com.hoko.blurlibrary;
 
 import android.content.Context;
-import android.support.annotation.IntDef;
 
 import com.hoko.blurlibrary.anno.Mode;
 import com.hoko.blurlibrary.anno.Scheme;
-import com.hoko.blurlibrary.api.IBitmapBlur;
+import com.hoko.blurlibrary.api.IBlurGenerator;
 import com.hoko.blurlibrary.generator.NativeBlurGenerator;
 import com.hoko.blurlibrary.generator.OpenGLBlurGenerator;
 import com.hoko.blurlibrary.generator.OriginBlurGenerator;
 import com.hoko.blurlibrary.generator.RenderScriptBlurGenerator;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
 /**
  * Created by xiangpi on 16/9/7.
  */
 public class Blur {
-
-    // 模糊算法，模糊实现方式，模糊半径，尺寸缩放，输入图像
 
     public static final int MODE_BOX = 0;
     public static final int MODE_GAUSSIAN = 1;
@@ -92,8 +86,8 @@ public class Blur {
          * 创建不同的模糊发生器
          * @return
          */
-        public IBitmapBlur blurGenerator() {
-            IBitmapBlur generator = null;
+        public IBlurGenerator blurGenerator() {
+            IBlurGenerator generator = null;
 
             switch (mBlurScheme) {
                 case Blur.SCHEME_RENDER_SCRIPT:

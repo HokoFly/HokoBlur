@@ -130,7 +130,7 @@ public class ScreenBlurRenderer implements IScreenRenderer {
 
 
     @Override
-    public void doBlur(DrawFunctor.GLInfo info) {
+    public void onDrawFrame(DrawFunctor.GLInfo info) {
         mInfo = info;
 
         mWidth = info.clipRight - info.clipLeft;
@@ -144,7 +144,7 @@ public class ScreenBlurRenderer implements IScreenRenderer {
         }
 
         if (!prepare()) { //渲染环境错误返回
-            Log.e(TAG, "doBlur: prepare");
+            Log.e(TAG, "onDrawFrame: prepare");
             return;
         }
 
@@ -160,6 +160,16 @@ public class ScreenBlurRenderer implements IScreenRenderer {
         }
 
         onPostBlur();
+    }
+
+    @Override
+    public void onSurfaceCreated() {
+
+    }
+
+    @Override
+    public void onSurfaceChanged(int width, int height) {
+        //surface尺寸始终为整块屏幕
     }
 
     private boolean checkBlurSize(int width, int height) {

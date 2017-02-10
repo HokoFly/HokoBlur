@@ -33,7 +33,7 @@ public class EglBuffer {
     private int[] mContextAttribs;
 
     //EGLContext、EGLSurface和Renderer都只与当前线程关联，进行渲染，因此采用ThreadLocal线程隔离。
-    private ThreadLocal<OffScreenRenderer> mThreadRenderer = new ThreadLocal<OffScreenRenderer>();
+    private ThreadLocal<OffScreenBlurRenderer> mThreadRenderer = new ThreadLocal<OffScreenBlurRenderer>();
 
     private ThreadLocal<EGLContext> mThreadEGLContext = new ThreadLocal<EGLContext>();
 
@@ -157,10 +157,10 @@ public class EglBuffer {
 
     }
 
-    private OffScreenRenderer getRenderer() {
-        OffScreenRenderer renderer = mThreadRenderer.get();
+    private OffScreenBlurRenderer getRenderer() {
+        OffScreenBlurRenderer renderer = mThreadRenderer.get();
         if (renderer == null) {
-            renderer = new OffScreenRenderer();
+            renderer = new OffScreenBlurRenderer();
             mThreadRenderer.set(renderer);
         }
 

@@ -2,7 +2,7 @@ package com.hoko.blurlibrary.task;
 
 import android.graphics.Bitmap;
 
-import com.hoko.blurlibrary.api.IBitmapBlur;
+import com.hoko.blurlibrary.api.IBlurGenerator;
 import com.hoko.blurlibrary.util.SingleMainHandler;
 
 /**
@@ -12,13 +12,13 @@ import com.hoko.blurlibrary.util.SingleMainHandler;
 public class BlurTask implements Runnable {
     private CallBack mCallBack;
 
-    private IBitmapBlur mGenerator;
+    private IBlurGenerator mGenerator;
 
     private Bitmap mBitmap;
 
     private BlurResultDelivery mResultDelivery;
 
-    public BlurTask(IBitmapBlur generator, Bitmap bitmap, CallBack callBack) {
+    public BlurTask(IBlurGenerator generator, Bitmap bitmap, CallBack callBack) {
         mGenerator = generator;
         mBitmap = bitmap;
         mCallBack = callBack;

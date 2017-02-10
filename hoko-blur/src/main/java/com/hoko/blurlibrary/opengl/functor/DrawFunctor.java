@@ -4,21 +4,22 @@ import android.graphics.Canvas;
 import android.opengl.Matrix;
 import android.os.Build;
 
-import com.hoko.blurlibrary.api.IScreenRenderer;
+import com.hoko.blurlibrary.api.IRenderer;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 
 /**
+ * 对函数指针的封装，通过调用callDrawGLFunction，获取硬件绘制区域在屏幕的具体位置
  * Created by xiangpi on 16/11/9.
  */
 public class DrawFunctor {
 
     private long mNativeFunctor;
 
-    private IScreenRenderer mBlurRenderer;
+    private IRenderer<GLInfo> mBlurRenderer;
 
-    public DrawFunctor(IScreenRenderer blurRenderer) {
+    public DrawFunctor(IRenderer<GLInfo> blurRenderer) {
         mNativeFunctor = createNativeFunctor(new WeakReference<DrawFunctor>(this));
         mBlurRenderer = blurRenderer;
 
@@ -79,20 +80,25 @@ public class DrawFunctor {
 //        Log.e("DrawFunctor", " left: " + info.clipLeft + " bottom: " + info.clipBottom + " right: " + info.clipRight + " top: " + info.clipTop);
 //        Log.e("DrawFunctor", "transX: " + info.transform[12] + " transY: " + info.transform[13]);
         if (mBlurRenderer != null) {
+            //margin为负值时
             if (info.transform[12] < 0) {
                 info.transform[12] = 0;
             }
             if (info.transform[13] < 0) {
                 info.transform[13] = info.clipTop;
             }
-            mBlurRenderer.doBlur(info);
+            mBlurRenderer.onDrawFrame(info);
         }
     }
 
-    public IScreenRenderer getRenderer() {
+    public IRenderer getRenderer() {
         return mBlurRenderer;
     }
 
+
+    /**
+     * 模糊区域与屏幕的相对位置信息
+     */
     public static class GLInfo {
         public int clipLeft;
         public int clipTop;
