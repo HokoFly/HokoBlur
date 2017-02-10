@@ -128,6 +128,7 @@ public class Blur {
             mRadius = DEFAULT_BLUR_RADIUS;
             mSampleFactor = DEFAULT_SAMPLE_FACTOR;
             mIsForceCopy = DEFAULT_FORCE_COPY;
+            mNeedUpscale = DEFAULT_UP_SCALE;
         }
     }
 

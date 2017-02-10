@@ -4,8 +4,8 @@ import android.graphics.Bitmap;
 import android.opengl.GLES20;
 import android.util.Log;
 
-import com.hoko.blurlibrary.Blur;
 import com.hoko.blurlibrary.anno.Mode;
+import com.hoko.blurlibrary.api.IBitmapRenderer;
 import com.hoko.blurlibrary.opengl.cache.FrameBufferCache;
 import com.hoko.blurlibrary.api.IFrameBuffer;
 import com.hoko.blurlibrary.api.ITexture;
@@ -25,8 +25,8 @@ import static com.hoko.blurlibrary.util.ShaderUtil.checkGLError;
 /**
  * Created by xiangpi on 16/8/10.
  */
-public class OffScreenRendererImpl implements GLRenderer{
-    private final static String TAG = OffScreenRendererImpl.class.getSimpleName();
+public class OffScreenRenderer implements IBitmapRenderer {
+    private final static String TAG = OffScreenRenderer.class.getSimpleName();
 
     private final String vertexShaderCode =
                     "attribute vec2 aTexCoord;   \n" +
@@ -93,7 +93,7 @@ public class OffScreenRendererImpl implements GLRenderer{
     private boolean mHasEGLContext;
     private boolean mNeedRelink;
 
-    public OffScreenRendererImpl() {
+    public OffScreenRenderer() {
 
         ByteBuffer bb = ByteBuffer.allocateDirect(squareCoords.length * 4);
         bb.order(ByteOrder.nativeOrder());
@@ -116,8 +116,8 @@ public class OffScreenRendererImpl implements GLRenderer{
 
     }
 
-    private void doBlur(Bitmap bitmap) {
-
+    @Override
+    public void onDrawFrame(Bitmap bitmap) {
         if (bitmap == null || bitmap.isRecycled()) {
             return;
         }
@@ -135,7 +135,17 @@ public class OffScreenRendererImpl implements GLRenderer{
         }
 
         onPostBlur();
+    }
 
+    @Override
+    public void onSurfaceCreated() {
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+
+    }
+
+    @Override
+    public void onSurfaceChanged(int width, int height) {
+        GLES20.glViewport(0, 0, width, height);
     }
 
     private boolean prepare() {
@@ -160,6 +170,7 @@ public class OffScreenRendererImpl implements GLRenderer{
             return false;
         }
 
+        GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1f);
         //未解决多线程下的共享纹理问题，这里不再使用缓存池，直接创建新的Texture
         //另外，影响性能的主要矛盾不再于此
         mInputTexture = TextureFactory.create(mBitmap);
@@ -259,24 +270,6 @@ public class OffScreenRendererImpl implements GLRenderer{
 
     public void setBlurRadius(int radius) {
         mRadius = radius;
-    }
-
-    @Override
-    public void onDrawFrame(Bitmap bitmap) {
-        GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1f);
-        doBlur(bitmap);
-    }
-
-    @Override
-    public void onSurfaceCreated() {
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-
-    }
-
-    @Override
-    public void onSurfaceChanged(int width, int height) {
-        GLES20.glViewport(0, 0, width, height);
-
     }
 
 }

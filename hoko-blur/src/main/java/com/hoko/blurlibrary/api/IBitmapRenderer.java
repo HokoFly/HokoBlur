@@ -1,11 +1,11 @@
-package com.hoko.blurlibrary.opengl.offscreen;
+package com.hoko.blurlibrary.api;
 
 import android.graphics.Bitmap;
 
 /**
  * Created by xiangpi on 16/8/29.
  */
-public interface GLRenderer {
+public interface IBitmapRenderer {
 
     void onDrawFrame(Bitmap bitmap);
 

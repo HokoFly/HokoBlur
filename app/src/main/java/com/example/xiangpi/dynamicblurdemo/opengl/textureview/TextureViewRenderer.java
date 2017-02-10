@@ -1,19 +1,16 @@
 package com.example.xiangpi.dynamicblurdemo.opengl.textureview;
 
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 
-import com.example.xiangpi.dynamicblurdemo.R;
 import com.example.xiangpi.dynamicblurdemo.opengl.shape.Rectangle;
-import com.hoko.blurlibrary.opengl.offscreen.GLRenderer;
+import com.hoko.blurlibrary.api.IBitmapRenderer;
 
 /**
  * Created by xiangpi on 16/8/17.
  */
-public class TextureViewRendererImpl implements GLRenderer {
+public class TextureViewRenderer implements IBitmapRenderer {
 
     private Rectangle mRectangle;
 
@@ -24,7 +21,7 @@ public class TextureViewRendererImpl implements GLRenderer {
     private int mWidth;
     private int mHeight;
 
-    public TextureViewRendererImpl() {
+    public TextureViewRenderer() {
         mRectangle = new Rectangle();
     }
 

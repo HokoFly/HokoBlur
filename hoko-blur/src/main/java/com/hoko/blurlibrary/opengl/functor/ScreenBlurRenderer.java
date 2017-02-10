@@ -7,7 +7,7 @@ import android.util.Log;
 import com.hoko.blurlibrary.Blur;
 import com.hoko.blurlibrary.anno.Mode;
 import com.hoko.blurlibrary.api.IFrameBuffer;
-import com.hoko.blurlibrary.api.IScreenBlur;
+import com.hoko.blurlibrary.api.IScreenRenderer;
 import com.hoko.blurlibrary.api.ITexture;
 import com.hoko.blurlibrary.opengl.cache.FrameBufferCache;
 import com.hoko.blurlibrary.opengl.cache.TextureCache;
@@ -29,7 +29,7 @@ import static com.hoko.blurlibrary.util.ShaderUtil.getVertexCode;
 /**
  * Created by xiangpi on 16/11/23.
  */
-public class ScreenBlurRenderer implements IScreenBlur {
+public class ScreenBlurRenderer implements IScreenRenderer {
 
     private static final String TAG = "ScreenBlurRenderer";
 

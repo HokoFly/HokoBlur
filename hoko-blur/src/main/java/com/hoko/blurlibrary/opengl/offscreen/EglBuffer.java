@@ -2,11 +2,8 @@ package com.hoko.blurlibrary.opengl.offscreen;
 
 import android.graphics.Bitmap;
 import android.opengl.GLES20;
-import android.util.Log;
 
-import com.hoko.blurlibrary.Blur;
 import com.hoko.blurlibrary.anno.Mode;
-import com.hoko.blurlibrary.util.ShaderUtil;
 
 import java.nio.IntBuffer;
 
@@ -36,7 +33,7 @@ public class EglBuffer {
     private int[] mContextAttribs;
 
     //EGLContext、EGLSurface和Renderer都只与当前线程关联，进行渲染，因此采用ThreadLocal线程隔离。
-    private ThreadLocal<OffScreenRendererImpl> mThreadRenderer = new ThreadLocal<OffScreenRendererImpl>();
+    private ThreadLocal<OffScreenRenderer> mThreadRenderer = new ThreadLocal<OffScreenRenderer>();
 
     private ThreadLocal<EGLContext> mThreadEGLContext = new ThreadLocal<EGLContext>();
 
@@ -160,10 +157,10 @@ public class EglBuffer {
 
     }
 
-    private OffScreenRendererImpl getRenderer() {
-        OffScreenRendererImpl renderer = mThreadRenderer.get();
+    private OffScreenRenderer getRenderer() {
+        OffScreenRenderer renderer = mThreadRenderer.get();
         if (renderer == null) {
-            renderer = new OffScreenRendererImpl();
+            renderer = new OffScreenRenderer();
             mThreadRenderer.set(renderer);
         }
 

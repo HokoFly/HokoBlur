@@ -3,9 +3,8 @@ package com.hoko.blurlibrary.opengl.functor;
 import android.graphics.Canvas;
 import android.opengl.Matrix;
 import android.os.Build;
-import android.util.Log;
 
-import com.hoko.blurlibrary.api.IScreenBlur;
+import com.hoko.blurlibrary.api.IScreenRenderer;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
@@ -17,9 +16,9 @@ public class DrawFunctor {
 
     private long mNativeFunctor;
 
-    private IScreenBlur mBlurRenderer;
+    private IScreenRenderer mBlurRenderer;
 
-    public DrawFunctor(IScreenBlur blurRenderer) {
+    public DrawFunctor(IScreenRenderer blurRenderer) {
         mNativeFunctor = createNativeFunctor(new WeakReference<DrawFunctor>(this));
         mBlurRenderer = blurRenderer;
 
@@ -90,7 +89,7 @@ public class DrawFunctor {
         }
     }
 
-    public IScreenBlur getRenderer() {
+    public IScreenRenderer getRenderer() {
         return mBlurRenderer;
     }
 

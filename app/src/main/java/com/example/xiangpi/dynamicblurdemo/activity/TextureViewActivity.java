@@ -11,12 +11,12 @@ import android.view.WindowManager;
 
 import com.example.xiangpi.dynamicblurdemo.R;
 import com.example.xiangpi.dynamicblurdemo.opengl.textureview.GLProducerThread;
-import com.example.xiangpi.dynamicblurdemo.opengl.textureview.TextureViewRendererImpl;
+import com.example.xiangpi.dynamicblurdemo.opengl.textureview.TextureViewRenderer;
 
 public class TextureViewActivity extends AppCompatActivity implements TextureView.SurfaceTextureListener{
 
     private TextureView mTextureView;
-    private TextureViewRendererImpl mGLRenderer;
+    private TextureViewRenderer mGLRenderer;
     private GLProducerThread mGLThread;
 
     private boolean mRunDraw = true;
@@ -39,7 +39,7 @@ public class TextureViewActivity extends AppCompatActivity implements TextureVie
 
         setContentView(mTextureView);
 
-        mGLRenderer = new TextureViewRendererImpl();
+        mGLRenderer = new TextureViewRenderer();
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inScaled = false;   // No pre-scaling
         mBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.sample5, options);

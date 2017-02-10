@@ -11,7 +11,7 @@ import android.support.annotation.NonNull;
 import com.hoko.blurlibrary.Blur;
 import com.hoko.blurlibrary.anno.Mode;
 import com.hoko.blurlibrary.api.IBlur;
-import com.hoko.blurlibrary.api.IScreenBlur;
+import com.hoko.blurlibrary.api.IScreenRenderer;
 import com.hoko.blurlibrary.opengl.functor.DrawFunctor;
 import com.hoko.blurlibrary.opengl.functor.ScreenBlurRenderer;
 import com.hoko.blurlibrary.util.BlurUtil;
@@ -23,7 +23,7 @@ public class BlurDrawable extends Drawable implements IBlur{
 
     private DrawFunctor mDrawFunctor;
 
-    private IScreenBlur mBlurRenderer;
+    private IScreenRenderer mBlurRenderer;
 
     private int alpha;
 
