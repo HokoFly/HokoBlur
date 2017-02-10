@@ -26,7 +26,7 @@ public class BlurEffectMakerActivity extends AppCompatActivity {
         final ImageView imageView1 = ((ImageView) findViewById(R.id.image1));
         final ImageView imageView2 = ((ImageView) findViewById(R.id.image2));
 //        imageView.setImageBitmap(BlurEffectMaker.makeBlur(bitmap, bitmap.getWidth(), bitmap.getHeight(), 0, 0, 2, 10));
-        Blur.with(this).forceCopy(true).scheme(Blur.SCHEME_RENDER_SCRIPT).sampleFactor(1.0f).radius(2).blurGenerator().doAsyncBlur(bitmap, new BlurTask.CallBack() {
+        Blur.with(this).forceCopy(true).scheme(Blur.SCHEME_OPENGL).sampleFactor(1.0f).radius(2).blurGenerator().doAsyncBlur(bitmap, new BlurTask.CallBack() {
             @Override
             public void onBlurSuccess(Bitmap bitmap) {
                 imageView.setImageBitmap(bitmap);
@@ -36,7 +36,7 @@ public class BlurEffectMakerActivity extends AppCompatActivity {
             public void onBlurFailed() {
             }
         });
-        Blur.with(this).forceCopy(true).scheme(Blur.SCHEME_NATIVE).sampleFactor(2.0f).radius(10).blurGenerator().doAsyncBlur(bitmap, new BlurTask.CallBack() {
+        Blur.with(this).forceCopy(true).scheme(Blur.SCHEME_OPENGL).sampleFactor(2.0f).radius(5).blurGenerator().doAsyncBlur(bitmap, new BlurTask.CallBack() {
             @Override
             public void onBlurSuccess(Bitmap bitmap) {
                 imageView1.setImageBitmap(bitmap);
@@ -46,7 +46,7 @@ public class BlurEffectMakerActivity extends AppCompatActivity {
             public void onBlurFailed() {
             }
         });
-        Blur.with(this).blurGenerator().doAsyncBlur(bitmap, new BlurTask.CallBack() {
+        Blur.with(this).scheme(Blur.SCHEME_OPENGL).blurGenerator().doAsyncBlur(bitmap, new BlurTask.CallBack() {
             @Override
             public void onBlurSuccess(Bitmap bitmap) {
                 imageView2.setImageBitmap(bitmap);

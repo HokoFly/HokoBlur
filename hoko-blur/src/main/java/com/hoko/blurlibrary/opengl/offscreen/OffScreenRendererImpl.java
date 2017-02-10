@@ -85,7 +85,7 @@ public class OffScreenRendererImpl implements GLRenderer{
     private int mWidth;
     private int mHeight;
 
-    private int mRadius;
+    public int mRadius;
     @Mode
     private int mMode;
 
@@ -230,8 +230,12 @@ public class OffScreenRendererImpl implements GLRenderer{
     }
 
     private void onPostBlur() {
-        mInputTexture.delete();
-        mHorizontalTexture.delete();
+        if (mInputTexture != null) {
+            mInputTexture.delete();
+        }
+        if (mHorizontalTexture != null) {
+            mHorizontalTexture.delete();
+        }
         mFrameBufferCache.recycleFrameBuffer(mHorizontalFrameBuffer);
     }
 

@@ -2,9 +2,11 @@ package com.hoko.blurlibrary.opengl.offscreen;
 
 import android.graphics.Bitmap;
 import android.opengl.GLES20;
+import android.util.Log;
 
 import com.hoko.blurlibrary.Blur;
 import com.hoko.blurlibrary.anno.Mode;
+import com.hoko.blurlibrary.util.ShaderUtil;
 
 import java.nio.IntBuffer;
 
@@ -26,27 +28,22 @@ public class EglBuffer {
 
     private EGLDisplay mEGLDisplay = EGL10.EGL_NO_DISPLAY;
 
-    private EGLContext mEGLContext = EGL10.EGL_NO_CONTEXT;
-
-    private EGLSurface mEGLSurface = EGL10.EGL_NO_SURFACE;
-
     private static final int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
 
     private static final int EGL_OPENGL_ES2_BIT = 4;
 
     private EGLConfig[] mEglConfigs = new EGLConfig[1];
     private int[] mContextAttribs;
-    private int mWidth;
-    private int mHeight;
 
-    private OffScreenRendererImpl mRenderer;
+    //EGLContext、EGLSurface和Renderer都只与当前线程关联，进行渲染，因此采用ThreadLocal线程隔离。
+    private ThreadLocal<OffScreenRendererImpl> mThreadRenderer = new ThreadLocal<OffScreenRendererImpl>();
 
-//    private Bitmap mOutputBitmap;
+    private ThreadLocal<EGLContext> mThreadEGLContext = new ThreadLocal<EGLContext>();
+
+    private ThreadLocal<EGLSurface> mThreadEGLSurface = new ThreadLocal<EGLSurface>();
 
     public EglBuffer() {
         initGL();
-        mRenderer = new OffScreenRendererImpl();
-
     }
 
     private void initGL() {
@@ -79,39 +76,38 @@ public class EglBuffer {
                 EGL10.EGL_NONE
         };
 
-        mEGLContext = mEgl.eglCreateContext(mEGLDisplay, mEglConfigs[0], EGL10.EGL_NO_CONTEXT, mContextAttribs);
-
     }
 
-    private void initSurface() {
+    private void initSurface(int width, int height) {
         int[] surfaceAttribs = {
-                EGL10.EGL_WIDTH, mWidth,
-                EGL10.EGL_HEIGHT, mHeight,
+                EGL10.EGL_WIDTH, width,
+                EGL10.EGL_HEIGHT, height,
                 EGL10.EGL_NONE
         };
 
-        mEGLSurface = mEgl.eglCreatePbufferSurface(mEGLDisplay, mEglConfigs[0], surfaceAttribs);
+        EGLSurface eglSurface = mEgl.eglCreatePbufferSurface(mEGLDisplay, mEglConfigs[0], surfaceAttribs);
 
-        mEgl.eglMakeCurrent(mEGLDisplay, mEGLSurface, mEGLSurface, mEGLContext);
+        mThreadEGLSurface.set(eglSurface);
+        mEgl.eglMakeCurrent(mEGLDisplay, eglSurface, eglSurface, getEGLContext());
 
     }
 
 
     public Bitmap getBlurBitmap(Bitmap bitmap) {
         if (bitmap == null || bitmap.isRecycled()) {
-            return null;
+            return bitmap;
         }
 
-        mWidth = bitmap.getWidth();
-        mHeight = bitmap.getHeight();
+        final int w = bitmap.getWidth();
+        final int h = bitmap.getHeight();
 
-        initSurface();
+        initSurface(w, h);
 
-        if (mRenderer != null) {
-            mRenderer.onSurfaceCreated();
-            mRenderer.onSurfaceChanged(mWidth, mHeight);
-            mRenderer.onDrawFrame(bitmap);
-            mEgl.eglSwapBuffers(mEGLDisplay, mEGLSurface);
+        if (getRenderer() != null) {
+            getRenderer().onSurfaceCreated();
+            getRenderer().onSurfaceChanged(w, h);
+            getRenderer().onDrawFrame(bitmap);
+            mEgl.eglSwapBuffers(mEGLDisplay, mThreadEGLSurface.get());
         }
         convertToBitmap(bitmap);
         unbindEglCurrent();
@@ -120,20 +116,27 @@ public class EglBuffer {
     }
 
     public void setBlurRadius(int radius) {
-        mRenderer.setBlurRadius(radius);
+        getRenderer().setBlurRadius(radius);
     }
 
     public void setBlurMode(@Mode int mode) {
-        mRenderer.setBlurMode(mode);
+        getRenderer().setBlurMode(mode);
     }
 
     public void free() {
-        mRenderer.free();
+        getRenderer().free();
     }
 
     private void convertToBitmap(Bitmap bitmap) {
-        IntBuffer ib = IntBuffer.allocate(mWidth * mHeight);
-        GLES20.glReadPixels(0, 0, mWidth, mHeight, GL_RGBA, GL_UNSIGNED_BYTE, ib);
+        if (bitmap == null || bitmap.isRecycled() || !bitmap.isMutable()) {
+            return;
+        }
+
+        final int w = bitmap.getWidth();
+        final int h = bitmap.getHeight();
+
+        IntBuffer ib = IntBuffer.allocate(w * h);
+        GLES20.glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, ib);
         int[] ia = ib.array();
 
 //        for (int i = 0; i < mHeight; i++) {
@@ -155,5 +158,25 @@ public class EglBuffer {
     private void unbindEglCurrent() {
         mEgl.eglMakeCurrent(mEGLDisplay, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);
 
+    }
+
+    private OffScreenRendererImpl getRenderer() {
+        OffScreenRendererImpl renderer = mThreadRenderer.get();
+        if (renderer == null) {
+            renderer = new OffScreenRendererImpl();
+            mThreadRenderer.set(renderer);
+        }
+
+        return renderer;
+    }
+
+    private EGLContext getEGLContext() {
+        EGLContext eglContext = mThreadEGLContext.get();
+        if (eglContext == null) {
+            eglContext = mEgl.eglCreateContext(mEGLDisplay, mEglConfigs[0], EGL10.EGL_NO_CONTEXT, mContextAttribs);
+            mThreadEGLContext.set(eglContext);
+        }
+
+        return eglContext;
     }
 }

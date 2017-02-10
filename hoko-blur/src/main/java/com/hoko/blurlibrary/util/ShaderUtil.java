@@ -6,6 +6,9 @@ import android.util.Log;
 import com.hoko.blurlibrary.Blur;
 import com.hoko.blurlibrary.anno.Mode;
 
+import javax.microedition.khronos.egl.EGL10;
+import javax.microedition.khronos.egl.EGLContext;
+
 /**
  * Created by xiangpi on 16/9/4.
  */
@@ -87,6 +90,16 @@ public class ShaderUtil {
         }
 
         return error == 0;
+    }
+
+    public static boolean checkEGLContext() {
+        EGLContext context = ((EGL10) EGLContext.getEGL()).eglGetCurrentContext();
+        if (context.equals(EGL10.EGL_NO_CONTEXT)) {
+            Log.e(TAG, "This thread is no EGLContext.");
+            return false;
+        } else {
+            return true;
+        }
     }
 
     public static String getFragmentShaderCode(@Mode int mode) {
