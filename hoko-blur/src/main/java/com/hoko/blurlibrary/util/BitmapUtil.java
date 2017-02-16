@@ -25,4 +25,10 @@ public class BitmapUtil {
         matrix.postScale(ratio, ratio);
         return Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true);
     }
+
+    public static native void replaceBitmap(Bitmap bitmap, int[] pixels);
+
+    static {
+        System.loadLibrary("ImageBlur");
+    }
 }

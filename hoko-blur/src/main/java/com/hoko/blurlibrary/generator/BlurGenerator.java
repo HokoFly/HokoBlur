@@ -72,8 +72,7 @@ public abstract class BlurGenerator implements IBlurGenerator {
 
         Bitmap inBitmap = null;
 
-        //factor不为1.0必须进行scale，因此bitmap不会是immutable
-        if (mIsForceCopy || (!bitmap.isMutable() && mSampleFactor == 1.0f)) {
+        if (mIsForceCopy) {
             inBitmap = bitmap.copy(bitmap.getConfig(), true);
         } else {
             inBitmap = bitmap;

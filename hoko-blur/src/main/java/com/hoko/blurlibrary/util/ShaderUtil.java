@@ -170,17 +170,16 @@ public class ShaderUtil {
         sb.append("int diameter = 2 * uRadius + 1; \n")
                 .append("  vec3 sampleTex;\n")
                 .append("  vec3 col;  \n")
-                .append("  float weightSum = 0.0f; \n")
+                .append("  float weightSum = 0.0; \n")
                 .append("  for(int i = 0; i < diameter; i++) {\n")
                 .append("       vec2 offset = vec2(float(i - uRadius) * uWidthOffset, float(i - uRadius) * uHeightOffset);  \n")
                 .append("        sampleTex = vec3(texture2D(uTexture, vTexCoord.st+offset));\n")
                 .append("       float index = float(i); \n")
-                .append("       float boxWeight = 1.0f / float(diameter); \n")
+                .append("       float boxWeight = float(1.0) / float(diameter); \n")
                 .append("       col += sampleTex * boxWeight; \n")
                 .append("       weightSum += boxWeight;\n")
                 .append("  }   \n")
                 .append("  gl_FragColor = vec4(col / weightSum, 1.0);   \n");
-
         return sb.toString();
     }
 

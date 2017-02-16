@@ -8,6 +8,9 @@ import android.view.View;
 
 import com.hoko.blurlibrary.generator.BlurGenerator;
 import com.hoko.blurlibrary.generator.NativeBlurGenerator;
+import com.hoko.blurlibrary.generator.OpenGLBlurGenerator;
+import com.hoko.blurlibrary.generator.OriginBlurGenerator;
+import com.hoko.blurlibrary.generator.RenderScriptBlurGenerator;
 
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
@@ -57,10 +60,6 @@ public class BlurEffectMaker {
         final float scale = 1.0f / downScale;
 
         Bitmap temp = Bitmap.createBitmap(src, translateX, translateY, width, height);
-
-        if (!temp.isMutable()) {
-            temp = temp.copy(temp.getConfig(), true);
-        }
 
         Bitmap dest = Bitmap.createScaledBitmap(temp, (int) (width * scale), (int) (height * scale), true);
 

@@ -28,6 +28,7 @@ public class BlurDrawable extends Drawable implements IBlur{
     private int alpha;
 
     private Paint mPaint;
+    private boolean mBlurEnabled = true;
 
     public BlurDrawable() {
         mBlurRenderer = new ScreenBlurRenderer();
@@ -38,7 +39,7 @@ public class BlurDrawable extends Drawable implements IBlur{
 
     @Override
     public void draw(@NonNull Canvas canvas) {
-        if (canvas.isHardwareAccelerated()) {
+        if (canvas.isHardwareAccelerated() && mBlurEnabled) {
             mDrawFunctor.doDraw(canvas);
         } else {
             canvas.drawRect(getBounds(), mPaint);
@@ -64,6 +65,15 @@ public class BlurDrawable extends Drawable implements IBlur{
     @Override
     public int getOpacity() {
         return alpha == 255 ? PixelFormat.OPAQUE : PixelFormat.TRANSLUCENT;
+    }
+
+
+    public void disableBlur() {
+        mBlurEnabled = false;
+    }
+
+    public void enableBlur() {
+        mBlurEnabled = true;
     }
 
     @Override

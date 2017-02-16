@@ -17,7 +17,7 @@ import com.hoko.blurlibrary.api.IBlurGenerator;
 /**
  * Created by xiangpi on 16/8/20.
  */
-public class BlurringView extends View {
+public class DragBlurringView extends View {
 
     private static final int DOWNSAMPLE_FACTOR = 5;
 
@@ -31,13 +31,13 @@ public class BlurringView extends View {
     private Canvas mBlurringCanvas;
     private IBlurGenerator mGenerator;
 
-    public BlurringView(Context context) {
+    public DragBlurringView(Context context) {
         super(context);
         init();
 
     }
 
-    public BlurringView(Context context, AttributeSet attrs) {
+    public DragBlurringView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }

@@ -1,8 +1,10 @@
 package com.hoko.blurlibrary.generator;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.util.BitmapUtil;
 
 /**
  * Created by xiangpi on 16/9/7.
@@ -34,11 +36,15 @@ public class NativeBlurGenerator extends BlurGenerator {
                     nativeGaussianBlur(pixels, w, h, mRadius);
                     break;
             }
-            scaledInBitmap.setPixels(pixels, 0, w, 0, 0, w, h);
+
+            if (scaledInBitmap.isMutable()) {
+                scaledInBitmap.setPixels(pixels, 0, w, 0, 0, w, h);
+            } else {
+                BitmapUtil.replaceBitmap(scaledInBitmap, pixels);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
-
         }
 
         return scaledInBitmap;

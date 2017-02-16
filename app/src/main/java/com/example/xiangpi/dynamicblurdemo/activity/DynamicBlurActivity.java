@@ -5,13 +5,13 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.example.xiangpi.dynamicblurdemo.R;
-import com.hoko.blurlibrary.view.BlurringView;
+import com.hoko.blurlibrary.view.DragBlurringView;
 
 public class DynamicBlurActivity extends AppCompatActivity {
 
     private View mBlurredView;
 
-    private BlurringView mBlurringView;
+    private DragBlurringView mDragBlurringView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,9 +20,9 @@ public class DynamicBlurActivity extends AppCompatActivity {
 
         mBlurredView = findViewById(R.id.container);
 
-        mBlurringView = (BlurringView) findViewById(R.id.blurring);
+        mDragBlurringView = (DragBlurringView) findViewById(R.id.blurring);
 
-        mBlurringView.setBlurredView(mBlurredView);
+        mDragBlurringView.setBlurredView(mBlurredView);
 
     }
 }

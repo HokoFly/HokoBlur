@@ -125,7 +125,7 @@ public class EglBuffer {
     }
 
     private void convertToBitmap(Bitmap bitmap) {
-        if (bitmap == null || bitmap.isRecycled() || !bitmap.isMutable()) {
+        if (bitmap == null || bitmap.isRecycled()) {
             return;
         }
 
