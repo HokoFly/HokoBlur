@@ -13,7 +13,8 @@ public class GaussianBlurFilter {
         float[] kernel = makeKernel(radius);
 
         gaussianBlurHorizontal(kernel, in, result, width, height);
-        gaussianBlurHorizontal(kernel, result, in, height, width);
+        gaussianBlurVertical(kernel, result, in, width, height);
+
     }
 
     public static void gaussianBlurHorizontal(float[] kernel, int[] inPixels, int[] outPixels, int width, int height) {
@@ -21,7 +22,6 @@ public class GaussianBlurFilter {
         int cols2 = cols / 2;
 
         for (int y = 0; y < height; y++) {
-            int index = y;
             int ioffset = y * width;
             for (int x = 0; x < width; x++) {
                 float r = 0, g = 0, b = 0;
@@ -42,14 +42,77 @@ public class GaussianBlurFilter {
                         b += f * (rgb & 0xff);
                     }
                 }
-                int ia = (inPixels[ioffset + x] >> 24) & 0xff;
+                int outIndex = ioffset + x;
+                int ia = (inPixels[outIndex] >> 24) & 0xff;
                 int ir = clamp((int) (r + 0.5), 0, 255);
                 int ig = clamp((int) (g + 0.5), 0, 255);
                 int ib = clamp((int) (b + 0.5), 0, 255);
-                outPixels[index] = (ia << 24) | (ir << 16) | (ig << 8) | ib;
-                index += height;
+                outPixels[outIndex] = (ia << 24) | (ir << 16) | (ig << 8) | ib;
             }
         }
+    }
+    public static void gaussianBlurVertical(float[] kernel, int[] inPixels, int[] outPixels, int width, int height) {
+        int cols = kernel.length;
+        int cols2 = cols / 2;
+        for (int x = 0; x < width; x++) {
+            int ioffset = x;
+            for (int y = 0; y < height; y++) {
+                float r = 0, g = 0, b = 0;
+                int moffset = cols2;
+                for (int col = -cols2; col <= cols2; col++) {
+                    float f = kernel[moffset + col];
+
+                    if (f != 0) {
+                        int iy = y + col;
+                        if (iy < 0) {
+                            iy = 0;
+                        } else if (iy >= height) {
+                            iy = height - 1;
+                        }
+                        int rgb = inPixels[ioffset + iy * width];
+                        r += f * ((rgb >> 16) & 0xff);
+                        g += f * ((rgb >> 8) & 0xff);
+                        b += f * (rgb & 0xff);
+                    }
+                }
+                int outIndex = ioffset + y * width;
+                int ia = (inPixels[outIndex] >> 24) & 0xff;
+                int ir = clamp((int) (r + 0.5), 0, 255);
+                int ig = clamp((int) (g + 0.5), 0, 255);
+                int ib = clamp((int) (b + 0.5), 0, 255);
+                outPixels[outIndex] = (ia << 24) | (ir << 16) | (ig << 8) | ib;
+            }
+        }
+//        for (int y = 0; y < height; y++) {
+//            int index = y;
+//            int ioffset = y * width;
+//            for (int x = 0; x < width; x++) {
+//                float r = 0, g = 0, b = 0;
+//                int moffset = cols2;
+//                for (int col = -cols2; col <= cols2; col++) {
+//                    float f = kernel[moffset + col];
+//
+//                    if (f != 0) {
+//                        int ix = x + col;
+//                        if (ix < 0) {
+//                            ix = 0;
+//                        } else if (ix >= width) {
+//                            ix = width - 1;
+//                        }
+//                        int rgb = inPixels[ioffset + ix];
+//                        r += f * ((rgb >> 16) & 0xff);
+//                        g += f * ((rgb >> 8) & 0xff);
+//                        b += f * (rgb & 0xff);
+//                    }
+//                }
+//                int ia = (inPixels[ioffset + x] >> 24) & 0xff;
+//                int ir = clamp((int) (r + 0.5), 0, 255);
+//                int ig = clamp((int) (g + 0.5), 0, 255);
+//                int ib = clamp((int) (b + 0.5), 0, 255);
+//                outPixels[ioffset + x] = (ia << 24) | (ir << 16) | (ig << 8) | ib;
+//                index += height;
+//            }
+//        }
     }
 
     /**

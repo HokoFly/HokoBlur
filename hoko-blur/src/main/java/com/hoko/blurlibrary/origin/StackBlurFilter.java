@@ -37,7 +37,7 @@ public class StackBlurFilter {
 
         }
 
-    public static void doHorizontalBlur(int[] pix, int w, int h, int radius) {
+    private static void doHorizontalBlur(int[] pix, int w, int h, int radius) {
         int wm = w - 1;
         int hm = h - 1;
         int wh = w * h;
@@ -145,7 +145,7 @@ public class StackBlurFilter {
         }
     }
 
-    public static void doVerticalBlur(int[] pix, int w, int h, int radius) {
+    private static void doVerticalBlur(int[] pix, int w, int h, int radius) {
         int wm = w - 1;
         int hm = h - 1;
         int wh = w * h;

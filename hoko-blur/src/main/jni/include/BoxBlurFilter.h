@@ -12,6 +12,7 @@ JNIEXPORT void JNICALL Java_com_hoko_blurlibrary_generator_NativeBlurGenerator_n
         (JNIEnv *, jobject, jintArray, jint, jint, jint);
 
 void boxBlurHorizontal(int[], int[], int width, int height, int radius);
+void boxBlurVertical(int[], int[], int width, int height, int radius);
 int clamp(int i, int minValue, int maxValue);
 
 #ifdef __cplusplus

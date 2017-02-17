@@ -31,7 +31,8 @@ void JNICALL Java_com_hoko_blurlibrary_generator_NativeBlurGenerator_nativeGauss
     c_kernelArray = makeKernel(j_radius);
 
     gaussianBlurHorizontal(c_kernelArray, c_inArray, c_outArray, j_w, j_h, j_radius);
-    gaussianBlurHorizontal(c_kernelArray, c_outArray, c_inArray, j_h, j_w, j_radius);
+
+    gaussianBlurVertical(c_kernelArray, c_outArray, c_inArray, j_w, j_h, j_radius);
 
     env->SetIntArrayRegion(j_inArray, 0, arr_len, c_inArray);
 
@@ -47,7 +48,6 @@ void gaussianBlurHorizontal(float *kernel, jint *inPixels, jint *outPixels, jint
     jint x, y, col;
 
     for (y = 0; y < height; y++) {
-        jint index = y;
         jint ioffset = y * width;
         for (x = 0; x < width; x++) {
             float r = 0, g = 0, b = 0;
@@ -68,12 +68,49 @@ void gaussianBlurHorizontal(float *kernel, jint *inPixels, jint *outPixels, jint
                     b += f * (rgb & 0xff);
                 }
             }
+
+            jint outIndex = ioffset + x;
             jint ia = (inPixels[ioffset + x] >> 24) & 0xff;
             jint ir = clamp((jint) (r + 0.5), 0, 255);
             jint ig = clamp((jint) (g + 0.5), 0, 255);
             jint ib = clamp((jint) (b + 0.5), 0, 255);
-            outPixels[index] = (ia << 24) | (ir << 16) | (ig << 8) | ib;
-            index += height;
+            outPixels[outIndex] = (ia << 24) | (ir << 16) | (ig << 8) | ib;
+        }
+    }
+}
+void gaussianBlurVertical(float *kernel, jint *inPixels, jint *outPixels, jint width, jint height,
+                            jint radius) {
+    jint cols = 2 * radius + 1;
+    jint cols2 = cols / 2;
+    jint x, y, col;
+
+    for (x = 0; x < width; x++) {
+        jint ioffset = x;
+        for (y = 0; y < height; y++) {
+            float r = 0, g = 0, b = 0;
+            int moffset = cols2;
+            for (col = -cols2; col <= cols2; col++) {
+                float f = kernel[moffset + col];
+
+                if (f != 0) {
+                    jint iy = y + col;
+                    if (iy < 0) {
+                        iy = 0;
+                    } else if (iy >= height) {
+                        iy = height - 1;
+                    }
+                    jint rgb = inPixels[ioffset + iy * width];
+                    r += f * ((rgb >> 16) & 0xff);
+                    g += f * ((rgb >> 8) & 0xff);
+                    b += f * (rgb & 0xff);
+                }
+            }
+            jint outIndex = ioffset + y * width;
+            jint ia = (inPixels[ioffset + x] >> 24) & 0xff;
+            jint ir = clamp((jint) (r + 0.5), 0, 255);
+            jint ig = clamp((jint) (g + 0.5), 0, 255);
+            jint ib = clamp((jint) (b + 0.5), 0, 255);
+            outPixels[outIndex] = (ia << 24) | (ir << 16) | (ig << 8) | ib;
         }
     }
 }

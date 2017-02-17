@@ -26,7 +26,7 @@ JNIEXPORT void JNICALL Java_com_hoko_blurlibrary_generator_NativeBlurGenerator_n
     c_outArray = (jint *) malloc(sizeof(jint) * arr_len);
 
     boxBlurHorizontal(c_inArray, c_outArray, j_w, j_h, j_radius);
-    boxBlurHorizontal(c_outArray, c_inArray, j_h, j_w, j_radius);
+    boxBlurVertical(c_outArray, c_inArray, j_w, j_h, j_radius);
 
     env->SetIntArrayRegion(j_inArray, 0, arr_len, c_inArray);
 
@@ -39,9 +39,6 @@ void boxBlurHorizontal(jint *in, jint *out, jint width, jint height, jint radius
     jint tableSize = 2 * radius + 1;
     jint divide[256 * tableSize];
 
-    // the value scope will be 0 to 255, and number of 0 is table size
-    // will get means from index not calculate result again since
-    // color value must be  between 0 and 255.
     for (jint i = 0; i < 256 * tableSize; i++)
         divide[i] = i / tableSize;
 
@@ -49,21 +46,22 @@ void boxBlurHorizontal(jint *in, jint *out, jint width, jint height, jint radius
 
     //
     for (jint y = 0; y < height; y++) {
-        jint outIndex = y;
-        jint ta = 0, tr = 0, tg = 0, tb = 0; // ARGB -> prepare for the alpha, red, green, blue color value.
+        jint ta = 0, tr = 0, tg = 0, tb = 0;
 
         for (jint i = -radius; i <= radius; i++) {
             jint rgb = in[inIndex +
-                          clamp(i, 0, width - 1)]; // read input pixel data here. table size data.
+                          clamp(i, 0, width - 1)];
             ta += (rgb >> 24) & 0xff;
             tr += (rgb >> 16) & 0xff;
             tg += (rgb >> 8) & 0xff;
             tb += rgb & 0xff;
         }
 
-        for (jint x = 0; x < width; x++) { // get output pixel data.
-            out[outIndex] = (divide[ta] << 24) | (divide[tr] << 16) | (divide[tg] << 8) |
-                            divide[tb]; // calculate the output data.
+        jint baseIndex = y * width;
+
+        for (jint x = 0; x < width; x++) {
+            out[baseIndex + x] = (divide[ta] << 24) | (divide[tr] << 16) | (divide[tg] << 8) |
+                            divide[tb];
 
             jint i1 = x + radius + 1;
             if (i1 > widthMinus1)
@@ -78,11 +76,52 @@ void boxBlurHorizontal(jint *in, jint *out, jint width, jint height, jint radius
             tr += ((rgb1 & 0xff0000) - (rgb2 & 0xff0000)) >> 16;
             tg += ((rgb1 & 0xff00) - (rgb2 & 0xff00)) >> 8;
             tb += (rgb1 & 0xff) - (rgb2 & 0xff);
-            outIndex += height; // per column or per row as cycle...
         }
-        inIndex += width; // next (i+ column number * n, n=1....n-1)
+        inIndex += width;
     }
 }
+
+
+void boxBlurVertical(jint *in, jint *out, jint width, jint height, jint radius) {
+    jint heightMinus1 = height - 1;
+    jint tableSize = 2 * radius + 1;
+    jint divide[256 * tableSize];
+
+    for (jint i = 0; i < 256 * tableSize; i++)
+        divide[i] = i / tableSize;
+
+    for (jint x = 0; x < width; x++) {
+        jint ta = 0, tr = 0, tg = 0, tb = 0;
+
+        for (jint i = -radius; i <= radius; i++) {
+            jint rgb = in[x + clamp(i, 0, height - 1) * width];
+            ta += (rgb >> 24) & 0xff;
+            tr += (rgb >> 16) & 0xff;
+            tg += (rgb >> 8) & 0xff;
+            tb += rgb & 0xff;
+        }
+
+        for (jint y = 0; y < height; y++) {
+            out[y * width + x] = (divide[ta] << 24) | (divide[tr] << 16) | (divide[tg] << 8) |
+                            divide[tb];
+
+            jint i1 = y + radius + 1;
+            if (i1 > heightMinus1)
+                i1 = heightMinus1;
+            jint i2 = y - radius;
+            if (i2 < 0)
+                i2 = 0;
+            jint rgb1 = in[x + i1 * width];
+            jint rgb2 = in[x + i2 * width];
+
+            ta += ((rgb1 >> 24) & 0xff) - ((rgb2 >> 24) & 0xff);
+            tr += ((rgb1 & 0xff0000) - (rgb2 & 0xff0000)) >> 16;
+            tg += ((rgb1 & 0xff00) - (rgb2 & 0xff00)) >> 8;
+            tb += (rgb1 & 0xff) - (rgb2 & 0xff);
+        }
+    }
+}
+
 
 jint clamp(jint i, jint minValue, jint maxValue) {
     if (i < minValue) {
