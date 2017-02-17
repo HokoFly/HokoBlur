@@ -14,7 +14,8 @@ extern "C" {
 JNIEXPORT void JNICALL Java_com_hoko_blurlibrary_generator_NativeBlurGenerator_nativeStackBlur
         (JNIEnv *, jobject, jintArray, jint, jint, jint);
 
-void doInnerBlur(jint *, jint , jint , jint);
+void doHorizontalBlur(jint *, jint , jint , jint);
+void doVerticalBlur(jint *, jint , jint , jint);
 #ifdef __cplusplus
 }
 #endif

@@ -22,13 +22,14 @@ JNIEXPORT void JNICALL Java_com_hoko_blurlibrary_generator_NativeBlurGenerator_n
 
     arr_len = env->GetArrayLength(j_inArray);
 
-    doInnerBlur(c_inArray, j_w, j_h, j_radius);
+    doHorizontalBlur(c_inArray, j_w, j_h, j_radius);
+    doVerticalBlur(c_inArray, j_w, j_h, j_radius);
 
     env->SetIntArrayRegion(j_inArray, 0, arr_len, c_inArray);
     env->ReleaseIntArrayElements(j_inArray, c_inArray, 0);
 }
 
-void doInnerBlur(jint *pix, jint w, jint h, jint radius) {
+void doHorizontalBlur(jint *pix, jint w, jint h, jint radius) {
 
     jint wm = w - 1;
     jint hm = h - 1;
@@ -103,6 +104,8 @@ void doInnerBlur(jint *pix, jint w, jint h, jint radius) {
             g[yi] = dv[gsum];
             b[yi] = dv[bsum];
 
+            pix[yi] = (0xff000000 & pix[yi]) | (dv[rsum] << 16) | (dv[gsum] << 8) | dv[bsum];
+
             rsum -= routsum;
             gsum -= goutsum;
             bsum -= boutsum;
@@ -146,6 +149,66 @@ void doInnerBlur(jint *pix, jint w, jint h, jint radius) {
         }
         yw += w;
     }
+
+
+    free(r);
+    free(g);
+    free(b);
+    free(dv);
+    free(stack);
+}
+
+void doVerticalBlur(jint *pix, jint w, jint h, jint radius) {
+
+    jint wm = w - 1;
+    jint hm = h - 1;
+    jint wh = w * h;
+    jint div = radius + radius + 1;
+
+    short *r;
+    short *g;
+    short *b;
+
+    r = (short *) malloc(sizeof(short) * wh);
+    g = (short *) malloc(sizeof(short) * wh);
+    b = (short *) malloc(sizeof(short) * wh);
+
+    jint rsum, gsum, bsum, x, y, i, p, yp, yi, yw;
+    jint *vmin;
+
+    vmin = (jint *) malloc(sizeof(jint) * max(w, h));
+
+    jint divsum = (div + 1) >> 1;
+    divsum *= divsum;
+
+    short *dv;
+    dv = (short *) malloc(sizeof(short) * 256 * divsum);
+
+    for (i = 0; i < 256 * divsum; i++) {
+        dv[i] = (short) (i / divsum);
+    }
+
+    yw = yi = 0;
+
+    //jint stack[div][3];
+
+    jint (*stack)[3];
+    stack = (jint(*)[3]) malloc(sizeof(jint) * div * 3);
+
+    jint stackpointer;
+    jint stackstart;
+    jint *sir;
+    jint rbs;
+    jint r1 = radius + 1;
+    jint routsum, goutsum, boutsum;
+    jint rinsum, ginsum, binsum;
+
+    for (i = 0; i < wh; i++) {
+        r[i] = (pix[i] & 0xff0000) >> 16;
+        g[i] = (pix[i] & 0x00ff00) >> 8;
+        b[i] = (pix[i] & 0x0000ff);
+    }
+
 
     for (x = 0; x < w; x++) {
         rinsum = ginsum = binsum = routsum = goutsum = boutsum = rsum = gsum = bsum = 0;
