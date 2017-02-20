@@ -3,46 +3,60 @@
 //
 
 #include "include/StackBlurFilter.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <jni.h>
-#include <android/log.h>
 
+JNIEXPORT void JNICALL Java_com_hoko_blurlibrary_util_NativeBlurHelper_nativeStackBlur
+        (JNIEnv *env, jobject j_object, jobject jbitmap, jint j_radius, jint j_cores, jint j_index, jint j_direction) {
 
-JNIEXPORT void JNICALL Java_com_hoko_blurlibrary_generator_NativeBlurGenerator_nativeStackBlur
-        (JNIEnv *env, jobject j_object, jintArray j_inArray, jint j_w, jint j_h, jint j_radius) {
-
-    jint *c_inArray;
-    jint arr_len;
-
-    c_inArray = env->GetIntArrayElements(j_inArray, NULL);
-    if (c_inArray == NULL) {
+    if (jbitmap == NULL) {
         return;
     }
 
-    arr_len = env->GetArrayLength(j_inArray);
+    AndroidBitmapInfo bmpInfo={0};
+    if (AndroidBitmap_getInfo(env, jbitmap, &bmpInfo) < 0) {
+        return;
+    }
 
-    doHorizontalBlur(c_inArray, j_w, j_h, j_radius);
-    doVerticalBlur(c_inArray, j_w, j_h, j_radius);
+    int * pixels = NULL;
+    if (AndroidBitmap_lockPixels(env, jbitmap, (void **)&pixels) < 0) {
+        return;
+    }
 
-    env->SetIntArrayRegion(j_inArray, 0, arr_len, c_inArray);
-    env->ReleaseIntArrayElements(j_inArray, c_inArray, 0);
+    int w = bmpInfo.width;
+    int h = bmpInfo.height;
+
+    if (j_direction == HORIZONTAL) {
+        int deltaY = h / j_cores;
+        int startY = j_index * deltaY;
+
+        if (j_index == j_cores - 1) {
+            deltaY = h - (j_cores - 1) * deltaY;
+        }
+
+        doHorizontalBlur(pixels, w, h, j_radius, 0, startY, w, deltaY);
+
+    } else if (j_direction == VERTICAL){
+        int deltaX = w / j_cores;
+        int startX = j_index * deltaX;
+
+        if (j_index == j_cores - 1) {
+            deltaX = w - (j_cores - 1) * (w / j_cores);
+        }
+
+        doVerticalBlur(pixels, w, h, j_radius, startX, 0, deltaX, h);
+    }
+
+    AndroidBitmap_unlockPixels(env, jbitmap);
+
 }
 
-void doHorizontalBlur(jint *pix, jint w, jint h, jint radius) {
+
+
+void doHorizontalBlur(jint *pix, jint w, jint h, jint radius, jint startX, jint startY, jint deltaX, jint deltaY) {
 
     jint wm = w - 1;
     jint hm = h - 1;
     jint wh = w * h;
     jint div = radius + radius + 1;
-
-    short *r;
-    short *g;
-    short *b;
-
-    r = (short *) malloc(sizeof(short) * wh);
-    g = (short *) malloc(sizeof(short) * wh);
-    b = (short *) malloc(sizeof(short) * wh);
 
     jint rsum, gsum, bsum, x, y, i, p, yp, yi, yw;
     jint *vmin;
@@ -59,7 +73,7 @@ void doHorizontalBlur(jint *pix, jint w, jint h, jint radius) {
         dv[i] = (short) (i / divsum);
     }
 
-    yw = yi = 0;
+    yi = 0;
 
     //jint stack[div][3];
 
@@ -73,11 +87,16 @@ void doHorizontalBlur(jint *pix, jint w, jint h, jint radius) {
     jint r1 = radius + 1;
     jint routsum, goutsum, boutsum;
     jint rinsum, ginsum, binsum;
+    jint baseIndex;
+    jint endX = startX + deltaX;
+    jint endY = startY + deltaY;
 
-    for (y = 0; y < h; y++) {
+    for (y = startY; y < endY; y++) {
         rinsum = ginsum = binsum = routsum = goutsum = boutsum = rsum = gsum = bsum = 0;
+        baseIndex = y * w;
+
         for (i = -radius; i <= radius; i++) {
-            p = pix[yi + min(wm, max(i, 0))];
+            p = pix[baseIndex + min(wm, max(startX, i + startX))];
             sir = stack[i + radius];
             sir[0] = (p & 0xff0000) >> 16;
             sir[1] = (p & 0x00ff00) >> 8;
@@ -98,11 +117,8 @@ void doHorizontalBlur(jint *pix, jint w, jint h, jint radius) {
         }
         stackpointer = radius;
 
-        for (x = 0; x < w; x++) {
-
-            r[yi] = dv[rsum];
-            g[yi] = dv[gsum];
-            b[yi] = dv[bsum];
+        yi = baseIndex + startX;
+        for (x = startX; x < endX; x++) {
 
             pix[yi] = (0xff000000 & pix[yi]) | (dv[rsum] << 16) | (dv[gsum] << 8) | dv[bsum];
 
@@ -117,10 +133,10 @@ void doHorizontalBlur(jint *pix, jint w, jint h, jint radius) {
             goutsum -= sir[1];
             boutsum -= sir[2];
 
-            if (y == 0) {
-                vmin[x] = min(x + radius + 1, wm);
-            }
-            p = pix[yw + vmin[x]];
+//            if (y == 0) {
+            vmin[x] = min(x + radius + 1, wm);
+//            }
+            p = pix[baseIndex + vmin[x]];
 
             sir[0] = (p & 0xff0000) >> 16;
             sir[1] = (p & 0x00ff00) >> 8;
@@ -147,31 +163,21 @@ void doHorizontalBlur(jint *pix, jint w, jint h, jint radius) {
 
             yi++;
         }
-        yw += w;
     }
 
 
-    free(r);
-    free(g);
-    free(b);
     free(dv);
     free(stack);
 }
 
-void doVerticalBlur(jint *pix, jint w, jint h, jint radius) {
+
+void doVerticalBlur(jint *pix, jint w, jint h, jint radius, jint startX, jint startY, jint deltaX, jint deltaY) {
 
     jint wm = w - 1;
     jint hm = h - 1;
     jint wh = w * h;
+    jint hmw = hm * w;
     jint div = radius + radius + 1;
-
-    short *r;
-    short *g;
-    short *b;
-
-    r = (short *) malloc(sizeof(short) * wh);
-    g = (short *) malloc(sizeof(short) * wh);
-    b = (short *) malloc(sizeof(short) * wh);
 
     jint rsum, gsum, bsum, x, y, i, p, yp, yi, yw;
     jint *vmin;
@@ -188,7 +194,7 @@ void doVerticalBlur(jint *pix, jint w, jint h, jint radius) {
         dv[i] = (short) (i / divsum);
     }
 
-    yw = yi = 0;
+    yi = 0;
 
     //jint stack[div][3];
 
@@ -202,32 +208,23 @@ void doVerticalBlur(jint *pix, jint w, jint h, jint radius) {
     jint r1 = radius + 1;
     jint routsum, goutsum, boutsum;
     jint rinsum, ginsum, binsum;
+    jint endX = startX + deltaX;
+    jint endY = startY + deltaY;
 
-    for (i = 0; i < wh; i++) {
-        r[i] = (pix[i] & 0xff0000) >> 16;
-        g[i] = (pix[i] & 0x00ff00) >> 8;
-        b[i] = (pix[i] & 0x0000ff);
-    }
+    jint baseIndex = startY * w;
 
-
-    for (x = 0; x < w; x++) {
+    for (x = startX; x < endX; x++) {
         rinsum = ginsum = binsum = routsum = goutsum = boutsum = rsum = gsum = bsum = 0;
-        yp = -radius * w;
         for (i = -radius; i <= radius; i++) {
-            yi = max(0, yp) + x;
-
+            p = pix[min(hmw, max(baseIndex + i * w, baseIndex)) + x];
             sir = stack[i + radius];
-
-            sir[0] = r[yi];
-            sir[1] = g[yi];
-            sir[2] = b[yi];
-
+            sir[0] = (p & 0xff0000) >> 16;
+            sir[1] = (p & 0x00ff00) >> 8;
+            sir[2] = (p & 0x0000ff);
             rbs = r1 - abs(i);
-
-            rsum += r[yi] * rbs;
-            gsum += g[yi] * rbs;
-            bsum += b[yi] * rbs;
-
+            rsum += sir[0] * rbs;
+            gsum += sir[1] * rbs;
+            bsum += sir[2] * rbs;
             if (i > 0) {
                 rinsum += sir[0];
                 ginsum += sir[1];
@@ -237,15 +234,12 @@ void doVerticalBlur(jint *pix, jint w, jint h, jint radius) {
                 goutsum += sir[1];
                 boutsum += sir[2];
             }
-
-            if (i < hm) {
-                yp += w;
-            }
         }
-        yi = x;
         stackpointer = radius;
-        for (y = 0; y < h; y++) {
-            // Preserve alpha channel: ( 0xff000000 & pix[yi] )
+
+        yi = baseIndex + x;
+        for (y = startY; y < endY; y++) {
+
             pix[yi] = (0xff000000 & pix[yi]) | (dv[rsum] << 16) | (dv[gsum] << 8) | dv[bsum];
 
             rsum -= routsum;
@@ -259,14 +253,15 @@ void doVerticalBlur(jint *pix, jint w, jint h, jint radius) {
             goutsum -= sir[1];
             boutsum -= sir[2];
 
-            if (x == 0) {
-                vmin[y] = min(y + r1, hm) * w;
-            }
-            p = x + vmin[y];
 
-            sir[0] = r[p];
-            sir[1] = g[p];
-            sir[2] = b[p];
+//            if (y == 0) {
+            vmin[y] = min(y + radius + 1, hm);
+//            }
+            p = pix[vmin[y] * w + x];
+
+            sir[0] = (p & 0xff0000) >> 16;
+            sir[1] = (p & 0x00ff00) >> 8;
+            sir[2] = (p & 0x0000ff);
 
             rinsum += sir[0];
             ginsum += sir[1];
@@ -277,7 +272,7 @@ void doVerticalBlur(jint *pix, jint w, jint h, jint radius) {
             bsum += binsum;
 
             stackpointer = (stackpointer + 1) % div;
-            sir = stack[stackpointer];
+            sir = stack[(stackpointer) % div];
 
             routsum += sir[0];
             goutsum += sir[1];
@@ -291,9 +286,6 @@ void doVerticalBlur(jint *pix, jint w, jint h, jint radius) {
         }
     }
 
-    free(r);
-    free(g);
-    free(b);
     free(dv);
     free(stack);
 }

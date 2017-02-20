@@ -47,8 +47,14 @@ public class RenderScriptBlurGenerator extends BlurGenerator {
     }
 
 
+    /**
+     * RenderScript自带并行实现
+     * @param scaledInBitmap
+     * @param concurrent
+     * @return
+     */
     @Override
-    protected Bitmap doInnerBlur(Bitmap scaledInBitmap) {
+    protected Bitmap doInnerBlur(Bitmap scaledInBitmap,  boolean concurrent) {
         if (scaledInBitmap == null) {
             return null;
         }

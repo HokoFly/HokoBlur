@@ -1,5 +1,8 @@
 package com.hoko.blurlibrary.origin;
 
+import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.anno.Direction;
+
 import static com.hoko.blurlibrary.util.BlurUtil.clamp;
 
 /**
@@ -7,10 +10,21 @@ import static com.hoko.blurlibrary.util.BlurUtil.clamp;
  */
 public class BoxBlurFilter {
 
-    public static void doBlur(int[] in, int width, int height, int radius) {
+    public static void doBlur(int[] in, int width, int height, int radius, @Direction int round) {
         int[] result = new int[width * height];
-        boxBlurHorizontal(in, result, width, height, radius);
-        boxBlurVertical(result, in, width, height, radius);
+
+        if (round == Blur.HORIZONTAL) {
+            boxBlurHorizontal(in, result, width, height, radius);
+            System.arraycopy(result, 0, in, 0, result.length);
+        } else if (round == Blur.VERTICAL) {
+            boxBlurVertical(in, result, width, height, radius);
+            System.arraycopy(result, 0, in, 0, result.length);
+
+        } else {
+            boxBlurHorizontal(in, result, width, height, radius);
+            boxBlurVertical(result, in, width, height, radius);
+
+        }
     }
 
     private static void boxBlurHorizontal(int[] in, int[] out, int width, int height, int radius) {
@@ -98,4 +112,6 @@ public class BoxBlurFilter {
             }
         }
     }
+
+
 }

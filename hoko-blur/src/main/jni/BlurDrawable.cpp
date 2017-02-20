@@ -2,10 +2,7 @@
 // Created by 橡皮 on 16/11/9.
 //
 
-#include <android/log.h>
 #include "include/BlurDrawable.h"
-#include "include/DrawFunctor.h"
-
 
 using namespace android;
 using namespace uirenderer;

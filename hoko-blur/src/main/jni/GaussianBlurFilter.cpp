@@ -3,53 +3,76 @@
 //
 
 #include "include/GaussianBlurFilter.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <jni.h>
-#include "math.h"
-#include "include/BoxBlurFilter.h"
-#include <android/log.h>
 
+void JNICALL Java_com_hoko_blurlibrary_util_NativeBlurHelper_nativeGaussianBlur
+        (JNIEnv *env, jobject j_object, jobject jbitmap, jint j_radius, jint j_cores, jint j_index, jint j_direction) {
 
-void JNICALL Java_com_hoko_blurlibrary_generator_NativeBlurGenerator_nativeGaussianBlur
-        (JNIEnv *env, jobject j_object, jintArray j_inArray, jint j_w, jint j_h, jint j_radius) {
-
-    jint *c_inArray;
-    jint *c_outArray;
-    jint arr_len;
-    float *c_kernelArray;
-
-    c_inArray = env->GetIntArrayElements(j_inArray, NULL);
-    if (c_inArray == NULL) {
+    if (jbitmap == NULL) {
         return;
     }
 
-    arr_len = env->GetArrayLength(j_inArray);
+    AndroidBitmapInfo bmpInfo={0};
+    if (AndroidBitmap_getInfo(env, jbitmap, &bmpInfo) < 0) {
+        return;
+    }
 
-    c_outArray = (jint *) malloc(sizeof(jint) * arr_len);
+    int * pixels = NULL;
+    if (AndroidBitmap_lockPixels(env, jbitmap, (void **)&pixels) < 0) {
+        return;
+    }
 
-    c_kernelArray = makeKernel(j_radius);
+    int w = bmpInfo.width;
+    int h = bmpInfo.height;
 
-    gaussianBlurHorizontal(c_kernelArray, c_inArray, c_outArray, j_w, j_h, j_radius);
+    float *kernel = NULL;
+    kernel = makeKernel(j_radius);
 
-    gaussianBlurVertical(c_kernelArray, c_outArray, c_inArray, j_w, j_h, j_radius);
+    jint *copy = NULL;
+    copy = (jint *) malloc(sizeof(jint) * w * h);
 
-    env->SetIntArrayRegion(j_inArray, 0, arr_len, c_inArray);
+    for (int i = 0; i < w * h; i++) {
+        copy[i] = pixels[i];
+    }
 
-    env->ReleaseIntArrayElements(j_inArray, c_inArray, 0);
-    free(c_outArray);
-    free(c_kernelArray);
+    if (j_direction == HORIZONTAL) {
+        int deltaY = h / j_cores;
+        int startY = j_index * deltaY;
+
+        if (j_index == j_cores - 1) {
+            deltaY = h - (j_cores - 1) * deltaY;
+        }
+
+        gaussianBlurHorizontal(kernel, copy, pixels, w, h, j_radius, 0, startY, w, deltaY);
+
+    } else if (j_direction == VERTICAL){
+        int deltaX = w / j_cores;
+        int startX = j_index * deltaX;
+
+        if (j_index == j_cores - 1) {
+            deltaX = w - (j_cores - 1) * (w / j_cores);
+        }
+
+        gaussianBlurVertical(kernel, copy, pixels, w, h, j_radius, startX, 0, deltaX, h);
+    }
+
+    AndroidBitmap_unlockPixels(env, jbitmap);
+
+    free(copy);
+    free(kernel);
 }
 
-void gaussianBlurHorizontal(float *kernel, jint *inPixels, jint *outPixels, jint width, jint height,
-                            jint radius) {
+void gaussianBlurHorizontal(float *kernel, jint *inPixels, jint *outPixels, jint width, jint height, jint radius,
+                            jint startX, jint startY, jint deltaX, jint deltaY) {
     jint cols = 2 * radius + 1;
     jint cols2 = cols / 2;
     jint x, y, col;
 
-    for (y = 0; y < height; y++) {
+    jint endY = startY + deltaY;
+    jint endX = startX + deltaX;
+
+    for (y = startY; y < endY; y++) {
         jint ioffset = y * width;
-        for (x = 0; x < width; x++) {
+        for (x = startX; x < endX; x++) {
             float r = 0, g = 0, b = 0;
             int moffset = cols2;
             for (col = -cols2; col <= cols2; col++) {
@@ -57,10 +80,10 @@ void gaussianBlurHorizontal(float *kernel, jint *inPixels, jint *outPixels, jint
 
                 if (f != 0) {
                     jint ix = x + col;
-                    if (ix < 0) {
-                        ix = 0;
-                    } else if (ix >= width) {
-                        ix = width - 1;
+                    if (ix < startX) {
+                        ix = startX;
+                    } else if (ix >= endX) {
+                        ix = endX - 1;
                     }
                     jint rgb = inPixels[ioffset + ix];
                     r += f * ((rgb >> 16) & 0xff);
@@ -78,15 +101,18 @@ void gaussianBlurHorizontal(float *kernel, jint *inPixels, jint *outPixels, jint
         }
     }
 }
-void gaussianBlurVertical(float *kernel, jint *inPixels, jint *outPixels, jint width, jint height,
-                            jint radius) {
+void gaussianBlurVertical(float *kernel, jint *inPixels, jint *outPixels, jint width, jint height, jint radius,
+                          jint startX, jint startY, jint deltaX, jint deltaY) {
     jint cols = 2 * radius + 1;
     jint cols2 = cols / 2;
     jint x, y, col;
 
-    for (x = 0; x < width; x++) {
+    jint endY = startY + deltaY;
+    jint endX = startX + deltaX;
+
+    for (x = startX; x < endX; x++) {
         jint ioffset = x;
-        for (y = 0; y < height; y++) {
+        for (y = startY; y < endY; y++) {
             float r = 0, g = 0, b = 0;
             int moffset = cols2;
             for (col = -cols2; col <= cols2; col++) {
@@ -94,10 +120,10 @@ void gaussianBlurVertical(float *kernel, jint *inPixels, jint *outPixels, jint w
 
                 if (f != 0) {
                     jint iy = y + col;
-                    if (iy < 0) {
-                        iy = 0;
-                    } else if (iy >= height) {
-                        iy = height - 1;
+                    if (iy < startY) {
+                        iy = startY;
+                    } else if (iy >= endY) {
+                        iy = endY - 1;
                     }
                     jint rgb = inPixels[ioffset + iy * width];
                     r += f * ((rgb >> 16) & 0xff);
@@ -121,18 +147,10 @@ float *makeKernel(jint r) {
     float *matrix = (float *) malloc(sizeof(float) * rows);
     float sigma = (r + 1) / 2.0f;
     float sigma22 = 2 * sigma * sigma;
-    float sigmaPi2 = (float) (2 * M_PI * sigma);
-    float sqrtSigmaPi2 = (float) sqrt(sigmaPi2);
-    float radius2 = r * r;
     float total = 0;
     jint index = 0;
     for (row = -r; row <= r; row++) {
-        float distance = row * row;
-        if (distance > radius2) {
-            matrix[index] = 0;
-        } else {
-            matrix[index] = (float) exp(-(distance) / sigma22) / sqrtSigmaPi2;
-        }
+        matrix[index] = exp(-1 * (row * row) / sigma22) / sigma;
         total += matrix[index];
         index++;
     }

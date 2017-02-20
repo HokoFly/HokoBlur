@@ -4,59 +4,48 @@ import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.task.BlurSubTask;
+import com.hoko.blurlibrary.task.BlurTaskManager;
 import com.hoko.blurlibrary.util.BitmapUtil;
+import com.hoko.blurlibrary.util.NativeBlurHelper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by xiangpi on 16/9/7.
  */
 public class NativeBlurGenerator extends BlurGenerator {
 
-
     @Override
-    protected Bitmap doInnerBlur(Bitmap scaledInBitmap) {
+    protected Bitmap doInnerBlur(Bitmap scaledInBitmap, boolean concurrent) {
         if (scaledInBitmap == null) {
             return null;
         }
 
-        try {
+        if (concurrent) {
+            try {
+                int cores = BlurTaskManager.getCores();
+                List<BlurSubTask> hTasks = new ArrayList<BlurSubTask>(cores);
+                List<BlurSubTask> vTasks = new ArrayList<BlurSubTask>(cores);
 
-            final int w = scaledInBitmap.getWidth();
-            final int h = scaledInBitmap.getHeight();
-            final int[] pixels = new int[w * h];
-            scaledInBitmap.getPixels(pixels, 0, w, 0, 0, w, h);
+                for (int i = 0; i < cores; i++) {
+                    hTasks.add(new BlurSubTask(Blur.SCHEME_NATIVE, mMode, scaledInBitmap, mRadius, cores, i, Blur.HORIZONTAL));
+                    vTasks.add(new BlurSubTask(Blur.SCHEME_NATIVE, mMode, scaledInBitmap, mRadius, cores, i, Blur.VERTICAL));
+                }
 
-            switch (mMode) {
-                case Blur.MODE_BOX:
-                    nativeBoxBlur(pixels, w, h, mRadius);
-                    break;
-                case Blur.MODE_STACK:
-                    nativeStackBlur(pixels, w, h, mRadius);
-                    break;
-                case Blur.MODE_GAUSSIAN:
-                    nativeGaussianBlur(pixels, w, h, mRadius);
-                    break;
+                BlurTaskManager.getInstance().invokeAll(hTasks);
+                BlurTaskManager.getInstance().invokeAll(vTasks);
+
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
-            if (scaledInBitmap.isMutable()) {
-                scaledInBitmap.setPixels(pixels, 0, w, 0, 0, w, h);
-            } else {
-                BitmapUtil.replaceBitmap(scaledInBitmap, pixels);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        } else {
+            NativeBlurHelper.doFullBlur(mMode, scaledInBitmap, mRadius);
         }
 
+
         return scaledInBitmap;
-    }
-
-
-    public native void nativeBoxBlur(int[] pixels, int width, int height, int radius);
-    public native void nativeStackBlur(int[] pixels, int width, int height, int radius);
-    public native void nativeGaussianBlur(int[] pixels, int width, int height, int radius);
-
-    static {
-        System.loadLibrary("ImageBlur");
     }
 
 }

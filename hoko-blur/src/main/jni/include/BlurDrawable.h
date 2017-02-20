@@ -3,7 +3,8 @@
 //
 #include <jni.h>
 #include "DrawGlInfo.h"
-
+#include "DrawFunctor.h"
+#include <android/log.h>
 
 #ifndef DYNAMICBLUR_BLURDRAWABLE_H
 #define DYNAMICBLUR_BLURDRAWABLE_H

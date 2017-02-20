@@ -23,11 +23,6 @@ import java.util.concurrent.Executors;
  */
 
 public class BlurEffectMaker {
-    // 线程数到可用cpu核数的一半
-    private static final int EXECUTOR_THREADS = Runtime.getRuntime().availableProcessors() <= 3 ?
-            1 : Runtime.getRuntime().availableProcessors() / 2;
-
-    private static final ExecutorService BLUR_EXECUTOR = Executors.newFixedThreadPool(EXECUTOR_THREADS);
 
     private static Bitmap drawBitmapOnView(View view, int width, int height, int translateX, int translateY, int downScale) {
         final float scale = 1.0f / downScale;
@@ -98,37 +93,14 @@ public class BlurEffectMaker {
     }
 
     public static void makeBlur(Bitmap src, float radius) {
-        int cores = EXECUTOR_THREADS;
-
-        ArrayList<NativeTask> tasks = new ArrayList<NativeTask>(cores);
-        tasks.add(new NativeTask(src, (int) radius));
-
-        try {
-            BLUR_EXECUTOR.invokeAll(tasks);
-        } catch (InterruptedException e) {
-        }
-    }
-
-    private static class NativeTask implements Callable<Void> {
-        private Bitmap _bitmapOut;
-        private int _radius;
-
-        public NativeTask(Bitmap bitmapOut, int radius) {
-            _bitmapOut = bitmapOut;
-            _radius = radius;
-        }
-
-        @Override
-        public Void call() throws Exception {
-            BlurGenerator generator = new NativeBlurGenerator();
-            generator.setBlurMode(Blur.MODE_STACK);
-            generator.forceCopy(false);
-            //旧代码包含scale操作，为兼容旧代码这里设置factor为1.0，不做scale
-            generator.setSampleFactor(1.0f);
-            generator.setBlurRadius(_radius);
-            generator.needUpscale(false);
-            generator.doBlur(_bitmapOut);
-            return null;
-        }
+        BlurGenerator generator = new NativeBlurGenerator();
+        generator.setBlurMode(Blur.MODE_STACK);
+        generator.forceCopy(false);
+        //旧代码包含scale操作，为兼容旧代码这里设置factor为1.0，不做scale
+        generator.setSampleFactor(1.0f);
+        generator.setBlurRadius((int) radius);
+        generator.needUpscale(false);
+        generator.doBlur(src);
     }
 }
+

@@ -3,38 +3,63 @@
 //
 
 #include "include/BoxBlurFilter.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <jni.h>
-#include <android/log.h>
+
+JNIEXPORT void JNICALL Java_com_hoko_blurlibrary_util_NativeBlurHelper_nativeBoxBlur
+        (JNIEnv *env, jobject j_object, jobject jbitmap, jint j_radius, jint j_cores, jint j_index, jint j_direction) {
 
 
-JNIEXPORT void JNICALL Java_com_hoko_blurlibrary_generator_NativeBlurGenerator_nativeBoxBlur
-        (JNIEnv *env, jobject j_object, jintArray j_inArray, jint j_w, jint j_h, jint j_radius) {
-
-    jint *c_inArray;
-    jint *c_outArray;
-    jint arr_len;
-
-    c_inArray = env->GetIntArrayElements(j_inArray, NULL);
-    if (c_inArray == NULL) {
+    if (jbitmap == NULL) {
         return;
     }
 
-    arr_len = env->GetArrayLength(j_inArray);
+    AndroidBitmapInfo bmpInfo={0};
+    if (AndroidBitmap_getInfo(env, jbitmap, &bmpInfo) < 0) {
+        return;
+    }
 
-    c_outArray = (jint *) malloc(sizeof(jint) * arr_len);
+    int * pixels = NULL;
+    if (AndroidBitmap_lockPixels(env, jbitmap, (void **)&pixels) < 0) {
+        return;
+    }
 
-    boxBlurHorizontal(c_inArray, c_outArray, j_w, j_h, j_radius);
-    boxBlurVertical(c_outArray, c_inArray, j_w, j_h, j_radius);
+    int w = bmpInfo.width;
+    int h = bmpInfo.height;
 
-    env->SetIntArrayRegion(j_inArray, 0, arr_len, c_inArray);
+    jint *copy = NULL;
+    copy = (jint *) malloc(sizeof(jint) * w * h);
 
-    env->ReleaseIntArrayElements(j_inArray, c_inArray, 0);
-    free(c_outArray);
+    for (int i = 0; i < w * h; i++) {
+        copy[i] = pixels[i];
+    }
+
+    if (j_direction == HORIZONTAL) {
+        int deltaY = h / j_cores;
+        int startY = j_index * deltaY;
+
+        if (j_index == j_cores - 1) {
+            deltaY = h - (j_cores - 1) * deltaY;
+        }
+
+        boxBlurHorizontal(copy, pixels, w, h, j_radius, 0, startY, w, deltaY);
+
+    } else if (j_direction == VERTICAL){
+        int deltaX = w / j_cores;
+        int startX = j_index * deltaX;
+
+        if (j_index == j_cores - 1) {
+            deltaX = w - (j_cores - 1) * (w / j_cores);
+        }
+
+        boxBlurVertical(copy, pixels, w, h, j_radius, startX, 0, deltaX, h);
+    }
+
+    AndroidBitmap_unlockPixels(env, jbitmap);
+
+    free(copy);
+
 }
 
-void boxBlurHorizontal(jint *in, jint *out, jint width, jint height, jint radius) {
+void boxBlurHorizontal(jint *in, jint *out, jint width, jint height, jint radius, jint startX, jint startY, jint deltaX, jint deltaY) {
     jint widthMinus1 = width - 1;
     jint tableSize = 2 * radius + 1;
     jint divide[256 * tableSize];
@@ -42,15 +67,12 @@ void boxBlurHorizontal(jint *in, jint *out, jint width, jint height, jint radius
     for (jint i = 0; i < 256 * tableSize; i++)
         divide[i] = i / tableSize;
 
-    int inIndex = 0;
-
-    //
-    for (jint y = 0; y < height; y++) {
+    for (jint y = startY; y < startY + deltaY; y++) {
         jint ta = 0, tr = 0, tg = 0, tb = 0;
 
         for (jint i = -radius; i <= radius; i++) {
-            jint rgb = in[inIndex +
-                          clamp(i, 0, width - 1)];
+            jint rgb = in[y * width +
+                          clamp(i, startX, startX + deltaX - 1)];
             ta += (rgb >> 24) & 0xff;
             tr += (rgb >> 16) & 0xff;
             tg += (rgb >> 8) & 0xff;
@@ -59,30 +81,30 @@ void boxBlurHorizontal(jint *in, jint *out, jint width, jint height, jint radius
 
         jint baseIndex = y * width;
 
-        for (jint x = 0; x < width; x++) {
-            out[baseIndex + x] = (divide[ta] << 24) | (divide[tr] << 16) | (divide[tg] << 8) |
-                            divide[tb];
+        for (jint x = startX; x < startX + deltaX; x++) {
 
             jint i1 = x + radius + 1;
-            if (i1 > widthMinus1)
-                i1 = widthMinus1;
+            if (i1 > startX + deltaX - 1)
+                i1 = startX + deltaX - 1;
             jint i2 = x - radius;
-            if (i2 < 0)
-                i2 = 0;
-            jint rgb1 = in[inIndex + i1];
-            jint rgb2 = in[inIndex + i2];
+            if (i2 < startX)
+                i2 = startX;
+            jint rgb1 = in[baseIndex + i1];
+            jint rgb2 = in[baseIndex + i2];
 
             ta += ((rgb1 >> 24) & 0xff) - ((rgb2 >> 24) & 0xff);
             tr += ((rgb1 & 0xff0000) - (rgb2 & 0xff0000)) >> 16;
             tg += ((rgb1 & 0xff00) - (rgb2 & 0xff00)) >> 8;
             tb += (rgb1 & 0xff) - (rgb2 & 0xff);
+
+            out[baseIndex + x] = (divide[ta] << 24) | (divide[tr] << 16) | (divide[tg] << 8) |
+                                 divide[tb];
         }
-        inIndex += width;
     }
 }
 
 
-void boxBlurVertical(jint *in, jint *out, jint width, jint height, jint radius) {
+void boxBlurVertical(jint *in, jint *out, jint width, jint height, jint radius, jint startX, jint startY, jint deltaX, jint deltaY) {
     jint heightMinus1 = height - 1;
     jint tableSize = 2 * radius + 1;
     jint divide[256 * tableSize];
@@ -90,27 +112,27 @@ void boxBlurVertical(jint *in, jint *out, jint width, jint height, jint radius) 
     for (jint i = 0; i < 256 * tableSize; i++)
         divide[i] = i / tableSize;
 
-    for (jint x = 0; x < width; x++) {
+    for (jint x = startX; x < startX + deltaX; x++) {
         jint ta = 0, tr = 0, tg = 0, tb = 0;
 
         for (jint i = -radius; i <= radius; i++) {
-            jint rgb = in[x + clamp(i, 0, height - 1) * width];
+            jint rgb = in[x + clamp(i, startY, startY + deltaY - 1) * width];
             ta += (rgb >> 24) & 0xff;
             tr += (rgb >> 16) & 0xff;
             tg += (rgb >> 8) & 0xff;
             tb += rgb & 0xff;
         }
 
-        for (jint y = 0; y < height; y++) {
+        for (jint y = startY; y < startY + deltaY; y++) {
             out[y * width + x] = (divide[ta] << 24) | (divide[tr] << 16) | (divide[tg] << 8) |
-                            divide[tb];
+                                 divide[tb];
 
             jint i1 = y + radius + 1;
-            if (i1 > heightMinus1)
-                i1 = heightMinus1;
+            if (i1 > startY + deltaY - 1)
+                i1 = startY +deltaY - 1;
             jint i2 = y - radius;
-            if (i2 < 0)
-                i2 = 0;
+            if (i2 < startY)
+                i2 = startY;
             jint rgb1 = in[x + i1 * width];
             jint rgb2 = in[x + i2 * width];
 
@@ -119,16 +141,5 @@ void boxBlurVertical(jint *in, jint *out, jint width, jint height, jint radius) 
             tg += ((rgb1 & 0xff00) - (rgb2 & 0xff00)) >> 8;
             tb += (rgb1 & 0xff) - (rgb2 & 0xff);
         }
-    }
-}
-
-
-jint clamp(jint i, jint minValue, jint maxValue) {
-    if (i < minValue) {
-        return minValue;
-    } else if (i > maxValue) {
-        return maxValue;
-    } else {
-        return i;
     }
 }

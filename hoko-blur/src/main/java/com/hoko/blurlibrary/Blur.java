@@ -24,6 +24,10 @@ public class Blur {
     public static final int SCHEME_NATIVE = 1003;
     public static final int SCHEME_JAVA = 1004;
 
+    public static final int HORIZONTAL = 0;
+    public static final int VERTICAL = 1;
+    public static final int BOTH = 2;
+
     public static BlurBuilder with(Context context) {
         return new BlurBuilder(context.getApplicationContext());
     }

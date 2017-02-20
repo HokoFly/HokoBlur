@@ -3,9 +3,6 @@
 //
 
 #include "include/DrawFunctor.h"
-#include <android/log.h>
-
-
 
 using namespace android;
 

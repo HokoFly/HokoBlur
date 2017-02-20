@@ -26,7 +26,7 @@ public class BitmapUtil {
         return Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true);
     }
 
-    public static native void replaceBitmap(Bitmap bitmap, int[] pixels);
+    public static synchronized native void replaceBitmap(Bitmap bitmap, int[] pixels, int x, int y, int deltaX, int deltaY);
 
     static {
         System.loadLibrary("ImageBlur");

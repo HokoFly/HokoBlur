@@ -14,11 +14,7 @@ android {
         renderscriptTargetApi 15
         renderscriptSupportModeEnabled true
 
-        ndk {
-            moduleName "ImageBlur"
-            ldLibs "log" //添加log库，看自己需求
-            abiFilters "armeabi", "armeabi-v7a", "x86"
-        }
+
 
     }
     buildTypes {

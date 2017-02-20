@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import com.example.xiangpi.dynamicblurdemo.R;
 import com.hoko.blurlibrary.Blur;
 import com.hoko.blurlibrary.BlurEffectMaker;
-import com.hoko.blurlibrary.task.BlurTask;
+import com.hoko.blurlibrary.task.AsyncBlurTask;
 
 public class BlurEffectMakerActivity extends AppCompatActivity {
 
@@ -27,7 +27,7 @@ public class BlurEffectMakerActivity extends AppCompatActivity {
         imageView.setImageBitmap(bitmap);
         BlurEffectMaker.makeBlur(bitmap, 20);
 //        imageView.setImageBitmap(BlurEffectMaker.makeBlur(bitmap, bitmap.getWidth(), bitmap.getHeight(), 0, 0, 2, 10));
-//        Blur.with(this).forceCopy(false).scheme(Blur.SCHEME_RENDER_SCRIPT).sampleFactor(1.0f).radius(20).blurGenerator().doAsyncBlur(bitmap, new BlurTask.CallBack() {
+//        Blur.with(this).forceCopy(false).scheme(Blur.SCHEME_RENDER_SCRIPT).sampleFactor(1.0f).radius(20).blurGenerator().doAsyncBlur(bitmap, new AsyncBlurTask.CallBack() {
 //            @Override
 //            public void onBlurSuccess(Bitmap bitmap) {
 //                imageView.setImageBitmap(bitmap);
@@ -38,7 +38,7 @@ public class BlurEffectMakerActivity extends AppCompatActivity {
 //            }
 //        });
         bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.cat);
-        Blur.with(this).forceCopy(true).scheme(Blur.SCHEME_NATIVE).sampleFactor(2.0f).radius(2).blurGenerator().doAsyncBlur(bitmap, new BlurTask.CallBack() {
+        Blur.with(this).forceCopy(true).scheme(Blur.SCHEME_NATIVE).sampleFactor(2.0f).radius(2).blurGenerator().doAsyncBlur(bitmap, new AsyncBlurTask.CallBack() {
             @Override
             public void onBlurSuccess(Bitmap bitmap) {
                 imageView1.setImageBitmap(bitmap);
@@ -48,7 +48,7 @@ public class BlurEffectMakerActivity extends AppCompatActivity {
             public void onBlurFailed() {
             }
         });
-        Blur.with(this).scheme(Blur.SCHEME_OPENGL).blurGenerator().doAsyncBlur(bitmap, new BlurTask.CallBack() {
+        Blur.with(this).scheme(Blur.SCHEME_OPENGL).blurGenerator().doAsyncBlur(bitmap, new AsyncBlurTask.CallBack() {
             @Override
             public void onBlurSuccess(Bitmap bitmap) {
                 imageView2.setImageBitmap(bitmap);

@@ -2,23 +2,24 @@ package com.hoko.blurlibrary.task;
 
 import android.graphics.Bitmap;
 
-import com.hoko.blurlibrary.api.IBlurGenerator;
+import com.hoko.blurlibrary.generator.BlurGenerator;
 import com.hoko.blurlibrary.util.SingleMainHandler;
 
 /**
+ * 异步模糊任务的封装
  * Created by xiangpi on 2017/2/6.
  */
 
-public class BlurTask implements Runnable {
+public class AsyncBlurTask implements Runnable {
     private CallBack mCallBack;
 
-    private IBlurGenerator mGenerator;
+    private BlurGenerator mGenerator;
 
     private Bitmap mBitmap;
 
     private BlurResultDelivery mResultDelivery;
 
-    public BlurTask(IBlurGenerator generator, Bitmap bitmap, CallBack callBack) {
+    public AsyncBlurTask(BlurGenerator generator, Bitmap bitmap, CallBack callBack) {
         mGenerator = generator;
         mBitmap = bitmap;
         mCallBack = callBack;
@@ -39,7 +40,7 @@ public class BlurTask implements Runnable {
                 return;
             }
 
-            result.setBitmap(mGenerator.doBlur(mBitmap));
+            result.setBitmap(mGenerator.doBlur(mBitmap, false));
             result.setSuccess(true);
         } catch (Exception e) {
             e.printStackTrace();
@@ -50,6 +51,10 @@ public class BlurTask implements Runnable {
 
     }
 
+    /**
+     * 可自定义模糊结果的分发，如分发到其他worker thread
+     * @param resultDelivery
+     */
     public void setResultDelivery(BlurResultDelivery resultDelivery) {
         mResultDelivery = resultDelivery;
     }

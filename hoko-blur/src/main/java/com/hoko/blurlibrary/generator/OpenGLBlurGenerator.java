@@ -23,11 +23,12 @@ public class OpenGLBlurGenerator extends BlurGenerator {
     }
 
     @Override
-    protected Bitmap doInnerBlur(Bitmap scaledInBitmap) {
+    protected Bitmap doInnerBlur(Bitmap scaledInBitmap, boolean concurrent) {
         if (scaledInBitmap == null || scaledInBitmap.isRecycled()) {
             return null;
         }
 
+        // TODO: 2017/2/20 opengl 的并发处理
         mEglBuffer.setBlurRadius(mRadius);
         mEglBuffer.setBlurMode(mMode);
         return mEglBuffer.getBlurBitmap(scaledInBitmap);

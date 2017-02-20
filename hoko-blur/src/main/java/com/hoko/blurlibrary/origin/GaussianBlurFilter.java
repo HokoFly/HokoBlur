@@ -1,5 +1,8 @@
 package com.hoko.blurlibrary.origin;
 
+import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.anno.Direction;
+
 import static com.hoko.blurlibrary.util.BlurUtil.clamp;
 
 /**
@@ -7,13 +10,24 @@ import static com.hoko.blurlibrary.util.BlurUtil.clamp;
  */
 public class GaussianBlurFilter {
 
-    public static void doBlur(int[] in, int width, int height, int radius) {
+
+    public static void doBlur(int[] in, int width, int height, int radius, @Direction int direction) {
 
         int[] result = new int[width * height];
         float[] kernel = makeKernel(radius);
 
-        gaussianBlurHorizontal(kernel, in, result, width, height);
-        gaussianBlurVertical(kernel, result, in, width, height);
+        if (direction == Blur.HORIZONTAL) {
+            gaussianBlurHorizontal(kernel, in, result, width, height);
+            System.arraycopy(result, 0, in, 0, result.length);
+        } else if (direction == Blur.VERTICAL) {
+            gaussianBlurVertical(kernel, in, result, width, height);
+            System.arraycopy(result, 0, in, 0, result.length);
+
+        } else {
+            gaussianBlurHorizontal(kernel, in, result, width, height);
+            gaussianBlurVertical(kernel, result, in, width, height);
+        }
+
 
     }
 
@@ -83,36 +97,7 @@ public class GaussianBlurFilter {
                 outPixels[outIndex] = (ia << 24) | (ir << 16) | (ig << 8) | ib;
             }
         }
-//        for (int y = 0; y < height; y++) {
-//            int index = y;
-//            int ioffset = y * width;
-//            for (int x = 0; x < width; x++) {
-//                float r = 0, g = 0, b = 0;
-//                int moffset = cols2;
-//                for (int col = -cols2; col <= cols2; col++) {
-//                    float f = kernel[moffset + col];
 //
-//                    if (f != 0) {
-//                        int ix = x + col;
-//                        if (ix < 0) {
-//                            ix = 0;
-//                        } else if (ix >= width) {
-//                            ix = width - 1;
-//                        }
-//                        int rgb = inPixels[ioffset + ix];
-//                        r += f * ((rgb >> 16) & 0xff);
-//                        g += f * ((rgb >> 8) & 0xff);
-//                        b += f * (rgb & 0xff);
-//                    }
-//                }
-//                int ia = (inPixels[ioffset + x] >> 24) & 0xff;
-//                int ir = clamp((int) (r + 0.5), 0, 255);
-//                int ig = clamp((int) (g + 0.5), 0, 255);
-//                int ib = clamp((int) (b + 0.5), 0, 255);
-//                outPixels[ioffset + x] = (ia << 24) | (ir << 16) | (ig << 8) | ib;
-//                index += height;
-//            }
-//        }
     }
 
     /**
@@ -123,17 +108,11 @@ public class GaussianBlurFilter {
         float[] matrix = new float[rows];
         float sigma = (r + 1) / 2.0f;
         float sigma22 = 2 * sigma * sigma;
-        float sigmaPi2 = (float) (2 * Math.PI * sigma);
-        float sqrtSigmaPi2 = (float) Math.sqrt(sigmaPi2);
-        float radius2 = r * r;
         float total = 0;
         int index = 0;
         for (int row = -r; row <= r; row++) {
-            float distance = row * row;
-            if (distance > radius2)
-                matrix[index] = 0;
-            else
-                matrix[index] = (float) Math.exp(-(distance) / sigma22) / sqrtSigmaPi2;
+            matrix[index] = (float) (Math.exp(-1 * (row * row) / sigma22) / sigma);
+
             total += matrix[index];
             index++;
         }
@@ -142,5 +121,6 @@ public class GaussianBlurFilter {
 
         return matrix;
     }
+
 
 }

@@ -2,8 +2,7 @@ package com.hoko.blurlibrary.api;
 
 import android.graphics.Bitmap;
 
-import com.hoko.blurlibrary.api.IBlur;
-import com.hoko.blurlibrary.task.BlurTask;
+import com.hoko.blurlibrary.task.AsyncBlurTask;
 
 /**
  * Created by xiangpi on 16/9/8.
@@ -17,7 +16,7 @@ public interface IBlurGenerator extends IBlur {
      */
     Bitmap doBlur(Bitmap inBitmap);
 
-    void doAsyncBlur(Bitmap bitmap, BlurTask.CallBack callBack);
+    void doAsyncBlur(Bitmap bitmap, AsyncBlurTask.CallBack callBack);
 
 
     void forceCopy(boolean isForceCopy);

@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 import com.hoko.blurlibrary.Blur;
 import com.hoko.blurlibrary.anno.Mode;
 import com.hoko.blurlibrary.api.IBlurGenerator;
-import com.hoko.blurlibrary.task.BlurTask;
+import com.hoko.blurlibrary.task.AsyncBlurTask;
 import com.hoko.blurlibrary.task.BlurTaskManager;
 import com.hoko.blurlibrary.util.BitmapUtil;
 
@@ -22,7 +22,7 @@ public abstract class BlurGenerator implements IBlurGenerator {
     private float mSampleFactor;
 
     private boolean mIsForceCopy;
-    
+
     private boolean mNeedUpscale = true;
 
     @Override
@@ -58,6 +58,10 @@ public abstract class BlurGenerator implements IBlurGenerator {
 
     @Override
     public Bitmap doBlur(Bitmap bitmap) {
+        return doBlur(bitmap, true);
+    }
+
+    public Bitmap doBlur(Bitmap bitmap, boolean concurrent) {
         if (bitmap == null || bitmap.isRecycled()) {
             throw new IllegalArgumentException("You must input an unrecycled bitmap !");
         }
@@ -79,16 +83,18 @@ public abstract class BlurGenerator implements IBlurGenerator {
         }
 
         Bitmap scaledInBitmap = BitmapUtil.getScaledBitmap(inBitmap, mSampleFactor);
-        Bitmap scaledOutBitmap = doInnerBlur(scaledInBitmap);
-        
+
+        Bitmap scaledOutBitmap = doInnerBlur(scaledInBitmap, concurrent);
+
         Bitmap outBitmap = mNeedUpscale ? BitmapUtil.getScaledBitmap(scaledOutBitmap, 1f / mSampleFactor) : scaledOutBitmap;
         return outBitmap;
     }
 
-    protected abstract Bitmap doInnerBlur(Bitmap scaledBitmap);
 
-    public void doAsyncBlur(Bitmap bitmap, BlurTask.CallBack callBack) {
-        BlurTaskManager.getInstance().submit(new BlurTask(this, bitmap, callBack));
+    protected abstract Bitmap doInnerBlur(Bitmap scaledBitmap, boolean concurrent);
+
+    public void doAsyncBlur(Bitmap bitmap, AsyncBlurTask.CallBack callBack) {
+        BlurTaskManager.getInstance().submit(new AsyncBlurTask(this, bitmap, callBack));
     }
 
     @Override

@@ -1,5 +1,8 @@
 package com.hoko.blurlibrary.origin;
 
+import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.anno.Direction;
+
 /**
  *  Stack Blur v1.0 from
  * http://www.quasimondo.com/StackBlurForCanvas/StackBlurDemo.html
@@ -31,11 +34,18 @@ package com.hoko.blurlibrary.origin;
  **/
 public class StackBlurFilter {
 
-        public static void doBlur(int[] pix, int w, int h, int radius) {
+    public static void doBlur(int[] pix, int w, int h, int radius, @Direction int direction) {
+
+        if (direction == Blur.HORIZONTAL) {
+            doHorizontalBlur(pix, w, h, radius);
+        } else if (direction == Blur.VERTICAL) {
+            doVerticalBlur(pix, w, h, radius);
+        } else {
             doHorizontalBlur(pix, w, h, radius);
             doVerticalBlur(pix, w, h, radius);
-
         }
+
+    }
 
     private static void doHorizontalBlur(int[] pix, int w, int h, int radius) {
         int wm = w - 1;
@@ -264,3 +274,4 @@ public class StackBlurFilter {
         }
     }
 }
+

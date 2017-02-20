@@ -11,9 +11,9 @@ public class BlurResult {
 
     private Bitmap bitmap;
 
-    private BlurTask.CallBack callBack;
+    private AsyncBlurTask.CallBack callBack;
 
-    public BlurResult(BlurTask.CallBack callBack) {
+    public BlurResult(AsyncBlurTask.CallBack callBack) {
         this.callBack = callBack;
     }
 
@@ -33,7 +33,7 @@ public class BlurResult {
         this.bitmap = bitmap;
     }
 
-    public BlurTask.CallBack getCallBack() {
+    public AsyncBlurTask.CallBack getCallBack() {
         return callBack;
     }
 }
