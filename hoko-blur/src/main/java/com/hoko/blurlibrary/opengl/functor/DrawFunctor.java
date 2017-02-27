@@ -84,7 +84,7 @@ public class DrawFunctor {
             if (info.transform[12] < 0) {
                 info.transform[12] = 0;
             }
-            if (info.transform[13] < 0) {
+            if (info.transform[13] < info.clipTop) {
                 info.transform[13] = info.clipTop;
             }
             mBlurRenderer.onDrawFrame(info);

@@ -139,7 +139,7 @@ public class ScreenBlurRenderer implements IScreenRenderer {
         mScaleW = (int) (mWidth / mSampleFactor);
         mScaleH = (int) (mHeight / mSampleFactor);
 
-        if (mWidth <= 0 || mHeight <= 0) {
+        if (mWidth <= 0 || mHeight <= 0 || mScaleW <= 0 || mScaleH <= 0) {
             return;
         }
 
