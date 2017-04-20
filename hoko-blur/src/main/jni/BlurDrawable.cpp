@@ -1,11 +1,23 @@
 //
 // Created by 橡皮 on 16/11/9.
 //
-
 #include "include/BlurDrawable.h"
+#include "include/scope_jenv.h"
+
 
 using namespace android;
 using namespace uirenderer;
+
+JavaVM *g_VM;
+pthread_key_t g_env_key;
+jclass mFunctorClazz;
+jclass mGlInfoClazz;
+
+static void __DetachCurrentThread(void* a) {
+    if (NULL != g_VM) {
+        g_VM->DetachCurrentThread();
+    }
+}
 
 
 JNIEXPORT jlong JNICALL
@@ -20,15 +32,22 @@ Java_com_hoko_blurlibrary_opengl_functor_DrawFunctor_createNativeFunctor(JNIEnv 
 
 }
 
+JNIEXPORT void JNICALL
+Java_com_hoko_blurlibrary_opengl_functor_DrawFunctor_releaseFunctor(JNIEnv *env, jobject clazz,
+                                                                      jlong j_functor_ptr) {
+    DrawFunctor * drawFunctor = (DrawFunctor *)j_functor_ptr;
+
+    delete drawFunctor;
+}
+
 void postEventFromNativeC(int mode, void *info, jobject functor) {
 
     if (mFunctorClazz == NULL || mGlInfoClazz == NULL) {
         return;
     }
 
-    JNIEnv *env = NULL;
-
-    javaVM->GetEnv((void **) &env, JNI_VERSION_1_6);
+    ScopeJEnv scope_jenv(g_VM);
+    JNIEnv *env = scope_jenv.GetEnv();
 
     jmethodID mPostMethodID = env->GetStaticMethodID((jclass) mFunctorClazz, "postEventFromNative",
                                                      "(Ljava/lang/ref/WeakReference;Lcom/hoko/blurlibrary/opengl/functor/DrawFunctor$GLInfo;I)V");
@@ -52,9 +71,8 @@ jobject *copyGlInfo(jobject *j_info, DrawGlInfo *c_info) {
         return NULL;
     }
 
-    JNIEnv *env = NULL;
-
-    javaVM->GetEnv((void **) &env, JNI_VERSION_1_6);
+    ScopeJEnv scope_jenv(g_VM);
+    JNIEnv *env = scope_jenv.GetEnv();
 
     jfieldID clipLeftFieldId = env->GetFieldID(mGlInfoClazz, "clipLeft", "I");
     jfieldID clipTopFieldId = env->GetFieldID(mGlInfoClazz, "clipTop", "I");
@@ -82,12 +100,16 @@ jobject *copyGlInfo(jobject *j_info, DrawGlInfo *c_info) {
 }
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
-    javaVM = vm;
+    g_VM = vm;
     JNIEnv *env = NULL;
     jclass functorCls = NULL;
     jclass glInfoCls = NULL;
     if (vm->GetEnv((void **) &env, JNI_VERSION_1_6) != JNI_OK) {
         return JNI_ERR;
+    }
+
+    if (0 != pthread_key_create(&g_env_key, __DetachCurrentThread)) {
+        __android_log_print(ANDROID_LOG_ERROR, "pthread", "create g_env_key fail");
     }
 
     // 查找要加载的本地方法Class引用
@@ -107,3 +129,24 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
     return JNI_VERSION_1_6;
 }
 
+JNIEXPORT void JNICALL JNI_OnUnload(JavaVM* vm, void* reserved)
+{
+    JNIEnv* env = NULL;
+
+    if (vm->GetEnv((void**) &env, JNI_VERSION_1_6) != JNI_OK) {
+        //LOGE("GetEnv failed!");
+        return;
+    }
+
+    if (mFunctorClazz != NULL && env != NULL) {
+        env->DeleteGlobalRef(mFunctorClazz);
+        mFunctorClazz = NULL;
+    }
+    if (mGlInfoClazz != NULL && env != NULL) {
+        env->DeleteGlobalRef(mGlInfoClazz);
+        mGlInfoClazz = NULL;
+    }
+
+    g_VM = NULL;
+
+}

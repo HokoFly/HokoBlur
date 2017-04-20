@@ -3,7 +3,8 @@
 //
 
 #include "include/DrawFunctor.h"
-
+#include "include/BlurDrawable.h"
+#include "include/scope_jenv.h"
 using namespace android;
 
 extern "C" void postEventFromNativeC(int, void *, jobject);
@@ -20,5 +21,16 @@ void DrawFunctor::operate(int mode, void *info) {
 
     return;
 
+}
+
+DrawFunctor::DrawFunctor() {
+}
+
+DrawFunctor::~DrawFunctor() {
+    ScopeJEnv scope_jenv(g_VM);
+    JNIEnv *env = scope_jenv.GetEnv();
+    if (env) {
+        env->DeleteGlobalRef(mWeakRefFunctor);
+    }
 }
 

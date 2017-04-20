@@ -5,6 +5,8 @@
 #include "DrawGlInfo.h"
 #include "DrawFunctor.h"
 #include <android/log.h>
+#include <pthread.h>
+
 
 #ifndef DYNAMICBLUR_BLURDRAWABLE_H
 #define DYNAMICBLUR_BLURDRAWABLE_H
@@ -16,13 +18,19 @@ extern "C" {
 using namespace android;
 using namespace uirenderer;
 
-JavaVM *javaVM;
-jclass mFunctorClazz;
-jclass mGlInfoClazz;
+extern JavaVM *g_VM;
+extern pthread_key_t g_env_key;
+extern jclass mFunctorClazz;
+extern jclass mGlInfoClazz;
 
 JNIEXPORT jlong JNICALL
         Java_com_hoko_blurlibrary_opengl_functor_DrawFunctor_createNativeFunctor(JNIEnv *env, jobject clazz,
                                                                           jobject weakRefFunctor);
+
+JNIEXPORT void JNICALL
+        Java_com_hoko_blurlibrary_opengl_functor_DrawFunctor_releaseFunctor(JNIEnv *env, jobject clazz,
+                                                                      jlong j_functor_ptr);
+
 void postEventFromNativeC(int mode, void *info, jobject weakRefFunctor);
 
 jobject * copyGlInfo(jobject * j_info, DrawGlInfo *c_info);

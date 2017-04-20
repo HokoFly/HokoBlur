@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.opengl.Matrix;
 import android.os.Build;
 
+
 import com.hoko.blurlibrary.api.IRenderer;
 
 import java.lang.ref.WeakReference;
@@ -91,6 +92,14 @@ public class DrawFunctor {
         }
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        if (mNativeFunctor != 0) {
+            releaseFunctor(mNativeFunctor);
+        }
+    }
+
     public IRenderer getRenderer() {
         return mBlurRenderer;
     }
@@ -121,6 +130,8 @@ public class DrawFunctor {
     }
 
     public native long createNativeFunctor(WeakReference<DrawFunctor> functor);
+
+    private native void releaseFunctor(long functorPtr);
 
     static {
         System.loadLibrary("ImageBlur");

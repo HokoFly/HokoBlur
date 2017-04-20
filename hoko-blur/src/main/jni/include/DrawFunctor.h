@@ -14,16 +14,15 @@ namespace android {
     public:
         jobject mWeakRefFunctor;
 
-        DrawFunctor() { }
+        DrawFunctor();
 
-        ~DrawFunctor() { }
+        ~DrawFunctor();
 
         status_t operator()(int mode, void *info);
 
 
     private:
         void operate(int mode, void *info);
-
 
     };
 
