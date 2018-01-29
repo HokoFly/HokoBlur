@@ -1,5 +1,5 @@
 //
-// Created by 橡皮 on 16/9/10.
+// Created by yuxfzju on 16/9/10.
 //
 
 #include "include/GaussianBlurFilter.h"

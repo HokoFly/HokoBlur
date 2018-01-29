@@ -1,5 +1,5 @@
 //
-// Created by 橡皮 on 16/11/9.
+// Created by yuxfzju on 16/11/9.
 //
 #include <jni.h>
 #include "DrawGlInfo.h"

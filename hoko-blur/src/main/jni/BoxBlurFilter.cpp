@@ -1,5 +1,5 @@
 //
-// Created by 橡皮 on 16/7/28.
+// Created by yuxfzju on 16/7/28.
 //
 
 #include "include/BoxBlurFilter.h"

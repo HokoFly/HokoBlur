@@ -1,5 +1,5 @@
 //
-// Created by 橡皮 on 2017/2/14.
+// Created by yuxfzju on 2017/2/14.
 //
 
 #include "include/BlurUtil.h"

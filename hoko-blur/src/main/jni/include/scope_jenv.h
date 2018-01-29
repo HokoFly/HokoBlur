@@ -1,5 +1,5 @@
 //
-// Created by 橡皮 on 2017/3/17.
+// Created by yuxfzju on 2017/3/17.
 //
 
 #ifndef SCOP_JENV_H_
