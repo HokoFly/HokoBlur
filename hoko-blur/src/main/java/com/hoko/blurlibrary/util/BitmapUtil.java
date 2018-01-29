@@ -29,6 +29,6 @@ public class BitmapUtil {
     public static synchronized native void replaceBitmap(Bitmap bitmap, int[] pixels, int x, int y, int deltaX, int deltaY);
 
     static {
-        System.loadLibrary("ImageBlur");
+        System.loadLibrary("hoko_blur");
     }
 }

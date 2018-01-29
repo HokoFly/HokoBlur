@@ -134,6 +134,6 @@ public class DrawFunctor {
     private native void releaseFunctor(long functorPtr);
 
     static {
-        System.loadLibrary("ImageBlur");
+        System.loadLibrary("hoko_blur");
     }
 }

@@ -39,7 +39,7 @@ public class NativeBlurHelper {
     public static native void nativeGaussianBlur(Bitmap bitmap, int radius, int cores, int index, int direction);
 
     static {
-        System.loadLibrary("ImageBlur");
+        System.loadLibrary("hoko_blur");
     }
 
 }
