@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.dynamicblurdemo">
+    package="com.example.hokoblurdemo">
 
     <uses-feature
         android:glEsVersion="0x00020000"
@@ -29,7 +29,7 @@
             android:name=".activity.MultiBlurActivity"
             android:hardwareAccelerated="true" />
         <activity android:name=".activity.BlurDrawableActivity" />
-        <activity android:name=".activity.BlurEffectMakerActivity"></activity>
+        <activity android:name=".activity.EasyBlurActivity" />
     </application>
 
 </manifest>

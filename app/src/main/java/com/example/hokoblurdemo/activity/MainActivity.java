@@ -1,4 +1,4 @@
-package com.example.dynamicblurdemo.activity;
+package com.example.hokoblurdemo.activity;
 
 import android.animation.ValueAnimator;
 import android.content.ComponentName;
@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 
-import com.example.dynamicblurdemo.R;
+import com.example.hokoblurdemo.R;
 import com.hoko.blurlibrary.opengl.drawable.BlurDrawable;
 import com.hoko.blurlibrary.view.BlurLinearLayout;
 
@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button mDynamicBtn;
     private Button mLayoutBtn;
     private Button mDrawableBtn;
-    private Button mBlurMakerBtn;
+    private Button mEasyBlurBtn;
 
     private BlurLinearLayout mBlurLayout;
 
@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mLayoutBtn = (Button) findViewById(R.id.layout_blur);
         mBlurLayout = (BlurLinearLayout) findViewById(R.id.blur_layout);
         mDrawableBtn = (Button) findViewById(R.id.drawable_blur);
-        mBlurMakerBtn = (Button) findViewById(R.id.blur_effect_maker);
+        mEasyBlurBtn = (Button) findViewById(R.id.easy_blur);
 
         mMultiBlurBtn.setOnClickListener(this);
         mOpenGLBtn.setOnClickListener(this);
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mDynamicBtn.setOnClickListener(this);
         mLayoutBtn.setOnClickListener(this);
         mDrawableBtn.setOnClickListener(this);
-        mBlurMakerBtn.setOnClickListener(this);
+        mEasyBlurBtn.setOnClickListener(this);
 
         mBlurDrawable = mBlurLayout.getBlurDrawable();
 
@@ -85,8 +85,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.drawable_blur:
                 intent.setClass(MainActivity.this, BlurDrawableActivity.class);
                 break;
-            case R.id.blur_effect_maker:
-                intent.setClass(MainActivity.this, BlurEffectMakerActivity.class);
+            case R.id.easy_blur:
+                intent.setClass(MainActivity.this, EasyBlurActivity.class);
                 break;
 
         }

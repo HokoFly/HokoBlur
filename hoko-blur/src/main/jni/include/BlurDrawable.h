@@ -8,8 +8,8 @@
 #include <pthread.h>
 
 
-#ifndef DYNAMICBLUR_BLURDRAWABLE_H
-#define DYNAMICBLUR_BLURDRAWABLE_H
+#ifndef HOKO_BLUR_DRAWABLE_H
+#define HOKO_BLUR_DRAWABLE_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -39,5 +39,5 @@ jobject * copyGlInfo(jobject * j_info, DrawGlInfo *c_info);
 }
 #endif
 
-#endif //DYNAMICBLUR_BLURDRAWABLE_H
+#endif //HOKO_BLUR_DRAWABLE_H
 

@@ -63,8 +63,8 @@ ext {
 
     libraryDescription = 'a blur effect generator library'
 
-    siteUrl = 'https://github.com/yuxfzju/DynamicBlur'
-    gitUrl = 'https://github.com/yuxfzju/DynamicBlur.git'
+    siteUrl = 'https://github.com/HokoFly/HokoBlur'
+    gitUrl = 'https://github.com/HokoFly/HokoBlur.git'
 
     libraryVersion = '0.0.1'
 

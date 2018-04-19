@@ -1,4 +1,4 @@
-package com.example.dynamicblurdemo;
+package com.example.hokoblurdemo;
 
 import org.junit.Test;
 

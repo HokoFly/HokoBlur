@@ -65,7 +65,7 @@
             android:text="@string/drawable_blur"/>
 
         <Button
-            android:id="@+id/blur_effect_maker"
+            android:id="@+id/easy_blur"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAllCaps="false"

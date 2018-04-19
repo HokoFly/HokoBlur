@@ -1,4 +1,4 @@
-package com.example.dynamicblurdemo.opengl.glsurfaceview;
+package com.example.hokoblurdemo.opengl.glsurfaceview;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;

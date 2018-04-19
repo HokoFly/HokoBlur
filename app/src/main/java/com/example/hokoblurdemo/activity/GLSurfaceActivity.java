@@ -1,10 +1,10 @@
-package com.example.dynamicblurdemo.activity;
+package com.example.hokoblurdemo.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.example.dynamicblurdemo.R;
-import com.example.dynamicblurdemo.opengl.glsurfaceview.BlurGLSurfaceView;
+import com.example.hokoblurdemo.R;
+import com.example.hokoblurdemo.opengl.glsurfaceview.BlurGLSurfaceView;
 
 
 public class GLSurfaceActivity extends AppCompatActivity {

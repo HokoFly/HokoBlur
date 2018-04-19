@@ -6,8 +6,8 @@
 #include <android/log.h>
 #include <android/bitmap.h>
 
-#ifndef DYNAMICBLUR_STACKBLURFILTER_H
-#define DYNAMICBLUR_STACKBLURFILTER_H
+#ifndef HOKO_BLUR_STACKBLURFILTER_H
+#define HOKO_BLUR_STACKBLURFILTER_H
 
 #ifdef __cplusplus
 extern "C" {

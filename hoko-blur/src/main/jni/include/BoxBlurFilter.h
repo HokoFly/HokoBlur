@@ -6,8 +6,8 @@
 #include <android/bitmap.h>
 #include "BlurUtil.h"
 
-#ifndef DYNAMICBLUR_BOXBLURFILTER_H
-#define DYNAMICBLUR_BOXBLURFILTER_H
+#ifndef HOKO_BLUR_BOXBLURFILTER_H
+#define HOKO_BLUR_BOXBLURFILTER_H
 
 #ifdef __cplusplus
 extern "C" {

@@ -1,10 +1,10 @@
-package com.example.dynamicblurdemo.activity;
+package com.example.hokoblurdemo.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import com.example.dynamicblurdemo.R;
+import com.example.hokoblurdemo.R;
 import com.hoko.blurlibrary.view.DragBlurringView;
 
 public class DynamicBlurActivity extends AppCompatActivity {

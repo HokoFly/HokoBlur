@@ -1,4 +1,4 @@
-package com.example.dynamicblurdemo.activity;
+package com.example.hokoblurdemo.activity;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
@@ -19,7 +19,7 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.example.dynamicblurdemo.R;
+import com.example.hokoblurdemo.R;
 import com.hoko.blurlibrary.Blur;
 import com.hoko.blurlibrary.api.IBlurGenerator;
 

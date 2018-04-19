@@ -4,8 +4,8 @@
 #include <android/log.h>
 #include "Functor.h"
 
-#ifndef DYNAMICBLUR_DRAWFUNCTOR_H
-#define DYNAMICBLUR_DRAWFUNCTOR_H
+#ifndef HOKO_BLUR_DRAWFUNCTOR_H
+#define HOKO_BLUR_DRAWFUNCTOR_H
 
 
 namespace android {
@@ -27,4 +27,4 @@ namespace android {
     };
 
 }
-#endif //DYNAMICBLUR_DRAWFUNCTOR_H
+#endif //HOKO_BLUR_DRAWFUNCTOR_H

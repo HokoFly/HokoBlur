@@ -10,11 +10,10 @@ import com.hoko.blurlibrary.generator.BlurGenerator;
 import com.hoko.blurlibrary.generator.NativeBlurGenerator;
 
 /**
- * Created by dolphinWang on 14-10-20.
  * Modified by yuxfzju on 17-2-4.
  */
 
-public class BlurEffectMaker {
+public class EasyBlur {
 
     private static Bitmap drawBitmapOnView(View view, int width, int height, int translateX, int translateY, int downScale) {
         final float scale = 1.0f / downScale;

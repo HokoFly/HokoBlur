@@ -2,8 +2,8 @@
 // Created by yuxfzju on 16/9/10.
 //
 
-#ifndef DYNAMICBLUR_GAUSSIANBLURFILTER_H
-#define DYNAMICBLUR_GAUSSIANBLURFILTER_H
+#ifndef HOKO_BLUR_GAUSSIANBLURFILTER_H
+#define HOKO_BLUR_GAUSSIANBLURFILTER_H
 
 
 #include <jni.h>
@@ -29,4 +29,4 @@ void gaussianBlurVertical(float *, jint *, jint *, jint, jint, jint, jint, jint,
 #ifdef __cplusplus
 }
 #endif
-#endif //DYNAMICBLUR_GAUSSIANBLURFILTER_H
+#endif //HOKO_BLUR_GAUSSIANBLURFILTER_H

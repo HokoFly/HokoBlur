@@ -1,4 +1,4 @@
-package com.example.dynamicblurdemo.activity;
+package com.example.hokoblurdemo.activity;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -6,17 +6,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ImageView;
 
-import com.example.dynamicblurdemo.R;
+import com.example.hokoblurdemo.R;
 import com.hoko.blurlibrary.Blur;
-import com.hoko.blurlibrary.BlurEffectMaker;
+import com.hoko.blurlibrary.EasyBlur;
 import com.hoko.blurlibrary.task.AsyncBlurTask;
 
-public class BlurEffectMakerActivity extends AppCompatActivity {
+public class EasyBlurActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_blur_effect_maker);
+        setContentView(R.layout.activity_easy_blur);
 
          Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.cat);
 
@@ -25,8 +25,8 @@ public class BlurEffectMakerActivity extends AppCompatActivity {
         final ImageView imageView2 = ((ImageView) findViewById(R.id.image2));
 
         imageView.setImageBitmap(bitmap);
-        BlurEffectMaker.makeBlur(bitmap, 20);
-//        imageView.setImageBitmap(BlurEffectMaker.makeBlur(bitmap, bitmap.getWidth(), bitmap.height(), 0, 0, 2, 10));
+        EasyBlur.makeBlur(bitmap, 20);
+//        imageView.setImageBitmap(EasyBlur.makeBlur(bitmap, bitmap.getWidth(), bitmap.height(), 0, 0, 2, 10));
 //        Blur.with(this).forceCopy(false).scheme(Blur.SCHEME_RENDER_SCRIPT).sampleFactor(1.0f).radius(20).blurGenerator().asyncBlur(bitmap, new AsyncBlurTask.CallBack() {
 //            @Override
 //            public void onBlurSuccess(Bitmap bitmap) {

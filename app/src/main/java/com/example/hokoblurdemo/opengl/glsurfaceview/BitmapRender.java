@@ -1,4 +1,4 @@
-package com.example.dynamicblurdemo.opengl.glsurfaceview;
+package com.example.hokoblurdemo.opengl.glsurfaceview;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -7,8 +7,8 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 
-import com.example.dynamicblurdemo.R;
-import com.example.dynamicblurdemo.opengl.textureview.TextureViewRendererProxy;
+import com.example.hokoblurdemo.R;
+import com.example.hokoblurdemo.opengl.textureview.TextureViewRendererProxy;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;

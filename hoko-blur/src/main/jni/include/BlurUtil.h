@@ -2,8 +2,8 @@
 // Created by yuxfzju on 2017/2/14.
 //
 
-#ifndef DYNAMICBLUR_BITMAPREPLACE_H
-#define DYNAMICBLUR_BITMAPREPLACE_H
+#ifndef HOKO_BLUR_BITMAPREPLACE_H
+#define HOKO_BLUR_BITMAPREPLACE_H
 
 #include <jni.h>
 #include "android/bitmap.h"
@@ -29,4 +29,4 @@ JNIEXPORT void JNICALL
 }
 #endif
 
-#endif //DYNAMICBLUR_BITMAPREPLACE_H
+#endif //HOKO_BLUR_BITMAPREPLACE_H

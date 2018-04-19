@@ -1,4 +1,4 @@
-package com.example.dynamicblurdemo.util;
+package com.example.hokoblurdemo.util;
 
 import android.Manifest;
 import android.app.Activity;

@@ -1,4 +1,4 @@
-package com.example.dynamicblurdemo.activity;
+package com.example.hokoblurdemo.activity;
 
 import android.animation.ValueAnimator;
 import android.app.Activity;
@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.example.dynamicblurdemo.R;
+import com.example.hokoblurdemo.R;
 import com.hoko.blurlibrary.opengl.drawable.BlurDrawable;
 import com.hoko.blurlibrary.view.BlurFrameLayout;
 

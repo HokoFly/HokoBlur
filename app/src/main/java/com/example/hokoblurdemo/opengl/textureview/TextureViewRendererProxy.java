@@ -1,4 +1,4 @@
-package com.example.dynamicblurdemo.opengl.textureview;
+package com.example.hokoblurdemo.opengl.textureview;
 
 import android.graphics.Bitmap;
 import android.opengl.GLES20;
