@@ -3,7 +3,7 @@ package com.hoko.blurlibrary.opengl.cache;
 import java.util.LinkedList;
 
 /**
- * Created by xiangpi on 2017/1/21.
+ * Created by yuxfzju on 2017/1/21.
  */
 
 public abstract class CachePool<K, T extends K> {
@@ -62,10 +62,6 @@ public abstract class CachePool<K, T extends K> {
         T previous = null;
         synchronized (this) {
             for (T t : mList) {
-//                if (t != null && t.getWidth() == size.getWidth() && t.getHeight() == size.getHeight()) {
-//                    previous = mList.remove(mList.indexOf(t));
-//                    break;
-//                }
                 if (checkHit(key, t)) {
                     previous = mList.remove(mList.indexOf(t));
                     break;

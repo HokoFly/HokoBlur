@@ -1,4 +1,4 @@
-package com.example.xiangpi.dynamicblurdemo.opengl.textureview;
+package com.example.dynamicblurdemo.opengl.textureview;
 
 import android.graphics.Bitmap;
 import android.opengl.GLES20;
@@ -7,7 +7,7 @@ import android.opengl.Matrix;
 import com.hoko.blurlibrary.api.IRenderer;
 
 /**
- * Created by xiangpi on 16/8/17.
+ * Created by yuxfzju on 16/8/17.
  */
 public class TextureViewRenderer implements IRenderer<Bitmap> {
 

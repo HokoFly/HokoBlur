@@ -8,7 +8,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
-    tools:context="com.example.xiangpi.dynamicblurdemo.activity.MultiBlurActivity">
+    tools:context="com.example.dynamicblurdemo.activity.MultiBlurActivity">
 
     <ImageView
         android:id="@+id/photo"

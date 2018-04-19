@@ -10,7 +10,7 @@ import com.hoko.blurlibrary.task.BlurTaskManager;
 import com.hoko.blurlibrary.util.BitmapUtil;
 
 /**
- * Created by xiangpi on 16/9/8.
+ * Created by yuxfzju on 16/9/8.
  */
 public abstract class BlurGenerator implements IBlurGenerator {
 
@@ -26,38 +26,38 @@ public abstract class BlurGenerator implements IBlurGenerator {
     private boolean mNeedUpscale = true;
 
     @Override
-    public void setBlurMode(@Mode int mode) {
+    public void mode(@Mode int mode) {
         mMode = mode;
     }
 
     @Override
-    public void setBlurRadius(int radius) {
+    public void radius(int radius) {
         mRadius = radius;
     }
 
     @Override
-    public void setSampleFactor(float factor) {
+    public void sampleFactor(float factor) {
         mSampleFactor = factor;
     }
 
     @Override
     @Mode
-    public int getBlurMode() {
+    public int mode() {
         return mMode;
     }
 
     @Override
-    public int getBlurRadius() {
+    public int radius() {
         return mRadius;
     }
 
     @Override
-    public float getSampleFactor() {
+    public float sampleFactor() {
         return mSampleFactor;
     }
 
     @Override
-    public Bitmap doBlur(Bitmap bitmap) {
+    public Bitmap blur(Bitmap bitmap) {
         return doBlur(bitmap, true);
     }
 
@@ -93,7 +93,7 @@ public abstract class BlurGenerator implements IBlurGenerator {
 
     protected abstract Bitmap doInnerBlur(Bitmap scaledBitmap, boolean concurrent);
 
-    public void doAsyncBlur(Bitmap bitmap, AsyncBlurTask.CallBack callBack) {
+    public void asyncBlur(Bitmap bitmap, AsyncBlurTask.CallBack callBack) {
         BlurTaskManager.getInstance().submit(new AsyncBlurTask(this, bitmap, callBack));
     }
 

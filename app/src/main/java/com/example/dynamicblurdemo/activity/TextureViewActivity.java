@@ -1,4 +1,4 @@
-package com.example.xiangpi.dynamicblurdemo.activity;
+package com.example.dynamicblurdemo.activity;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,9 +9,10 @@ import android.view.TextureView;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.example.xiangpi.dynamicblurdemo.R;
-import com.example.xiangpi.dynamicblurdemo.opengl.textureview.GLRenderThread;
-import com.example.xiangpi.dynamicblurdemo.opengl.textureview.TextureViewRenderer;
+import com.example.dynamicblurdemo.R;
+import com.example.dynamicblurdemo.opengl.textureview.GLRenderThread;
+import com.example.dynamicblurdemo.opengl.textureview.TextureViewRenderer;
+
 
 public class TextureViewActivity extends AppCompatActivity implements TextureView.SurfaceTextureListener{
 

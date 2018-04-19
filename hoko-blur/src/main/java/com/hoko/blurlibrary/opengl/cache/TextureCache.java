@@ -6,7 +6,7 @@ import com.hoko.blurlibrary.opengl.texture.TextureFactory;
 import com.hoko.blurlibrary.opengl.size.Size;
 
 /**
- * Created by xiangpi on 17/1/20.
+ * Created by yuxfzju on 17/1/20.
  */
 
 public class TextureCache {
@@ -23,7 +23,7 @@ public class TextureCache {
                 if (size == null) {
                     return null;
                 }
-                return TextureFactory.create(size.getWidth(), size.getHeight());
+                return TextureFactory.create(size.width(), size.height());
             }
 
 
@@ -36,7 +36,7 @@ public class TextureCache {
 
             @Override
             protected boolean checkHit(ISize a, ITexture b) {
-                return a != null && b != null && a.getWidth() == b.getWidth() && a.getHeight() == b.getHeight();
+                return a != null && b != null && a.width() == b.width() && a.height() == b.height();
             }
         };
     }

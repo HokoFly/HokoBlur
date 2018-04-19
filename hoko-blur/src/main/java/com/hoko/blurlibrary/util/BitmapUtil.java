@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 
 /**
- * Created by xiangpi on 16/9/12.
+ * Created by yuxfzju on 16/9/12.
  */
 public class BitmapUtil {
     public static Bitmap getScaledBitmap(Bitmap bitmap, float factor) {

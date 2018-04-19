@@ -9,7 +9,7 @@ import com.hoko.blurlibrary.anno.Mode;
 import static com.hoko.blurlibrary.util.BitmapUtil.replaceBitmap;
 
 /**
- * Created by xiangpi on 2017/2/19.
+ * Created by yuxfzju on 2017/2/19.
  */
 
 public class OriginBlurHelper {

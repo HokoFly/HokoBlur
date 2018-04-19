@@ -7,7 +7,7 @@ import com.hoko.blurlibrary.anno.Direction;
 import com.hoko.blurlibrary.anno.Mode;
 
 /**
- * Created by xiangpi on 2017/2/18.
+ * Created by yuxfzju on 2017/2/18.
  */
 
 public class NativeBlurHelper {

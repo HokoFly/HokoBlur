@@ -1,4 +1,4 @@
-package com.example.xiangpi.dynamicblurdemo;
+package com.example.dynamicblurdemo;
 
 import org.junit.Test;
 

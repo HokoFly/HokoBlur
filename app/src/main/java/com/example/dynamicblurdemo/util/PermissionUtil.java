@@ -1,4 +1,4 @@
-package com.example.xiangpi.dynamicblurdemo.util;
+package com.example.dynamicblurdemo.util;
 
 import android.Manifest;
 import android.app.Activity;
@@ -10,7 +10,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 
 /**
- * Created by xiangpi on 16/8/29.
+ * Created by yuxfzju on 16/8/29.
  */
 public class PermissionUtil {
 

@@ -1,4 +1,4 @@
-package com.example.xiangpi.dynamicblurdemo.opengl.textureview;
+package com.example.dynamicblurdemo.opengl.textureview;
 
 import android.graphics.Bitmap;
 import android.opengl.GLES20;
@@ -10,7 +10,7 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
 /**
- * Created by xiangpi on 16/8/10.
+ * Created by yuxfzju on 16/8/10.
  */
 public class TextureViewRendererProxy {
 

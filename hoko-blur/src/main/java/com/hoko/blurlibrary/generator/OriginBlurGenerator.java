@@ -1,23 +1,17 @@
 package com.hoko.blurlibrary.generator;
 
 import android.graphics.Bitmap;
-import android.os.SystemClock;
-import android.util.Log;
 
 import com.hoko.blurlibrary.Blur;
-import com.hoko.blurlibrary.origin.BoxBlurFilter;
-import com.hoko.blurlibrary.origin.GaussianBlurFilter;
 import com.hoko.blurlibrary.origin.OriginBlurHelper;
-import com.hoko.blurlibrary.origin.StackBlurFilter;
 import com.hoko.blurlibrary.task.BlurSubTask;
 import com.hoko.blurlibrary.task.BlurTaskManager;
-import com.hoko.blurlibrary.util.BitmapUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by xiangpi on 16/9/7.
+ * Created by yuxfzju on 16/9/7.
  */
 public class OriginBlurGenerator extends BlurGenerator {
 
@@ -52,8 +46,8 @@ public class OriginBlurGenerator extends BlurGenerator {
     }
 
     @Override
-    public void setBlurRadius(int radius) {
-        super.setBlurRadius(radius);
+    public void radius(int radius) {
+        super.radius(radius);
 
     }
 }

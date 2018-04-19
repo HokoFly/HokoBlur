@@ -1,4 +1,4 @@
-package com.example.xiangpi.dynamicblurdemo.opengl.textureview;
+package com.example.dynamicblurdemo.opengl.textureview;
 
 import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
@@ -12,7 +12,7 @@ import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 
 /**
- * Created by xiangpi on 16/8/17.
+ * Created by yuxfzju on 16/8/17.
  */
 public class GLRenderThread extends Thread {
 

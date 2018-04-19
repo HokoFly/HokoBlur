@@ -7,7 +7,7 @@ import android.opengl.GLUtils;
 import java.lang.ref.WeakReference;
 
 /**
- * Created by xiangpi on 2017/1/24.
+ * Created by yuxfzju on 2017/1/24.
  */
 
 public class BitmapTexture extends Texture {
@@ -16,8 +16,8 @@ public class BitmapTexture extends Texture {
 
     BitmapTexture(Bitmap bitmap) {
         if (bitmap != null && !bitmap.isRecycled()) {
-            setWidth(bitmap.getWidth());
-            setHeight(bitmap.getHeight());
+            width(bitmap.getWidth());
+            height(bitmap.getHeight());
             mBitmapWeakRef = new WeakReference<Bitmap>(bitmap);
             genTexture();
         }
@@ -25,7 +25,7 @@ public class BitmapTexture extends Texture {
 
     @Override
     protected void initTexture() {
-        if (getWidth() != 0 && getHeight() != 0 && mBitmapWeakRef != null ) {
+        if (width() != 0 && height() != 0 && mBitmapWeakRef != null ) {
             Bitmap bitmap = mBitmapWeakRef.get();
 
             if (bitmap != null && !bitmap.isRecycled()) {

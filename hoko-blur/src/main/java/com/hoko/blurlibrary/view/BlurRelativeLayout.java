@@ -9,7 +9,7 @@ import android.widget.RelativeLayout;
 import com.hoko.blurlibrary.opengl.drawable.BlurDrawable;
 
 /**
- * Created by xiangpi on 16/11/9.
+ * Created by yuxfzju on 16/11/9.
  */
 public class BlurRelativeLayout extends RelativeLayout{
     private BlurDrawable mBlurDrawable;

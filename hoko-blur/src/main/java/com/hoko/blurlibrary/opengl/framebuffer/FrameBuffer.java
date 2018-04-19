@@ -6,7 +6,7 @@ import com.hoko.blurlibrary.api.IFrameBuffer;
 import com.hoko.blurlibrary.api.ITexture;
 
 /**
- * Created by xiangpi on 2017/1/22.
+ * Created by yuxfzju on 2017/1/22.
  */
 
 class FrameBuffer implements IFrameBuffer {
@@ -24,12 +24,12 @@ class FrameBuffer implements IFrameBuffer {
     }
 
     @Override
-    public int getId() {
+    public int id() {
         return mFrameBufferId;
     }
 
     @Override
-    public void setId(int frameBufferId) {
+    public void id(int frameBufferId) {
         mFrameBufferId = frameBufferId;
     }
 
@@ -48,18 +48,18 @@ class FrameBuffer implements IFrameBuffer {
         }
         mTexture = texture;
 
-        if (texture.getId() != 0) {
+        if (texture.id() != 0) {
             GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFrameBufferId);
 
             GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0,
-                    GLES20.GL_TEXTURE_2D, texture.getId(), 0);
+                    GLES20.GL_TEXTURE_2D, texture.id(), 0);
         }
 
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
     }
 
     @Override
-    public ITexture getBindTexture() {
+    public ITexture bindTexture() {
         return mTexture;
     }
 

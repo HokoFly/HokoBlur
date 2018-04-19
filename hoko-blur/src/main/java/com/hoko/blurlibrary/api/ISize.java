@@ -1,15 +1,15 @@
 package com.hoko.blurlibrary.api;
 
 /**
- * Created by xiangpi on 2017/1/22.
+ * Created by yuxfzju on 2017/1/22.
  */
 public interface ISize {
 
-    void setWidth(int width);
+    void width(int width);
 
-    int getWidth();
+    int width();
 
-    void setHeight(int height);
+    void height(int height);
 
-    int getHeight();
+    int height();
 }

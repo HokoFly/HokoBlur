@@ -2,7 +2,7 @@ package com.hoko.blurlibrary.api;
 
 
 /**
- * Created by xiangpi on 2017/2/10.
+ * Created by yuxfzju on 2017/2/10.
  */
 public interface IRenderer<T> {
     void onSurfaceCreated();

@@ -17,7 +17,7 @@ import com.hoko.blurlibrary.opengl.functor.ScreenBlurRenderer;
 import com.hoko.blurlibrary.util.BlurUtil;
 
 /**
- * Created by xiangpi on 16/11/23.
+ * Created by yuxfzju on 16/11/23.
  */
 public class BlurDrawable extends Drawable implements IBlur{
 
@@ -77,49 +77,49 @@ public class BlurDrawable extends Drawable implements IBlur{
     }
 
     @Override
-    public void setBlurMode(@Mode int mode) {
+    public void mode(@Mode int mode) {
         if (mBlurRenderer != null) {
-            mBlurRenderer.setBlurMode(mode);
+            mBlurRenderer.mode(mode);
             invalidateSelf();
         }
     }
 
     @Override
-    public void setBlurRadius(int radius) {
+    public void radius(int radius) {
         if (mBlurRenderer != null) {
-            mBlurRenderer.setBlurRadius(BlurUtil.checkRadius(radius));
+            mBlurRenderer.radius(BlurUtil.checkRadius(radius));
             invalidateSelf();
         }
     }
 
     @Override
-    public void setSampleFactor(float factor) {
+    public void sampleFactor(float factor) {
         if (mBlurRenderer != null) {
-            mBlurRenderer.setSampleFactor(factor);
+            mBlurRenderer.sampleFactor(factor);
         }
         invalidateSelf();
     }
 
     @Override
-    public int getBlurMode() {
+    public int mode() {
         if (mBlurRenderer != null) {
-            return mBlurRenderer.getBlurMode();
+            return mBlurRenderer.mode();
         }
         return Blur.MODE_BOX;
     }
 
     @Override
-    public int getBlurRadius() {
+    public int radius() {
         if (mBlurRenderer != null) {
-            return mBlurRenderer.getBlurRadius();
+            return mBlurRenderer.radius();
         }
         return 0;
     }
 
     @Override
-    public float getSampleFactor() {
+    public float sampleFactor() {
         if (mBlurRenderer != null) {
-            return mBlurRenderer.getSampleFactor();
+            return mBlurRenderer.sampleFactor();
         }
         return 1.0f;
     }

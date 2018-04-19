@@ -660,7 +660,7 @@ Blur.with(context)
     .mode(Blur.MODE_GAUSSIAN) //设置模糊算法类型
     .sampleFactor(10) //设置缩放因子
     .radius(10) //设置模糊半径
-    .getBlurGenerator() //获得模糊实现类
+    .blurGenerator() //获得模糊实现类
     .doBlur(bitmap); 	//模糊图片
 
 ```

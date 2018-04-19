@@ -1,4 +1,4 @@
-package com.example.xiangpi.dynamicblurdemo.activity;
+package com.example.dynamicblurdemo.activity;
 
 import android.animation.ValueAnimator;
 import android.app.Activity;
@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.example.xiangpi.dynamicblurdemo.R;
+import com.example.dynamicblurdemo.R;
 import com.hoko.blurlibrary.opengl.drawable.BlurDrawable;
 import com.hoko.blurlibrary.view.BlurFrameLayout;
 
@@ -31,7 +31,7 @@ public class BlurDrawableActivity extends Activity {
         mAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                mFrameLayout.getBlurDrawable().setBlurRadius((Integer) animation.getAnimatedValue());
+                mFrameLayout.getBlurDrawable().radius((Integer) animation.getAnimatedValue());
             }
         });
     }

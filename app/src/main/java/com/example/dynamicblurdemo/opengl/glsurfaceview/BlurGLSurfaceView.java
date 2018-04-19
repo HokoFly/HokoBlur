@@ -1,11 +1,11 @@
-package com.example.xiangpi.dynamicblurdemo.opengl.glsurfaceview;
+package com.example.dynamicblurdemo.opengl.glsurfaceview;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 
 /**
- * Created by xiangpi on 16/8/10.
+ * Created by yuxfzju on 16/8/10.
  */
 public class BlurGLSurfaceView extends GLSurfaceView {
 

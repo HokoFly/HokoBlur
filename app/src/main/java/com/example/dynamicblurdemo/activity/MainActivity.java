@@ -1,4 +1,4 @@
-package com.example.xiangpi.dynamicblurdemo.activity;
+package com.example.dynamicblurdemo.activity;
 
 import android.animation.ValueAnimator;
 import android.content.ComponentName;
@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 
-import com.example.xiangpi.dynamicblurdemo.R;
+import com.example.dynamicblurdemo.R;
 import com.hoko.blurlibrary.opengl.drawable.BlurDrawable;
 import com.hoko.blurlibrary.view.BlurLinearLayout;
 
@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 int r = (int) animation.getAnimatedValue();
-                mBlurDrawable.setBlurRadius(r);
+                mBlurDrawable.radius(r);
             }
         });
         animator.setDuration(1000);

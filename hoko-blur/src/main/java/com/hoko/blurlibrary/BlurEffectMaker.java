@@ -8,18 +8,10 @@ import android.view.View;
 
 import com.hoko.blurlibrary.generator.BlurGenerator;
 import com.hoko.blurlibrary.generator.NativeBlurGenerator;
-import com.hoko.blurlibrary.generator.OpenGLBlurGenerator;
-import com.hoko.blurlibrary.generator.OriginBlurGenerator;
-import com.hoko.blurlibrary.generator.RenderScriptBlurGenerator;
-
-import java.util.ArrayList;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Created by dolphinWang on 14-10-20.
- * Modified by xiangpi on 17-2-4.
+ * Modified by yuxfzju on 17-2-4.
  */
 
 public class BlurEffectMaker {
@@ -94,13 +86,13 @@ public class BlurEffectMaker {
 
     public static void makeBlur(Bitmap src, float radius) {
         BlurGenerator generator = new NativeBlurGenerator();
-        generator.setBlurMode(Blur.MODE_STACK);
+        generator.mode(Blur.MODE_STACK);
         generator.forceCopy(false);
         //旧代码包含scale操作，为兼容旧代码这里设置factor为1.0，不做scale
-        generator.setSampleFactor(1.0f);
-        generator.setBlurRadius((int) radius);
+        generator.sampleFactor(1.0f);
+        generator.radius((int) radius);
         generator.needUpscale(false);
-        generator.doBlur(src);
+        generator.blur(src);
     }
 }
 

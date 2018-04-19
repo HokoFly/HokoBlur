@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-    tools:context="com.example.xiangpi.dynamicblurdemo.activity.BlurDrawableActivity">
+    tools:context="com.example.dynamicblurdemo.activity.BlurDrawableActivity">
 
     <ScrollView
         android:layout_width="match_parent"

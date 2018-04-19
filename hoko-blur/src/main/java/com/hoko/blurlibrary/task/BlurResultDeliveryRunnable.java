@@ -1,7 +1,7 @@
 package com.hoko.blurlibrary.task;
 
 /**
- * Created by xiangpi on 2017/2/7.
+ * Created by yuxfzju on 2017/2/7.
  */
 
 class BlurResultDeliveryRunnable implements Runnable {

@@ -7,7 +7,7 @@ import com.hoko.blurlibrary.util.SingleMainHandler;
 
 /**
  * 异步模糊任务的封装
- * Created by xiangpi on 2017/2/6.
+ * Created by yuxfzju on 2017/2/6.
  */
 
 public class AsyncBlurTask implements Runnable {

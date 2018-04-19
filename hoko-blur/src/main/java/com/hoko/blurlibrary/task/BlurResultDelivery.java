@@ -3,7 +3,7 @@ package com.hoko.blurlibrary.task;
 import java.util.concurrent.Executor;
 
 /**
- * Created by xiangpi on 2017/2/7.
+ * Created by yuxfzju on 2017/2/7.
  */
 
 public class BlurResultDelivery {

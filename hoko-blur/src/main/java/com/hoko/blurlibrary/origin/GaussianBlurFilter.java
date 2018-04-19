@@ -6,7 +6,7 @@ import com.hoko.blurlibrary.anno.Direction;
 import static com.hoko.blurlibrary.util.BlurUtil.clamp;
 
 /**
- * Created by xiangpi on 16/9/10.
+ * Created by yuxfzju on 16/9/10.
  */
 public class GaussianBlurFilter {
 

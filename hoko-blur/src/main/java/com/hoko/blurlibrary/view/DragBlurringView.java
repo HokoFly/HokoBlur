@@ -15,7 +15,7 @@ import com.hoko.blurlibrary.api.IBlurGenerator;
 
 
 /**
- * Created by xiangpi on 16/8/20.
+ * Created by yuxfzju on 16/8/20.
  */
 public class DragBlurringView extends View {
 
@@ -67,7 +67,7 @@ public class DragBlurringView extends View {
                 }
 
                 mBlurredView.draw(mBlurringCanvas);
-                mBlurredBitmap = mGenerator.doBlur(mToBlurBitmap);
+                mBlurredBitmap = mGenerator.blur(mToBlurBitmap);
 
                 canvas.save();
                 canvas.translate(mBlurredView.getX() - getX(), mBlurredView.getY() - getY());

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="10dp"
-    tools:context="com.example.xiangpi.dynamicblurdemo.activity.DynamicBlurActivity">
+    tools:context="com.example.dynamicblurdemo.activity.DynamicBlurActivity">
 
     <RelativeLayout
         android:id="@+id/container"

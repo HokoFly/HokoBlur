@@ -5,7 +5,7 @@ import android.opengl.GLES20;
 import com.hoko.blurlibrary.api.IFrameBuffer;
 
 /**
- * Created by xiangpi on 2017/1/22.
+ * Created by yuxfzju on 2017/1/22.
  */
 
 public class FrameBufferFactory {

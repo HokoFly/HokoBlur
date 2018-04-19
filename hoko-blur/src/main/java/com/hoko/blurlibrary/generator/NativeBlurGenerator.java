@@ -1,19 +1,17 @@
 package com.hoko.blurlibrary.generator;
 
 import android.graphics.Bitmap;
-import android.util.Log;
 
 import com.hoko.blurlibrary.Blur;
 import com.hoko.blurlibrary.task.BlurSubTask;
 import com.hoko.blurlibrary.task.BlurTaskManager;
-import com.hoko.blurlibrary.util.BitmapUtil;
 import com.hoko.blurlibrary.util.NativeBlurHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by xiangpi on 16/9/7.
+ * Created by yuxfzju on 16/9/7.
  */
 public class NativeBlurGenerator extends BlurGenerator {
 

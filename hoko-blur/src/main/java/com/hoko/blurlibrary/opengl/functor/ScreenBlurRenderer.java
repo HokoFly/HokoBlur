@@ -27,7 +27,7 @@ import static com.hoko.blurlibrary.util.ShaderUtil.getFragmentShaderCode;
 import static com.hoko.blurlibrary.util.ShaderUtil.getVertexCode;
 
 /**
- * Created by xiangpi on 16/11/23.
+ * Created by yuxfzju on 16/11/23.
  */
 public class ScreenBlurRenderer implements IScreenRenderer {
 
@@ -284,7 +284,7 @@ public class ScreenBlurRenderer implements IScreenRenderer {
 
         mTextureUniformId = GLES20.glGetUniformLocation(mBlurProgram, "uTexture");
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, isHorizontal ? mDisplayTexture.getId() : mHorizontalTexture.getId());
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, isHorizontal ? mDisplayTexture.id() : mHorizontalTexture.id());
         GLES20.glUniform1i(mTextureUniformId, 0);
 
         int radiusId = GLES20.glGetUniformLocation(mBlurProgram, "uRadius");
@@ -326,7 +326,7 @@ public class ScreenBlurRenderer implements IScreenRenderer {
 
         mTextureUniformId = GLES20.glGetUniformLocation(mCopyProgram, "uTexture");
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mVerticalTexture.getId());
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mVerticalTexture.id());
         GLES20.glUniform1i(mTextureUniformId, 0);
 
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, mDrawListBuffer);
@@ -359,9 +359,9 @@ public class ScreenBlurRenderer implements IScreenRenderer {
     }
 
     private void copyTextureFromScreen(DrawFunctor.GLInfo info) {
-        if (info != null && mDisplayTexture != null && mDisplayTexture.getId() != 0) {
+        if (info != null && mDisplayTexture != null && mDisplayTexture.id() != 0) {
             GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mDisplayTexture.getId());
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mDisplayTexture.id());
             GLES20.glCopyTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, 0, info.clipLeft, info.viewportHeight - info.clipBottom, mWidth, mHeight);
         }
 
@@ -401,33 +401,33 @@ public class ScreenBlurRenderer implements IScreenRenderer {
     }
 
     @Override
-    public void setBlurMode(@Mode int mode) {
+    public void mode(@Mode int mode) {
         mMode = mode;
         mNeedRelink = true;
     }
 
     @Override
-    public void setBlurRadius(int radius) {
+    public void radius(int radius) {
         mRadius = radius;
     }
 
     @Override
-    public void setSampleFactor(float factor) {
+    public void sampleFactor(float factor) {
         mSampleFactor = factor;
     }
 
     @Override
-    public int getBlurMode() {
+    public int mode() {
         return mMode;
     }
 
     @Override
-    public int getBlurRadius() {
+    public int radius() {
         return mRadius;
     }
 
     @Override
-    public float getSampleFactor() {
+    public float sampleFactor() {
         return mSampleFactor;
     }
 

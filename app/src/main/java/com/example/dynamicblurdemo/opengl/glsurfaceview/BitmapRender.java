@@ -1,4 +1,4 @@
-package com.example.xiangpi.dynamicblurdemo.opengl.glsurfaceview;
+package com.example.dynamicblurdemo.opengl.glsurfaceview;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -7,14 +7,14 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 
-import com.example.xiangpi.dynamicblurdemo.R;
-import com.example.xiangpi.dynamicblurdemo.opengl.textureview.TextureViewRendererProxy;
+import com.example.dynamicblurdemo.R;
+import com.example.dynamicblurdemo.opengl.textureview.TextureViewRendererProxy;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 /**
- * Created by xiangpi on 16/8/10.
+ * Created by yuxfzju on 16/8/10.
  */
 public class BitmapRender implements GLSurfaceView.Renderer{
 

@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
 
 /**
  * 对函数指针的封装，通过调用callDrawGLFunction，获取硬件绘制区域在屏幕的具体位置
- * Created by xiangpi on 16/11/9.
+ * Created by yuxfzju on 16/11/9.
  */
 public class DrawFunctor {
 

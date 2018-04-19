@@ -5,7 +5,7 @@ import android.opengl.GLES20;
 import com.hoko.blurlibrary.api.ITexture;
 
 /**
- * Created by xiangpi on 17/1/20.
+ * Created by yuxfzju on 17/1/20.
  */
 
 public abstract class Texture implements ITexture {
@@ -42,32 +42,32 @@ public abstract class Texture implements ITexture {
     }
 
     @Override
-    public void setId(int textureId) {
+    public void id(int textureId) {
         mTextureId = textureId;
     }
 
     @Override
-    public int getId() {
+    public int id() {
         return mTextureId;
     }
 
     @Override
-    public void setWidth(int width) {
+    public void width(int width) {
         mWidth = width;
     }
 
     @Override
-    public int getWidth() {
+    public int width() {
         return mWidth;
     }
 
     @Override
-    public void setHeight(int height) {
+    public void height(int height) {
         mHeight = height;
     }
 
     @Override
-    public int getHeight() {
+    public int height() {
         return mHeight;
     }
 }

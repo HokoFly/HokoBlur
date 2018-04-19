@@ -5,7 +5,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 /**
- * Created by xiangpi on 2017/2/7.
+ * Created by yuxfzju on 2017/2/7.
  */
 
 public class SingleMainHandler {

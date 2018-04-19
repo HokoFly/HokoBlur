@@ -17,7 +17,7 @@ import static javax.microedition.khronos.opengles.GL10.GL_RGBA;
 import static javax.microedition.khronos.opengles.GL10.GL_UNSIGNED_BYTE;
 
 /**
- * Created by xiangpi on 16/8/29.
+ * Created by yuxfzju on 16/8/29.
  */
 public class EglBuffer {
 

@@ -11,7 +11,7 @@ import static com.hoko.blurlibrary.Blur.SCHEME_OPENGL;
 import static com.hoko.blurlibrary.Blur.SCHEME_RENDER_SCRIPT;
 
 /**
- * Created by xiangpi on 2017/2/9.
+ * Created by yuxfzju on 2017/2/9.
  */
 
 @IntDef({SCHEME_RENDER_SCRIPT, SCHEME_OPENGL, SCHEME_NATIVE, SCHEME_JAVA})

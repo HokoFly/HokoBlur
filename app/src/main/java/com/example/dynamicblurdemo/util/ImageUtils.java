@@ -1,9 +1,7 @@
-package com.example.xiangpi.dynamicblurdemo.util;
+package com.example.dynamicblurdemo.util;
 
 import android.graphics.Bitmap;
 import android.os.Environment;
-
-import com.example.xiangpi.dynamicblurdemo.R;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -12,7 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
- * Created by xiangpi on 16/8/20.
+ * Created by yuxfzju on 16/8/20.
  */
 public class ImageUtils {
 

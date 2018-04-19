@@ -10,7 +10,7 @@ import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLContext;
 
 /**
- * Created by xiangpi on 16/9/4.
+ * Created by yuxfzju on 16/9/4.
  */
 public class ShaderUtil {
 

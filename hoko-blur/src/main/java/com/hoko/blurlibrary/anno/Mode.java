@@ -10,7 +10,7 @@ import static com.hoko.blurlibrary.Blur.MODE_GAUSSIAN;
 import static com.hoko.blurlibrary.Blur.MODE_STACK;
 
 /**
- * Created by xiangpi on 2017/2/9.
+ * Created by yuxfzju on 2017/2/9.
  */
 
 @IntDef({MODE_BOX, MODE_GAUSSIAN, MODE_STACK})

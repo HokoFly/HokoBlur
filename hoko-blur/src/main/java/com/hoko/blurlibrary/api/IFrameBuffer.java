@@ -1,17 +1,17 @@
 package com.hoko.blurlibrary.api;
 
 /**
- * Created by xiangpi on 2017/1/22.
+ * Created by yuxfzju on 2017/1/22.
  */
 
 public interface IFrameBuffer{
-    int getId();
+    int id();
 
-    void setId(int id);
+    void id(int id);
 
     void bindTexture(ITexture texture);
 
-    ITexture getBindTexture();
+    ITexture bindTexture();
 
     void bindSelf();
 

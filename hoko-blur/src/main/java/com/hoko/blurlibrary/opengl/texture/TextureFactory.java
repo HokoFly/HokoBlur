@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 import com.hoko.blurlibrary.api.ITexture;
 
 /**
- * Created by xiangpi on 17/1/20.
+ * Created by yuxfzju on 17/1/20.
  */
 
 public class TextureFactory {

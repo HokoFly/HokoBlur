@@ -13,7 +13,7 @@ import com.hoko.blurlibrary.Blur;
 import com.hoko.blurlibrary.api.IBlurGenerator;
 
 /**
- * Created by xiangpi on 16/9/18.
+ * Created by yuxfzju on 16/9/18.
  */
 public class RsBlurLinearLayout extends LinearLayout {
 
@@ -77,7 +77,7 @@ public class RsBlurLinearLayout extends LinearLayout {
     @Override
     protected void dispatchDraw(Canvas canvas) {
         if (mCanvas == canvas) {
-            mBitmap = mGenerator.doBlur(mBitmap);
+            mBitmap = mGenerator.blur(mBitmap);
         } else {
             if (mBitmap != null) {
                 canvas.drawBitmap(mBitmap, new Matrix(), null);
@@ -87,12 +87,12 @@ public class RsBlurLinearLayout extends LinearLayout {
     }
 
     public void setBlurRadius(int radius) {
-        mGenerator.setBlurRadius(radius);
+        mGenerator.radius(radius);
         invalidate();
     }
 
     public void setSampleFactor(float factor) {
-        mGenerator.setSampleFactor(factor);
+        mGenerator.sampleFactor(factor);
         invalidate();
     }
 

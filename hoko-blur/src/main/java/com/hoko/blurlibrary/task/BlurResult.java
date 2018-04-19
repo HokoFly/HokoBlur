@@ -3,7 +3,7 @@ package com.hoko.blurlibrary.task;
 import android.graphics.Bitmap;
 
 /**
- * Created by xiangpi on 2017/2/7.
+ * Created by yuxfzju on 2017/2/7.
  */
 
 public class BlurResult {

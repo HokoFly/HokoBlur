@@ -11,7 +11,7 @@ import com.hoko.blurlibrary.generator.OriginBlurGenerator;
 import com.hoko.blurlibrary.generator.RenderScriptBlurGenerator;
 
 /**
- * Created by xiangpi on 16/9/7.
+ * Created by yuxfzju on 16/9/7.
  */
 public class Blur {
 
@@ -110,9 +110,9 @@ public class Blur {
             }
 
             if (generator != null) {
-                generator.setBlurMode(mMode);
-                generator.setBlurRadius(mRadius);
-                generator.setSampleFactor(mSampleFactor);
+                generator.mode(mMode);
+                generator.radius(mRadius);
+                generator.sampleFactor(mSampleFactor);
                 generator.forceCopy(mIsForceCopy);
                 generator.needUpscale(mNeedUpscale);
             }

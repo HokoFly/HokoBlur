@@ -1,22 +1,21 @@
 package com.hoko.blurlibrary.api;
 
-import com.hoko.blurlibrary.Blur;
 import com.hoko.blurlibrary.anno.Mode;
 
 /**
- * Created by xiangpi on 2017/1/23.
+ * Created by yuxfzju on 2017/1/23.
  */
 public interface IBlur {
-    void setBlurMode(@Mode int mode);
+    void mode(@Mode int mode);
 
-    void setBlurRadius(int radius);
+    void radius(int radius);
 
-    void setSampleFactor(float factor);
+    void sampleFactor(float factor);
 
     @Mode
-    int getBlurMode();
+    int mode();
 
-    int getBlurRadius();
+    int radius();
 
-    float getSampleFactor();
+    float sampleFactor();
 }

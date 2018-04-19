@@ -15,7 +15,7 @@ import com.hoko.blurlibrary.renderscript.ScriptC_Stackblur;
 import com.hoko.blurlibrary.util.BlurUtil;
 
 /**
- * Created by xiangpi on 16/9/7.
+ * Created by yuxfzju on 16/9/7.
  */
 public class RenderScriptBlurGenerator extends BlurGenerator {
 

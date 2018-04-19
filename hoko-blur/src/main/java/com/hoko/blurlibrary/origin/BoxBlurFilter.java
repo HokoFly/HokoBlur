@@ -6,7 +6,7 @@ import com.hoko.blurlibrary.anno.Direction;
 import static com.hoko.blurlibrary.util.BlurUtil.clamp;
 
 /**
- * Created by 余晓飞 on 2016/7/24.
+ * Created by yuxfzju on 2016/7/24.
  */
 public class BoxBlurFilter {
 

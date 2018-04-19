@@ -1,10 +1,11 @@
-package com.example.xiangpi.dynamicblurdemo.activity;
+package com.example.dynamicblurdemo.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.example.xiangpi.dynamicblurdemo.R;
-import com.example.xiangpi.dynamicblurdemo.opengl.glsurfaceview.BlurGLSurfaceView;
+import com.example.dynamicblurdemo.R;
+import com.example.dynamicblurdemo.opengl.glsurfaceview.BlurGLSurfaceView;
+
 
 public class GLSurfaceActivity extends AppCompatActivity {
 

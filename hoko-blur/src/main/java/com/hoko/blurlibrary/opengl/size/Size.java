@@ -3,7 +3,7 @@ package com.hoko.blurlibrary.opengl.size;
 import com.hoko.blurlibrary.api.ISize;
 
 /**
- * Created by xiangpi on 2017/1/22.
+ * Created by yuxfzju on 2017/1/22.
  */
 
 public final class Size implements ISize {
@@ -23,28 +23,28 @@ public final class Size implements ISize {
             throw new IllegalArgumentException("size is null");
         }
 
-        mWidth = size.getWidth();
+        mWidth = size.width();
 
-        mHeight = size.getHeight();
+        mHeight = size.height();
     }
 
     @Override
-    public int getWidth() {
+    public int width() {
         return mWidth;
     }
 
     @Override
-    public void setWidth(int mWidth) {
+    public void width(int mWidth) {
         this.mWidth = mWidth;
     }
 
     @Override
-    public int getHeight() {
+    public int height() {
         return mHeight;
     }
 
     @Override
-    public void setHeight(int mHeight) {
+    public void height(int mHeight) {
         this.mHeight = mHeight;
     }
 
@@ -60,7 +60,7 @@ public final class Size implements ISize {
 
         if (obj instanceof Size) {
             Size size = (Size) obj;
-            return getWidth() == size.getWidth() && getHeight() == size.getHeight();
+            return width() == size.width() && height() == size.height();
         }
         return false;
     }

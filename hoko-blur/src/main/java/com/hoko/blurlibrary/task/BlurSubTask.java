@@ -13,7 +13,7 @@ import java.util.concurrent.Callable;
 
 /**
  * 对bitmap的模糊任务，任务主要模糊bitmap的一部分，通过线程池管理，实现对bitmap的并发模糊处理
- * Created by xiangpi on 2017/2/17.
+ * Created by yuxfzju on 2017/2/17.
  */
 
 public class BlurSubTask implements Callable<Void> {

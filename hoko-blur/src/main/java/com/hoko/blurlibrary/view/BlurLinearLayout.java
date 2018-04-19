@@ -9,7 +9,7 @@ import android.widget.LinearLayout;
 import com.hoko.blurlibrary.opengl.drawable.BlurDrawable;
 
 /**
- * Created by xiangpi on 16/11/9.
+ * Created by yuxfzju on 16/11/9.
  */
 public class BlurLinearLayout extends LinearLayout{
     private BlurDrawable mBlurDrawable;

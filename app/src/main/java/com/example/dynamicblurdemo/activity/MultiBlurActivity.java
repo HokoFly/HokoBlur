@@ -1,4 +1,4 @@
-package com.example.xiangpi.dynamicblurdemo.activity;
+package com.example.dynamicblurdemo.activity;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
@@ -19,7 +19,7 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.example.xiangpi.dynamicblurdemo.R;
+import com.example.dynamicblurdemo.R;
 import com.hoko.blurlibrary.Blur;
 import com.hoko.blurlibrary.api.IBlurGenerator;
 
@@ -190,7 +190,7 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
         }
 
         mGenerator = mBlurBuilder.blurGenerator();
-        mGenerator.setBlurRadius(mRadius);
+        mGenerator.radius(mRadius);
         updateImage(mRadius);
 
     }
@@ -276,9 +276,9 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
                 mIssued = true;
                 int radius = params[0];
                 if (mInBitmap != null && !mInBitmap.isRecycled() && mGenerator != null) {
-                    mGenerator.setBlurRadius(radius);
+                    mGenerator.radius(radius);
                     long start = System.nanoTime();
-                    output = mGenerator.doBlur(mInBitmap);
+                    output = mGenerator.blur(mInBitmap);
                     long stop = System.nanoTime();
                     Log.i("Total elapsed time", (stop - start) / 1000000f + "ms");
                 }

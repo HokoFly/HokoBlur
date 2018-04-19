@@ -5,7 +5,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * Created by xiangpi on 2017/2/7.
+ * Created by yuxfzju on 2017/2/7.
  */
 
 public class BlurTaskManager {

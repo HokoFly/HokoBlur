@@ -4,7 +4,7 @@ import com.hoko.blurlibrary.opengl.framebuffer.FrameBufferFactory;
 import com.hoko.blurlibrary.api.IFrameBuffer;
 
 /**
- * Created by xiangpi on 2017/1/21.
+ * Created by yuxfzju on 2017/1/21.
  */
 
 public class FrameBufferCache {

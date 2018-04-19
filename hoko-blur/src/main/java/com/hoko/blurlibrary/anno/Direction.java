@@ -10,7 +10,7 @@ import static com.hoko.blurlibrary.Blur.HORIZONTAL;
 import static com.hoko.blurlibrary.Blur.VERTICAL;
 
 /**
- * Created by xiangpi on 2017/2/20.
+ * Created by yuxfzju on 2017/2/20.
  */
 
 @IntDef({HORIZONTAL, VERTICAL, BOTH})

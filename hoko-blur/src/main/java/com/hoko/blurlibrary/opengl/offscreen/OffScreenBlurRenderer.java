@@ -23,7 +23,7 @@ import javax.microedition.khronos.egl.EGLContext;
 import static com.hoko.blurlibrary.util.ShaderUtil.checkGLError;
 
 /**
- * Created by xiangpi on 16/8/10.
+ * Created by yuxfzju on 16/8/10.
  */
 public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
     private final static String TAG = OffScreenBlurRenderer.class.getSimpleName();
@@ -211,7 +211,7 @@ public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
 
         mTextureUniformId = GLES20.glGetUniformLocation(mProgram, "uTexture");
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, isHorizontal ? mInputTexture.getId() : mHorizontalTexture.getId());
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, isHorizontal ? mInputTexture.id() : mHorizontalTexture.id());
         GLES20.glUniform1i(mTextureUniformId, 0);
 
         mRadiusId = GLES20.glGetUniformLocation(mProgram, "uRadius");

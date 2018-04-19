@@ -1,7 +1,7 @@
 package com.hoko.blurlibrary.util;
 
 /**
- * Created by xiangpi on 2017/2/3.
+ * Created by yuxfzju on 2017/2/3.
  */
 
 public class BlurUtil {

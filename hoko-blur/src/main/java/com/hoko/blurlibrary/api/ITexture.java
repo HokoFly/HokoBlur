@@ -1,16 +1,14 @@
 package com.hoko.blurlibrary.api;
 
-import com.hoko.blurlibrary.api.ISize;
-
 /**
- * Created by xiangpi on 17/1/20.
+ * Created by yuxfzju on 17/1/20.
  */
 
 public interface ITexture extends ISize {
 
-    int getId();
+    int id();
 
-    void setId(int textureId);
+    void id(int textureId);
 
     void delete();
 
