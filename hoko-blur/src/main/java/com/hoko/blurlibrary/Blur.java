@@ -41,6 +41,8 @@ public class Blur {
         private static final float DEFAULT_SAMPLE_FACTOR = 5.0f;
         private static final boolean DEFAULT_FORCE_COPY = false;
         private static final boolean DEFAULT_UP_SCALE = true;
+        private static final int DEFAULT_TRANSLATE_X = 0;
+        private static final int DEFAULT_TRANSLATE_Y = 0;
         @Mode
         private int mMode = DEFAULT_MODE;
         @Scheme
@@ -49,6 +51,9 @@ public class Blur {
         private float mSampleFactor = DEFAULT_SAMPLE_FACTOR;
         private boolean mIsForceCopy = DEFAULT_FORCE_COPY;
         private boolean mNeedUpscale = DEFAULT_UP_SCALE;
+
+        private int mTranslateX = DEFAULT_TRANSLATE_X;
+        private int mTranslateY = DEFAULT_TRANSLATE_Y;
 
         private Context mCtx;
 
@@ -86,6 +91,15 @@ public class Blur {
             return this;
         }
 
+        public BlurBuilder translateX(int translateX) {
+            mTranslateX = translateX;
+            return this;
+        }
+        public BlurBuilder translateY(int translateY) {
+            mTranslateY = translateY;
+            return this;
+        }
+
         /**
          * 创建不同的模糊发生器
          * @return
@@ -115,6 +129,8 @@ public class Blur {
                 generator.sampleFactor(mSampleFactor);
                 generator.forceCopy(mIsForceCopy);
                 generator.needUpscale(mNeedUpscale);
+                generator.translateX(mTranslateX);
+                generator.translateY(mTranslateY);
             }
 
             return generator;
@@ -127,6 +143,8 @@ public class Blur {
             mSampleFactor = DEFAULT_SAMPLE_FACTOR;
             mIsForceCopy = DEFAULT_FORCE_COPY;
             mNeedUpscale = DEFAULT_UP_SCALE;
+            mTranslateX = DEFAULT_TRANSLATE_X;
+            mTranslateY = DEFAULT_TRANSLATE_Y;
         }
     }
 

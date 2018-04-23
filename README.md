@@ -84,53 +84,16 @@ Blur.with(this)
     * @params view: 用于产生bitmap的view
     * @params width: 输出的bitmap的宽, 一般来说传入view的宽
     * @params height: 输出的bitmap的高，一般来说传入view的高
-    * @params downScale: 在传入的宽高基础上的缩放值。由于经过blur之后，图片会模糊，所以不需要使用原始大小的图片，缩小一半
-    *                    甚至1/4，可以减小bitmap所占内存。
-    * @params radius: 模糊半径，0-254之间，数值越高，模糊越明显。
-    */
-    public static Bitmap makeBlur(View view, int width, int height, int downScale, float radius) {
-       // ...
-    }
-
-   /*
-    * 支持截取view上的某个部分
-    * see also {@link makeBlur(View, int, int, int, float)}
     * @params translateX: 从view的坐标原点开始，右移。
     * @params translateY: 从view的坐标原点开始，下移。
-    */
-    public static Bitmap makeBlur(View view, int width, int height, int translateX, int translateY, int downScale, float radius) {
-       // ...
-    }
-
-   /*
-    * 基于传入的bitmap对象，截取某个部分后，对它进行模糊。
-    * 宽高等于原图宽高，并且translateX和translateY为0，并且downScale为1的时候，由于
-    * Bitmap createBitmap函数的特性，blur操作会在原图上进行。如果想要强制使用新Bitmap对象，
-    * 可以使用makeBlurWithForceCopy函数
     *
-    * see also {@link makeBlur(View, int, int, int, float)}
     */
-    public static Bitmap makeBlur(Bitmap src, int width, int height, int translateX, int translateY, int downScale, float radius) {
+    public static Bitmap blur(View view, int width, int height, int translateX, int translateY, int downScale, float radius) {
        // ...
     }
-
-   /*
-    * 基于传入的bitmap对象，截取某个部分后，对它进行模糊。一定会在一个新的Bitmap对象上进行操作。
-    *
-    * see also {@link makeBlur(View, int, int, int, float)}
-    */
-    public static Bitmap makeBlurWithForceCopy(Bitmap src, int width, int height, int translateX, int translateY, int downScale, float radius){
-       // ...
-    }
-
-   /*
-    * 直接在bitmap对象上面做模糊
-    * see also {@link makeBlur(View, int, int, int, float)}
-    */
-    public static void makeBlur(Bitmap src, float radius) {
-      // ...
-    }
+   
 ```
+  
 
 ### 3.3 效果展示
 

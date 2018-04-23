@@ -1,6 +1,7 @@
 package com.hoko.blurlibrary.generator;
 
 import android.graphics.Bitmap;
+import android.view.View;
 
 import com.hoko.blurlibrary.Blur;
 import com.hoko.blurlibrary.anno.Mode;
@@ -24,6 +25,9 @@ public abstract class BlurGenerator implements IBlurGenerator {
     private boolean mIsForceCopy;
 
     private boolean mNeedUpscale = true;
+
+    private int mTranslateX;
+    private int mTranslateY;
 
     @Override
     public void mode(@Mode int mode) {
@@ -57,6 +61,26 @@ public abstract class BlurGenerator implements IBlurGenerator {
     }
 
     @Override
+    public void translateX(int translateX) {
+        mTranslateX = translateX;
+    }
+
+    @Override
+    public int translateX() {
+        return mTranslateX;
+    }
+
+    @Override
+    public void translateY(int translateY) {
+        mTranslateY = translateY;
+    }
+
+    @Override
+    public int translateY() {
+        return mTranslateY;
+    }
+
+    @Override
     public Bitmap blur(Bitmap bitmap) {
         return doBlur(bitmap, true);
     }
@@ -82,19 +106,39 @@ public abstract class BlurGenerator implements IBlurGenerator {
             inBitmap = bitmap;
         }
 
-        Bitmap scaledInBitmap = BitmapUtil.getScaledBitmap(inBitmap, mSampleFactor);
+        Bitmap transInBitmap = BitmapUtil.transformBitmap(inBitmap, translateX(), translateY());
+
+        Bitmap scaledInBitmap = BitmapUtil.getScaledBitmap(transInBitmap, sampleFactor());
 
         Bitmap scaledOutBitmap = doInnerBlur(scaledInBitmap, concurrent);
 
-        Bitmap outBitmap = mNeedUpscale ? BitmapUtil.getScaledBitmap(scaledOutBitmap, 1f / mSampleFactor) : scaledOutBitmap;
+        Bitmap outBitmap = mNeedUpscale ? BitmapUtil.getScaledBitmap(scaledOutBitmap, 1f / sampleFactor()) : scaledOutBitmap;
         return outBitmap;
     }
 
 
     protected abstract Bitmap doInnerBlur(Bitmap scaledBitmap, boolean concurrent);
 
+    @Override
+    public Bitmap blur(View view) {
+        if (view == null) {
+            throw new IllegalArgumentException("You must input a view !");
+        }
+
+        //todo view
+//        BitmapUtil.getViewBitmap(view, )
+
+        return null;
+    }
+
+    @Override
     public void asyncBlur(Bitmap bitmap, AsyncBlurTask.CallBack callBack) {
         BlurTaskManager.getInstance().submit(new AsyncBlurTask(this, bitmap, callBack));
+    }
+
+    @Override
+    public void asyncBlur(View view, AsyncBlurTask.CallBack callBack) {
+        //todo view
     }
 
     @Override

@@ -40,7 +40,7 @@ public class AsyncBlurTask implements Runnable {
                 return;
             }
 
-            result.setBitmap(mGenerator.doBlur(mBitmap, false));
+            result.setBitmap(mGenerator.doBlur(mBitmap, true));
             result.setSuccess(true);
         } catch (Exception e) {
             e.printStackTrace();

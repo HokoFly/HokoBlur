@@ -10,6 +10,7 @@ import com.example.hokoblurdemo.R;
 import com.hoko.blurlibrary.Blur;
 import com.hoko.blurlibrary.EasyBlur;
 import com.hoko.blurlibrary.task.AsyncBlurTask;
+import com.hoko.blurlibrary.util.BitmapUtil;
 
 public class EasyBlurActivity extends AppCompatActivity {
 
@@ -25,7 +26,7 @@ public class EasyBlurActivity extends AppCompatActivity {
         final ImageView imageView2 = ((ImageView) findViewById(R.id.image2));
 
         imageView.setImageBitmap(bitmap);
-        EasyBlur.makeBlur(bitmap, 20);
+        EasyBlur.blur(bitmap, 20);
 //        imageView.setImageBitmap(EasyBlur.makeBlur(bitmap, bitmap.getWidth(), bitmap.height(), 0, 0, 2, 10));
 //        Blur.with(this).forceCopy(false).scheme(Blur.SCHEME_RENDER_SCRIPT).sampleFactor(1.0f).radius(20).blurGenerator().asyncBlur(bitmap, new AsyncBlurTask.CallBack() {
 //            @Override
