@@ -2,7 +2,7 @@ package com.hoko.blurlibrary.generator;
 
 import android.graphics.Bitmap;
 
-import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.HokoBlur;
 import com.hoko.blurlibrary.task.BlurSubTask;
 import com.hoko.blurlibrary.task.BlurTaskManager;
 import com.hoko.blurlibrary.util.NativeBlurHelper;
@@ -15,7 +15,7 @@ import java.util.List;
  */
 class NativeBlurGenerator extends BlurGenerator {
 
-    NativeBlurGenerator(BlurBuilder builder) {
+    NativeBlurGenerator(Builder builder) {
         super(builder);
     }
 
@@ -32,8 +32,8 @@ class NativeBlurGenerator extends BlurGenerator {
                 List<BlurSubTask> vTasks = new ArrayList<BlurSubTask>(cores);
 
                 for (int i = 0; i < cores; i++) {
-                    hTasks.add(new BlurSubTask(Blur.SCHEME_NATIVE, mMode, scaledInBitmap, mRadius, cores, i, Blur.HORIZONTAL));
-                    vTasks.add(new BlurSubTask(Blur.SCHEME_NATIVE, mMode, scaledInBitmap, mRadius, cores, i, Blur.VERTICAL));
+                    hTasks.add(new BlurSubTask(HokoBlur.SCHEME_NATIVE, mMode, scaledInBitmap, mRadius, cores, i, HokoBlur.HORIZONTAL));
+                    vTasks.add(new BlurSubTask(HokoBlur.SCHEME_NATIVE, mMode, scaledInBitmap, mRadius, cores, i, HokoBlur.VERTICAL));
                 }
 
                 BlurTaskManager.getInstance().invokeAll(hTasks);

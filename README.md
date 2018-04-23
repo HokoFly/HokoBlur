@@ -27,7 +27,7 @@
 完整的api如下
 
 ```java
-Blur.with(context)
+HokoBlur.with(context)
     .scheme(Blur.SCHEME_NATIVE) //设置模糊实现方案，包括RenderScript、OpenGL、Native和Java实现，默认为Native方案
     .mode(Blur.MODE_STACK) //设置模糊算法，包括Gaussian、Stack和Box，默认并推荐选择Stack算法
     .radius(10) //设置模糊半径，内部最大限制为25，默认值5
@@ -52,7 +52,7 @@ Bitmap outBitmap = Blur.with(context).blurGenerator().blur(bitmap);
 
 
 ```java
-Blur.with(this)
+HokoBlur.with(this)
     .scheme(Blur.SCHEME_NATIVE)
     .mode(Blur.MODE_STACK)
     .radius(10)

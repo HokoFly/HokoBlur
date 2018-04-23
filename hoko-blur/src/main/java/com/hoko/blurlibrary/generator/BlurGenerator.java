@@ -4,7 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.View;
 
-import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.HokoBlur;
 import com.hoko.blurlibrary.anno.Mode;
 import com.hoko.blurlibrary.anno.Scheme;
 import com.hoko.blurlibrary.api.IBlurGenerator;
@@ -34,7 +34,7 @@ public abstract class BlurGenerator implements IBlurGenerator {
     private int mTranslateX;
     private int mTranslateY;
 
-    public BlurGenerator(BlurBuilder builder) {
+    public BlurGenerator(Builder builder) {
         mMode = builder.mMode;
         mScheme = builder.mScheme;
         mRadius = builder.mRadius;
@@ -170,15 +170,15 @@ public abstract class BlurGenerator implements IBlurGenerator {
 
     }
 
-    public BlurBuilder newBuilder() {
-        return new BlurBuilder(this);
+    public Builder newBuilder() {
+        return new Builder(this);
     }
 
-    public static class BlurBuilder {
+    public static class Builder {
         @Mode
-        private static final int DEFAULT_MODE = Blur.MODE_STACK;
+        private static final int DEFAULT_MODE = HokoBlur.MODE_STACK;
         @Scheme
-        private static final int DEFAULT_SCHEME = Blur.SCHEME_NATIVE;
+        private static final int DEFAULT_SCHEME = HokoBlur.SCHEME_NATIVE;
         private static final int DEFAULT_BLUR_RADIUS = 5;
         private static final float DEFAULT_SAMPLE_FACTOR = 5.0f;
         private static final boolean DEFAULT_FORCE_COPY = false;
@@ -199,11 +199,11 @@ public abstract class BlurGenerator implements IBlurGenerator {
 
         Context mCtx;
 
-        public BlurBuilder(Context context) {
+        public Builder(Context context) {
             mCtx = context.getApplicationContext();
         }
 
-        public BlurBuilder(IBlurGenerator blurGenerator) {
+        public Builder(IBlurGenerator blurGenerator) {
             mMode = blurGenerator.mode();
             mScheme = blurGenerator.scheme();
             mRadius = blurGenerator.radius();
@@ -214,46 +214,46 @@ public abstract class BlurGenerator implements IBlurGenerator {
             mTranslateY = blurGenerator.translateY();
         }
 
-        public BlurBuilder context(Context ctx) {
+        public Builder context(Context ctx) {
             mCtx = ctx;
             return this;
         }
 
-        public BlurBuilder mode(@Mode int mode) {
+        public Builder mode(@Mode int mode) {
             mMode = mode;
             return this;
         }
 
-        public BlurBuilder scheme(@Scheme int scheme) {
+        public Builder scheme(@Scheme int scheme) {
             mScheme = scheme;
             return this;
         }
 
-        public BlurBuilder radius(int radius) {
+        public Builder radius(int radius) {
             mRadius = radius;
             return this;
         }
 
-        public BlurBuilder sampleFactor(float factor) {
+        public Builder sampleFactor(float factor) {
             mSampleFactor = factor;
             return this;
         }
 
-        public BlurBuilder forceCopy(boolean isForceCopy) {
+        public Builder forceCopy(boolean isForceCopy) {
             mIsForceCopy = isForceCopy;
             return this;
         }
 
-        public BlurBuilder needUpscale(boolean needUpscale) {
+        public Builder needUpscale(boolean needUpscale) {
             mNeedUpscale = needUpscale;
             return this;
         }
 
-        public BlurBuilder translateX(int translateX) {
+        public Builder translateX(int translateX) {
             mTranslateX = translateX;
             return this;
         }
-        public BlurBuilder translateY(int translateY) {
+        public Builder translateY(int translateY) {
             mTranslateY = translateY;
             return this;
         }
@@ -266,16 +266,16 @@ public abstract class BlurGenerator implements IBlurGenerator {
             BlurGenerator generator = null;
 
             switch (mScheme) {
-                case Blur.SCHEME_RENDER_SCRIPT:
+                case HokoBlur.SCHEME_RENDER_SCRIPT:
                     generator = new RenderScriptBlurGenerator(this);
                     break;
-                case Blur.SCHEME_OPENGL:
+                case HokoBlur.SCHEME_OPENGL:
                     generator = new OpenGLBlurGenerator(this);
                     break;
-                case Blur.SCHEME_NATIVE:
+                case HokoBlur.SCHEME_NATIVE:
                     generator = new NativeBlurGenerator(this);
                     break;
-                case Blur.SCHEME_JAVA:
+                case HokoBlur.SCHEME_JAVA:
                     generator = new OriginBlurGenerator(this);
                     break;
                 default:

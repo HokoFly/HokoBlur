@@ -7,7 +7,7 @@ import com.hoko.blurlibrary.generator.BlurGenerator;
 /**
  * Created by yuxfzju on 16/9/7.
  */
-public class Blur {
+public class HokoBlur {
 
     public static final int MODE_BOX = 0;
     public static final int MODE_GAUSSIAN = 1;
@@ -22,8 +22,8 @@ public class Blur {
     public static final int VERTICAL = 1;
     public static final int BOTH = 2;
 
-    public static BlurGenerator.BlurBuilder with(Context context) {
-        return new BlurGenerator.BlurBuilder(context.getApplicationContext());
+    public static BlurGenerator.Builder with(Context context) {
+        return new BlurGenerator.Builder(context.getApplicationContext());
     }
 
 }

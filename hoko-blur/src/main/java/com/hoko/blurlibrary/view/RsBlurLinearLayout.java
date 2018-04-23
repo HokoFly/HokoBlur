@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 
-import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.HokoBlur;
 import com.hoko.blurlibrary.api.IBlurGenerator;
 
 /**
@@ -57,7 +57,7 @@ public class RsBlurLinearLayout extends LinearLayout {
     private void init() {
         mCanvas = new Canvas();
         mLocationInWindow = new int[2];
-        mGenerator = Blur.with(getContext()).scheme(Blur.SCHEME_RENDER_SCRIPT).sampleFactor(DEFAULT_BITMAP_SAMPLE_FACTOR).blurGenerator();
+        mGenerator = HokoBlur.with(getContext()).scheme(HokoBlur.SCHEME_RENDER_SCRIPT).sampleFactor(DEFAULT_BITMAP_SAMPLE_FACTOR).blurGenerator();
         setBlurRadius(DEFAULT_BLUR_RADIUS);
 
     }

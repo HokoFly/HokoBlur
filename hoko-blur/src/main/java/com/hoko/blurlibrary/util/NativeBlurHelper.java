@@ -2,7 +2,7 @@ package com.hoko.blurlibrary.util;
 
 import android.graphics.Bitmap;
 
-import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.HokoBlur;
 import com.hoko.blurlibrary.anno.Direction;
 import com.hoko.blurlibrary.anno.Mode;
 
@@ -14,15 +14,15 @@ public class NativeBlurHelper {
 
     public static void doBlur(@Mode int mode, Bitmap bitmap, int radius, int cores, int index, @Direction int direction) {
         switch (mode) {
-            case Blur.MODE_BOX:
+            case HokoBlur.MODE_BOX:
                 nativeBoxBlur(bitmap, radius, cores, index, direction);
                 break;
 //
-            case Blur.MODE_STACK:
+            case HokoBlur.MODE_STACK:
                 nativeStackBlur(bitmap, radius, cores, index, direction);
                 break;
 
-            case Blur.MODE_GAUSSIAN:
+            case HokoBlur.MODE_GAUSSIAN:
                 nativeGaussianBlur(bitmap, radius, cores, index, direction);
                 break;
 
@@ -30,8 +30,8 @@ public class NativeBlurHelper {
     }
 
     public static void doFullBlur(@Mode int mode, Bitmap bitmap, int radius) {
-        doBlur(mode, bitmap, radius, 1, 0, Blur.HORIZONTAL);
-        doBlur(mode, bitmap, radius, 1, 0, Blur.VERTICAL);
+        doBlur(mode, bitmap, radius, 1, 0, HokoBlur.HORIZONTAL);
+        doBlur(mode, bitmap, radius, 1, 0, HokoBlur.VERTICAL);
     }
 
     public static native void nativeBoxBlur(Bitmap bitmap, int radius, int cores, int index, int direction);

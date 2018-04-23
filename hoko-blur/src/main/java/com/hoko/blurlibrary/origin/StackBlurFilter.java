@@ -1,10 +1,10 @@
 package com.hoko.blurlibrary.origin;
 
-import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.HokoBlur;
 import com.hoko.blurlibrary.anno.Direction;
 
 /**
- *  Stack Blur v1.0 from
+ *  Stack HokoBlur v1.0 from
  * http://www.quasimondo.com/StackBlurForCanvas/StackBlurDemo.html
  *
  * Java Author: Mario Klingemann <a href="mailto:mario@quasimondo.com">mario@quasimondo.com</a>
@@ -14,11 +14,11 @@ import com.hoko.blurlibrary.anno.Direction;
  * http://www.kayenko.com
  * ported april 5th, 2012
  *
- * This is a compromise between Gaussian Blur and Box blur
- * It creates much better looking blurs than Box Blur, but is
- * 7x faster than my Gaussian Blur implementation.
+ * This is a compromise between Gaussian HokoBlur and Box blur
+ * It creates much better looking blurs than Box HokoBlur, but is
+ * 7x faster than my Gaussian HokoBlur implementation.
  *
- * I called it Stack Blur because this describes best how this
+ * I called it Stack HokoBlur because this describes best how this
  * filter works internally: it creates a kind of moving stack
  * of colors whilst scanning through the image. Thereby it
  * just has to add one new block of color to the right side
@@ -30,15 +30,15 @@ import com.hoko.blurlibrary.anno.Direction;
  * If you are using this algorithm in your code please add
  * the following line:
  *
- * Stack Blur Algorithm by Mario Klingemann  <a href="mailto:mario@quasimondo.com">mario@quasimondo.com</a>
+ * Stack HokoBlur Algorithm by Mario Klingemann  <a href="mailto:mario@quasimondo.com">mario@quasimondo.com</a>
  **/
 public final class StackBlurFilter {
 
     public static void doBlur(int[] pix, int w, int h, int radius, @Direction int direction) {
 
-        if (direction == Blur.HORIZONTAL) {
+        if (direction == HokoBlur.HORIZONTAL) {
             doHorizontalBlur(pix, w, h, radius);
-        } else if (direction == Blur.VERTICAL) {
+        } else if (direction == HokoBlur.VERTICAL) {
             doVerticalBlur(pix, w, h, radius);
         } else {
             doHorizontalBlur(pix, w, h, radius);

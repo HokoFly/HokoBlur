@@ -8,7 +8,7 @@ import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 
-import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.HokoBlur;
 import com.hoko.blurlibrary.anno.Mode;
 import com.hoko.blurlibrary.api.IParams;
 import com.hoko.blurlibrary.api.IScreenRenderer;
@@ -105,7 +105,7 @@ public class BlurDrawable extends Drawable implements IParams {
         if (mBlurRenderer != null) {
             return mBlurRenderer.mode();
         }
-        return Blur.MODE_BOX;
+        return HokoBlur.MODE_BOX;
     }
 
     @Override

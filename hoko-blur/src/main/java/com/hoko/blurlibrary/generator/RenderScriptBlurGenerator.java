@@ -8,7 +8,7 @@ import android.support.v8.renderscript.RSRuntimeException;
 import android.support.v8.renderscript.RenderScript;
 import android.support.v8.renderscript.ScriptIntrinsicBlur;
 
-import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.HokoBlur;
 import com.hoko.blurlibrary.renderscript.ScriptC_BoxblurHorizontal;
 import com.hoko.blurlibrary.renderscript.ScriptC_BoxblurVertical;
 import com.hoko.blurlibrary.renderscript.ScriptC_Stackblur;
@@ -28,7 +28,7 @@ class RenderScriptBlurGenerator extends BlurGenerator {
     private Allocation mAllocationIn;
     private Allocation mAllocationOut;
 
-    RenderScriptBlurGenerator(BlurBuilder builder) {
+    RenderScriptBlurGenerator(Builder builder) {
         super(builder);
         init(builder.mCtx);
     }
@@ -66,13 +66,13 @@ class RenderScriptBlurGenerator extends BlurGenerator {
 
         try {
             switch (mMode) {
-                case Blur.MODE_BOX:
+                case HokoBlur.MODE_BOX:
                     doBoxBlur(scaledInBitmap);
                     break;
-                case Blur.MODE_STACK:
+                case HokoBlur.MODE_STACK:
                     doStackBlur(scaledInBitmap);
                     break;
-                case Blur.MODE_GAUSSIAN:
+                case HokoBlur.MODE_GAUSSIAN:
                     doGaussianBlur(scaledInBitmap);
                     break;
             }
@@ -141,8 +141,8 @@ class RenderScriptBlurGenerator extends BlurGenerator {
     }
 
     @Override
-    public BlurBuilder newBuilder() {
-        BlurBuilder builder = super.newBuilder();
+    public Builder newBuilder() {
+        Builder builder = super.newBuilder();
         builder.context(mRenderScript.getApplicationContext());
         return builder;
     }

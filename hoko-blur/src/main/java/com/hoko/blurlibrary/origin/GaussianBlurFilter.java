@@ -1,6 +1,6 @@
 package com.hoko.blurlibrary.origin;
 
-import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.HokoBlur;
 import com.hoko.blurlibrary.anno.Direction;
 
 import static com.hoko.blurlibrary.util.BlurUtil.clamp;
@@ -16,10 +16,10 @@ public final class GaussianBlurFilter {
         int[] result = new int[width * height];
         float[] kernel = makeKernel(radius);
 
-        if (direction == Blur.HORIZONTAL) {
+        if (direction == HokoBlur.HORIZONTAL) {
             gaussianBlurHorizontal(kernel, in, result, width, height);
             System.arraycopy(result, 0, in, 0, result.length);
-        } else if (direction == Blur.VERTICAL) {
+        } else if (direction == HokoBlur.VERTICAL) {
             gaussianBlurVertical(kernel, in, result, width, height);
             System.arraycopy(result, 0, in, 0, result.length);
 

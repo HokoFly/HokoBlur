@@ -4,7 +4,7 @@ import android.opengl.GLES20;
 import android.opengl.Matrix;
 import android.util.Log;
 
-import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.HokoBlur;
 import com.hoko.blurlibrary.anno.Mode;
 import com.hoko.blurlibrary.api.IFrameBuffer;
 import com.hoko.blurlibrary.api.IScreenRenderer;
@@ -34,7 +34,7 @@ public class ScreenBlurRenderer implements IScreenRenderer {
     private static final String TAG = "ScreenBlurRenderer";
 
     @Mode
-    private static final int DEFAULT_MODE = Blur.MODE_GAUSSIAN;
+    private static final int DEFAULT_MODE = HokoBlur.MODE_GAUSSIAN;
     private static final int DEFAULT_BLUR_RADIUS = 5;
     private static final float DEFAULT_SAMPLE_FACTOR = 4.0f;
 

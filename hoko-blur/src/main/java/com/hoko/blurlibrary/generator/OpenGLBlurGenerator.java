@@ -14,7 +14,7 @@ class OpenGLBlurGenerator extends BlurGenerator {
 
     private EglBuffer mEglBuffer;
 
-    OpenGLBlurGenerator(BlurBuilder builder) {
+    OpenGLBlurGenerator(Builder builder) {
         super(builder);
         init();
     }

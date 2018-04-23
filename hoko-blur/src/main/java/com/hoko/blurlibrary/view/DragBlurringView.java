@@ -10,7 +10,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.HokoBlur;
 import com.hoko.blurlibrary.api.IBlurGenerator;
 
 
@@ -44,9 +44,9 @@ public class DragBlurringView extends View {
 
 
     private void init() {
-        mGenerator = Blur.with(getContext())
-                .scheme(Blur.SCHEME_NATIVE)
-                .mode(Blur.MODE_GAUSSIAN)
+        mGenerator = HokoBlur.with(getContext())
+                .scheme(HokoBlur.SCHEME_NATIVE)
+                .mode(HokoBlur.MODE_GAUSSIAN)
                 .radius(5)
                 .sampleFactor(1.0f)
                 .blurGenerator();

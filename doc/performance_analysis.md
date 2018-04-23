@@ -660,7 +660,7 @@ OpenGL在多线程环境下工作需要额外的处理，为了正常工作需�
 已将上述方案整理成组件，使用姿势如下：
 
 ```java
-Blur.with(context)
+HokoBlur.with(context)
     .scheme(Blur.SCHEME_RENDER_SCRIPT) //设置模糊方案
     .mode(Blur.MODE_GAUSSIAN) //设置模糊算法类型
     .sampleFactor(10) //设置缩放因子

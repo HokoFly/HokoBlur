@@ -20,7 +20,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.hokoblurdemo.R;
-import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.HokoBlur;
 import com.hoko.blurlibrary.generator.BlurGenerator;
 
 public class MultiBlurActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener, SeekBar.OnSeekBarChangeListener {
@@ -46,7 +46,7 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
 
     private ImageView mImageView;
 
-    private BlurGenerator.BlurBuilder mBlurBuilder;
+    private BlurGenerator.Builder mBlurBuilder;
 
     private BlurGenerator mGenerator;
 
@@ -69,7 +69,7 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
             getSupportActionBar().hide();
         }
 
-        mBlurBuilder = Blur.with(this).sampleFactor(SAMPLE_FACTOR);
+        mBlurBuilder = HokoBlur.with(this).sampleFactor(SAMPLE_FACTOR);
 
         mImageView = (ImageView) findViewById(R.id.photo);
         mSchemeSpinner = (Spinner) findViewById(R.id.scheme_spinner);
@@ -167,23 +167,23 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
         final int spinnerId = parent.getId();
         if (spinnerId == R.id.scheme_spinner) {
             switch (position) {
-                case 0: mBlurBuilder.scheme(Blur.SCHEME_RENDER_SCRIPT);
+                case 0: mBlurBuilder.scheme(HokoBlur.SCHEME_RENDER_SCRIPT);
                     break;
-                case 1: mBlurBuilder.scheme(Blur.SCHEME_OPENGL);
+                case 1: mBlurBuilder.scheme(HokoBlur.SCHEME_OPENGL);
                     break;
-                case 2: mBlurBuilder.scheme(Blur.SCHEME_NATIVE);
+                case 2: mBlurBuilder.scheme(HokoBlur.SCHEME_NATIVE);
                     break;
-                case 3: mBlurBuilder.scheme(Blur.SCHEME_JAVA);
+                case 3: mBlurBuilder.scheme(HokoBlur.SCHEME_JAVA);
                     break;
             }
 
         } else if (spinnerId == R.id.mode_spinner) {
             switch (position) {
-                case 0: mBlurBuilder.mode(Blur.MODE_GAUSSIAN);
+                case 0: mBlurBuilder.mode(HokoBlur.MODE_GAUSSIAN);
                     break;
-                case 1: mBlurBuilder.mode(Blur.MODE_STACK);
+                case 1: mBlurBuilder.mode(HokoBlur.MODE_STACK);
                     break;
-                case 2: mBlurBuilder.mode(Blur.MODE_BOX);
+                case 2: mBlurBuilder.mode(HokoBlur.MODE_BOX);
                     break;
             }
 

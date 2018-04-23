@@ -3,7 +3,7 @@ package com.hoko.blurlibrary.util;
 import android.opengl.GLES20;
 import android.util.Log;
 
-import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.HokoBlur;
 import com.hoko.blurlibrary.anno.Mode;
 
 import javax.microedition.khronos.egl.EGL10;
@@ -122,11 +122,11 @@ public class ShaderUtil {
                  */
                 .append("void main() {   \n");
 
-        if (mode == Blur.MODE_BOX) {
+        if (mode == HokoBlur.MODE_BOX) {
             sb.append(ShaderUtil.getBoxSampleCode());
-        } else if (mode == Blur.MODE_GAUSSIAN) {
+        } else if (mode == HokoBlur.MODE_GAUSSIAN) {
             sb.append(ShaderUtil.getGaussianSampleCode());
-        } else if (mode == Blur.MODE_STACK) {
+        } else if (mode == HokoBlur.MODE_STACK) {
             sb.append(ShaderUtil.getStackSampleCode());
         }
         sb.append("}   \n");

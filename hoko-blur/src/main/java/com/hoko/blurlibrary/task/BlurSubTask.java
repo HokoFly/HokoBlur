@@ -2,7 +2,7 @@ package com.hoko.blurlibrary.task;
 
 import android.graphics.Bitmap;
 
-import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.HokoBlur;
 import com.hoko.blurlibrary.anno.Direction;
 import com.hoko.blurlibrary.anno.Mode;
 import com.hoko.blurlibrary.anno.Scheme;
@@ -53,18 +53,18 @@ public class BlurSubTask implements Callable<Void> {
 
     private void applyPixelsBlur() {
         switch (mScheme) {
-            case Blur.SCHEME_NATIVE:
+            case HokoBlur.SCHEME_NATIVE:
                 NativeBlurHelper.doBlur(mMode, mBitmapOut, mRadius, mCores, mIndex, mDirection);
                 break;
 
-            case Blur.SCHEME_JAVA:
+            case HokoBlur.SCHEME_JAVA:
                 OriginBlurHelper.doBlur(mMode, mBitmapOut, mRadius, mCores, mIndex, mDirection);
                 break;
 
-            case Blur.SCHEME_OPENGL:
+            case HokoBlur.SCHEME_OPENGL:
                 //暂时不支持并行执行
                 break;
-            case Blur.SCHEME_RENDER_SCRIPT:
+            case HokoBlur.SCHEME_RENDER_SCRIPT:
                 //RenderScript本身为并行处理
                 break;
             default:
