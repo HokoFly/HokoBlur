@@ -1,5 +1,7 @@
 package com.hoko.blurlibrary.task;
 
+import com.hoko.blurlibrary.api.IBlurResultDispatcher;
+
 import java.util.concurrent.Executor;
 
 /**
@@ -7,11 +9,11 @@ import java.util.concurrent.Executor;
  * Created by yuxfzju on 2017/2/7.
  */
 
-public class BlurResultDelivery {
+public class BlurResultDispatcher implements IBlurResultDispatcher {
 
     private Executor mResultPoster;
 
-    public BlurResultDelivery(final android.os.Handler handler) {
+    public BlurResultDispatcher(final android.os.Handler handler) {
         mResultPoster = new Executor() {
             @Override
             public void execute(Runnable command) {
@@ -22,6 +24,7 @@ public class BlurResultDelivery {
         };
     }
 
+    @Override
     public void postResult(BlurResult result) {
         mResultPoster.execute(new BlurResultDeliveryRunnable(result));
     }

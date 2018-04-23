@@ -85,7 +85,7 @@ public abstract class BlurGenerator implements IBlurGenerator {
         return doBlur(bitmap, true);
     }
 
-    public Bitmap doBlur(Bitmap bitmap, boolean concurrent) {
+    private Bitmap doBlur(Bitmap bitmap, boolean concurrent) {
         if (bitmap == null || bitmap.isRecycled()) {
             throw new IllegalArgumentException("You must input an unrecycled bitmap !");
         }

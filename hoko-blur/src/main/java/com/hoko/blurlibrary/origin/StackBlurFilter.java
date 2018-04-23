@@ -32,7 +32,7 @@ import com.hoko.blurlibrary.anno.Direction;
  *
  * Stack Blur Algorithm by Mario Klingemann  <a href="mailto:mario@quasimondo.com">mario@quasimondo.com</a>
  **/
-public class StackBlurFilter {
+public final class StackBlurFilter {
 
     public static void doBlur(int[] pix, int w, int h, int radius, @Direction int direction) {
 

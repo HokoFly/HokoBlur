@@ -19,16 +19,16 @@ import java.util.concurrent.Callable;
 public class BlurSubTask implements Callable<Void> {
 
     @Scheme
-    protected final int mScheme;
+    private final int mScheme;
     @Mode
-    protected final int mMode;
-    protected final Bitmap mBitmapOut;
-    protected final int mRadius;
-    protected final int mIndex;
-    protected final int mCores;
+    private final int mMode;
+    private final Bitmap mBitmapOut;
+    private final int mRadius;
+    private final int mIndex;
+    private final int mCores;
 
     @Direction
-    protected final int mDirection;
+    private final int mDirection;
 
     public BlurSubTask(@Scheme int scheme, @Mode int mode, Bitmap bitmapOut, int radius, int cores, int index, @Direction int direction) {
         mScheme = scheme;
@@ -61,6 +61,12 @@ public class BlurSubTask implements Callable<Void> {
                 OriginBlurHelper.doBlur(mMode, mBitmapOut, mRadius, mCores, mIndex, mDirection);
                 break;
 
+            case Blur.SCHEME_OPENGL:
+                //暂时不支持并行执行
+                break;
+            case Blur.SCHEME_RENDER_SCRIPT:
+                //RenderScript本身为并行处理
+                break;
             default:
                 break;
 

@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.view.View;
 
 import com.hoko.blurlibrary.api.IBlurGenerator;
+import com.hoko.blurlibrary.api.IBlurResultDispatcher;
 import com.hoko.blurlibrary.util.SingleMainHandler;
 
 /**
@@ -20,14 +21,14 @@ public class AsyncBlurTask implements Runnable {
 
     private View mView;
 
-    private BlurResultDelivery mResultDelivery;
+    private IBlurResultDispatcher mResultDelivery;
 
     public AsyncBlurTask(IBlurGenerator generator, Bitmap bitmap, Callback callback) {
         mGenerator = generator;
         mBitmap = bitmap;
         mCallback = callback;
 
-        mResultDelivery = new BlurResultDelivery(SingleMainHandler.get());
+        mResultDelivery = new BlurResultDispatcher(SingleMainHandler.get());
 
     }
 
@@ -68,7 +69,7 @@ public class AsyncBlurTask implements Runnable {
      * 可自定义模糊结果的分发，如分发到其他worker thread
      * @param resultDelivery
      */
-    public void setResultDelivery(BlurResultDelivery resultDelivery) {
+    public void setResultDelivery(IBlurResultDispatcher resultDelivery) {
         mResultDelivery = resultDelivery;
     }
 

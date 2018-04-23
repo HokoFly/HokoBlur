@@ -8,7 +8,7 @@ import static com.hoko.blurlibrary.util.BlurUtil.clamp;
 /**
  * Created by yuxfzju on 2016/7/24.
  */
-public class BoxBlurFilter {
+public final class BoxBlurFilter {
 
     public static void doBlur(int[] in, int width, int height, int radius, @Direction int round) {
         int[] result = new int[width * height];
