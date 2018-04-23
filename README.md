@@ -103,17 +103,17 @@ view.setBackgroundDrawable(blurDrawable);
 模糊参数的调整，可以这样操作：
 
 ```java
-BlurDrawable.mode(mode)
-BlurDrawable.radius(radius)
-BlurDrawable.sampleFactor(factor)
+blurDrawable.mode(mode)
+blurDrawable.radius(radius)
+blurDrawable.sampleFactor(factor)
 
 ```
 
 禁用/开启背景模糊
 
 ```java
-BlurDrawable.disableBlur();
-BlurDrawable.enableBlur();
+blurDrawable.disableBlur();
+blurDrawable.enableBlur();
 ```
 组件已包含实现背景模糊的三种常用ViewGroup，包括BlurFrameLayout、BlurLinearLayout和BlurRelativeLayout。
 
