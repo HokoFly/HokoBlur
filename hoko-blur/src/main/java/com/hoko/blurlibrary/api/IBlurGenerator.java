@@ -19,9 +19,9 @@ public interface IBlurGenerator extends IBlur, ITranslate {
 
     Bitmap blur(View view);
 
-    void asyncBlur(Bitmap bitmap, AsyncBlurTask.CallBack callBack);
+    void asyncBlur(Bitmap bitmap, AsyncBlurTask.Callback callback);
 
-    void asyncBlur(View view, AsyncBlurTask.CallBack callBack);
+    void asyncBlur(View view, AsyncBlurTask.Callback callback);
 
     void forceCopy(boolean isForceCopy);
 

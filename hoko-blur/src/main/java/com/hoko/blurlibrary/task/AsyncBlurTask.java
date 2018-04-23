@@ -1,8 +1,9 @@
 package com.hoko.blurlibrary.task;
 
 import android.graphics.Bitmap;
+import android.view.View;
 
-import com.hoko.blurlibrary.generator.BlurGenerator;
+import com.hoko.blurlibrary.api.IBlurGenerator;
 import com.hoko.blurlibrary.util.SingleMainHandler;
 
 /**
@@ -11,21 +12,28 @@ import com.hoko.blurlibrary.util.SingleMainHandler;
  */
 
 public class AsyncBlurTask implements Runnable {
-    private CallBack mCallBack;
+    private Callback mCallback;
 
-    private BlurGenerator mGenerator;
+    private IBlurGenerator mGenerator;
 
     private Bitmap mBitmap;
 
+    private View mView;
+
     private BlurResultDelivery mResultDelivery;
 
-    public AsyncBlurTask(BlurGenerator generator, Bitmap bitmap, CallBack callBack) {
+    public AsyncBlurTask(IBlurGenerator generator, Bitmap bitmap, Callback callback) {
         mGenerator = generator;
         mBitmap = bitmap;
-        mCallBack = callBack;
+        mCallback = callback;
 
         mResultDelivery = new BlurResultDelivery(SingleMainHandler.get());
 
+    }
+
+    public AsyncBlurTask(IBlurGenerator generator, View view, Callback callback) {
+        this(generator, (Bitmap)null, callback);
+        mView = view;
     }
 
     @Override
@@ -33,14 +41,19 @@ public class AsyncBlurTask implements Runnable {
         /**
          * do blur
          */
-        BlurResult result = new BlurResult(mCallBack);
+        BlurResult result = new BlurResult(mCallback);
         try {
             if (mGenerator == null) {
                 result.setSuccess(false);
                 return;
             }
 
-            result.setBitmap(mGenerator.doBlur(mBitmap, true));
+            if (mView != null) {
+                result.setBitmap(mGenerator.blur(mView));
+            } else {
+                result.setBitmap(mGenerator.blur(mBitmap));
+            }
+
             result.setSuccess(true);
         } catch (Exception e) {
             e.printStackTrace();
@@ -59,7 +72,7 @@ public class AsyncBlurTask implements Runnable {
         mResultDelivery = resultDelivery;
     }
 
-    public interface CallBack {
+    public interface Callback {
         void onBlurSuccess(Bitmap bitmap);
 
         void onBlurFailed();

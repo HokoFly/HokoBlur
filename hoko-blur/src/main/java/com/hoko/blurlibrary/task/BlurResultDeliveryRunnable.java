@@ -15,12 +15,12 @@ class BlurResultDeliveryRunnable implements Runnable {
     public void run() {
         if (mResult != null) {
             if (mResult.isSuccess()) {
-                if (mResult.getCallBack() != null) {
-                    mResult.getCallBack().onBlurSuccess(mResult.getBitmap());
+                if (mResult.getCallback() != null) {
+                    mResult.getCallback().onBlurSuccess(mResult.getBitmap());
                 }
             } else {
-                if (mResult.getCallBack() != null) {
-                    mResult.getCallBack().onBlurFailed();
+                if (mResult.getCallback() != null) {
+                    mResult.getCallback().onBlurFailed();
                 }
             }
         }

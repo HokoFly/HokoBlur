@@ -91,7 +91,7 @@ public abstract class BlurGenerator implements IBlurGenerator {
         }
 
         if (mRadius <= 0) {
-            return bitmap;
+            mRadius = 1;
         }
 
         if (mSampleFactor < 1.0f) {
@@ -125,20 +125,23 @@ public abstract class BlurGenerator implements IBlurGenerator {
             throw new IllegalArgumentException("You must input a view !");
         }
 
-        //todo view
-//        BitmapUtil.getViewBitmap(view, )
+        Bitmap viewBitmap = BitmapUtil.getViewBitmap(view, translateX(), translateY(), sampleFactor());
 
-        return null;
+        Bitmap scaledOutBitmap = doInnerBlur(viewBitmap, true);
+
+        Bitmap outBitmap = mNeedUpscale ? BitmapUtil.getScaledBitmap(scaledOutBitmap, 1f / sampleFactor()) : scaledOutBitmap;
+
+        return outBitmap;
     }
 
     @Override
-    public void asyncBlur(Bitmap bitmap, AsyncBlurTask.CallBack callBack) {
-        BlurTaskManager.getInstance().submit(new AsyncBlurTask(this, bitmap, callBack));
+    public void asyncBlur(Bitmap bitmap, AsyncBlurTask.Callback callback) {
+        BlurTaskManager.getInstance().submit(new AsyncBlurTask(this, bitmap, callback));
     }
 
     @Override
-    public void asyncBlur(View view, AsyncBlurTask.CallBack callBack) {
-        //todo view
+    public void asyncBlur(View view, AsyncBlurTask.Callback callback) {
+        BlurTaskManager.getInstance().submit(new AsyncBlurTask(this, view, callback));
     }
 
     @Override

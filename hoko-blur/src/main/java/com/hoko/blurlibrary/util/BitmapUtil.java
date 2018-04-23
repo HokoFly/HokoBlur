@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.drawable.ColorDrawable;
+import android.icu.util.Measure;
 import android.view.View;
 
 /**
@@ -33,14 +34,15 @@ public class BitmapUtil {
     /**
      * 从view绘制bitmap
      *
-     * @param width 输出bitmap的宽度
-     * @param height 输出bitmap的高度
      * @param translateX 离view原点的X方向偏移
      * @param translateY 离view原点的Y方向偏移
      * @return
      */
-    public static Bitmap getViewBitmap(View view, int width, int height, int translateX, int translateY, int downScale) {
-        final float scale = 1.0f / downScale;
+    public static Bitmap getViewBitmap(View view, int translateX, int translateY, float sampleFactor) {
+        final float scale = 1.0f / sampleFactor;
+
+        final int width = view.getWidth();
+        final int height = view.getHeight();
 
         final int downScaledWidth = (int) ((width - translateX) * scale);
         final int downScaledHeight = (int) ((height - translateY) * scale);
@@ -57,7 +59,7 @@ public class BitmapUtil {
         canvas.translate(
                 -(int) (translateX * scale), -(int) (translateY * scale)
         );
-        if (downScale > 1) {
+        if (sampleFactor > 1.0f) {
             canvas.scale(scale, scale);
         }
 
