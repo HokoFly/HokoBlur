@@ -34,6 +34,8 @@ Blur.with(context)
     .sampleFactor(2.0f) // 设置scale因子，factor = 2时，内部将bitmap的宽高scale为原来的 1/2，默认值5
     .forceCopy(false) //对于scale因子为1.0f时，会直接修改传入的bitmap，如果你不希望修改原bitmap，设置forceCopy为true即可，默认值false
     .needUpscale(true) //设置模糊之后，是否upscale为原Bitmap的尺寸，默认值true
+    .translateX(150)//可对部分区域进行模糊，这里设置x轴的偏移量
+    .translateY(150)//可对部分区域进行模糊，这里设置y轴的偏移量
     .blurGenerator() //获得模糊实现类
     .blur(bitmap);	//模糊图片，方法是阻塞的，底层为多核并行实现，异步请使用doAsyncBlur
 
@@ -72,30 +74,7 @@ Blur.with(this)
 
 ```
 
-
-#### 3.2 Easy Blur API
-
-提供另一种简易的同步模糊API。
-
-```java
-   /*
-    * 函数会直接用view上的内容产生一个bitmap。该bitmap对象是新创建的。
-    *
-    * @params view: 用于产生bitmap的view
-    * @params width: 输出的bitmap的宽, 一般来说传入view的宽
-    * @params height: 输出的bitmap的高，一般来说传入view的高
-    * @params translateX: 从view的坐标原点开始，右移。
-    * @params translateY: 从view的坐标原点开始，下移。
-    *
-    */
-    public static Bitmap blur(View view, int width, int height, int translateX, int translateY, int downScale, float radius) {
-       // ...
-    }
-   
-```
-  
-
-### 3.3 效果展示
+### 3.2 效果展示
 
 #### 动画
 
