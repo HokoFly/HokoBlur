@@ -17,7 +17,7 @@ import com.hoko.blurlibrary.util.BlurUtil;
 /**
  * Created by yuxfzju on 16/9/7.
  */
-public class RenderScriptBlurGenerator extends BlurGenerator {
+class RenderScriptBlurGenerator extends BlurGenerator {
 
     private RenderScript mRenderScript;
     private ScriptIntrinsicBlur mGaussianBlurScirpt;
@@ -28,9 +28,9 @@ public class RenderScriptBlurGenerator extends BlurGenerator {
     private Allocation mAllocationIn;
     private Allocation mAllocationOut;
 
-    public RenderScriptBlurGenerator(Context context) {
-        init(context);
-
+    RenderScriptBlurGenerator(BlurBuilder builder) {
+        super(builder);
+        init(builder.mCtx);
     }
 
     private void init(Context context) {
@@ -140,4 +140,10 @@ public class RenderScriptBlurGenerator extends BlurGenerator {
         mAllocationOut = mAllocationIn;
     }
 
+    @Override
+    public BlurBuilder newBuilder() {
+        BlurBuilder builder = super.newBuilder();
+        builder.context(mRenderScript.getApplicationContext());
+        return builder;
+    }
 }

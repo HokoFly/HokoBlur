@@ -13,7 +13,11 @@ import java.util.List;
 /**
  * Created by yuxfzju on 16/9/7.
  */
-public class OriginBlurGenerator extends BlurGenerator {
+class OriginBlurGenerator extends BlurGenerator {
+
+    OriginBlurGenerator(BlurBuilder builder) {
+        super(builder);
+    }
 
     @Override
     protected Bitmap doInnerBlur(Bitmap scaledInBitmap, boolean concurrent) {
@@ -45,10 +49,5 @@ public class OriginBlurGenerator extends BlurGenerator {
         return scaledInBitmap;
     }
 
-    @Override
-    public void radius(int radius) {
-        super.radius(radius);
-
-    }
 }
 

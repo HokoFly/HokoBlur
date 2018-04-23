@@ -13,7 +13,11 @@ import java.util.List;
 /**
  * Created by yuxfzju on 16/9/7.
  */
-public class NativeBlurGenerator extends BlurGenerator {
+class NativeBlurGenerator extends BlurGenerator {
+
+    NativeBlurGenerator(BlurBuilder builder) {
+        super(builder);
+    }
 
     @Override
     protected Bitmap doInnerBlur(Bitmap scaledInBitmap, boolean concurrent) {

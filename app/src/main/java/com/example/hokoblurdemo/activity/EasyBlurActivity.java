@@ -66,6 +66,23 @@ public class EasyBlurActivity extends AppCompatActivity {
             }
         });
 
+        imageView1.post(new Runnable() {
+            @Override
+            public void run() {
+                Blur.with(EasyBlurActivity.this).scheme(Blur.SCHEME_RENDER_SCRIPT).blurGenerator().newBuilder().blurGenerator().asyncBlur(imageView1, new AsyncBlurTask.Callback() {
+                    @Override
+                    public void onBlurSuccess(Bitmap bitmap) {
+                        imageView3.setImageBitmap(bitmap);
+                    }
+
+                    @Override
+                    public void onBlurFailed() {
+
+                    }
+                });
+
+            }
+        });
 
     }
 }

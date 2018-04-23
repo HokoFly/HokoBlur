@@ -3,12 +3,13 @@ package com.hoko.blurlibrary.api;
 import android.graphics.Bitmap;
 import android.view.View;
 
+import com.hoko.blurlibrary.anno.Scheme;
 import com.hoko.blurlibrary.task.AsyncBlurTask;
 
 /**
  * Created by yuxfzju on 16/9/8.
  */
-public interface IBlurGenerator extends IBlur, ITranslate {
+public interface IBlurGenerator extends IParams, ITranslate {
     /**
      * 模糊操作
      *
@@ -23,8 +24,11 @@ public interface IBlurGenerator extends IBlur, ITranslate {
 
     void asyncBlur(View view, AsyncBlurTask.Callback callback);
 
-    void forceCopy(boolean isForceCopy);
+    @Scheme
+    int scheme();
 
-    void needUpscale(boolean needUpscale);
+    boolean forceCopy();
+
+    boolean needUpscale();
 
 }

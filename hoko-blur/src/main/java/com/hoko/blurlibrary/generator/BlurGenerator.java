@@ -1,10 +1,12 @@
 package com.hoko.blurlibrary.generator;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.View;
 
 import com.hoko.blurlibrary.Blur;
 import com.hoko.blurlibrary.anno.Mode;
+import com.hoko.blurlibrary.anno.Scheme;
 import com.hoko.blurlibrary.api.IBlurGenerator;
 import com.hoko.blurlibrary.task.AsyncBlurTask;
 import com.hoko.blurlibrary.task.BlurTaskManager;
@@ -18,16 +20,30 @@ public abstract class BlurGenerator implements IBlurGenerator {
     int mRadius;
 
     @Mode
-    int mMode = Blur.MODE_STACK;
+    int mMode;
+
+    @Scheme
+    private int mScheme;
 
     private float mSampleFactor;
 
     private boolean mIsForceCopy;
 
-    private boolean mNeedUpscale = true;
+    private boolean mNeedUpscale;
 
     private int mTranslateX;
     private int mTranslateY;
+
+    public BlurGenerator(BlurBuilder builder) {
+        mMode = builder.mMode;
+        mScheme = builder.mScheme;
+        mRadius = builder.mRadius;
+        mSampleFactor = builder.mSampleFactor;
+        mIsForceCopy = builder.mIsForceCopy;
+        mNeedUpscale = builder.mNeedUpscale;
+        mTranslateX = builder.mTranslateX;
+        mTranslateY = builder.mTranslateY;
+    }
 
     @Override
     public void mode(@Mode int mode) {
@@ -61,18 +77,24 @@ public abstract class BlurGenerator implements IBlurGenerator {
     }
 
     @Override
-    public void translateX(int translateX) {
-        mTranslateX = translateX;
+    public int scheme() {
+        return mScheme;
     }
+
+    @Override
+    public boolean forceCopy() {
+        return mIsForceCopy;
+    }
+
+    @Override
+    public boolean needUpscale() {
+        return mNeedUpscale;
+    }
+
 
     @Override
     public int translateX() {
         return mTranslateX;
-    }
-
-    @Override
-    public void translateY(int translateY) {
-        mTranslateY = translateY;
     }
 
     @Override
@@ -144,17 +166,135 @@ public abstract class BlurGenerator implements IBlurGenerator {
         BlurTaskManager.getInstance().submit(new AsyncBlurTask(this, view, callback));
     }
 
-    @Override
-    public void forceCopy(boolean isForceCopy) {
-        mIsForceCopy = isForceCopy;
-    }
-
-    @Override
-    public void needUpscale(boolean needUpscale) {
-        mNeedUpscale = needUpscale;
-    }
-
     protected void free() {
 
+    }
+
+    public BlurBuilder newBuilder() {
+        return new BlurBuilder(this);
+    }
+
+    public static class BlurBuilder {
+        @Mode
+        private static final int DEFAULT_MODE = Blur.MODE_STACK;
+        @Scheme
+        private static final int DEFAULT_SCHEME = Blur.SCHEME_NATIVE;
+        private static final int DEFAULT_BLUR_RADIUS = 5;
+        private static final float DEFAULT_SAMPLE_FACTOR = 5.0f;
+        private static final boolean DEFAULT_FORCE_COPY = false;
+        private static final boolean DEFAULT_UP_SCALE = true;
+        private static final int DEFAULT_TRANSLATE_X = 0;
+        private static final int DEFAULT_TRANSLATE_Y = 0;
+        @Mode
+        private int mMode = DEFAULT_MODE;
+        @Scheme
+        private int mScheme = DEFAULT_SCHEME;
+        private int mRadius = DEFAULT_BLUR_RADIUS;
+        private float mSampleFactor = DEFAULT_SAMPLE_FACTOR;
+        private boolean mIsForceCopy = DEFAULT_FORCE_COPY;
+        private boolean mNeedUpscale = DEFAULT_UP_SCALE;
+
+        private int mTranslateX = DEFAULT_TRANSLATE_X;
+        private int mTranslateY = DEFAULT_TRANSLATE_Y;
+
+        Context mCtx;
+
+        public BlurBuilder(Context context) {
+            mCtx = context.getApplicationContext();
+        }
+
+        public BlurBuilder(IBlurGenerator blurGenerator) {
+            mMode = blurGenerator.mode();
+            mScheme = blurGenerator.scheme();
+            mRadius = blurGenerator.radius();
+            mSampleFactor = blurGenerator.sampleFactor();
+            mIsForceCopy = blurGenerator.forceCopy();
+            mNeedUpscale = blurGenerator.needUpscale();
+            mTranslateX = blurGenerator.translateX();
+            mTranslateY = blurGenerator.translateY();
+        }
+
+        public BlurBuilder context(Context ctx) {
+            mCtx = ctx;
+            return this;
+        }
+
+        public BlurBuilder mode(@Mode int mode) {
+            mMode = mode;
+            return this;
+        }
+
+        public BlurBuilder scheme(@Scheme int scheme) {
+            mScheme = scheme;
+            return this;
+        }
+
+        public BlurBuilder radius(int radius) {
+            mRadius = radius;
+            return this;
+        }
+
+        public BlurBuilder sampleFactor(float factor) {
+            mSampleFactor = factor;
+            return this;
+        }
+
+        public BlurBuilder forceCopy(boolean isForceCopy) {
+            mIsForceCopy = isForceCopy;
+            return this;
+        }
+
+        public BlurBuilder needUpscale(boolean needUpscale) {
+            mNeedUpscale = needUpscale;
+            return this;
+        }
+
+        public BlurBuilder translateX(int translateX) {
+            mTranslateX = translateX;
+            return this;
+        }
+        public BlurBuilder translateY(int translateY) {
+            mTranslateY = translateY;
+            return this;
+        }
+
+        /**
+         * 创建不同的模糊发生器
+         * @return
+         */
+        public BlurGenerator blurGenerator() {
+            BlurGenerator generator = null;
+
+            switch (mScheme) {
+                case Blur.SCHEME_RENDER_SCRIPT:
+                    generator = new RenderScriptBlurGenerator(this);
+                    break;
+                case Blur.SCHEME_OPENGL:
+                    generator = new OpenGLBlurGenerator(this);
+                    break;
+                case Blur.SCHEME_NATIVE:
+                    generator = new NativeBlurGenerator(this);
+                    break;
+                case Blur.SCHEME_JAVA:
+                    generator = new OriginBlurGenerator(this);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unsupported blur scheme!");
+
+            }
+
+            return generator;
+        }
+
+        private void reset() {
+            mMode = DEFAULT_MODE;
+            mScheme = DEFAULT_SCHEME;
+            mRadius = DEFAULT_BLUR_RADIUS;
+            mSampleFactor = DEFAULT_SAMPLE_FACTOR;
+            mIsForceCopy = DEFAULT_FORCE_COPY;
+            mNeedUpscale = DEFAULT_UP_SCALE;
+            mTranslateX = DEFAULT_TRANSLATE_X;
+            mTranslateY = DEFAULT_TRANSLATE_Y;
+        }
     }
 }

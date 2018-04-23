@@ -10,11 +10,12 @@ import com.hoko.blurlibrary.opengl.offscreen.EglBuffer;
 /**
  * Created by yuxfzju on 16/9/7.
  */
-public class OpenGLBlurGenerator extends BlurGenerator {
+class OpenGLBlurGenerator extends BlurGenerator {
 
     private EglBuffer mEglBuffer;
 
-    public OpenGLBlurGenerator() {
+    OpenGLBlurGenerator(BlurBuilder builder) {
+        super(builder);
         init();
     }
 

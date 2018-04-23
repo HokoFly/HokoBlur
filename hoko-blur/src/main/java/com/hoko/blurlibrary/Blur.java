@@ -2,13 +2,7 @@ package com.hoko.blurlibrary;
 
 import android.content.Context;
 
-import com.hoko.blurlibrary.anno.Mode;
-import com.hoko.blurlibrary.anno.Scheme;
-import com.hoko.blurlibrary.api.IBlurGenerator;
-import com.hoko.blurlibrary.generator.NativeBlurGenerator;
-import com.hoko.blurlibrary.generator.OpenGLBlurGenerator;
-import com.hoko.blurlibrary.generator.OriginBlurGenerator;
-import com.hoko.blurlibrary.generator.RenderScriptBlurGenerator;
+import com.hoko.blurlibrary.generator.BlurGenerator;
 
 /**
  * Created by yuxfzju on 16/9/7.
@@ -28,124 +22,8 @@ public class Blur {
     public static final int VERTICAL = 1;
     public static final int BOTH = 2;
 
-    public static BlurBuilder with(Context context) {
-        return new BlurBuilder(context.getApplicationContext());
-    }
-
-    public static class BlurBuilder {
-        @Mode
-        private static final int DEFAULT_MODE = MODE_STACK;
-        @Scheme
-        private static final int DEFAULT_SCHEME = SCHEME_NATIVE;
-        private static final int DEFAULT_BLUR_RADIUS = 5;
-        private static final float DEFAULT_SAMPLE_FACTOR = 5.0f;
-        private static final boolean DEFAULT_FORCE_COPY = false;
-        private static final boolean DEFAULT_UP_SCALE = true;
-        private static final int DEFAULT_TRANSLATE_X = 0;
-        private static final int DEFAULT_TRANSLATE_Y = 0;
-        @Mode
-        private int mMode = DEFAULT_MODE;
-        @Scheme
-        private int mBlurScheme = DEFAULT_SCHEME;
-        private int mRadius = DEFAULT_BLUR_RADIUS;
-        private float mSampleFactor = DEFAULT_SAMPLE_FACTOR;
-        private boolean mIsForceCopy = DEFAULT_FORCE_COPY;
-        private boolean mNeedUpscale = DEFAULT_UP_SCALE;
-
-        private int mTranslateX = DEFAULT_TRANSLATE_X;
-        private int mTranslateY = DEFAULT_TRANSLATE_Y;
-
-        private Context mCtx;
-
-        BlurBuilder(Context context) {
-            mCtx = context.getApplicationContext();
-        }
-
-        public BlurBuilder mode(@Mode int mode) {
-            mMode = mode;
-            return this;
-        }
-
-        public BlurBuilder scheme(@Scheme int scheme) {
-            mBlurScheme = scheme;
-            return this;
-        }
-
-        public BlurBuilder radius(int radius) {
-            mRadius = radius;
-            return this;
-        }
-
-        public BlurBuilder sampleFactor(float factor) {
-            mSampleFactor = factor;
-            return this;
-        }
-
-        public BlurBuilder forceCopy(boolean isForceCopy) {
-            mIsForceCopy = isForceCopy;
-            return this;
-        }
-
-        public BlurBuilder needUpscale(boolean needUpscale) {
-            mNeedUpscale = needUpscale;
-            return this;
-        }
-
-        public BlurBuilder translateX(int translateX) {
-            mTranslateX = translateX;
-            return this;
-        }
-        public BlurBuilder translateY(int translateY) {
-            mTranslateY = translateY;
-            return this;
-        }
-
-        /**
-         * 创建不同的模糊发生器
-         * @return
-         */
-        public IBlurGenerator blurGenerator() {
-            IBlurGenerator generator = null;
-
-            switch (mBlurScheme) {
-                case Blur.SCHEME_RENDER_SCRIPT:
-                    generator = new RenderScriptBlurGenerator(mCtx);
-                    break;
-                case Blur.SCHEME_OPENGL:
-                    generator = new OpenGLBlurGenerator();
-                    break;
-                case Blur.SCHEME_NATIVE:
-                    generator = new NativeBlurGenerator();
-                    break;
-                case Blur.SCHEME_JAVA:
-                    generator = new OriginBlurGenerator();
-                    break;
-
-            }
-
-            if (generator != null) {
-                generator.mode(mMode);
-                generator.radius(mRadius);
-                generator.sampleFactor(mSampleFactor);
-                generator.forceCopy(mIsForceCopy);
-                generator.needUpscale(mNeedUpscale);
-                generator.translateX(mTranslateX);
-                generator.translateY(mTranslateY);
-            }
-
-            return generator;
-        }
-
-        private void reset() {
-            mMode = DEFAULT_MODE;
-            mBlurScheme = DEFAULT_SCHEME;
-            mRadius = DEFAULT_BLUR_RADIUS;
-            mSampleFactor = DEFAULT_SAMPLE_FACTOR;
-            mIsForceCopy = DEFAULT_FORCE_COPY;
-            mNeedUpscale = DEFAULT_UP_SCALE;
-            mTranslateX = DEFAULT_TRANSLATE_X;
-            mTranslateY = DEFAULT_TRANSLATE_Y;
-        }
+    public static BlurGenerator.BlurBuilder with(Context context) {
+        return new BlurGenerator.BlurBuilder(context.getApplicationContext());
     }
 
 }
