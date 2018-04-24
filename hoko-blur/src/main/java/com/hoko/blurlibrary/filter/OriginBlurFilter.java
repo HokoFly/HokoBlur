@@ -1,4 +1,4 @@
-package com.hoko.blurlibrary.origin;
+package com.hoko.blurlibrary.filter;
 
 import android.graphics.Bitmap;
 
@@ -12,7 +12,7 @@ import static com.hoko.blurlibrary.util.BitmapUtil.replaceBitmap;
  * Created by yuxfzju on 2017/2/19.
  */
 
-public final class OriginBlurHelper {
+public final class OriginBlurFilter {
 
     public static void doBlur(@Mode int mode, Bitmap bitmap, int radius, int cores, int index, @Direction int direction) {
 

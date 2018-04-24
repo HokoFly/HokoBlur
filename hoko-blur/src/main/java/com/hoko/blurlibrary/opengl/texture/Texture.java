@@ -16,7 +16,7 @@ public abstract class Texture implements ITexture {
 
     private int mHeight;
 
-    protected void genTexture() {
+    void genTexture() {
 
         final int[] textureIds = new int[1];
 

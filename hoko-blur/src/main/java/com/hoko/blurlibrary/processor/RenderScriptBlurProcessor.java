@@ -1,4 +1,4 @@
-package com.hoko.blurlibrary.generator;
+package com.hoko.blurlibrary.processor;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -17,7 +17,7 @@ import com.hoko.blurlibrary.util.BlurUtil;
 /**
  * Created by yuxfzju on 16/9/7.
  */
-class RenderScriptBlurGenerator extends BlurGenerator {
+class RenderScriptBlurProcessor extends BlurProcessor {
 
     private RenderScript mRenderScript;
     private ScriptIntrinsicBlur mGaussianBlurScirpt;
@@ -28,7 +28,7 @@ class RenderScriptBlurGenerator extends BlurGenerator {
     private Allocation mAllocationIn;
     private Allocation mAllocationOut;
 
-    RenderScriptBlurGenerator(Builder builder) {
+    RenderScriptBlurProcessor(Builder builder) {
         super(builder);
         init(builder.mCtx);
     }

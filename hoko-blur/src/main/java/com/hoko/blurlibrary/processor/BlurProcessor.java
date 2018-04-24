@@ -1,4 +1,4 @@
-package com.hoko.blurlibrary.generator;
+package com.hoko.blurlibrary.processor;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -7,7 +7,7 @@ import android.view.View;
 import com.hoko.blurlibrary.HokoBlur;
 import com.hoko.blurlibrary.anno.Mode;
 import com.hoko.blurlibrary.anno.Scheme;
-import com.hoko.blurlibrary.api.IBlurGenerator;
+import com.hoko.blurlibrary.api.IBlurProcessor;
 import com.hoko.blurlibrary.task.AsyncBlurTask;
 import com.hoko.blurlibrary.task.BlurTaskManager;
 import com.hoko.blurlibrary.util.BitmapUtil;
@@ -15,7 +15,7 @@ import com.hoko.blurlibrary.util.BitmapUtil;
 /**
  * Created by yuxfzju on 16/9/8.
  */
-public abstract class BlurGenerator implements IBlurGenerator {
+public abstract class BlurProcessor implements IBlurProcessor {
 
     int mRadius;
 
@@ -34,7 +34,7 @@ public abstract class BlurGenerator implements IBlurGenerator {
     private int mTranslateX;
     private int mTranslateY;
 
-    public BlurGenerator(Builder builder) {
+    public BlurProcessor(Builder builder) {
         mMode = builder.mMode;
         mScheme = builder.mScheme;
         mRadius = builder.mRadius;
@@ -203,7 +203,7 @@ public abstract class BlurGenerator implements IBlurGenerator {
             mCtx = context.getApplicationContext();
         }
 
-        public Builder(IBlurGenerator blurGenerator) {
+        public Builder(IBlurProcessor blurGenerator) {
             mMode = blurGenerator.mode();
             mScheme = blurGenerator.scheme();
             mRadius = blurGenerator.radius();
@@ -262,28 +262,8 @@ public abstract class BlurGenerator implements IBlurGenerator {
          * 创建不同的模糊发生器
          * @return
          */
-        public BlurGenerator blurGenerator() {
-            BlurGenerator generator = null;
-
-            switch (mScheme) {
-                case HokoBlur.SCHEME_RENDER_SCRIPT:
-                    generator = new RenderScriptBlurGenerator(this);
-                    break;
-                case HokoBlur.SCHEME_OPENGL:
-                    generator = new OpenGLBlurGenerator(this);
-                    break;
-                case HokoBlur.SCHEME_NATIVE:
-                    generator = new NativeBlurGenerator(this);
-                    break;
-                case HokoBlur.SCHEME_JAVA:
-                    generator = new OriginBlurGenerator(this);
-                    break;
-                default:
-                    throw new IllegalArgumentException("Unsupported blur scheme!");
-
-            }
-
-            return generator;
+        public BlurProcessor processor() {
+            return BlurProcessorFactory.get(mScheme, this);
         }
 
         private void reset() {

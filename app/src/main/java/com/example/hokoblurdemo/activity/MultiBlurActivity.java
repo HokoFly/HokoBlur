@@ -21,7 +21,7 @@ import android.widget.TextView;
 
 import com.example.hokoblurdemo.R;
 import com.hoko.blurlibrary.HokoBlur;
-import com.hoko.blurlibrary.generator.BlurGenerator;
+import com.hoko.blurlibrary.processor.BlurProcessor;
 
 public class MultiBlurActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
@@ -46,9 +46,9 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
 
     private ImageView mImageView;
 
-    private BlurGenerator.Builder mBlurBuilder;
+    private BlurProcessor.Builder mBlurBuilder;
 
-    private BlurGenerator mGenerator;
+    private BlurProcessor mProcessor;
 
     private Bitmap mInBitmap;
 
@@ -189,8 +189,8 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
 
         }
 
-        mGenerator = mBlurBuilder.blurGenerator();
-        mGenerator.radius(mRadius);
+        mProcessor = mBlurBuilder.processor();
+        mProcessor.radius(mRadius);
         updateImage(mRadius);
 
     }
@@ -275,10 +275,10 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
             if (!isCancelled()) {
                 mIssued = true;
                 int radius = params[0];
-                if (mInBitmap != null && !mInBitmap.isRecycled() && mGenerator != null) {
-                    mGenerator.radius(radius);
+                if (mInBitmap != null && !mInBitmap.isRecycled() && mProcessor != null) {
+                    mProcessor.radius(radius);
                     long start = System.nanoTime();
-                    output = mGenerator.blur(mInBitmap);
+                    output = mProcessor.blur(mInBitmap);
                     long stop = System.nanoTime();
                     Log.i("Total elapsed time", (stop - start) / 1000000f + "ms");
                 }

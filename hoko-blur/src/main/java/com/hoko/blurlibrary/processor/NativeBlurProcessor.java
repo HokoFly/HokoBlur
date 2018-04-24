@@ -1,11 +1,11 @@
-package com.hoko.blurlibrary.generator;
+package com.hoko.blurlibrary.processor;
 
 import android.graphics.Bitmap;
 
 import com.hoko.blurlibrary.HokoBlur;
-import com.hoko.blurlibrary.origin.OriginBlurHelper;
 import com.hoko.blurlibrary.task.BlurSubTask;
 import com.hoko.blurlibrary.task.BlurTaskManager;
+import com.hoko.blurlibrary.filter.NativeBlurFilter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,9 +13,9 @@ import java.util.List;
 /**
  * Created by yuxfzju on 16/9/7.
  */
-class OriginBlurGenerator extends BlurGenerator {
+class NativeBlurProcessor extends BlurProcessor {
 
-    OriginBlurGenerator(Builder builder) {
+    NativeBlurProcessor(Builder builder) {
         super(builder);
     }
 
@@ -32,8 +32,8 @@ class OriginBlurGenerator extends BlurGenerator {
                 List<BlurSubTask> vTasks = new ArrayList<BlurSubTask>(cores);
 
                 for (int i = 0; i < cores; i++) {
-                    hTasks.add(new BlurSubTask(HokoBlur.SCHEME_JAVA, mMode, scaledInBitmap, mRadius, cores, i, HokoBlur.HORIZONTAL));
-                    vTasks.add(new BlurSubTask(HokoBlur.SCHEME_JAVA, mMode, scaledInBitmap, mRadius, cores, i, HokoBlur.VERTICAL));
+                    hTasks.add(new BlurSubTask(HokoBlur.SCHEME_NATIVE, mMode, scaledInBitmap, mRadius, cores, i, HokoBlur.HORIZONTAL));
+                    vTasks.add(new BlurSubTask(HokoBlur.SCHEME_NATIVE, mMode, scaledInBitmap, mRadius, cores, i, HokoBlur.VERTICAL));
                 }
 
                 BlurTaskManager.getInstance().invokeAll(hTasks);
@@ -43,11 +43,11 @@ class OriginBlurGenerator extends BlurGenerator {
                 e.printStackTrace();
             }
         } else {
-            OriginBlurHelper.doFullBlur(mMode, scaledInBitmap, mRadius);
+            NativeBlurFilter.doFullBlur(mMode, scaledInBitmap, mRadius);
         }
+
 
         return scaledInBitmap;
     }
 
 }
-

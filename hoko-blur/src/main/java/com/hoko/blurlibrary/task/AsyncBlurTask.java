@@ -3,7 +3,7 @@ package com.hoko.blurlibrary.task;
 import android.graphics.Bitmap;
 import android.view.View;
 
-import com.hoko.blurlibrary.api.IBlurGenerator;
+import com.hoko.blurlibrary.api.IBlurProcessor;
 import com.hoko.blurlibrary.api.IBlurResultDispatcher;
 import com.hoko.blurlibrary.util.SingleMainHandler;
 
@@ -15,7 +15,7 @@ import com.hoko.blurlibrary.util.SingleMainHandler;
 public class AsyncBlurTask implements Runnable {
     private Callback mCallback;
 
-    private IBlurGenerator mGenerator;
+    private IBlurProcessor mProcessor;
 
     private Bitmap mBitmap;
 
@@ -23,8 +23,8 @@ public class AsyncBlurTask implements Runnable {
 
     private IBlurResultDispatcher mResultDelivery;
 
-    public AsyncBlurTask(IBlurGenerator generator, Bitmap bitmap, Callback callback) {
-        mGenerator = generator;
+    public AsyncBlurTask(IBlurProcessor processor, Bitmap bitmap, Callback callback) {
+        mProcessor = processor;
         mBitmap = bitmap;
         mCallback = callback;
 
@@ -32,8 +32,8 @@ public class AsyncBlurTask implements Runnable {
 
     }
 
-    public AsyncBlurTask(IBlurGenerator generator, View view, Callback callback) {
-        this(generator, (Bitmap)null, callback);
+    public AsyncBlurTask(IBlurProcessor processor, View view, Callback callback) {
+        this(processor, (Bitmap)null, callback);
         mView = view;
     }
 
@@ -44,15 +44,15 @@ public class AsyncBlurTask implements Runnable {
          */
         BlurResult result = new BlurResult(mCallback);
         try {
-            if (mGenerator == null) {
+            if (mProcessor == null) {
                 result.setSuccess(false);
                 return;
             }
 
             if (mView != null) {
-                result.setBitmap(mGenerator.blur(mView));
+                result.setBitmap(mProcessor.blur(mView));
             } else {
-                result.setBitmap(mGenerator.blur(mBitmap));
+                result.setBitmap(mProcessor.blur(mBitmap));
             }
 
             result.setSuccess(true);

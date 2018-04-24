@@ -1,4 +1,4 @@
-package com.hoko.blurlibrary.util;
+package com.hoko.blurlibrary.filter;
 
 import android.graphics.Bitmap;
 
@@ -10,7 +10,7 @@ import com.hoko.blurlibrary.anno.Mode;
  * Created by yuxfzju on 2017/2/18.
  */
 
-public class NativeBlurHelper {
+public class NativeBlurFilter {
 
     public static void doBlur(@Mode int mode, Bitmap bitmap, int radius, int cores, int index, @Direction int direction) {
         switch (mode) {
@@ -34,9 +34,9 @@ public class NativeBlurHelper {
         doBlur(mode, bitmap, radius, 1, 0, HokoBlur.VERTICAL);
     }
 
-    public static native void nativeBoxBlur(Bitmap bitmap, int radius, int cores, int index, int direction);
-    public static native void nativeStackBlur(Bitmap bitmap, int radius, int cores, int index, int direction);
-    public static native void nativeGaussianBlur(Bitmap bitmap, int radius, int cores, int index, int direction);
+    private static native void nativeBoxBlur(Bitmap bitmap, int radius, int cores, int index, int direction);
+    private static native void nativeStackBlur(Bitmap bitmap, int radius, int cores, int index, int direction);
+    private static native void nativeGaussianBlur(Bitmap bitmap, int radius, int cores, int index, int direction);
 
     static {
         System.loadLibrary("hoko_blur");

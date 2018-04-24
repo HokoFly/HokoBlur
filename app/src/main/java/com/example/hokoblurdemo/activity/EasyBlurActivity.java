@@ -17,17 +17,23 @@ public class EasyBlurActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_easy_blur);
 
-         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.cat);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.cat);
 
         final ImageView imageView = ((ImageView) findViewById(R.id.image));
         final ImageView imageView1 = ((ImageView) findViewById(R.id.image1));
         final ImageView imageView2 = ((ImageView) findViewById(R.id.image2));
         final ImageView imageView3 = ((ImageView) findViewById(R.id.image3));
 
-        imageView.setImageBitmap(HokoBlur.with(this).forceCopy(true).scheme(HokoBlur.SCHEME_RENDER_SCRIPT).sampleFactor(3.0f).radius(20).blurGenerator().blur(bitmap));
+        imageView.setImageBitmap(HokoBlur.with(this)
+                .forceCopy(true)
+                .scheme(HokoBlur.SCHEME_RENDER_SCRIPT)
+                .sampleFactor(3.0f)
+                .radius(20)
+                .processor()
+                .blur(bitmap));
 
         imageView1.setImageBitmap(bitmap);
-//        HokoBlur.with(this).forceCopy(true).scheme(HokoBlur.SCHEME_NATIVE).sampleFactor(2.0f).radius(2).blurGenerator().asyncBlur(bitmap, new AsyncBlurTask.Callback() {
+//        HokoBlur.with(this).forceCopy(true).scheme(HokoBlur.SCHEME_NATIVE).sampleFactor(2.0f).radius(2).processor().asyncBlur(bitmap, new AsyncBlurTask.Callback() {
 //            @Override
 //            public void onBlurSuccess(Bitmap bitmap) {
 //                imageView1.setImageBitmap(bitmap);
@@ -37,49 +43,64 @@ public class EasyBlurActivity extends AppCompatActivity {
 //            public void onBlurFailed() {
 //            }
 //        });
-        HokoBlur.with(this).scheme(HokoBlur.SCHEME_OPENGL).translateX(150).translateY(150).blurGenerator().asyncBlur(bitmap, new AsyncBlurTask.Callback() {
-            @Override
-            public void onBlurSuccess(Bitmap bitmap) {
-                imageView2.setImageBitmap(bitmap);
-            }
+        HokoBlur.with(this)
+                .scheme(HokoBlur.SCHEME_OPENGL)
+                .translateX(150)
+                .translateY(150)
+                .processor()
+                .asyncBlur(bitmap, new AsyncBlurTask.Callback() {
+                    @Override
+                    public void onBlurSuccess(Bitmap bitmap) {
+                        imageView2.setImageBitmap(bitmap);
+                    }
 
+                    @Override
+                    public void onBlurFailed() {
+                    }
+                });
+
+        imageView1.post(new Runnable() {
             @Override
-            public void onBlurFailed() {
+            public void run() {
+                HokoBlur.with(EasyBlurActivity.this)
+                        .scheme(HokoBlur.SCHEME_NATIVE)
+                        .translateX(100)
+                        .translateY(100)
+                        .processor()
+                        .asyncBlur(imageView1, new AsyncBlurTask.Callback() {
+                            @Override
+                            public void onBlurSuccess(Bitmap bitmap) {
+                                imageView3.setImageBitmap(bitmap);
+                            }
+
+                            @Override
+                            public void onBlurFailed() {
+
+                            }
+                        });
+
             }
         });
 
         imageView1.post(new Runnable() {
             @Override
             public void run() {
-                HokoBlur.with(EasyBlurActivity.this).scheme(HokoBlur.SCHEME_NATIVE).translateX(100).translateY(100).blurGenerator().asyncBlur(imageView1, new AsyncBlurTask.Callback() {
-                    @Override
-                    public void onBlurSuccess(Bitmap bitmap) {
-                        imageView3.setImageBitmap(bitmap);
-                    }
+                HokoBlur.with(EasyBlurActivity.this)
+                        .scheme(HokoBlur.SCHEME_RENDER_SCRIPT)
+                        .processor()
+                        .newBuilder()
+                        .processor()
+                        .asyncBlur(imageView1, new AsyncBlurTask.Callback() {
+                            @Override
+                            public void onBlurSuccess(Bitmap bitmap) {
+                                imageView3.setImageBitmap(bitmap);
+                            }
 
-                    @Override
-                    public void onBlurFailed() {
+                            @Override
+                            public void onBlurFailed() {
 
-                    }
-                });
-
-            }
-        });
-
-        imageView1.post(new Runnable() {
-            @Override
-            public void run() {
-                HokoBlur.with(EasyBlurActivity.this).scheme(HokoBlur.SCHEME_RENDER_SCRIPT).blurGenerator().newBuilder().blurGenerator().asyncBlur(imageView1, new AsyncBlurTask.Callback() {
-                    @Override
-                    public void onBlurSuccess(Bitmap bitmap) {
-                        imageView3.setImageBitmap(bitmap);
-                    }
-
-                    @Override
-                    public void onBlurFailed() {
-
-                    }
-                });
+                            }
+                        });
 
             }
         });

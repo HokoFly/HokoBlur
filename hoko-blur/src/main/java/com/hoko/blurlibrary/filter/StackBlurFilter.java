@@ -1,4 +1,4 @@
-package com.hoko.blurlibrary.origin;
+package com.hoko.blurlibrary.filter;
 
 import com.hoko.blurlibrary.HokoBlur;
 import com.hoko.blurlibrary.anno.Direction;
@@ -32,7 +32,7 @@ import com.hoko.blurlibrary.anno.Direction;
  *
  * Stack HokoBlur Algorithm by Mario Klingemann  <a href="mailto:mario@quasimondo.com">mario@quasimondo.com</a>
  **/
-public final class StackBlurFilter {
+final class StackBlurFilter {
 
     public static void doBlur(int[] pix, int w, int h, int radius, @Direction int direction) {
 

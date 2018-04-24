@@ -6,8 +6,8 @@ import com.hoko.blurlibrary.HokoBlur;
 import com.hoko.blurlibrary.anno.Direction;
 import com.hoko.blurlibrary.anno.Mode;
 import com.hoko.blurlibrary.anno.Scheme;
-import com.hoko.blurlibrary.origin.OriginBlurHelper;
-import com.hoko.blurlibrary.util.NativeBlurHelper;
+import com.hoko.blurlibrary.filter.OriginBlurFilter;
+import com.hoko.blurlibrary.filter.NativeBlurFilter;
 
 import java.util.concurrent.Callable;
 
@@ -54,11 +54,11 @@ public class BlurSubTask implements Callable<Void> {
     private void applyPixelsBlur() {
         switch (mScheme) {
             case HokoBlur.SCHEME_NATIVE:
-                NativeBlurHelper.doBlur(mMode, mBitmapOut, mRadius, mCores, mIndex, mDirection);
+                NativeBlurFilter.doBlur(mMode, mBitmapOut, mRadius, mCores, mIndex, mDirection);
                 break;
 
             case HokoBlur.SCHEME_JAVA:
-                OriginBlurHelper.doBlur(mMode, mBitmapOut, mRadius, mCores, mIndex, mDirection);
+                OriginBlurFilter.doBlur(mMode, mBitmapOut, mRadius, mCores, mIndex, mDirection);
                 break;
 
             case HokoBlur.SCHEME_OPENGL:

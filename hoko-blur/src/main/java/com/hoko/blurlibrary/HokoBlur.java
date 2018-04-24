@@ -2,7 +2,7 @@ package com.hoko.blurlibrary;
 
 import android.content.Context;
 
-import com.hoko.blurlibrary.generator.BlurGenerator;
+import com.hoko.blurlibrary.processor.BlurProcessor;
 
 /**
  * Created by yuxfzju on 16/9/7.
@@ -22,8 +22,8 @@ public class HokoBlur {
     public static final int VERTICAL = 1;
     public static final int BOTH = 2;
 
-    public static BlurGenerator.Builder with(Context context) {
-        return new BlurGenerator.Builder(context.getApplicationContext());
+    public static BlurProcessor.Builder with(Context context) {
+        return new BlurProcessor.Builder(context.getApplicationContext());
     }
 
 }

@@ -1,4 +1,4 @@
-package com.hoko.blurlibrary.generator;
+package com.hoko.blurlibrary.processor;
 
 import android.graphics.Bitmap;
 
@@ -10,11 +10,11 @@ import com.hoko.blurlibrary.opengl.offscreen.EglBuffer;
 /**
  * Created by yuxfzju on 16/9/7.
  */
-class OpenGLBlurGenerator extends BlurGenerator {
+class OpenGLBlurProcessor extends BlurProcessor {
 
     private EglBuffer mEglBuffer;
 
-    OpenGLBlurGenerator(Builder builder) {
+    OpenGLBlurProcessor(Builder builder) {
         super(builder);
         init();
     }

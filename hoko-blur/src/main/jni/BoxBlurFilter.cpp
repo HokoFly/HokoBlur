@@ -4,7 +4,7 @@
 
 #include "include/BoxBlurFilter.h"
 
-JNIEXPORT void JNICALL Java_com_hoko_blurlibrary_util_NativeBlurHelper_nativeBoxBlur
+JNIEXPORT void JNICALL Java_com_hoko_blurlibrary_filter_NativeBlurFilter_nativeBoxBlur
         (JNIEnv *env, jobject j_object, jobject jbitmap, jint j_radius, jint j_cores, jint j_index, jint j_direction) {
 
 

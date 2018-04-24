@@ -9,7 +9,7 @@ import com.hoko.blurlibrary.task.AsyncBlurTask;
 /**
  * Created by yuxfzju on 16/9/8.
  */
-public interface IBlurGenerator extends IParams, ITranslate {
+public interface IBlurProcessor extends IParams, ITranslate {
     /**
      * 模糊操作
      *

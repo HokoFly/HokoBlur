@@ -2,7 +2,7 @@
 // Created by yuxfzju on 16/11/9.
 //
 #include "include/BlurDrawable.h"
-#include "include/scope_jenv.h"
+#include "ScopeJEnv.h"
 
 
 using namespace android;

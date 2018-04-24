@@ -36,15 +36,15 @@ HokoBlur.with(context)
     .needUpscale(true) //设置模糊之后，是否upscale为原Bitmap的尺寸，默认值true
     .translateX(150)//可对部分区域进行模糊，这里设置x轴的偏移量
     .translateY(150)//可对部分区域进行模糊，这里设置y轴的偏移量
-    .blurGenerator() //获得模糊实现类
-    .blur(bitmap);	//模糊图片，方法是阻塞的，底层为多核并行实现，异步请使用doAsyncBlur
+    .processor() //获得模糊实现类
+    .blur(bitmap);	//模糊图片，方法是阻塞的，底层为多核并行实现，异步请使用asyncBlur
 
 ```
 日常并不需要如此复杂的参数设置，如果单纯只是想添加模糊效果，可以这样调用：
 
 ```java
 //doBlur()将返回模糊后的Bitmap
-Bitmap outBitmap = Blur.with(context).blurGenerator().blur(bitmap);
+Bitmap outBitmap = Blur.with(context).processor().blur(bitmap);
 
 ```
 
@@ -59,7 +59,7 @@ HokoBlur.with(this)
     .sampleFactor(2.0f)
     .forceCopy(false)
     .needUpscale(true)
-    .blurGenerator()
+    .processor()
     .asyncBlur(bitmap, new AsyncBlurTask.CallBack() {
         @Override
         public void onBlurSuccess(Bitmap outBitmap) {

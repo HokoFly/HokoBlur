@@ -13,7 +13,7 @@
 extern "C" {
 #endif
 
-JNIEXPORT void JNICALL Java_com_hoko_blurlibrary_util_NativeBlurHelper_nativeBoxBlur
+JNIEXPORT void JNICALL Java_com_hoko_blurlibrary_filter_NativeBlurFilter_nativeBoxBlur
         (JNIEnv *, jobject, jobject, jint, jint, jint, jint);
 
 void boxBlurHorizontal(int[], int[], int width, int height, int radius, int, int, int, int);
