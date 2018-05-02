@@ -6,6 +6,7 @@ import com.hoko.blurlibrary.HokoBlur;
 import com.hoko.blurlibrary.task.BlurSubTask;
 import com.hoko.blurlibrary.task.BlurTaskManager;
 import com.hoko.blurlibrary.filter.NativeBlurFilter;
+import com.hoko.blurlibrary.util.Preconditions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,9 +22,7 @@ class NativeBlurProcessor extends BlurProcessor {
 
     @Override
     protected Bitmap doInnerBlur(Bitmap scaledInBitmap, boolean concurrent) {
-        if (scaledInBitmap == null) {
-            return null;
-        }
+        Preconditions.checkNotNull(scaledInBitmap, "scaledInBitmap == null");
 
         if (concurrent) {
             try {

@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import com.hoko.blurlibrary.opengl.cache.FrameBufferCache;
 import com.hoko.blurlibrary.opengl.cache.TextureCache;
 import com.hoko.blurlibrary.opengl.offscreen.EglBuffer;
+import com.hoko.blurlibrary.util.Preconditions;
 
 
 /**
@@ -25,9 +26,8 @@ class OpenGLBlurProcessor extends BlurProcessor {
 
     @Override
     protected Bitmap doInnerBlur(Bitmap scaledInBitmap, boolean concurrent) {
-        if (scaledInBitmap == null || scaledInBitmap.isRecycled()) {
-            return null;
-        }
+        Preconditions.checkNotNull(scaledInBitmap, "scaledInBitmap == null");
+        Preconditions.checkArgument(!scaledInBitmap.isRecycled(), "You must input an unrecycled bitmap !");
 
         // TODO: 2017/2/20 opengl 的并发处理
         mEglBuffer.setBlurRadius(mRadius);

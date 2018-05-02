@@ -11,6 +11,7 @@ import com.hoko.blurlibrary.api.IScreenRenderer;
 import com.hoko.blurlibrary.api.ITexture;
 import com.hoko.blurlibrary.opengl.cache.FrameBufferCache;
 import com.hoko.blurlibrary.opengl.cache.TextureCache;
+import com.hoko.blurlibrary.util.Preconditions;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -188,9 +189,7 @@ public class ScreenBlurRenderer implements IScreenRenderer {
             mHasEGLContext = true;
         }
 
-        if (!checkBlurSize(mWidth, mHeight)) {
-            return false;
-        }
+        Preconditions.checkArgument(checkBlurSize(mWidth, mHeight), "Too large blurred sizes");
 
         initMVPMatrix(mInfo);
 
