@@ -644,7 +644,7 @@ OpenGL在多线程环境下工作需要额外的处理，为了正常工作需�
 	```
 这里避免使用数组存储offset，offset是在每次循环中重新计算的，不要出现
 
-	```glsl
+	```c
 	float offset[KERNEL_SIZE];
 	for(int i = 0; i < KERNEL_SIZE; i++) {
 		offset[i] = ...;
