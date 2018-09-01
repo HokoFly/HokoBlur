@@ -634,7 +634,7 @@ OpenGL在多线程环境下工作需要额外的处理，为了正常工作需�
 1. Native方案实现时，需要注意内存的分配方式，直接使用数组存储像素容易造成OOM，建议malloc动态分配，同时别忘了及时释放。对于像素的操作一般采用short类型变量存储。
 2. OpenGL方案中编写的shader代码需要注意临时变量的设置，
 
-	```glsl
+	```c
 	for(int i = 0; i < KERNEL_SIZE; i++) {
 		...
 		vec2 offset = vec2(float(i - radius) * uWidthOffset, float(i - radius) * uHeightOffset);
