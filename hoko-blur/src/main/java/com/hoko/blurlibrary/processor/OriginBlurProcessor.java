@@ -1,9 +1,9 @@
-package com.hoko.blurlibrary.generator;
+package com.hoko.blurlibrary.processor;
 
 import android.graphics.Bitmap;
 
-import com.hoko.blurlibrary.Blur;
-import com.hoko.blurlibrary.origin.OriginBlurHelper;
+import com.hoko.blurlibrary.HokoBlur;
+import com.hoko.blurlibrary.filter.OriginBlurFilter;
 import com.hoko.blurlibrary.task.BlurSubTask;
 import com.hoko.blurlibrary.task.BlurTaskManager;
 
@@ -13,7 +13,11 @@ import java.util.List;
 /**
  * Created by yuxfzju on 16/9/7.
  */
-public class OriginBlurGenerator extends BlurGenerator {
+class OriginBlurProcessor extends BlurProcessor {
+
+    OriginBlurProcessor(Builder builder) {
+        super(builder);
+    }
 
     @Override
     protected Bitmap doInnerBlur(Bitmap scaledInBitmap, boolean concurrent) {
@@ -28,8 +32,8 @@ public class OriginBlurGenerator extends BlurGenerator {
                 List<BlurSubTask> vTasks = new ArrayList<BlurSubTask>(cores);
 
                 for (int i = 0; i < cores; i++) {
-                    hTasks.add(new BlurSubTask(Blur.SCHEME_JAVA, mMode, scaledInBitmap, mRadius, cores, i, Blur.HORIZONTAL));
-                    vTasks.add(new BlurSubTask(Blur.SCHEME_JAVA, mMode, scaledInBitmap, mRadius, cores, i, Blur.VERTICAL));
+                    hTasks.add(new BlurSubTask(HokoBlur.SCHEME_JAVA, mMode, scaledInBitmap, mRadius, cores, i, HokoBlur.HORIZONTAL));
+                    vTasks.add(new BlurSubTask(HokoBlur.SCHEME_JAVA, mMode, scaledInBitmap, mRadius, cores, i, HokoBlur.VERTICAL));
                 }
 
                 BlurTaskManager.getInstance().invokeAll(hTasks);
@@ -39,16 +43,11 @@ public class OriginBlurGenerator extends BlurGenerator {
                 e.printStackTrace();
             }
         } else {
-            OriginBlurHelper.doFullBlur(mMode, scaledInBitmap, mRadius);
+            OriginBlurFilter.doFullBlur(mMode, scaledInBitmap, mRadius);
         }
 
         return scaledInBitmap;
     }
 
-    @Override
-    public void radius(int radius) {
-        super.radius(radius);
-
-    }
 }
 

@@ -1,8 +1,10 @@
 package com.hoko.blurlibrary.task;
 
 import android.graphics.Bitmap;
+import android.view.View;
 
-import com.hoko.blurlibrary.generator.BlurGenerator;
+import com.hoko.blurlibrary.api.IBlurProcessor;
+import com.hoko.blurlibrary.api.IBlurResultDispatcher;
 import com.hoko.blurlibrary.util.SingleMainHandler;
 
 /**
@@ -11,21 +13,28 @@ import com.hoko.blurlibrary.util.SingleMainHandler;
  */
 
 public class AsyncBlurTask implements Runnable {
-    private CallBack mCallBack;
+    private Callback mCallback;
 
-    private BlurGenerator mGenerator;
+    private IBlurProcessor mProcessor;
 
     private Bitmap mBitmap;
 
-    private BlurResultDelivery mResultDelivery;
+    private View mView;
 
-    public AsyncBlurTask(BlurGenerator generator, Bitmap bitmap, CallBack callBack) {
-        mGenerator = generator;
+    private IBlurResultDispatcher mResultDelivery;
+
+    public AsyncBlurTask(IBlurProcessor processor, Bitmap bitmap, Callback callback) {
+        mProcessor = processor;
         mBitmap = bitmap;
-        mCallBack = callBack;
+        mCallback = callback;
 
-        mResultDelivery = new BlurResultDelivery(SingleMainHandler.get());
+        mResultDelivery = new BlurResultDispatcher(SingleMainHandler.get());
 
+    }
+
+    public AsyncBlurTask(IBlurProcessor processor, View view, Callback callback) {
+        this(processor, (Bitmap)null, callback);
+        mView = view;
     }
 
     @Override
@@ -33,14 +42,19 @@ public class AsyncBlurTask implements Runnable {
         /**
          * do blur
          */
-        BlurResult result = new BlurResult(mCallBack);
+        BlurResult result = new BlurResult(mCallback);
         try {
-            if (mGenerator == null) {
+            if (mProcessor == null) {
                 result.setSuccess(false);
                 return;
             }
 
-            result.setBitmap(mGenerator.doBlur(mBitmap, false));
+            if (mView != null) {
+                result.setBitmap(mProcessor.blur(mView));
+            } else {
+                result.setBitmap(mProcessor.blur(mBitmap));
+            }
+
             result.setSuccess(true);
         } catch (Exception e) {
             e.printStackTrace();
@@ -55,11 +69,11 @@ public class AsyncBlurTask implements Runnable {
      * 可自定义模糊结果的分发，如分发到其他worker thread
      * @param resultDelivery
      */
-    public void setResultDelivery(BlurResultDelivery resultDelivery) {
+    public void setResultDelivery(IBlurResultDispatcher resultDelivery) {
         mResultDelivery = resultDelivery;
     }
 
-    public interface CallBack {
+    public interface Callback {
         void onBlurSuccess(Bitmap bitmap);
 
         void onBlurFailed();

@@ -5,8 +5,6 @@ package com.hoko.blurlibrary.util;
  */
 
 public class BlurUtil {
-    public static final int MAX_RADIUS = 25;
-
     public static int clamp(int i, int minValue, int maxValue) {
         if (i < minValue) {
             return minValue;

@@ -9,8 +9,8 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 
-import com.hoko.blurlibrary.Blur;
-import com.hoko.blurlibrary.api.IBlurGenerator;
+import com.hoko.blurlibrary.HokoBlur;
+import com.hoko.blurlibrary.api.IBlurProcessor;
 
 /**
  * Created by yuxfzju on 16/9/18.
@@ -23,7 +23,7 @@ public class RsBlurLinearLayout extends LinearLayout {
 
     private int[] mLocationInWindow;
 
-    private IBlurGenerator mGenerator;
+    private IBlurProcessor mProcessor;
 
     private Bitmap mBitmap;
 
@@ -57,7 +57,7 @@ public class RsBlurLinearLayout extends LinearLayout {
     private void init() {
         mCanvas = new Canvas();
         mLocationInWindow = new int[2];
-        mGenerator = Blur.with(getContext()).scheme(Blur.SCHEME_RENDER_SCRIPT).sampleFactor(DEFAULT_BITMAP_SAMPLE_FACTOR).blurGenerator();
+        mProcessor = HokoBlur.with(getContext()).scheme(HokoBlur.SCHEME_RENDER_SCRIPT).sampleFactor(DEFAULT_BITMAP_SAMPLE_FACTOR).processor();
         setBlurRadius(DEFAULT_BLUR_RADIUS);
 
     }
@@ -77,7 +77,7 @@ public class RsBlurLinearLayout extends LinearLayout {
     @Override
     protected void dispatchDraw(Canvas canvas) {
         if (mCanvas == canvas) {
-            mBitmap = mGenerator.blur(mBitmap);
+            mBitmap = mProcessor.blur(mBitmap);
         } else {
             if (mBitmap != null) {
                 canvas.drawBitmap(mBitmap, new Matrix(), null);
@@ -87,12 +87,12 @@ public class RsBlurLinearLayout extends LinearLayout {
     }
 
     public void setBlurRadius(int radius) {
-        mGenerator.radius(radius);
+        mProcessor.radius(radius);
         invalidate();
     }
 
     public void setSampleFactor(float factor) {
-        mGenerator.sampleFactor(factor);
+        mProcessor.sampleFactor(factor);
         invalidate();
     }
 

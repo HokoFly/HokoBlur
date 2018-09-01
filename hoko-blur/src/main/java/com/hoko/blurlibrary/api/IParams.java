@@ -5,12 +5,12 @@ import com.hoko.blurlibrary.anno.Mode;
 /**
  * Created by yuxfzju on 2017/1/23.
  */
-public interface IBlur {
+public interface IParams {
     void mode(@Mode int mode);
 
     void radius(int radius);
 
-    void sampleFactor(float factor);
+    void sampleFactor(float sampleFactor);
 
     @Mode
     int mode();

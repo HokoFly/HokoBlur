@@ -1,8 +1,8 @@
-package com.hoko.blurlibrary.origin;
+package com.hoko.blurlibrary.filter;
 
 import android.graphics.Bitmap;
 
-import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.HokoBlur;
 import com.hoko.blurlibrary.anno.Direction;
 import com.hoko.blurlibrary.anno.Mode;
 
@@ -12,7 +12,7 @@ import static com.hoko.blurlibrary.util.BitmapUtil.replaceBitmap;
  * Created by yuxfzju on 2017/2/19.
  */
 
-public class OriginBlurHelper {
+public final class OriginBlurFilter {
 
     public static void doBlur(@Mode int mode, Bitmap bitmap, int radius, int cores, int index, @Direction int direction) {
 
@@ -24,7 +24,7 @@ public class OriginBlurHelper {
         int deltaX = 0;
         int deltaY = 0;
 
-        if (direction == Blur.HORIZONTAL) {
+        if (direction == HokoBlur.HORIZONTAL) {
             deltaY = h / cores;
             y = index * deltaY;
 
@@ -33,7 +33,7 @@ public class OriginBlurHelper {
             }
 
             deltaX = w;
-        } else if (direction == Blur.VERTICAL){
+        } else if (direction == HokoBlur.VERTICAL){
             deltaX = w / cores;
             x = index * deltaX;
 
@@ -49,15 +49,15 @@ public class OriginBlurHelper {
         bitmap.getPixels(pixels, 0, deltaX, x, y, deltaX, deltaY);
 
         switch (mode) {
-            case Blur.MODE_BOX:
+            case HokoBlur.MODE_BOX:
                 BoxBlurFilter.doBlur(pixels, deltaX, deltaY, radius, direction);
                 break;
 
-            case Blur.MODE_GAUSSIAN:
+            case HokoBlur.MODE_GAUSSIAN:
                 GaussianBlurFilter.doBlur(pixels, deltaX, deltaY, radius, direction);
                 break;
 
-            case Blur.MODE_STACK:
+            case HokoBlur.MODE_STACK:
                 StackBlurFilter.doBlur(pixels, deltaX, deltaY, radius, direction);
                 break;
         }
@@ -77,16 +77,16 @@ public class OriginBlurHelper {
         bitmap.getPixels(pixels, 0, w, 0, 0, w, h);
 
         switch (mode) {
-            case Blur.MODE_BOX:
-                BoxBlurFilter.doBlur(pixels, w, h, radius, Blur.BOTH);
+            case HokoBlur.MODE_BOX:
+                BoxBlurFilter.doBlur(pixels, w, h, radius, HokoBlur.BOTH);
                 break;
 
-            case Blur.MODE_GAUSSIAN:
-                GaussianBlurFilter.doBlur(pixels, w, h, radius, Blur.BOTH);
+            case HokoBlur.MODE_GAUSSIAN:
+                GaussianBlurFilter.doBlur(pixels, w, h, radius, HokoBlur.BOTH);
                 break;
 
-            case Blur.MODE_STACK:
-                StackBlurFilter.doBlur(pixels, w, h, radius, Blur.BOTH);
+            case HokoBlur.MODE_STACK:
+                StackBlurFilter.doBlur(pixels, w, h, radius, HokoBlur.BOTH);
                 break;
         }
         if (bitmap.isMutable()) {

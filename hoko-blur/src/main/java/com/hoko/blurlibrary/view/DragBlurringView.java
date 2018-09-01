@@ -10,8 +10,8 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.hoko.blurlibrary.Blur;
-import com.hoko.blurlibrary.api.IBlurGenerator;
+import com.hoko.blurlibrary.HokoBlur;
+import com.hoko.blurlibrary.api.IBlurProcessor;
 
 
 /**
@@ -29,7 +29,7 @@ public class DragBlurringView extends View {
     private Bitmap mToBlurBitmap;
     private Bitmap mBlurredBitmap;
     private Canvas mBlurringCanvas;
-    private IBlurGenerator mGenerator;
+    private IBlurProcessor mProcessor;
 
     public DragBlurringView(Context context) {
         super(context);
@@ -44,12 +44,12 @@ public class DragBlurringView extends View {
 
 
     private void init() {
-        mGenerator = Blur.with(getContext())
-                .scheme(Blur.SCHEME_NATIVE)
-                .mode(Blur.MODE_GAUSSIAN)
+        mProcessor = HokoBlur.with(getContext())
+                .scheme(HokoBlur.SCHEME_NATIVE)
+                .mode(HokoBlur.MODE_GAUSSIAN)
                 .radius(5)
                 .sampleFactor(1.0f)
-                .blurGenerator();
+                .processor();
     }
 
     @Override
@@ -67,7 +67,7 @@ public class DragBlurringView extends View {
                 }
 
                 mBlurredView.draw(mBlurringCanvas);
-                mBlurredBitmap = mGenerator.blur(mToBlurBitmap);
+                mBlurredBitmap = mProcessor.blur(mToBlurBitmap);
 
                 canvas.save();
                 canvas.translate(mBlurredView.getX() - getX(), mBlurredView.getY() - getY());

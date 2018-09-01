@@ -11,10 +11,10 @@ public class BlurResult {
 
     private Bitmap bitmap;
 
-    private AsyncBlurTask.CallBack callBack;
+    private AsyncBlurTask.Callback callback;
 
-    public BlurResult(AsyncBlurTask.CallBack callBack) {
-        this.callBack = callBack;
+    public BlurResult(AsyncBlurTask.Callback callback) {
+        this.callback = callback;
     }
 
     public boolean isSuccess() {
@@ -33,7 +33,7 @@ public class BlurResult {
         this.bitmap = bitmap;
     }
 
-    public AsyncBlurTask.CallBack getCallBack() {
-        return callBack;
+    public AsyncBlurTask.Callback getCallback() {
+        return callback;
     }
 }

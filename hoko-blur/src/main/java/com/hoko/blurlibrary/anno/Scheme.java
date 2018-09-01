@@ -5,10 +5,10 @@ import android.support.annotation.IntDef;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import static com.hoko.blurlibrary.Blur.SCHEME_JAVA;
-import static com.hoko.blurlibrary.Blur.SCHEME_NATIVE;
-import static com.hoko.blurlibrary.Blur.SCHEME_OPENGL;
-import static com.hoko.blurlibrary.Blur.SCHEME_RENDER_SCRIPT;
+import static com.hoko.blurlibrary.HokoBlur.SCHEME_JAVA;
+import static com.hoko.blurlibrary.HokoBlur.SCHEME_NATIVE;
+import static com.hoko.blurlibrary.HokoBlur.SCHEME_OPENGL;
+import static com.hoko.blurlibrary.HokoBlur.SCHEME_RENDER_SCRIPT;
 
 /**
  * Created by yuxfzju on 2017/2/9.

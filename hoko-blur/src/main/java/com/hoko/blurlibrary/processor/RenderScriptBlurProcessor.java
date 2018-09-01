@@ -1,4 +1,4 @@
-package com.hoko.blurlibrary.generator;
+package com.hoko.blurlibrary.processor;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -8,7 +8,7 @@ import android.support.v8.renderscript.RSRuntimeException;
 import android.support.v8.renderscript.RenderScript;
 import android.support.v8.renderscript.ScriptIntrinsicBlur;
 
-import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.HokoBlur;
 import com.hoko.blurlibrary.renderscript.ScriptC_BoxblurHorizontal;
 import com.hoko.blurlibrary.renderscript.ScriptC_BoxblurVertical;
 import com.hoko.blurlibrary.renderscript.ScriptC_Stackblur;
@@ -17,7 +17,7 @@ import com.hoko.blurlibrary.util.BlurUtil;
 /**
  * Created by yuxfzju on 16/9/7.
  */
-public class RenderScriptBlurGenerator extends BlurGenerator {
+class RenderScriptBlurProcessor extends BlurProcessor {
 
     private RenderScript mRenderScript;
     private ScriptIntrinsicBlur mGaussianBlurScirpt;
@@ -28,9 +28,9 @@ public class RenderScriptBlurGenerator extends BlurGenerator {
     private Allocation mAllocationIn;
     private Allocation mAllocationOut;
 
-    public RenderScriptBlurGenerator(Context context) {
-        init(context);
-
+    RenderScriptBlurProcessor(Builder builder) {
+        super(builder);
+        init(builder.mCtx);
     }
 
     private void init(Context context) {
@@ -66,13 +66,13 @@ public class RenderScriptBlurGenerator extends BlurGenerator {
 
         try {
             switch (mMode) {
-                case Blur.MODE_BOX:
+                case HokoBlur.MODE_BOX:
                     doBoxBlur(scaledInBitmap);
                     break;
-                case Blur.MODE_STACK:
+                case HokoBlur.MODE_STACK:
                     doStackBlur(scaledInBitmap);
                     break;
-                case Blur.MODE_GAUSSIAN:
+                case HokoBlur.MODE_GAUSSIAN:
                     doGaussianBlur(scaledInBitmap);
                     break;
             }
@@ -140,4 +140,10 @@ public class RenderScriptBlurGenerator extends BlurGenerator {
         mAllocationOut = mAllocationIn;
     }
 
+    @Override
+    public Builder newBuilder() {
+        Builder builder = super.newBuilder();
+        builder.context(mRenderScript.getApplicationContext());
+        return builder;
+    }
 }

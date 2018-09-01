@@ -8,9 +8,9 @@ import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 
-import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.HokoBlur;
 import com.hoko.blurlibrary.anno.Mode;
-import com.hoko.blurlibrary.api.IBlur;
+import com.hoko.blurlibrary.api.IParams;
 import com.hoko.blurlibrary.api.IScreenRenderer;
 import com.hoko.blurlibrary.opengl.functor.DrawFunctor;
 import com.hoko.blurlibrary.opengl.functor.ScreenBlurRenderer;
@@ -19,7 +19,7 @@ import com.hoko.blurlibrary.util.BlurUtil;
 /**
  * Created by yuxfzju on 16/11/23.
  */
-public class BlurDrawable extends Drawable implements IBlur{
+public class BlurDrawable extends Drawable implements IParams {
 
     private DrawFunctor mDrawFunctor;
 
@@ -105,7 +105,7 @@ public class BlurDrawable extends Drawable implements IBlur{
         if (mBlurRenderer != null) {
             return mBlurRenderer.mode();
         }
-        return Blur.MODE_BOX;
+        return HokoBlur.MODE_BOX;
     }
 
     @Override

@@ -2,12 +2,12 @@ package com.hoko.blurlibrary.task;
 
 import android.graphics.Bitmap;
 
-import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.HokoBlur;
 import com.hoko.blurlibrary.anno.Direction;
 import com.hoko.blurlibrary.anno.Mode;
 import com.hoko.blurlibrary.anno.Scheme;
-import com.hoko.blurlibrary.origin.OriginBlurHelper;
-import com.hoko.blurlibrary.util.NativeBlurHelper;
+import com.hoko.blurlibrary.filter.OriginBlurFilter;
+import com.hoko.blurlibrary.filter.NativeBlurFilter;
 
 import java.util.concurrent.Callable;
 
@@ -19,16 +19,16 @@ import java.util.concurrent.Callable;
 public class BlurSubTask implements Callable<Void> {
 
     @Scheme
-    protected final int mScheme;
+    private final int mScheme;
     @Mode
-    protected final int mMode;
-    protected final Bitmap mBitmapOut;
-    protected final int mRadius;
-    protected final int mIndex;
-    protected final int mCores;
+    private final int mMode;
+    private final Bitmap mBitmapOut;
+    private final int mRadius;
+    private final int mIndex;
+    private final int mCores;
 
     @Direction
-    protected final int mDirection;
+    private final int mDirection;
 
     public BlurSubTask(@Scheme int scheme, @Mode int mode, Bitmap bitmapOut, int radius, int cores, int index, @Direction int direction) {
         mScheme = scheme;
@@ -53,14 +53,20 @@ public class BlurSubTask implements Callable<Void> {
 
     private void applyPixelsBlur() {
         switch (mScheme) {
-            case Blur.SCHEME_NATIVE:
-                NativeBlurHelper.doBlur(mMode, mBitmapOut, mRadius, mCores, mIndex, mDirection);
+            case HokoBlur.SCHEME_NATIVE:
+                NativeBlurFilter.doBlur(mMode, mBitmapOut, mRadius, mCores, mIndex, mDirection);
                 break;
 
-            case Blur.SCHEME_JAVA:
-                OriginBlurHelper.doBlur(mMode, mBitmapOut, mRadius, mCores, mIndex, mDirection);
+            case HokoBlur.SCHEME_JAVA:
+                OriginBlurFilter.doBlur(mMode, mBitmapOut, mRadius, mCores, mIndex, mDirection);
                 break;
 
+            case HokoBlur.SCHEME_OPENGL:
+                //暂时不支持并行执行
+                break;
+            case HokoBlur.SCHEME_RENDER_SCRIPT:
+                //RenderScript本身为并行处理
+                break;
             default:
                 break;
 

@@ -1,6 +1,6 @@
-package com.hoko.blurlibrary.origin;
+package com.hoko.blurlibrary.filter;
 
-import com.hoko.blurlibrary.Blur;
+import com.hoko.blurlibrary.HokoBlur;
 import com.hoko.blurlibrary.anno.Direction;
 
 import static com.hoko.blurlibrary.util.BlurUtil.clamp;
@@ -8,18 +8,18 @@ import static com.hoko.blurlibrary.util.BlurUtil.clamp;
 /**
  * Created by yuxfzju on 16/9/10.
  */
-public class GaussianBlurFilter {
+final class GaussianBlurFilter {
 
 
-    public static void doBlur(int[] in, int width, int height, int radius, @Direction int direction) {
+    static void doBlur(int[] in, int width, int height, int radius, @Direction int direction) {
 
         int[] result = new int[width * height];
         float[] kernel = makeKernel(radius);
 
-        if (direction == Blur.HORIZONTAL) {
+        if (direction == HokoBlur.HORIZONTAL) {
             gaussianBlurHorizontal(kernel, in, result, width, height);
             System.arraycopy(result, 0, in, 0, result.length);
-        } else if (direction == Blur.VERTICAL) {
+        } else if (direction == HokoBlur.VERTICAL) {
             gaussianBlurVertical(kernel, in, result, width, height);
             System.arraycopy(result, 0, in, 0, result.length);
 
@@ -31,7 +31,7 @@ public class GaussianBlurFilter {
 
     }
 
-    public static void gaussianBlurHorizontal(float[] kernel, int[] inPixels, int[] outPixels, int width, int height) {
+    private static void gaussianBlurHorizontal(float[] kernel, int[] inPixels, int[] outPixels, int width, int height) {
         int cols = kernel.length;
         int cols2 = cols / 2;
 
@@ -65,7 +65,7 @@ public class GaussianBlurFilter {
             }
         }
     }
-    public static void gaussianBlurVertical(float[] kernel, int[] inPixels, int[] outPixels, int width, int height) {
+    private static void gaussianBlurVertical(float[] kernel, int[] inPixels, int[] outPixels, int width, int height) {
         int cols = kernel.length;
         int cols2 = cols / 2;
         for (int x = 0; x < width; x++) {

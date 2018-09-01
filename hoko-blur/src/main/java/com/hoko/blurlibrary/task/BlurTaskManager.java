@@ -8,7 +8,7 @@ import java.util.concurrent.Executors;
  * Created by yuxfzju on 2017/2/7.
  */
 
-public class BlurTaskManager {
+public final class BlurTaskManager {
     // 线程数到可用cpu核数的一半
     private static final int EXECUTOR_THREADS = Runtime.getRuntime().availableProcessors() <= 3 ?
             1 : Runtime.getRuntime().availableProcessors() / 2;

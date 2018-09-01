@@ -18,7 +18,7 @@ public class GLRenderThread extends Thread {
 
     private boolean mRunDraw = true;
 
-    private IRenderer mGLRenderer;
+    private IRenderer<Bitmap> mGLRenderer;
 
     private SurfaceTexture mSurfaceTexture;
 
@@ -39,7 +39,7 @@ public class GLRenderThread extends Thread {
     private Bitmap mBitmap;
 
 
-    public GLRenderThread(IRenderer glRenderer, SurfaceTexture surfaceTexture) {
+    public GLRenderThread(IRenderer<Bitmap> glRenderer, SurfaceTexture surfaceTexture) {
         mGLRenderer = glRenderer;
         mSurfaceTexture = surfaceTexture;
         initGL();

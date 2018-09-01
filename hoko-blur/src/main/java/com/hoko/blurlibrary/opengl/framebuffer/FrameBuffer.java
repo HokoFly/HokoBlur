@@ -15,11 +15,11 @@ class FrameBuffer implements IFrameBuffer {
 
     private ITexture mTexture;
 
-    public FrameBuffer() {
+    FrameBuffer() {
         genFrameBuffer();
     }
 
-    public FrameBuffer(int id) {
+    FrameBuffer(int id) {
         mFrameBufferId = id;
     }
 

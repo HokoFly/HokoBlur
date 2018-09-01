@@ -2,7 +2,7 @@
 // Created by yuxfzju on 2017/3/17.
 //
 
-#include "include/scope_jenv.h"
+#include "ScopeJEnv.h"
 #include <stddef.h>
 #include <unistd.h>
 #include <pthread.h>
