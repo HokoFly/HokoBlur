@@ -11,6 +11,7 @@ import com.hoko.blurlibrary.api.IBlurProcessor;
 import com.hoko.blurlibrary.task.AsyncBlurTask;
 import com.hoko.blurlibrary.task.BlurTaskManager;
 import com.hoko.blurlibrary.util.BitmapUtil;
+import com.hoko.blurlibrary.util.Preconditions;
 
 /**
  * Created by yuxfzju on 16/9/8.
@@ -108,9 +109,8 @@ public abstract class BlurProcessor implements IBlurProcessor {
     }
 
     private Bitmap doBlur(Bitmap bitmap, boolean concurrent) {
-        if (bitmap == null || bitmap.isRecycled()) {
-            throw new IllegalArgumentException("You must input an unrecycled bitmap !");
-        }
+        Preconditions.checkNotNull(bitmap, "bitmap == null");
+        Preconditions.checkArgument(!bitmap.isRecycled(), "You must input an unrecycled bitmap !");
 
         if (mRadius <= 0) {
             mRadius = 1;
@@ -143,9 +143,7 @@ public abstract class BlurProcessor implements IBlurProcessor {
 
     @Override
     public Bitmap blur(View view) {
-        if (view == null) {
-            throw new IllegalArgumentException("You must input a view !");
-        }
+        Preconditions.checkNotNull(view, "You must input a view !");
 
         Bitmap viewBitmap = BitmapUtil.getViewBitmap(view, translateX(), translateY(), sampleFactor());
 

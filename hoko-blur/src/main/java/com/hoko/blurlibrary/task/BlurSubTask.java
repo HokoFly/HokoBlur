@@ -8,6 +8,7 @@ import com.hoko.blurlibrary.anno.Mode;
 import com.hoko.blurlibrary.anno.Scheme;
 import com.hoko.blurlibrary.filter.OriginBlurFilter;
 import com.hoko.blurlibrary.filter.NativeBlurFilter;
+import com.hoko.blurlibrary.util.Preconditions;
 
 import java.util.concurrent.Callable;
 
@@ -42,9 +43,9 @@ public class BlurSubTask implements Callable<Void> {
 
     @Override
     public Void call() throws Exception {
-        if (mBitmapOut == null || mBitmapOut.isRecycled() || mCores <= 0) {
-            return null;
-        }
+        Preconditions.checkNotNull(mBitmapOut, "mBitmapOut == null");
+        Preconditions.checkArgument(!mBitmapOut.isRecycled(), "You must input an unrecycled bitmap !");
+        Preconditions.checkArgument(mCores > 0, "mCores < 0");
 
         applyPixelsBlur();
 
@@ -62,8 +63,8 @@ public class BlurSubTask implements Callable<Void> {
                 break;
 
             case HokoBlur.SCHEME_OPENGL:
+                throw new UnsupportedOperationException("Blur in parallel not supported !");
                 //暂时不支持并行执行
-                break;
             case HokoBlur.SCHEME_RENDER_SCRIPT:
                 //RenderScript本身为并行处理
                 break;

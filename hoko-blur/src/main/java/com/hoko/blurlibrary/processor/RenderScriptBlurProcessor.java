@@ -13,6 +13,7 @@ import com.hoko.blurlibrary.renderscript.ScriptC_BoxblurHorizontal;
 import com.hoko.blurlibrary.renderscript.ScriptC_BoxblurVertical;
 import com.hoko.blurlibrary.renderscript.ScriptC_Stackblur;
 import com.hoko.blurlibrary.util.BlurUtil;
+import com.hoko.blurlibrary.util.Preconditions;
 
 /**
  * Created by yuxfzju on 16/9/7.
@@ -55,9 +56,7 @@ class RenderScriptBlurProcessor extends BlurProcessor {
      */
     @Override
     protected Bitmap doInnerBlur(Bitmap scaledInBitmap,  boolean concurrent) {
-        if (scaledInBitmap == null) {
-            return null;
-        }
+        Preconditions.checkNotNull(scaledInBitmap, "scaledInBitmap == null");
 
         Bitmap scaledOutBitmap = Bitmap.createBitmap(scaledInBitmap.getWidth(), scaledInBitmap.getHeight(), Bitmap.Config.ARGB_8888);
 

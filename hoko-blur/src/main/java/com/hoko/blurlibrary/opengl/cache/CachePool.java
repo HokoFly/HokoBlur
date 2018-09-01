@@ -1,5 +1,7 @@
 package com.hoko.blurlibrary.opengl.cache;
 
+import com.hoko.blurlibrary.util.Preconditions;
+
 import java.util.LinkedList;
 
 /**
@@ -19,18 +21,13 @@ public abstract class CachePool<K, T extends K> {
     }
 
     public CachePool(int maxSize) {
-        if (maxSize <= 0) {
-            throw new IllegalArgumentException("maxSize <= 0");
-        }
+        Preconditions.checkArgument(maxSize > 0, "maxSize <= 0");
         mMaxSize = maxSize;
         mList = new LinkedList<>();
     }
 
     public final T get(K key) {
-        if (key == null) {
-            throw new NullPointerException("size == null");
-        }
-
+        Preconditions.checkNotNull(key, "size == null");
         T listValue = remove(key);
         if (listValue != null) {
             return listValue;
@@ -41,10 +38,7 @@ public abstract class CachePool<K, T extends K> {
     }
 
     public final void put(T t) {
-        if (t == null) {
-            throw new NullPointerException("value == null");
-        }
-
+        Preconditions.checkNotNull(t, "value == null");
         synchronized (this) {
             mList.add(t);
         }
@@ -55,9 +49,7 @@ public abstract class CachePool<K, T extends K> {
     }
 
     private T remove(K key) {
-        if (key == null) {
-            throw new NullPointerException("size == null");
-        }
+        Preconditions.checkNotNull(key, "key == null");
 
         T previous = null;
         synchronized (this) {
@@ -73,10 +65,7 @@ public abstract class CachePool<K, T extends K> {
     }
 
     public void delete(K key) {
-        if (key == null) {
-            throw new NullPointerException("size == null");
-        }
-
+        Preconditions.checkNotNull(key, "key == null");
         T removed = remove(key);
         if (removed != null) {
             entryDeleted(removed);
