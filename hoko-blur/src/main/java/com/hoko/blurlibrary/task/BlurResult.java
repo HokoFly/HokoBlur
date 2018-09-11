@@ -13,6 +13,8 @@ public class BlurResult {
 
     private AsyncBlurTask.Callback callback;
 
+    private Throwable e;
+
     public BlurResult(AsyncBlurTask.Callback callback) {
         this.callback = callback;
     }
@@ -35,5 +37,13 @@ public class BlurResult {
 
     public AsyncBlurTask.Callback getCallback() {
         return callback;
+    }
+
+    public Throwable getError() {
+        return e;
+    }
+
+    public void setError(Throwable e) {
+        this.e = e;
     }
 }

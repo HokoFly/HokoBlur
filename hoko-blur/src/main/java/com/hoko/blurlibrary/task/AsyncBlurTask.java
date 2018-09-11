@@ -56,9 +56,10 @@ public class AsyncBlurTask implements Runnable {
             }
 
             result.setSuccess(true);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             e.printStackTrace();
             result.setSuccess(false);
+            result.setError(e);
         } finally {
             mResultDelivery.postResult(result);
         }
@@ -76,6 +77,6 @@ public class AsyncBlurTask implements Runnable {
     public interface Callback {
         void onBlurSuccess(Bitmap bitmap);
 
-        void onBlurFailed();
+        void onBlurFailed(Throwable error);
     }
 }

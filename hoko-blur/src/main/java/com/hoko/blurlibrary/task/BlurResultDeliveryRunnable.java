@@ -20,7 +20,7 @@ class BlurResultDeliveryRunnable implements Runnable {
                 }
             } else {
                 if (mResult.getCallback() != null) {
-                    mResult.getCallback().onBlurFailed();
+                    mResult.getCallback().onBlurFailed(mResult.getError());
                 }
             }
         }

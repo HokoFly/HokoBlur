@@ -55,7 +55,8 @@ public class EasyBlurActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onBlurFailed() {
+                    public void onBlurFailed(Throwable e) {
+                        e.printStackTrace();
                     }
                 });
 
@@ -74,8 +75,8 @@ public class EasyBlurActivity extends AppCompatActivity {
                             }
 
                             @Override
-                            public void onBlurFailed() {
-
+                            public void onBlurFailed(Throwable e) {
+                                e.printStackTrace();
                             }
                         });
 
@@ -97,8 +98,8 @@ public class EasyBlurActivity extends AppCompatActivity {
                             }
 
                             @Override
-                            public void onBlurFailed() {
-
+                            public void onBlurFailed(Throwable e) {
+                                e.printStackTrace();
                             }
                         });
 
