@@ -1,4 +1,6 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -57,7 +59,7 @@ ext {
     bintrayRepo = 'Hoko'
     bintrayName = 'hoko-blur'
 
-    publishedGroupId = 'com.yuxiaofei'
+    publishedGroupId = 'com.hoko'
     libraryName = 'HokoBlur'
     artifact = 'hoko-blur'
 
@@ -66,10 +68,10 @@ ext {
     siteUrl = 'https://github.com/HokoFly/HokoBlur'
     gitUrl = 'https://github.com/HokoFly/HokoBlur.git'
 
-    libraryVersion = '0.0.1'
+    libraryVersion = HOKO_BLUR_VERSION
 
-    developerId = 'yuxfzju'
-    developerName = 'Yu Xiaofei'
+    developerId = 'HokoFly'
+    developerName = 'HokoFly'
     developerEmail = 'yuxfzju@gmail.com'
 
     licenseName = 'The Apache Software License, Version 2.0'
@@ -77,5 +79,4 @@ ext {
     allLicenses = ["Apache-2.0"]
 }
 
-//apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
-//apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
+apply from: rootProject.file('gradle/bintray.gradle')
