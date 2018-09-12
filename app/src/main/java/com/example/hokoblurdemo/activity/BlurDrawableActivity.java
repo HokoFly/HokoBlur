@@ -7,8 +7,8 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.example.hokoblurdemo.R;
-import com.hoko.blurlibrary.opengl.drawable.BlurDrawable;
-import com.hoko.blurlibrary.view.BlurFrameLayout;
+import com.hoko.blur.opengl.drawable.BlurDrawable;
+import com.hoko.blur.view.BlurFrameLayout;
 
 public class BlurDrawableActivity extends Activity {
 

@@ -20,8 +20,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.hokoblurdemo.R;
-import com.hoko.blurlibrary.HokoBlur;
-import com.hoko.blurlibrary.processor.BlurProcessor;
+import com.hoko.blur.HokoBlur;
+import com.hoko.blur.processor.BlurProcessor;
 
 public class MultiBlurActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 

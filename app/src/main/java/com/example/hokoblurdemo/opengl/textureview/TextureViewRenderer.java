@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 
-import com.hoko.blurlibrary.api.IRenderer;
+import com.hoko.blur.api.IRenderer;
 
 /**
  * Created by yuxfzju on 16/8/17.

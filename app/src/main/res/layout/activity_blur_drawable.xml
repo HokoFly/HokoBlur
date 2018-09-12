@@ -153,7 +153,7 @@
         </LinearLayout>
     </ScrollView>
 
-    <com.hoko.blurlibrary.view.BlurFrameLayout
+    <com.hoko.blur.view.BlurFrameLayout
         android:id="@+id/blur_frameLayout"
         android:layout_width="300dp"
         android:layout_height="200dp"
@@ -166,7 +166,7 @@
             android:layout_height="wrap_content"
             android:text="动画"
             android:onClick="animate"/>
-    </com.hoko.blurlibrary.view.BlurFrameLayout>
+    </com.hoko.blur.view.BlurFrameLayout>
 
     <Button
         android:id="@+id/test_view"

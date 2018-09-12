@@ -141,7 +141,7 @@ gif图较大，稍等片刻
 动态模糊正常工作，需要在混淆时加入下面的规则：
 
 ```java
--keep class com.hoko.blurlibrary.opengl.functor.** { *; }
+-keep class com.hoko.blur.opengl.functor.** { *; }
 
 ```
 

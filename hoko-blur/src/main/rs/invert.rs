@@ -1,6 +1,6 @@
 #pragma version(1)
 
-#pragma rs java_package_name(com.hoko.blurlibrary.renderscript)
+#pragma rs java_package_name(com.hoko.blur.renderscript)
 
 #pragma rs_fp_relaxed
 

@@ -3,7 +3,7 @@ package com.example.hokoblurdemo.opengl.textureview;
 import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
 
-import com.hoko.blurlibrary.api.IRenderer;
+import com.hoko.blur.api.IRenderer;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;

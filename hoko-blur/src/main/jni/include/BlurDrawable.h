@@ -24,11 +24,11 @@ extern jclass mFunctorClazz;
 extern jclass mGlInfoClazz;
 
 JNIEXPORT jlong JNICALL
-        Java_com_hoko_blurlibrary_opengl_functor_DrawFunctor_createNativeFunctor(JNIEnv *env, jobject clazz,
+        Java_com_hoko_blur_opengl_functor_DrawFunctor_createNativeFunctor(JNIEnv *env, jobject clazz,
                                                                           jobject weakRefFunctor);
 
 JNIEXPORT void JNICALL
-        Java_com_hoko_blurlibrary_opengl_functor_DrawFunctor_releaseFunctor(JNIEnv *env, jobject clazz,
+        Java_com_hoko_blur_opengl_functor_DrawFunctor_releaseFunctor(JNIEnv *env, jobject clazz,
                                                                       jlong j_functor_ptr);
 
 void postEventFromNativeC(int mode, void *info, jobject weakRefFunctor);

@@ -7,8 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 
 import com.example.hokoblurdemo.R;
-import com.hoko.blurlibrary.HokoBlur;
-import com.hoko.blurlibrary.task.AsyncBlurTask;
+import com.hoko.blur.HokoBlur;
+import com.hoko.blur.task.AsyncBlurTask;
 
 public class EasyBlurActivity extends AppCompatActivity {
 

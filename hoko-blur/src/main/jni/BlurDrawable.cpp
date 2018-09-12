@@ -21,7 +21,7 @@ static void __DetachCurrentThread(void* a) {
 
 
 JNIEXPORT jlong JNICALL
-Java_com_hoko_blurlibrary_opengl_functor_DrawFunctor_createNativeFunctor(JNIEnv *env, jobject clazz,
+Java_com_hoko_blur_opengl_functor_DrawFunctor_createNativeFunctor(JNIEnv *env, jobject clazz,
                                                                   jobject weakRefFunctor) {
     DrawFunctor *drawFunctor = new DrawFunctor();
     drawFunctor->mWeakRefFunctor = env->NewGlobalRef(weakRefFunctor);
@@ -33,7 +33,7 @@ Java_com_hoko_blurlibrary_opengl_functor_DrawFunctor_createNativeFunctor(JNIEnv 
 }
 
 JNIEXPORT void JNICALL
-Java_com_hoko_blurlibrary_opengl_functor_DrawFunctor_releaseFunctor(JNIEnv *env, jobject clazz,
+Java_com_hoko_blur_opengl_functor_DrawFunctor_releaseFunctor(JNIEnv *env, jobject clazz,
                                                                       jlong j_functor_ptr) {
     DrawFunctor * drawFunctor = (DrawFunctor *)j_functor_ptr;
 
@@ -50,7 +50,7 @@ void postEventFromNativeC(int mode, void *info, jobject functor) {
     JNIEnv *env = scope_jenv.GetEnv();
 
     jmethodID mPostMethodID = env->GetStaticMethodID((jclass) mFunctorClazz, "postEventFromNative",
-                                                     "(Ljava/lang/ref/WeakReference;Lcom/hoko/blurlibrary/opengl/functor/DrawFunctor$GLInfo;I)V");
+                                                     "(Ljava/lang/ref/WeakReference;Lcom/hoko/blur/opengl/functor/DrawFunctor$GLInfo;I)V");
 
     jmethodID infoConstructID = env->GetMethodID(mGlInfoClazz, "<init>", "()V");
 
@@ -113,8 +113,8 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
     }
 
     // 查找要加载的本地方法Class引用
-    functorCls = env->FindClass("com/hoko/blurlibrary/opengl/functor/DrawFunctor");
-    glInfoCls = env->FindClass("com/hoko/blurlibrary/opengl/functor/DrawFunctor$GLInfo");
+    functorCls = env->FindClass("com/hoko/blur/opengl/functor/DrawFunctor");
+    glInfoCls = env->FindClass("com/hoko/blur/opengl/functor/DrawFunctor$GLInfo");
 
     if (functorCls == NULL || glInfoCls == NULL) {
         return JNI_ERR;

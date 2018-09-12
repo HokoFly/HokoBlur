@@ -10,8 +10,8 @@ import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 
 import com.example.hokoblurdemo.R;
-import com.hoko.blurlibrary.opengl.drawable.BlurDrawable;
-import com.hoko.blurlibrary.view.BlurLinearLayout;
+import com.hoko.blur.opengl.drawable.BlurDrawable;
+import com.hoko.blur.view.BlurLinearLayout;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 

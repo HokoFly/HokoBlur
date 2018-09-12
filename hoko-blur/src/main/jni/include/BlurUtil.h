@@ -22,7 +22,7 @@ enum Direction{
 jint clamp(jint i, jint minValue, jint maxValue);
 
 JNIEXPORT void JNICALL
-        Java_com_hoko_blurlibrary_util_BitmapUtil_replaceBitmap(JNIEnv *env, jobject instance,
+        Java_com_hoko_blur_util_BitmapUtil_replaceBitmap(JNIEnv *env, jobject instance,
                                                                   jobject bitmap, jintArray j_inArray, jint, jint, jint, jint);
 
 #ifdef __cplusplus

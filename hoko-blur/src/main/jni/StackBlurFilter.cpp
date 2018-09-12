@@ -4,7 +4,7 @@
 
 #include "include/StackBlurFilter.h"
 
-JNIEXPORT void JNICALL Java_com_hoko_blurlibrary_filter_NativeBlurFilter_nativeStackBlur
+JNIEXPORT void JNICALL Java_com_hoko_blur_filter_NativeBlurFilter_nativeStackBlur
         (JNIEnv *env, jobject j_object, jobject jbitmap, jint j_radius, jint j_cores, jint j_index, jint j_direction) {
 
     if (jbitmap == NULL) {
