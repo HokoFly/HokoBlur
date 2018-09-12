@@ -1,3 +1,6 @@
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
+
 group = publishedGroupId
 version = libraryVersion
 
