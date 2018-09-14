@@ -55,7 +55,7 @@ dependencies {
 
 ext {
     bintrayRepo = 'Hoko'
-    bintrayName = 'hoko-blur'
+    bintrayName = 'HokoBlur'
 
     publishedGroupId = 'com.hoko'
     libraryName = 'HokoBlur'

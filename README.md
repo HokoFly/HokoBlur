@@ -164,6 +164,11 @@ gif图较大，稍等片刻
 	- Stack算法有非常接近Gaussian算法的模糊效果，同时提升了算法效率，一般情况下使用Stack算法即可；
 6. BlurDrawable通过OpenGL实现，因此如果页面未开启硬件加速，背景模糊将无效。
 
-6. 示例与用法
+7. 示例与用法
 具体示例详见组件工程
 
+### 7. 组件版本
+
+```groovy
+   implementation 'com.hoko:hoko-blur:1.2.0'
+```
