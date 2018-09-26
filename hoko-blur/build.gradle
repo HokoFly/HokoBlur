@@ -17,6 +17,7 @@ android {
             cmake {
                 arguments '-DANDROID_PLATFORM=android-13', '-DANDROID_TOOLCHAIN=clang'
                 cppFlags "-std=c++11 -frtti -fexceptions"
+                abiFilters 'x86', 'armeabi-v7a'
             }
         }
     }
