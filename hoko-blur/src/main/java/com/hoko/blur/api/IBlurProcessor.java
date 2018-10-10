@@ -11,13 +11,19 @@ import com.hoko.blur.task.AsyncBlurTask;
  */
 public interface IBlurProcessor extends IParams, ITranslate {
     /**
-     * 模糊操作
+     * apply the blur effect to a bitmap
      *
-     * @param bitmap 输入的bitmap
-     * @return
+     * @param bitmap the original bitmap
+     * @return the blurred bitmap
      */
     Bitmap blur(Bitmap bitmap);
 
+    /**
+     *  apply the blur effect to a view
+     *
+     * @param view the original view
+     * @return the bitmap of the blurred view
+     */
     Bitmap blur(View view);
 
     void asyncBlur(Bitmap bitmap, AsyncBlurTask.Callback callback);

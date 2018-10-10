@@ -257,47 +257,48 @@ public class ScreenBlurRenderer implements IScreenRenderer {
 
 
     private void drawOneDimenBlur(float[] mvpMatrix, float[] texMatrix, boolean isHorizontal) {
-        GLES20.glViewport(0, 0, mScaleW, mScaleH);
+        try {
+            GLES20.glViewport(0, 0, mScaleW, mScaleH);
 
-        GLES20.glUseProgram(mBlurProgram);
+            GLES20.glUseProgram(mBlurProgram);
 //
-        mPositionId = GLES20.glGetAttribLocation(mBlurProgram, "aPosition");
-        GLES20.glEnableVertexAttribArray(mPositionId);
-        GLES20.glVertexAttribPointer(mPositionId, COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, mVertexStride, mVertexBuffer);
+            mPositionId = GLES20.glGetAttribLocation(mBlurProgram, "aPosition");
+            GLES20.glEnableVertexAttribArray(mPositionId);
+            GLES20.glVertexAttribPointer(mPositionId, COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, mVertexStride, mVertexBuffer);
 
-        mMVPMatrixId = GLES20.glGetUniformLocation(mBlurProgram, "uMVPMatrix");
-        GLES20.glUniformMatrix4fv(mMVPMatrixId, 1, false, mvpMatrix, 0);
+            mMVPMatrixId = GLES20.glGetUniformLocation(mBlurProgram, "uMVPMatrix");
+            GLES20.glUniformMatrix4fv(mMVPMatrixId, 1, false, mvpMatrix, 0);
 
-        mTexMatrixId = GLES20.glGetUniformLocation(mBlurProgram, "uTexMatrix");
-        GLES20.glUniformMatrix4fv(mTexMatrixId, 1, false, texMatrix, 0);
+            mTexMatrixId = GLES20.glGetUniformLocation(mBlurProgram, "uTexMatrix");
+            GLES20.glUniformMatrix4fv(mTexMatrixId, 1, false, texMatrix, 0);
 
-        mTexCoordId = GLES20.glGetAttribLocation(mBlurProgram, "aTexCoord");
-        GLES20.glEnableVertexAttribArray(mTexCoordId);
-        GLES20.glVertexAttribPointer(mTexCoordId, 2, GLES20.GL_FLOAT, false, 0, mTexCoordBuffer);
+            mTexCoordId = GLES20.glGetAttribLocation(mBlurProgram, "aTexCoord");
+            GLES20.glEnableVertexAttribArray(mTexCoordId);
+            GLES20.glVertexAttribPointer(mTexCoordId, 2, GLES20.GL_FLOAT, false, 0, mTexCoordBuffer);
 
-        if (isHorizontal) {
-            mHorizontalFrameBuffer.bindSelf();
-        } else {
-            mVerticalFrameBuffer.bindSelf();
+            if (isHorizontal) {
+                mHorizontalFrameBuffer.bindSelf();
+            } else {
+                mVerticalFrameBuffer.bindSelf();
+            }
+
+            mTextureUniformId = GLES20.glGetUniformLocation(mBlurProgram, "uTexture");
+            GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, isHorizontal ? mDisplayTexture.id() : mHorizontalTexture.id());
+            GLES20.glUniform1i(mTextureUniformId, 0);
+
+            int radiusId = GLES20.glGetUniformLocation(mBlurProgram, "uRadius");
+            int widthOffsetId = GLES20.glGetUniformLocation(mBlurProgram, "uWidthOffset");
+            int heightOffsetId = GLES20.glGetUniformLocation(mBlurProgram, "uHeightOffset");
+
+            GLES20.glUniform1i(radiusId, mRadius);
+            GLES20.glUniform1f(widthOffsetId, isHorizontal ? 1f / mWidth * mSampleFactor : 0);
+            GLES20.glUniform1f(heightOffsetId, isHorizontal ? 0 : 1f / mHeight * mSampleFactor);
+
+            GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, mDrawListBuffer);
+        } finally {
+            resetAllBuffer();
         }
-
-        mTextureUniformId = GLES20.glGetUniformLocation(mBlurProgram, "uTexture");
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, isHorizontal ? mDisplayTexture.id() : mHorizontalTexture.id());
-        GLES20.glUniform1i(mTextureUniformId, 0);
-
-        int radiusId = GLES20.glGetUniformLocation(mBlurProgram, "uRadius");
-        int widthOffsetId = GLES20.glGetUniformLocation(mBlurProgram, "uWidthOffset");
-        int heightOffsetId = GLES20.glGetUniformLocation(mBlurProgram, "uHeightOffset");
-
-        GLES20.glUniform1i(radiusId, mRadius);
-        GLES20.glUniform1f(widthOffsetId, isHorizontal ? 1f / mWidth * mSampleFactor : 0);
-        GLES20.glUniform1f(heightOffsetId, isHorizontal ? 0 : 1f / mHeight * mSampleFactor);
-
-        GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, mDrawListBuffer);
-
-
-        resetAllBuffer();
 
     }
 
