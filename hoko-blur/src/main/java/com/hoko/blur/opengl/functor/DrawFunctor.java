@@ -3,12 +3,14 @@ package com.hoko.blur.opengl.functor;
 import android.graphics.Canvas;
 import android.opengl.Matrix;
 import android.os.Build;
+import android.util.Log;
 
 
 import com.hoko.blur.api.IRenderer;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 /**
  * 对函数指针的封装，通过调用callDrawGLFunction，获取硬件绘制区域在屏幕的具体位置
@@ -78,12 +80,11 @@ public class DrawFunctor {
     }
 
     private void onDraw(final GLInfo info) {
-//        Log.e("DrawFunctor", " left: " + info.clipLeft + " bottom: " + info.clipBottom + " right: " + info.clipRight + " top: " + info.clipTop);
-//        Log.e("DrawFunctor", "transX: " + info.transform[12] + " transY: " + info.transform[13]);
+//        Log.i("DrawFunctor", "onDraw: " + info);
         if (mBlurRenderer != null) {
-            //margin为负值时
-            if (info.transform[12] < 0) {
-                info.transform[12] = 0;
+            // FIX: transform computation caused by the margin
+            if (info.transform[12] < info.clipLeft) {
+                info.transform[12] = info.clipLeft;
             }
             if (info.transform[13] < info.clipTop) {
                 info.transform[13] = info.clipTop;
@@ -126,6 +127,20 @@ public class DrawFunctor {
         public GLInfo(int width, int height) {
             this.viewportWidth = width;
             this.viewportHeight = height;
+        }
+
+        @Override
+        public String toString() {
+            return "GLInfo{" +
+                    "clipLeft=" + clipLeft +
+                    ", clipTop=" + clipTop +
+                    ", clipRight=" + clipRight +
+                    ", clipBottom=" + clipBottom +
+                    ", viewportWidth=" + viewportWidth +
+                    ", viewportHeight=" + viewportHeight +
+                    ", transform=" + Arrays.toString(transform) +
+                    ", isLayer=" + isLayer +
+                    '}';
         }
     }
 
