@@ -17,7 +17,7 @@
 ### 2. 组件版本
 
 ```groovy
-   implementation 'com.hoko:hoko-blur:1.2.1'
+   implementation 'com.hoko:hoko-blur:1.2.2'
 ```
 
 ### 3. 原理及性能分析
