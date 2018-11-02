@@ -7,12 +7,10 @@ import android.util.Log;
 import com.hoko.blur.HokoBlur;
 import com.hoko.blur.anno.Mode;
 import com.hoko.blur.api.IFrameBuffer;
-import com.hoko.blur.api.IParams;
 import com.hoko.blur.api.IScreenRenderer;
 import com.hoko.blur.api.ITexture;
 import com.hoko.blur.opengl.cache.FrameBufferCache;
 import com.hoko.blur.opengl.cache.TextureCache;
-import com.hoko.blur.opengl.drawable.BlurDrawable;
 import com.hoko.blur.util.Preconditions;
 
 import java.nio.ByteBuffer;
@@ -36,12 +34,39 @@ public class ScreenBlurRenderer implements IScreenRenderer {
 
     private static final String TAG = "ScreenBlurRenderer";
 
+    private static final int COORDS_PER_VERTEX = 3;
+    private static final int VERTEX_STRIDE = COORDS_PER_VERTEX * 4;
+
+    private static final float squareCoords[] = {
+            0.0F, 0.0F, 0.0F, // top left
+            1.0F, 0.0F, 0.0F, // bottom left
+            0.0F, 1.0F, 0.0F, // bottom right
+            1.0F, 1.0F, 0.0F}; // top right
+
+    private static final float mTexHorizontalCoords[] = {
+            0.0f, 0.0f,
+            1.0f, 0.0f,
+            0.0f, 1.0f,
+            1.0f, 1.0f};
+
+    private static final short drawOrder[] = {0, 1, 2, 2, 3, 1};
+
+
     private int mRadius;
 
     @Mode
     private int mMode;
 
     private float mSampleFactor;
+
+    private volatile boolean mNeedRelink = true;
+    private DrawFunctor.GLInfo mInfo;
+
+    private int mWidth;
+    private int mHeight;
+
+    private int mScaleW;
+    private int mScaleH;
 
     private float[] mModelMatrix = new float[16];
     private float[] mViewMatrix = new float[16];
@@ -51,35 +76,9 @@ public class ScreenBlurRenderer implements IScreenRenderer {
 
     private float[] mTexMatrix = new float[16];
 
-    private int mWidth;
-    private int mHeight;
-
-    private int mScaleW;
-    private int mScaleH;
-
     private FloatBuffer mVertexBuffer;
-
     private ShortBuffer mDrawListBuffer;
-
     private FloatBuffer mTexCoordBuffer;
-
-    private static final int COORDS_PER_VERTEX = 3;
-
-    private float squareCoords[] = {
-            0.0F, 0.0F, 0.0F, // top left
-            1.0F, 0.0F, 0.0F, // bottom left
-            0.0F, 1.0F, 0.0F, // bottom right
-            1.0F, 1.0F, 0.0F}; // top right
-
-    private static float mTexHorizontalCoords[] = {
-            0.0f, 0.0f,
-            1.0f, 0.0f,
-            0.0f, 1.0f,
-            1.0f, 1.0f};
-
-    private short drawOrder[] = {0, 1, 2, 2, 3, 1};
-
-    private int mVertexStride = COORDS_PER_VERTEX * 4;
 
     private int mBlurProgram;
     private int mCopyProgram;
@@ -89,8 +88,6 @@ public class ScreenBlurRenderer implements IScreenRenderer {
     private int mTexCoordId;
     private int mTexMatrixId;
 
-    private int mTextureUniformId;
-
     private ITexture mHorizontalTexture;
     private ITexture mVerticalTexture;
     private ITexture mDisplayTexture;
@@ -98,11 +95,6 @@ public class ScreenBlurRenderer implements IScreenRenderer {
     private IFrameBuffer mDisplayFrameBuffer;
     private IFrameBuffer mHorizontalFrameBuffer;
     private IFrameBuffer mVerticalFrameBuffer;
-
-    private volatile boolean mNeedRelink = true;
-    private DrawFunctor.GLInfo mInfo;
-    private TextureCache mTextureCache = TextureCache.getInstance();
-    private FrameBufferCache mFrameBufferCache = FrameBufferCache.getInstance();
 
     private ScreenBlurRenderer(Builder builder) {
         mMode = builder.mode;
@@ -211,13 +203,13 @@ public class ScreenBlurRenderer implements IScreenRenderer {
         // fuck scissor leads to bugfix for one week !!
         GLES20.glDisable(GLES20.GL_SCISSOR_TEST);
 
-        mDisplayTexture = mTextureCache.getTexture(mWidth, mHeight);
-        mHorizontalTexture = mTextureCache.getTexture(mScaleW, mScaleH);
-        mVerticalTexture = mTextureCache.getTexture(mScaleW, mScaleH);
+        mDisplayTexture = TextureCache.getInstance().getTexture(mWidth, mHeight);
+        mHorizontalTexture = TextureCache.getInstance().getTexture(mScaleW, mScaleH);
+        mVerticalTexture = TextureCache.getInstance().getTexture(mScaleW, mScaleH);
 
-        mDisplayFrameBuffer = mFrameBufferCache.getDisplayFrameBuffer();
-        mHorizontalFrameBuffer = mFrameBufferCache.getFrameBuffer();
-        mVerticalFrameBuffer = mFrameBufferCache.getFrameBuffer();
+        mDisplayFrameBuffer = FrameBufferCache.getInstance().getDisplayFrameBuffer();
+        mHorizontalFrameBuffer = FrameBufferCache.getInstance().getFrameBuffer();
+        mVerticalFrameBuffer = FrameBufferCache.getInstance().getFrameBuffer();
         if (mHorizontalFrameBuffer != null) {
             mHorizontalFrameBuffer.bindTexture(mHorizontalTexture);
         }
@@ -266,7 +258,7 @@ public class ScreenBlurRenderer implements IScreenRenderer {
 //
             mPositionId = GLES20.glGetAttribLocation(mBlurProgram, "aPosition");
             GLES20.glEnableVertexAttribArray(mPositionId);
-            GLES20.glVertexAttribPointer(mPositionId, COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, mVertexStride, mVertexBuffer);
+            GLES20.glVertexAttribPointer(mPositionId, COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, VERTEX_STRIDE, mVertexBuffer);
 
             mMVPMatrixId = GLES20.glGetUniformLocation(mBlurProgram, "uMVPMatrix");
             GLES20.glUniformMatrix4fv(mMVPMatrixId, 1, false, mvpMatrix, 0);
@@ -284,10 +276,10 @@ public class ScreenBlurRenderer implements IScreenRenderer {
                 mVerticalFrameBuffer.bindSelf();
             }
 
-            mTextureUniformId = GLES20.glGetUniformLocation(mBlurProgram, "uTexture");
+            int textureUniformId = GLES20.glGetUniformLocation(mBlurProgram, "uTexture");
             GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, isHorizontal ? mDisplayTexture.id() : mHorizontalTexture.id());
-            GLES20.glUniform1i(mTextureUniformId, 0);
+            GLES20.glUniform1i(textureUniformId, 0);
 
             int radiusId = GLES20.glGetUniformLocation(mBlurProgram, "uRadius");
             int widthOffsetId = GLES20.glGetUniformLocation(mBlurProgram, "uWidthOffset");
@@ -312,7 +304,7 @@ public class ScreenBlurRenderer implements IScreenRenderer {
 
         mPositionId = GLES20.glGetAttribLocation(mCopyProgram, "aPosition");
         GLES20.glEnableVertexAttribArray(mPositionId);
-        GLES20.glVertexAttribPointer(mPositionId, COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, mVertexStride, mVertexBuffer);
+        GLES20.glVertexAttribPointer(mPositionId, COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, VERTEX_STRIDE, mVertexBuffer);
 
         mMVPMatrixId = GLES20.glGetUniformLocation(mCopyProgram, "uMVPMatrix");
         GLES20.glUniformMatrix4fv(mMVPMatrixId, 1, false, mvpMatrix, 0);
@@ -326,10 +318,10 @@ public class ScreenBlurRenderer implements IScreenRenderer {
 
         mDisplayFrameBuffer.bindSelf();
 
-        mTextureUniformId = GLES20.glGetUniformLocation(mCopyProgram, "uTexture");
+        int textureUniformId = GLES20.glGetUniformLocation(mCopyProgram, "uTexture");
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mVerticalTexture.id());
-        GLES20.glUniform1i(mTextureUniformId, 0);
+        GLES20.glUniform1i(textureUniformId, 0);
 
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, mDrawListBuffer);
 
@@ -375,18 +367,18 @@ public class ScreenBlurRenderer implements IScreenRenderer {
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
         GLES20.glUseProgram(0);
 
-        mTextureCache.recycleTexture(mDisplayTexture);
-        mTextureCache.recycleTexture(mHorizontalTexture);
-        mTextureCache.recycleTexture(mVerticalTexture);
+        TextureCache.getInstance().recycleTexture(mDisplayTexture);
+        TextureCache.getInstance().recycleTexture(mHorizontalTexture);
+        TextureCache.getInstance().recycleTexture(mVerticalTexture);
 
-        mFrameBufferCache.recycleFrameBuffer(mHorizontalFrameBuffer);
-        mFrameBufferCache.recycleFrameBuffer(mVerticalFrameBuffer);
+        FrameBufferCache.getInstance().recycleFrameBuffer(mHorizontalFrameBuffer);
+        FrameBufferCache.getInstance().recycleFrameBuffer(mVerticalFrameBuffer);
     }
 
     @Override
     public void free() {
-        mTextureCache.deleteTextures();
-        mFrameBufferCache.deleteFrameBuffers();
+        TextureCache.getInstance().deleteTextures();
+        FrameBufferCache.getInstance().deleteFrameBuffers();
         GLES20.glDisableVertexAttribArray(mPositionId);
         GLES20.glDisableVertexAttribArray(mTexCoordId);
         deletePrograms();

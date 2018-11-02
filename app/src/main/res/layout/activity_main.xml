@@ -29,21 +29,6 @@
             android:textAllCaps="false"
             android:text="@string/blur_algorithm"/>
 
-
-        <Button
-            android:id="@+id/opengl_blur"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAllCaps="false"
-            android:text="@string/glsurfaceview"/>
-
-        <Button
-            android:id="@+id/tex_blur"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAllCaps="false"
-            android:text="@string/textureview"/>
-
         <Button
             android:id="@+id/dynamic_blur"
             android:layout_width="wrap_content"

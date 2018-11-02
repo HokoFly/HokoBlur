@@ -16,8 +16,6 @@ import com.hoko.blur.view.BlurLinearLayout;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
     private Button mMultiBlurBtn;
-    private Button mOpenGLBtn;
-    private Button mTexBtn;
     private Button mDynamicBtn;
     private Button mLayoutBtn;
     private Button mDrawableBtn;
@@ -42,8 +40,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         mMultiBlurBtn = (Button) findViewById(R.id.multi_blur);
-        mOpenGLBtn = (Button) findViewById(R.id.opengl_blur);
-        mTexBtn = (Button) findViewById(R.id.tex_blur);
         mDynamicBtn = (Button) findViewById(R.id.dynamic_blur);
         mLayoutBtn = (Button) findViewById(R.id.layout_blur);
         mBlurLayout = (BlurLinearLayout) findViewById(R.id.blur_layout);
@@ -51,8 +47,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mEasyBlurBtn = (Button) findViewById(R.id.easy_blur);
 
         mMultiBlurBtn.setOnClickListener(this);
-        mOpenGLBtn.setOnClickListener(this);
-        mTexBtn.setOnClickListener(this);
         mDynamicBtn.setOnClickListener(this);
         mLayoutBtn.setOnClickListener(this);
         mDrawableBtn.setOnClickListener(this);
@@ -69,12 +63,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (view.getId()) {
             case R.id.multi_blur:
                 intent.setClass(MainActivity.this, MultiBlurActivity.class);
-                break;
-            case R.id.opengl_blur:
-                intent.setClass(MainActivity.this, GLSurfaceActivity.class);
-                break;
-            case R.id.tex_blur:
-                intent.setClass(MainActivity.this, TextureViewActivity.class);
                 break;
             case R.id.dynamic_blur:
                 intent.setClass(MainActivity.this, DynamicBlurActivity.class);
