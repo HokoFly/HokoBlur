@@ -1,4 +1,4 @@
-package com.hoko.blur.opengl.size;
+package com.hoko.blur.opengl.cache;
 
 /**
  * Created by yuxfzju on 2017/1/22.

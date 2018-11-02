@@ -32,11 +32,7 @@ public class BitmapUtil {
     }
 
     /**
-     * 从view绘制bitmap
-     *
-     * @param translateX 离view原点的X方向偏移
-     * @param translateY 离view原点的Y方向偏移
-     * @return
+     * get bitmap from a view
      */
     public static Bitmap getViewBitmap(View view, int translateX, int translateY, float sampleFactor) {
         final float scale = 1.0f / sampleFactor;

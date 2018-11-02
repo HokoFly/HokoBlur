@@ -19,7 +19,7 @@ public class FrameBufferFactory {
     }
 
     public static IFrameBuffer getDisplayFrameBuffer() {
-        // 获得当前绑定的FBO（屏上）
+        // Get the bound FBO（On Screen）
         final int[] displayFbo = new int[1];
         GLES20.glGetIntegerv(GLES20.GL_FRAMEBUFFER_BINDING, displayFbo, 0);
         return create(displayFbo[0]);

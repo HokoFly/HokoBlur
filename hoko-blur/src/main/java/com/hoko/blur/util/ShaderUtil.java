@@ -79,9 +79,7 @@ public class ShaderUtil {
     }
 
     /**
-     * 返回true为GL无Error
-     * @param msg
-     * @return
+     * return true if no GL Error
      */
     public static boolean checkGLError(String msg) {
         int error = GLES20.glGetError();
@@ -137,7 +135,8 @@ public class ShaderUtil {
 
 
     /**
-     * 预先设置Kernel权重数组，出现GPU寄存器不足，无法计算，这里在代码中直接计算kernel
+     * If set kernel weight array in advance, the GPU registers have no enough space.
+     * So compute the weight in the code directly.
      */
     private static String getGaussianSampleCode() {
 
@@ -162,7 +161,8 @@ public class ShaderUtil {
     }
 
     /**
-     * 预先设置Kernel权重数组，出现GPU寄存器不足，无法计算，这里在代码中直接计算kernel
+     * If set kernel weight array in advance, the GPU registers have no enough space.
+     * So compute the weight in the code directly.
      */
     private static String getBoxSampleCode() {
         StringBuilder sb = new StringBuilder();
@@ -184,7 +184,8 @@ public class ShaderUtil {
     }
 
     /**
-     * 预先设置Kernel权重数组，出现GPU寄存器不足，无法计算，这里在代码中直接计算kernel
+     * If set kernel weight array in advance, the GPU registers have no enough space.
+     * So compute the weight in the code directly.
      */
     private static String getStackSampleCode() {
         StringBuilder sb = new StringBuilder();
@@ -206,7 +207,6 @@ public class ShaderUtil {
         return sb.toString();
     }
 
-    // 获得初始化模糊核部分的代码
     public static String getKernelInitCode(float[] kernel) {
         if (kernel == null || kernel.length == 0) {
             return "";
@@ -224,7 +224,6 @@ public class ShaderUtil {
         return sb.toString();
     }
 
-    //设置不同步长
     public static String getOffsetInitCode(int radius) {
         final int d = 2 * radius + 1;
         StringBuilder sb = new StringBuilder("  vec2 offsets[" + d + "]; \n");
@@ -244,8 +243,7 @@ public class ShaderUtil {
     }
 
     /**
-     * 获得与输入纹理相同的纹理
-     * @return
+     * copy the texture
      */
     public static String getCopyFragmentCode() {
         StringBuilder sb = new StringBuilder();
@@ -262,8 +260,7 @@ public class ShaderUtil {
 
 
     /**
-     * 获得纯色的Fragment
-     * @return
+     * get color fragment
      */
     public static String getColorFragmentCode() {
         StringBuilder sb = new StringBuilder();

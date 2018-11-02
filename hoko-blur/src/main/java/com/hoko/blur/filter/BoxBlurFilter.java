@@ -32,7 +32,7 @@ final class BoxBlurFilter {
         int tableSize = 2 * radius + 1;
         int divide[] = new int[256 * tableSize];
 
-        // 建立 0 到 255的查询表
+        // construct a query table from 0 to 255
         for (int i = 0; i < 256 * tableSize; i++)
             divide[i] = i / tableSize;
 
@@ -78,7 +78,7 @@ final class BoxBlurFilter {
         int tableSize = 2 * radius + 1;
         int divide[] = new int[256 * tableSize];
 
-        // 建立 0 到 255的查询表
+        // construct a query table from 0 to 255
         for (int i = 0; i < 256 * tableSize; i++)
             divide[i] = i / tableSize;
 
@@ -93,7 +93,7 @@ final class BoxBlurFilter {
                 tb += rgb & 0xff;
             }
 
-            for (int y = 0; y < height; y++) { // 滑动窗口的方式运算.
+            for (int y = 0; y < height; y++) { // Sliding window computation
                 out[y * width + x] = (divide[ta] << 24) | (divide[tr] << 16) | (divide[tg] << 8) | divide[tb];
 
                 int i1 = y + radius + 1;
