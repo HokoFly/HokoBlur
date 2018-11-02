@@ -11,6 +11,7 @@ import com.hoko.blur.api.IScreenRenderer;
 import com.hoko.blur.api.ITexture;
 import com.hoko.blur.opengl.cache.FrameBufferCache;
 import com.hoko.blur.opengl.cache.TextureCache;
+import com.hoko.blur.opengl.texture.Texture;
 import com.hoko.blur.util.Preconditions;
 
 import java.nio.ByteBuffer;
@@ -88,9 +89,9 @@ public class ScreenBlurRenderer implements IScreenRenderer {
     private int mTexCoordId;
     private int mTexMatrixId;
 
-    private ITexture mHorizontalTexture;
-    private ITexture mVerticalTexture;
-    private ITexture mDisplayTexture;
+    private Texture mHorizontalTexture;
+    private Texture mVerticalTexture;
+    private Texture mDisplayTexture;
 
     private IFrameBuffer mDisplayFrameBuffer;
     private IFrameBuffer mHorizontalFrameBuffer;

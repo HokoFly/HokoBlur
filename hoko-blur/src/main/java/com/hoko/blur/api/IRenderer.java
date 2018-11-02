@@ -11,9 +11,6 @@ public interface IRenderer<T> {
 
     void onDrawFrame(T t);
 
-    /**
-     * 释放OpenGL相关资源
-     */
     void free();
 
 }

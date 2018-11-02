@@ -1,12 +1,10 @@
 package com.hoko.blur.opengl.size;
 
-import com.hoko.blur.api.ISize;
-
 /**
  * Created by yuxfzju on 2017/1/22.
  */
 
-public final class Size implements ISize {
+public final class Size {
 
     private int mWidth;
 
@@ -28,22 +26,18 @@ public final class Size implements ISize {
         mHeight = size.height();
     }
 
-    @Override
     public int width() {
         return mWidth;
     }
 
-    @Override
     public void width(int mWidth) {
         this.mWidth = mWidth;
     }
 
-    @Override
     public int height() {
         return mHeight;
     }
 
-    @Override
     public void height(int mHeight) {
         this.mHeight = mHeight;
     }

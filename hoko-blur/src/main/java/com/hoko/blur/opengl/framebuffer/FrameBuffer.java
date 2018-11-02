@@ -4,6 +4,7 @@ import android.opengl.GLES20;
 
 import com.hoko.blur.api.IFrameBuffer;
 import com.hoko.blur.api.ITexture;
+import com.hoko.blur.opengl.texture.Texture;
 import com.hoko.blur.util.Preconditions;
 
 /**
@@ -14,7 +15,7 @@ class FrameBuffer implements IFrameBuffer {
 
     private int mFrameBufferId;
 
-    private ITexture mTexture;
+    private Texture mTexture;
 
     FrameBuffer() {
         genFrameBuffer();
@@ -43,7 +44,7 @@ class FrameBuffer implements IFrameBuffer {
     }
 
     @Override
-    public void bindTexture(ITexture texture) {
+    public void bindTexture(Texture texture) {
         if (texture == null) {
             return;
         }
@@ -60,7 +61,7 @@ class FrameBuffer implements IFrameBuffer {
     }
 
     @Override
-    public ITexture bindTexture() {
+    public Texture bindTexture() {
         return mTexture;
     }
 

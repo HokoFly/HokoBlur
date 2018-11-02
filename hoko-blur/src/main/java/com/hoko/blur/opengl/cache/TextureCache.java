@@ -1,7 +1,6 @@
 package com.hoko.blur.opengl.cache;
 
-import com.hoko.blur.api.ISize;
-import com.hoko.blur.api.ITexture;
+import com.hoko.blur.opengl.texture.Texture;
 import com.hoko.blur.opengl.texture.TextureFactory;
 import com.hoko.blur.opengl.size.Size;
 
@@ -13,13 +12,13 @@ public class TextureCache {
 
     private static volatile TextureCache sInstance;
 
-    private CachePool<ISize, ITexture> mCache;
+    private CachePool<Size, Texture> mCache;
 
     private TextureCache() {
-        mCache = new CachePool<ISize, ITexture>() {
+        mCache = new CachePool<Size, Texture>() {
 
             @Override
-            protected ITexture create(ISize size) {
+            protected Texture create(Size size) {
                 if (size == null) {
                     return null;
                 }
@@ -28,14 +27,14 @@ public class TextureCache {
 
 
             @Override
-            protected void entryDeleted(ITexture texture) {
+            protected void entryDeleted(Texture texture) {
                 if (texture != null) {
                     texture.delete();
                 }
             }
 
             @Override
-            protected boolean checkHit(ISize a, ITexture b) {
+            protected boolean checkHit(Size a, Texture b) {
                 return a != null && b != null && a.width() == b.width() && a.height() == b.height();
             }
         };
@@ -53,7 +52,7 @@ public class TextureCache {
         return sInstance;
     }
 
-    public ITexture getTexture(int width, int height) {
+    public Texture getTexture(int width, int height) {
 
         if (mCache != null) {
             return mCache.get(new Size(width, height));
@@ -62,7 +61,7 @@ public class TextureCache {
         return null;
     }
 
-    public void recycleTexture(ITexture texture) {
+    public void recycleTexture(Texture texture) {
         if (texture != null) {
             mCache.put(texture);
         }

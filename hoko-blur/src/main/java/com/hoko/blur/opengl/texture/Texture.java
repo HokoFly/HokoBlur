@@ -16,7 +16,8 @@ public abstract class Texture implements ITexture {
 
     private int mHeight;
 
-    void genTexture() {
+    @Override
+    public void create() {
 
         final int[] textureIds = new int[1];
 
@@ -26,13 +27,17 @@ public abstract class Texture implements ITexture {
 
         if (mTextureId != 0) {
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureId);
-            initTexture();
+            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
+            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
+            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
+            onTextureCreated();
         }
 
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
     }
 
-    protected abstract void initTexture();
+    protected abstract void onTextureCreated();
 
     @Override
     public void delete() {
@@ -41,32 +46,26 @@ public abstract class Texture implements ITexture {
         }
     }
 
-    @Override
     public void id(int textureId) {
         mTextureId = textureId;
     }
 
-    @Override
     public int id() {
         return mTextureId;
     }
 
-    @Override
     public void width(int width) {
         mWidth = width;
     }
 
-    @Override
     public int width() {
         return mWidth;
     }
 
-    @Override
     public void height(int height) {
         mHeight = height;
     }
 
-    @Override
     public int height() {
         return mHeight;
     }

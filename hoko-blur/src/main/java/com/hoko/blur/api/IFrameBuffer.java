@@ -1,5 +1,7 @@
 package com.hoko.blur.api;
 
+import com.hoko.blur.opengl.texture.Texture;
+
 /**
  * Created by yuxfzju on 2017/1/22.
  */
@@ -9,9 +11,9 @@ public interface IFrameBuffer{
 
     void id(int id);
 
-    void bindTexture(ITexture texture);
+    void bindTexture(Texture texture);
 
-    ITexture bindTexture();
+    Texture bindTexture();
 
     void bindSelf();
 

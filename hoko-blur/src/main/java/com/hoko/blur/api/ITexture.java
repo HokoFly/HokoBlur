@@ -4,11 +4,9 @@ package com.hoko.blur.api;
  * Created by yuxfzju on 17/1/20.
  */
 
-public interface ITexture extends ISize {
+public interface ITexture {
 
-    int id();
-
-    void id(int textureId);
+    void create();
 
     void delete();
 

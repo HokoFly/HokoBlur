@@ -26,8 +26,18 @@ public interface IBlurProcessor extends IParams {
      */
     Bitmap blur(View view);
 
+    /**
+     * Asynchronously apply the blur effect to a bitmap
+     * @param bitmap the original bitmap
+     * @param callback task callback
+     */
     void asyncBlur(Bitmap bitmap, AsyncBlurTask.Callback callback);
 
+    /**
+     * Asynchronously apply the blur effect to a view
+     * @param view the original view
+     * @param callback task callback
+     */
     void asyncBlur(View view, AsyncBlurTask.Callback callback);
 
 }

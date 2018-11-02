@@ -19,20 +19,16 @@ public class BitmapTexture extends Texture {
             width(bitmap.getWidth());
             height(bitmap.getHeight());
             mBitmapWeakRef = new WeakReference<Bitmap>(bitmap);
-            genTexture();
+            create();
         }
     }
 
     @Override
-    protected void initTexture() {
+    protected void onTextureCreated() {
         if (width() != 0 && height() != 0 && mBitmapWeakRef != null ) {
             Bitmap bitmap = mBitmapWeakRef.get();
 
             if (bitmap != null && !bitmap.isRecycled()) {
-                GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
-                GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
-                GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
-                GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
                 GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
             }
 
