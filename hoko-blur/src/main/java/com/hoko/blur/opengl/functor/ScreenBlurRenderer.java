@@ -7,10 +7,12 @@ import android.util.Log;
 import com.hoko.blur.HokoBlur;
 import com.hoko.blur.anno.Mode;
 import com.hoko.blur.api.IFrameBuffer;
+import com.hoko.blur.api.IParams;
 import com.hoko.blur.api.IScreenRenderer;
 import com.hoko.blur.api.ITexture;
 import com.hoko.blur.opengl.cache.FrameBufferCache;
 import com.hoko.blur.opengl.cache.TextureCache;
+import com.hoko.blur.opengl.drawable.BlurDrawable;
 import com.hoko.blur.util.Preconditions;
 
 import java.nio.ByteBuffer;
@@ -34,17 +36,12 @@ public class ScreenBlurRenderer implements IScreenRenderer {
 
     private static final String TAG = "ScreenBlurRenderer";
 
-    @Mode
-    private static final int DEFAULT_MODE = HokoBlur.MODE_GAUSSIAN;
-    private static final int DEFAULT_BLUR_RADIUS = 5;
-    private static final float DEFAULT_SAMPLE_FACTOR = 4.0f;
-
-    private int mRadius = DEFAULT_BLUR_RADIUS;
+    private int mRadius;
 
     @Mode
-    private int mMode = DEFAULT_MODE;
+    private int mMode;
 
-    private float mSampleFactor = DEFAULT_SAMPLE_FACTOR;
+    private float mSampleFactor;
 
     private float[] mModelMatrix = new float[16];
     private float[] mViewMatrix = new float[16];
@@ -102,13 +99,16 @@ public class ScreenBlurRenderer implements IScreenRenderer {
     private IFrameBuffer mHorizontalFrameBuffer;
     private IFrameBuffer mVerticalFrameBuffer;
 
-    private boolean mHasEGLContext = false;
-    private boolean mNeedRelink = true;
+    private volatile boolean mNeedRelink = true;
     private DrawFunctor.GLInfo mInfo;
     private TextureCache mTextureCache = TextureCache.getInstance();
     private FrameBufferCache mFrameBufferCache = FrameBufferCache.getInstance();
 
-    public ScreenBlurRenderer() {
+    private ScreenBlurRenderer(Builder builder) {
+        mMode = builder.mode;
+        mRadius = builder.radius;
+        mSampleFactor = builder.sampleFactor;
+
         ByteBuffer bb = ByteBuffer.allocateDirect(squareCoords.length * 4);
         bb.order(ByteOrder.nativeOrder());
         mVertexBuffer = bb.asFloatBuffer();
@@ -129,6 +129,10 @@ public class ScreenBlurRenderer implements IScreenRenderer {
 
     }
 
+    public Builder newBuilder() {
+        return new Builder(this);
+    }
+
 
     @Override
     public void onDrawFrame(DrawFunctor.GLInfo info) {
@@ -136,7 +140,7 @@ public class ScreenBlurRenderer implements IScreenRenderer {
 
         mWidth = info.clipRight - info.clipLeft;
         mHeight = info.clipBottom - info.clipTop;
-        
+
         mScaleW = (int) (mWidth / mSampleFactor);
         mScaleH = (int) (mHeight / mSampleFactor);
 
@@ -152,15 +156,18 @@ public class ScreenBlurRenderer implements IScreenRenderer {
         //半径为0也需要调用prepare()，这是为了下次模糊提供缓存，
         // 否则在做动画时，半径从0到1时，会因为需要prepare的额外耗时，使得Drawable出现短暂的黑屏
         if (mRadius > 0) {
-            copyTextureFromScreen(mInfo);
-            getTexMatrix(false);
-            drawOneDimenBlur(mMVPMatrix, mTexMatrix, true);
-            drawOneDimenBlur(mMVPMatrix, mTexMatrix, false);
-            getTexMatrix(true);
-            upscale(mScreenMVPMatrix, mTexMatrix);
-        }
+            try {
+                copyTextureFromScreen(mInfo);
+                getTexMatrix(false);
+                drawOneDimenBlur(mMVPMatrix, mTexMatrix, true);
+                drawOneDimenBlur(mMVPMatrix, mTexMatrix, false);
+                getTexMatrix(true);
+                upscale(mScreenMVPMatrix, mTexMatrix);
+            } finally {
+                onPostBlur();
+            }
 
-        onPostBlur();
+        }
     }
 
     @Override
@@ -178,15 +185,10 @@ public class ScreenBlurRenderer implements IScreenRenderer {
     }
 
     private boolean prepare() {
-        if (!mHasEGLContext) {
-            EGLContext context = ((EGL10) EGLContext.getEGL()).eglGetCurrentContext();
-            if (context.equals(EGL10.EGL_NO_CONTEXT)) {
-                Log.e(TAG, "This thread is no EGLContext.");
-                return false;
-            }
-
-            GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-            mHasEGLContext = true;
+        EGLContext context = ((EGL10) EGLContext.getEGL()).eglGetCurrentContext();
+        if (context.equals(EGL10.EGL_NO_CONTEXT)) {
+            Log.e(TAG, "This thread has no EGLContext.");
+            return false;
         }
 
         Preconditions.checkArgument(checkBlurSize(mWidth, mHeight), "Too large blurred sizes");
@@ -230,7 +232,7 @@ public class ScreenBlurRenderer implements IScreenRenderer {
 
     /**
      * MVP的取值
-     *  Model                            View           Projection
+     * Model                            View           Projection
      * transform + scaled Width&Height   Identity       viewport
      * scaled Width&Height               Identity       scaled Width&Height
      */
@@ -430,5 +432,41 @@ public class ScreenBlurRenderer implements IScreenRenderer {
     public float sampleFactor() {
         return mSampleFactor;
     }
+
+
+    public static class Builder {
+        @Mode
+        private int mode = HokoBlur.MODE_GAUSSIAN;
+        private int radius = 5;
+        private float sampleFactor = 4.0f;
+
+        public Builder() {
+
+        }
+
+        public Builder(IScreenRenderer screenRenderer) {
+            Preconditions.checkNotNull(screenRenderer, "ScreenBlurRenderer == null");
+            this.mode = screenRenderer.mode();
+            this.radius = screenRenderer.radius();
+            this.sampleFactor = screenRenderer.sampleFactor();
+        }
+
+        public void mode(int mode) {
+            this.mode = mode;
+        }
+
+        public void radius(int radius) {
+            this.radius = radius;
+        }
+
+        public void sampleFactor(float sampleFactor) {
+            this.sampleFactor = sampleFactor;
+        }
+
+        public IScreenRenderer build() {
+            return new ScreenBlurRenderer(this);
+        }
+    }
+
 
 }

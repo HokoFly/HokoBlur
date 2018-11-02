@@ -15,6 +15,7 @@ import com.hoko.blur.api.IScreenRenderer;
 import com.hoko.blur.opengl.functor.DrawFunctor;
 import com.hoko.blur.opengl.functor.ScreenBlurRenderer;
 import com.hoko.blur.util.BlurUtil;
+import com.hoko.blur.util.Preconditions;
 
 /**
  * Created by yuxfzju on 16/11/23.
@@ -28,10 +29,10 @@ public class BlurDrawable extends Drawable implements IParams {
     private int alpha;
 
     private Paint mPaint;
-    private boolean mBlurEnabled = true;
+    private volatile boolean mBlurEnabled = true;
 
     public BlurDrawable() {
-        mBlurRenderer = new ScreenBlurRenderer();
+        mBlurRenderer = new ScreenBlurRenderer.Builder().build();
         mDrawFunctor = new DrawFunctor(mBlurRenderer);
         mPaint = new Paint();
         mPaint.setColor(Color.TRANSPARENT);
@@ -78,55 +79,39 @@ public class BlurDrawable extends Drawable implements IParams {
 
     @Override
     public void mode(@Mode int mode) {
-        if (mBlurRenderer != null) {
-            mBlurRenderer.mode(mode);
-            invalidateSelf();
-        }
+        mBlurRenderer.mode(mode);
+        invalidateSelf();
     }
 
     @Override
     public void radius(int radius) {
-        if (mBlurRenderer != null) {
-            mBlurRenderer.radius(BlurUtil.checkRadius(radius));
-            invalidateSelf();
-        }
+        mBlurRenderer.radius(BlurUtil.checkRadius(radius));
+        invalidateSelf();
     }
 
     @Override
     public void sampleFactor(float factor) {
-        if (mBlurRenderer != null) {
-            mBlurRenderer.sampleFactor(factor);
-        }
+        mBlurRenderer.sampleFactor(factor);
         invalidateSelf();
     }
 
     @Override
     public int mode() {
-        if (mBlurRenderer != null) {
-            return mBlurRenderer.mode();
-        }
-        return HokoBlur.MODE_BOX;
+        return mBlurRenderer.mode();
     }
 
     @Override
     public int radius() {
-        if (mBlurRenderer != null) {
-            return mBlurRenderer.radius();
-        }
-        return 0;
+        return mBlurRenderer.radius();
     }
 
     @Override
     public float sampleFactor() {
-        if (mBlurRenderer != null) {
-            return mBlurRenderer.sampleFactor();
-        }
-        return 1.0f;
+        return mBlurRenderer.sampleFactor();
     }
 
     public void freeGLResource() {
-        if (mBlurRenderer != null) {
-            mBlurRenderer.free();
-        }
+        mBlurRenderer.free();
     }
+
 }

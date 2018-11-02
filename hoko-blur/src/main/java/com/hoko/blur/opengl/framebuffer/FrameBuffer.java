@@ -4,6 +4,7 @@ import android.opengl.GLES20;
 
 import com.hoko.blur.api.IFrameBuffer;
 import com.hoko.blur.api.ITexture;
+import com.hoko.blur.util.Preconditions;
 
 /**
  * Created by yuxfzju on 2017/1/22.
@@ -65,12 +66,15 @@ class FrameBuffer implements IFrameBuffer {
 
     @Override
     public void bindSelf() {
-        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFrameBufferId);
+        if (mFrameBufferId != 0) {
+            GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFrameBufferId);
+        }
     }
 
     @Override
     public void delete() {
-        GLES20.glDeleteFramebuffers(1, new int[]{mFrameBufferId}, 0);
-
+        if (mFrameBufferId != 0) {
+            GLES20.glDeleteFramebuffers(1, new int[]{mFrameBufferId}, 0);
+        }
     }
 }
