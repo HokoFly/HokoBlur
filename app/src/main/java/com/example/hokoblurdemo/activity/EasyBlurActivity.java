@@ -47,6 +47,9 @@ public class EasyBlurActivity extends AppCompatActivity {
                 .scheme(HokoBlur.SCHEME_OPENGL)
                 .translateX(150)
                 .translateY(150)
+                .forceCopy(false)
+                .sampleFactor(5.0f)
+                .needUpscale(true)
                 .processor()
                 .asyncBlur(bitmap, new AsyncBlurTask.Callback() {
                     @Override

@@ -8,6 +8,7 @@ import com.hoko.blur.HokoBlur;
 import com.hoko.blur.anno.Mode;
 import com.hoko.blur.anno.Scheme;
 import com.hoko.blur.api.IBlurProcessor;
+import com.hoko.blur.api.ITranslate;
 import com.hoko.blur.task.AsyncBlurTask;
 import com.hoko.blur.task.BlurTaskManager;
 import com.hoko.blur.util.BitmapUtil;
@@ -16,7 +17,7 @@ import com.hoko.blur.util.Preconditions;
 /**
  * Created by yuxfzju on 16/9/8.
  */
-public abstract class BlurProcessor implements IBlurProcessor {
+public abstract class BlurProcessor implements IBlurProcessor, ITranslate {
 
     int mRadius;
 
@@ -77,17 +78,15 @@ public abstract class BlurProcessor implements IBlurProcessor {
         return mSampleFactor;
     }
 
-    @Override
+    @Scheme
     public int scheme() {
         return mScheme;
     }
 
-    @Override
     public boolean forceCopy() {
         return mIsForceCopy;
     }
 
-    @Override
     public boolean needUpscale() {
         return mNeedUpscale;
     }
@@ -174,42 +173,33 @@ public abstract class BlurProcessor implements IBlurProcessor {
 
     public static class Builder {
         @Mode
-        private static final int DEFAULT_MODE = HokoBlur.MODE_STACK;
+        private int mMode = HokoBlur.MODE_STACK;
         @Scheme
-        private static final int DEFAULT_SCHEME = HokoBlur.SCHEME_NATIVE;
-        private static final int DEFAULT_BLUR_RADIUS = 5;
-        private static final float DEFAULT_SAMPLE_FACTOR = 5.0f;
-        private static final boolean DEFAULT_FORCE_COPY = false;
-        private static final boolean DEFAULT_UP_SCALE = true;
-        private static final int DEFAULT_TRANSLATE_X = 0;
-        private static final int DEFAULT_TRANSLATE_Y = 0;
-        @Mode
-        private int mMode = DEFAULT_MODE;
-        @Scheme
-        private int mScheme = DEFAULT_SCHEME;
-        private int mRadius = DEFAULT_BLUR_RADIUS;
-        private float mSampleFactor = DEFAULT_SAMPLE_FACTOR;
-        private boolean mIsForceCopy = DEFAULT_FORCE_COPY;
-        private boolean mNeedUpscale = DEFAULT_UP_SCALE;
+        private int mScheme =  HokoBlur.SCHEME_NATIVE;
+        private int mRadius = 5;
+        private float mSampleFactor = 5.0f;
+        private boolean mIsForceCopy = false;
+        private boolean mNeedUpscale = true;
 
-        private int mTranslateX = DEFAULT_TRANSLATE_X;
-        private int mTranslateY = DEFAULT_TRANSLATE_Y;
+        private int mTranslateX = 0;
+        private int mTranslateY = 0;
 
         Context mCtx;
 
         public Builder(Context context) {
+            Preconditions.checkNotNull(context, "context == null");
             mCtx = context.getApplicationContext();
         }
 
-        public Builder(IBlurProcessor blurGenerator) {
-            mMode = blurGenerator.mode();
-            mScheme = blurGenerator.scheme();
-            mRadius = blurGenerator.radius();
-            mSampleFactor = blurGenerator.sampleFactor();
-            mIsForceCopy = blurGenerator.forceCopy();
-            mNeedUpscale = blurGenerator.needUpscale();
-            mTranslateX = blurGenerator.translateX();
-            mTranslateY = blurGenerator.translateY();
+        public Builder(BlurProcessor blurProcessor) {
+            mMode = blurProcessor.mode();
+            mScheme = blurProcessor.scheme();
+            mRadius = blurProcessor.radius();
+            mSampleFactor = blurProcessor.sampleFactor();
+            mIsForceCopy = blurProcessor.forceCopy();
+            mNeedUpscale = blurProcessor.needUpscale();
+            mTranslateX = blurProcessor.translateX();
+            mTranslateY = blurProcessor.translateY();
         }
 
         public Builder context(Context ctx) {
@@ -257,22 +247,11 @@ public abstract class BlurProcessor implements IBlurProcessor {
         }
 
         /**
-         * 创建不同的模糊发生器
-         * @return
+         * Get different types of Blur Processors
          */
         public BlurProcessor processor() {
-            return BlurProcessorFactory.get(mScheme, this);
+            return BlurProcessorFactory.getBlurProcessor(mScheme, this);
         }
 
-        private void reset() {
-            mMode = DEFAULT_MODE;
-            mScheme = DEFAULT_SCHEME;
-            mRadius = DEFAULT_BLUR_RADIUS;
-            mSampleFactor = DEFAULT_SAMPLE_FACTOR;
-            mIsForceCopy = DEFAULT_FORCE_COPY;
-            mNeedUpscale = DEFAULT_UP_SCALE;
-            mTranslateX = DEFAULT_TRANSLATE_X;
-            mTranslateY = DEFAULT_TRANSLATE_Y;
-        }
     }
 }

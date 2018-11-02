@@ -1,6 +1,7 @@
 package com.hoko.blur.processor;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.hoko.blur.HokoBlur;
 import com.hoko.blur.task.BlurSubTask;
@@ -15,6 +16,8 @@ import java.util.List;
  * Created by yuxfzju on 16/9/7.
  */
 class NativeBlurProcessor extends BlurProcessor {
+    private static final String TAG = NativeBlurProcessor.class.getSimpleName();
+    private static boolean LIB_LOADED;
 
     NativeBlurProcessor(Builder builder) {
         super(builder);
@@ -24,11 +27,16 @@ class NativeBlurProcessor extends BlurProcessor {
     protected Bitmap doInnerBlur(Bitmap scaledInBitmap, boolean concurrent) {
         Preconditions.checkNotNull(scaledInBitmap, "scaledInBitmap == null");
 
-        if (concurrent) {
-            try {
+        if (!LIB_LOADED) {
+            Log.e(TAG, "Native blur library is not loaded");
+            return scaledInBitmap;
+        }
+
+        try {
+            if (concurrent) {
                 int cores = BlurTaskManager.getCores();
-                List<BlurSubTask> hTasks = new ArrayList<BlurSubTask>(cores);
-                List<BlurSubTask> vTasks = new ArrayList<BlurSubTask>(cores);
+                List<BlurSubTask> hTasks = new ArrayList<>(cores);
+                List<BlurSubTask> vTasks = new ArrayList<>(cores);
 
                 for (int i = 0; i < cores; i++) {
                     hTasks.add(new BlurSubTask(HokoBlur.SCHEME_NATIVE, mMode, scaledInBitmap, mRadius, cores, i, HokoBlur.HORIZONTAL));
@@ -37,16 +45,26 @@ class NativeBlurProcessor extends BlurProcessor {
 
                 BlurTaskManager.getInstance().invokeAll(hTasks);
                 BlurTaskManager.getInstance().invokeAll(vTasks);
-
-            } catch (Exception e) {
-                e.printStackTrace();
+            } else {
+                NativeBlurFilter.doFullBlur(mMode, scaledInBitmap, mRadius);
             }
-        } else {
-            NativeBlurFilter.doFullBlur(mMode, scaledInBitmap, mRadius);
+        } catch (Throwable e) {
+            Log.e(TAG, "Blur the bitmap error", e);
         }
-
 
         return scaledInBitmap;
     }
+
+
+    static {
+        try {
+            System.loadLibrary("hoko_blur");
+            LIB_LOADED = true;
+        } catch (Throwable t) {
+            LIB_LOADED = false;
+            Log.e(TAG, "Failed to load the hoko blur native library", t);
+        }
+    }
+
 
 }

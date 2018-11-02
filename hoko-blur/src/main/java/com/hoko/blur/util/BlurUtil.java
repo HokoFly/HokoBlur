@@ -15,8 +15,8 @@ public class BlurUtil {
         }
     }
 
-    public static int checkRadius(int radius) {
-        return clamp(radius, 0, 25);
+    public static int clampRadius(int radius, int max) {
+        return clamp(radius, 0, max);
     }
 
 }

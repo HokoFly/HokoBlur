@@ -32,7 +32,8 @@ public class EglBuffer {
     private EGLConfig[] mEglConfigs = new EGLConfig[1];
     private int[] mContextAttribs;
 
-    //EGLContext、EGLSurface和Renderer都只与当前线程关联，进行渲染，因此采用ThreadLocal线程隔离。
+    //EGLContext、EGLSurface and Renderer are bound to current thread.
+    // So here use the ThreadLocal to implement Thread isolation。
     private ThreadLocal<OffScreenBlurRenderer> mThreadRenderer = new ThreadLocal<OffScreenBlurRenderer>();
 
     private ThreadLocal<EGLContext> mThreadEGLContext = new ThreadLocal<EGLContext>();
@@ -69,13 +70,12 @@ public class EglBuffer {
         mEgl.eglChooseConfig(mEGLDisplay, configAttribs, mEglConfigs, 1, numConfigs);
 
         mContextAttribs = new int[] {
-                EGL_CONTEXT_CLIENT_VERSION, 2,
-                EGL10.EGL_NONE
+                EGL_CONTEXT_CLIENT_VERSION, 2, EGL10.EGL_NONE
         };
 
     }
 
-    private void initSurface(int width, int height) {
+    private void createSurface(int width, int height) {
         int[] surfaceAttribs = {
                 EGL10.EGL_WIDTH, width,
                 EGL10.EGL_HEIGHT, height,
@@ -91,14 +91,10 @@ public class EglBuffer {
 
 
     public Bitmap getBlurBitmap(Bitmap bitmap) {
-        if (bitmap == null || bitmap.isRecycled()) {
-            return bitmap;
-        }
-
         final int w = bitmap.getWidth();
         final int h = bitmap.getHeight();
 
-        initSurface(w, h);
+        createSurface(w, h);
 
         if (getRenderer() != null) {
             getRenderer().onSurfaceCreated();
@@ -148,9 +144,9 @@ public class EglBuffer {
     }
 
     /**
-     * 在当前线程结束一系列渲染和像素读取操作之后，需要将EGLContext与当前线程解绑，
-     * 这样才能在下次模糊操作的另一个线程中，继续使用当前EGLContext，达到共享EGLContext的目的。
-     * 当前线程绑定EGLContext，只需调用eglMakeCurrent()
+     * When the current thread finish renderring and reading pixels, the EGLContext should be unbound.
+     * Then the EGLContext could be reused for other threads. Make it possible to share the EGLContext
+     * To bind the EGLContext to current Thread, just call eglMakeCurrent()
      */
     private void unbindEglCurrent() {
         mEgl.eglMakeCurrent(mEGLDisplay, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);

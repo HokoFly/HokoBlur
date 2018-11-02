@@ -5,7 +5,7 @@ import com.hoko.blur.anno.Scheme;
 
 class BlurProcessorFactory {
 
-    static BlurProcessor get(@Scheme int scheme, BlurProcessor.Builder builder) {
+    static BlurProcessor getBlurProcessor(@Scheme int scheme, BlurProcessor.Builder builder) {
 
         BlurProcessor generator = null;
 

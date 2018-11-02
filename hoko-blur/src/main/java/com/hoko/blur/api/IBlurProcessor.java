@@ -9,7 +9,7 @@ import com.hoko.blur.task.AsyncBlurTask;
 /**
  * Created by yuxfzju on 16/9/8.
  */
-public interface IBlurProcessor extends IParams, ITranslate {
+public interface IBlurProcessor extends IParams {
     /**
      * apply the blur effect to a bitmap
      *
@@ -29,12 +29,5 @@ public interface IBlurProcessor extends IParams, ITranslate {
     void asyncBlur(Bitmap bitmap, AsyncBlurTask.Callback callback);
 
     void asyncBlur(View view, AsyncBlurTask.Callback callback);
-
-    @Scheme
-    int scheme();
-
-    boolean forceCopy();
-
-    boolean needUpscale();
 
 }

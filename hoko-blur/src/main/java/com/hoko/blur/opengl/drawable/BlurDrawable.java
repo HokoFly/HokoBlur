@@ -8,14 +8,12 @@ import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 
-import com.hoko.blur.HokoBlur;
 import com.hoko.blur.anno.Mode;
 import com.hoko.blur.api.IParams;
 import com.hoko.blur.api.IScreenRenderer;
 import com.hoko.blur.opengl.functor.DrawFunctor;
 import com.hoko.blur.opengl.functor.ScreenBlurRenderer;
 import com.hoko.blur.util.BlurUtil;
-import com.hoko.blur.util.Preconditions;
 
 /**
  * Created by yuxfzju on 16/11/23.
@@ -85,7 +83,7 @@ public class BlurDrawable extends Drawable implements IParams {
 
     @Override
     public void radius(int radius) {
-        mBlurRenderer.radius(BlurUtil.checkRadius(radius));
+        mBlurRenderer.radius(radius);
         invalidateSelf();
     }
 

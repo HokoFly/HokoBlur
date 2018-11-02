@@ -12,16 +12,14 @@ import com.hoko.blur.util.Preconditions;
  * Created by yuxfzju on 16/9/7.
  */
 class OpenGLBlurProcessor extends BlurProcessor {
+    private static final String TAG = OpenGLBlurProcessor.class.getSimpleName();
 
-    private EglBuffer mEglBuffer;
+    private final EglBuffer mEglBuffer;
 
     OpenGLBlurProcessor(Builder builder) {
         super(builder);
-        init();
-    }
-
-    private void init() {
         mEglBuffer = new EglBuffer();
+
     }
 
     @Override
@@ -40,6 +38,11 @@ class OpenGLBlurProcessor extends BlurProcessor {
         mEglBuffer.free();
         TextureCache.getInstance().deleteTextures();
         FrameBufferCache.getInstance().deleteFrameBuffers();
+    }
 
+    @Override
+    protected void finalize() throws Throwable {
+        free();
+        super.finalize();
     }
 }

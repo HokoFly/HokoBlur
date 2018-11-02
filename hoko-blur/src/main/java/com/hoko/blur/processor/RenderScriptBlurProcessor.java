@@ -7,6 +7,7 @@ import android.support.v8.renderscript.Element;
 import android.support.v8.renderscript.RSRuntimeException;
 import android.support.v8.renderscript.RenderScript;
 import android.support.v8.renderscript.ScriptIntrinsicBlur;
+import android.util.Log;
 
 import com.hoko.blur.HokoBlur;
 import com.hoko.blur.renderscript.ScriptC_BoxblurHorizontal;
@@ -19,6 +20,7 @@ import com.hoko.blur.util.Preconditions;
  * Created by yuxfzju on 16/9/7.
  */
 class RenderScriptBlurProcessor extends BlurProcessor {
+    private static final String TAG = RenderScriptBlurProcessor.class.getSimpleName();
 
     private RenderScript mRenderScript;
     private ScriptIntrinsicBlur mGaussianBlurScirpt;
@@ -29,27 +31,35 @@ class RenderScriptBlurProcessor extends BlurProcessor {
     private Allocation mAllocationIn;
     private Allocation mAllocationOut;
 
+    private static final int RS_MAX_RADIUS = 25;
+
+    private volatile boolean rsRuntimeInited = false;
+
     RenderScriptBlurProcessor(Builder builder) {
         super(builder);
         init(builder.mCtx);
     }
 
     private void init(Context context) {
+        Preconditions.checkNotNull(context, "Please set context for renderscript scheme, forget to set context for builder?");
+
         try {
             mRenderScript = RenderScript.create(context.getApplicationContext());
             mGaussianBlurScirpt = ScriptIntrinsicBlur.create(mRenderScript, Element.U8_4(mRenderScript));
             mBoxBlurScriptH = new ScriptC_BoxblurHorizontal(mRenderScript);
             mBoxBlurScriptV = new ScriptC_BoxblurVertical(mRenderScript);
             mStackBlurScript = new ScriptC_Stackblur(mRenderScript);
+            rsRuntimeInited = true;
         } catch (RSRuntimeException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Failed to init RenderScript runtime", e);
+            rsRuntimeInited = false;
         }
 
     }
 
 
     /**
-     * RenderScript自带并行实现
+     * RenderScript built-in parallel implementation
      * @param scaledInBitmap
      * @param concurrent
      * @return
@@ -57,6 +67,11 @@ class RenderScriptBlurProcessor extends BlurProcessor {
     @Override
     protected Bitmap doInnerBlur(Bitmap scaledInBitmap,  boolean concurrent) {
         Preconditions.checkNotNull(scaledInBitmap, "scaledInBitmap == null");
+
+        if (!rsRuntimeInited) {
+            Log.e(TAG, "RenderScript Runtime is not initialized");
+            return scaledInBitmap;
+        }
 
         Bitmap scaledOutBitmap = Bitmap.createBitmap(scaledInBitmap.getWidth(), scaledInBitmap.getHeight(), Bitmap.Config.ARGB_8888);
 
@@ -77,9 +92,8 @@ class RenderScriptBlurProcessor extends BlurProcessor {
             }
 
             mAllocationOut.copyTo(scaledInBitmap);
-        } catch (Exception e) {
-            e.printStackTrace();
-//            scaledOutBitmap = scaledInBitmap;
+        } catch (Throwable e) {
+            Log.e(TAG, "Blur the bitmap error", e);
         }
 
         return scaledInBitmap;
@@ -88,8 +102,7 @@ class RenderScriptBlurProcessor extends BlurProcessor {
 
     private void doBoxBlur(Bitmap input) {
         if (mBoxBlurScriptH == null || mBoxBlurScriptV == null) {
-            mAllocationOut = mAllocationIn;
-            return;
+            throw new IllegalStateException("The blur script is unavailable");
         }
         mBoxBlurScriptH.set_input(mAllocationIn);
         mBoxBlurScriptH.set_output(mAllocationOut);
@@ -109,11 +122,10 @@ class RenderScriptBlurProcessor extends BlurProcessor {
 
     private void doGaussianBlur(Bitmap input) {
         if (mGaussianBlurScirpt == null) {
-            mAllocationOut = mAllocationIn;
-            return;
+            throw new IllegalStateException("The blur script is unavailable");
         }
-        // 模糊核半径太大，RenderScript失效，这里做发限制
-        mRadius = BlurUtil.checkRadius(mRadius);
+        // RenderScript won't work, if too large blur radius
+        mRadius = BlurUtil.clampRadius(mRadius, RS_MAX_RADIUS);
         mGaussianBlurScirpt.setRadius(mRadius);
 //        mAllocationIn.copyFrom(input);
         mGaussianBlurScirpt.setInput(mAllocationIn);
@@ -122,8 +134,7 @@ class RenderScriptBlurProcessor extends BlurProcessor {
 
     private void doStackBlur(Bitmap input) {
         if (mStackBlurScript == null) {
-            mAllocationOut = mAllocationIn;
-            return;
+            throw new IllegalStateException("The blur script is unavailable");
         }
 
         mStackBlurScript.set_input(mAllocationIn);
