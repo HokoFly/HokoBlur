@@ -2,8 +2,10 @@ package com.hoko.blur.opengl.offscreen;
 
 import android.graphics.Bitmap;
 import android.opengl.GLES20;
+import android.util.Log;
 
 import com.hoko.blur.anno.Mode;
+import com.hoko.blur.api.IRenderer;
 
 import java.nio.IntBuffer;
 
@@ -20,6 +22,7 @@ import static javax.microedition.khronos.opengles.GL10.GL_UNSIGNED_BYTE;
  * Created by yuxfzju on 16/8/29.
  */
 public class EglBuffer {
+    private static final String TAG = EglBuffer.class.getSimpleName();
 
     private EGL10 mEgl;
 
@@ -38,8 +41,6 @@ public class EglBuffer {
 
     private ThreadLocal<EGLContext> mThreadEGLContext = new ThreadLocal<EGLContext>();
 
-    private ThreadLocal<EGLSurface> mThreadEGLSurface = new ThreadLocal<EGLSurface>();
-
     public EglBuffer() {
         initGL();
     }
@@ -50,11 +51,11 @@ public class EglBuffer {
 
         mEGLDisplay = mEgl.eglGetDisplay(EGL10.EGL_DEFAULT_DISPLAY);
 
-        int []version = new int[2];
+        int[] version = new int[2];
 
         mEgl.eglInitialize(mEGLDisplay, version);
 
-        int []configAttribs = {
+        int[] configAttribs = {
                 EGL10.EGL_BUFFER_SIZE, 32,
                 EGL10.EGL_ALPHA_SIZE, 8,
                 EGL10.EGL_BLUE_SIZE, 8,
@@ -65,17 +66,17 @@ public class EglBuffer {
                 EGL10.EGL_NONE
         };
 
-        int []numConfigs = new int[1];
+        int[] numConfigs = new int[1];
 
         mEgl.eglChooseConfig(mEGLDisplay, configAttribs, mEglConfigs, 1, numConfigs);
 
-        mContextAttribs = new int[] {
+        mContextAttribs = new int[]{
                 EGL_CONTEXT_CLIENT_VERSION, 2, EGL10.EGL_NONE
         };
 
     }
 
-    private void createSurface(int width, int height) {
+    private EGLSurface createSurface(int width, int height) {
         int[] surfaceAttribs = {
                 EGL10.EGL_WIDTH, width,
                 EGL10.EGL_HEIGHT, height,
@@ -84,8 +85,9 @@ public class EglBuffer {
 
         EGLSurface eglSurface = mEgl.eglCreatePbufferSurface(mEGLDisplay, mEglConfigs[0], surfaceAttribs);
 
-        mThreadEGLSurface.set(eglSurface);
         mEgl.eglMakeCurrent(mEGLDisplay, eglSurface, eglSurface, getEGLContext());
+
+        return eglSurface;
 
     }
 
@@ -94,37 +96,35 @@ public class EglBuffer {
         final int w = bitmap.getWidth();
         final int h = bitmap.getHeight();
 
-        createSurface(w, h);
+        try {
+            EGLSurface eglSurface = createSurface(w, h);
+            if (eglSurface == null) {
+                Log.e(TAG, "Create surface error");
+                return bitmap;
+            }
 
-        if (getRenderer() != null) {
-            getRenderer().onSurfaceCreated();
-            getRenderer().onSurfaceChanged(w, h);
-            getRenderer().onDrawFrame(bitmap);
-            mEgl.eglSwapBuffers(mEGLDisplay, mThreadEGLSurface.get());
+            IRenderer<Bitmap> renderer = getRenderer();
+            if (renderer != null) {
+                renderer.onSurfaceCreated();
+                renderer.onSurfaceChanged(w, h);
+                renderer.onDrawFrame(bitmap);
+                mEgl.eglSwapBuffers(mEGLDisplay, eglSurface);
+            } else {
+                Log.e(TAG, "Renderer is unavailable");
+                return bitmap;
+            }
+            convertToBitmap(bitmap);
+        } catch (Throwable t) {
+            Log.e(TAG, "Blur the bitmap error", t);
+        } finally {
+            unbindEglCurrent();
         }
-        convertToBitmap(bitmap);
-        unbindEglCurrent();
+
         return bitmap;
 
     }
 
-    public void setBlurRadius(int radius) {
-        getRenderer().setBlurRadius(radius);
-    }
-
-    public void setBlurMode(@Mode int mode) {
-        getRenderer().setBlurMode(mode);
-    }
-
-    public void free() {
-        getRenderer().free();
-    }
-
     private void convertToBitmap(Bitmap bitmap) {
-        if (bitmap == null || bitmap.isRecycled()) {
-            return;
-        }
-
         final int w = bitmap.getWidth();
         final int h = bitmap.getHeight();
 
@@ -172,4 +172,17 @@ public class EglBuffer {
 
         return eglContext;
     }
+
+    public void setBlurRadius(int radius) {
+        getRenderer().setBlurRadius(radius);
+    }
+
+    public void setBlurMode(@Mode int mode) {
+        getRenderer().setBlurMode(mode);
+    }
+
+    public void free() {
+        getRenderer().free();
+    }
+
 }

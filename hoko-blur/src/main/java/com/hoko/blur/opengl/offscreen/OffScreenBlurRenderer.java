@@ -28,8 +28,8 @@ import static com.hoko.blur.util.ShaderUtil.checkGLError;
 public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
     private final static String TAG = OffScreenBlurRenderer.class.getSimpleName();
 
-    private final String vertexShaderCode =
-                    "attribute vec2 aTexCoord;   \n" +
+    private static final String vertexShaderCode =
+            "attribute vec2 aTexCoord;   \n" +
                     "attribute vec4 aPosition;  \n" +
                     "varying vec2 vTexCoord;  \n" +
                     "void main() {              \n" +
@@ -37,61 +37,44 @@ public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
                     "  vTexCoord = aTexCoord; \n" +
                     "}  \n";
 
-
-    private FloatBuffer mVertexBuffer;
-
-    private ShortBuffer mDrawListBuffer;
-
-    private FloatBuffer mTexCoordBuffer;
-
     private static final int COORDS_PER_VERTEX = 3;
+    private static final int VERTEX_STRIDE = COORDS_PER_VERTEX * 4;
 
-    private float squareCoords[] = {
+    private static final float squareCoords[] = {
             -1f, 1f, 0.0f,   // top left
             -1f, -1f, 0.0f,   // bottom left
             1f, -1f, 0.0f,   // bottom right
             1f, 1f, 0.0f}; // top right
 
-    private static float mTexHorizontalCoords[] = {
+    private static final float mTexHorizontalCoords[] = {
             1.0f, 1.0f,
             1.0f, 0.0f,
             0.0f, 0.0f,
             0.0f, 1.0f};
 
-    private short drawOrder[] = {0, 1, 2, 0, 2, 3};
+    private static final short drawOrder[] = {0, 1, 2, 0, 2, 3};
 
-    private float fragmentColor[] = {0.2f, 0.709803922f, 0.898039216f, 1.0f};
+    private FloatBuffer mVertexBuffer;
+    private ShortBuffer mDrawListBuffer;
+    private FloatBuffer mTexCoordBuffer;
 
     private int mProgram;
 
-    private int mPositionId;
-    private int mColorHandle;
-    private int mTexCoordId;
-
-    private int mRadiusId;
-    private int mWidthOffsetId;
-    private int mHeightOffsetId;
-
-    private int vertexStride = COORDS_PER_VERTEX * 4;
-
-    private Bitmap mBitmap;
-
     private ITexture mHorizontalTexture;
     private ITexture mInputTexture;
-    private int mTextureUniformId;
 
-    private IFrameBuffer mHorizontalFrameBuffer;
+    private IFrameBuffer mBlurFrameBuffer;
+
+    private Bitmap mBitmap;
 
     private int mWidth;
     private int mHeight;
 
-    public int mRadius;
+    private int mRadius;
     @Mode
     private int mMode;
 
-    private FrameBufferCache mFrameBufferCache = FrameBufferCache.getInstance();
-    private boolean mHasEGLContext;
-    private boolean mNeedRelink;
+    private volatile boolean mNeedRelink;
 
     public OffScreenBlurRenderer() {
 
@@ -130,11 +113,13 @@ public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
             return;
         }
 
-        if (prepare()) {
-            draw();
+        try {
+            if (prepare()) {
+                draw();
+            }
+        } finally {
+            onPostBlur();
         }
-
-        onPostBlur();
     }
 
     @Override
@@ -149,15 +134,10 @@ public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
     }
 
     private boolean prepare() {
-        if (!mHasEGLContext) {
-            EGLContext context = ((EGL10) EGLContext.getEGL()).eglGetCurrentContext();
-            if (context.equals(EGL10.EGL_NO_CONTEXT)) {
-                Log.e(TAG, "This thread is no EGLContext.");
-                return false;
-            }
-
-            GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-            mHasEGLContext = true;
+        EGLContext context = ((EGL10) EGLContext.getEGL()).eglGetCurrentContext();
+        if (context.equals(EGL10.EGL_NO_CONTEXT)) {
+            Log.e(TAG, "This thread has no EGLContext.");
+            return false;
         }
 
         if (mNeedRelink) {
@@ -167,17 +147,21 @@ public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
         }
 
         if (mProgram == 0) {
+            Log.e(TAG, "Failed to create program.");
             return false;
         }
 
         GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1f);
-        //未解决多线程下的共享纹理问题，这里不再使用缓存池，直接创建新的Texture
-        //另外，影响性能的主要矛盾不再于此
+        //todo Textures share problem is not solved. Here create a new texture directly, not get from the texture cache
+        //It doesn't affect performance seriously.
         mInputTexture = TextureFactory.create(mBitmap);
         mHorizontalTexture = TextureFactory.create(mWidth, mHeight);
-        mHorizontalFrameBuffer = mFrameBufferCache.getFrameBuffer();
-        if (mHorizontalFrameBuffer != null) {
-            mHorizontalFrameBuffer.bindTexture(mHorizontalTexture);
+        mBlurFrameBuffer = FrameBufferCache.getInstance().getFrameBuffer();
+        if (mBlurFrameBuffer != null) {
+            mBlurFrameBuffer.bindTexture(mHorizontalTexture);
+        } else {
+            Log.e(TAG, "Failed to create framebuffer.");
+            return false;
         }
 
         return checkGLError("Prepare to blurring");
@@ -192,42 +176,45 @@ public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
     }
 
     private void drawOneDimenBlur(boolean isHorizontal) {
-        GLES20.glUseProgram(mProgram);
+        try {
+            GLES20.glUseProgram(mProgram);
 
-        mPositionId = GLES20.glGetAttribLocation(mProgram, "aPosition");
-        GLES20.glEnableVertexAttribArray(mPositionId);
-        GLES20.glVertexAttribPointer(mPositionId, COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, vertexStride, mVertexBuffer);
+            int positionId = GLES20.glGetAttribLocation(mProgram, "aPosition");
+            GLES20.glEnableVertexAttribArray(positionId);
+            GLES20.glVertexAttribPointer(positionId, COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, VERTEX_STRIDE, mVertexBuffer);
 
 //        mColorHandle = GLES20.glGetUniformLocation(mProgram, "vColor");
 //        GLES20.glUniform4fv(mColorHandle, 1, fragmentColor, 0);
 
-        mTexCoordId = GLES20.glGetAttribLocation(mProgram, "aTexCoord");
-        GLES20.glEnableVertexAttribArray(mTexCoordId);
-        GLES20.glVertexAttribPointer(mTexCoordId, 2, GLES20.GL_FLOAT, false, 0, mTexCoordBuffer);
+            int texCoordId = GLES20.glGetAttribLocation(mProgram, "aTexCoord");
+            GLES20.glEnableVertexAttribArray(texCoordId);
+            GLES20.glVertexAttribPointer(texCoordId, 2, GLES20.GL_FLOAT, false, 0, mTexCoordBuffer);
 
-        if (isHorizontal) {
-            mHorizontalFrameBuffer.bindSelf();
+            if (isHorizontal) {
+                mBlurFrameBuffer.bindSelf();
+            }
+
+            int textureUniformId = GLES20.glGetUniformLocation(mProgram, "uTexture");
+            GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, isHorizontal ? mInputTexture.id() : mHorizontalTexture.id());
+            GLES20.glUniform1i(textureUniformId, 0);
+
+            int radiusId = GLES20.glGetUniformLocation(mProgram, "uRadius");
+            int widthOffsetId = GLES20.glGetUniformLocation(mProgram, "uWidthOffset");
+            int heightOffsetId = GLES20.glGetUniformLocation(mProgram, "uHeightOffset");
+            GLES20.glUniform1i(radiusId, mRadius);
+            GLES20.glUniform1f(widthOffsetId, isHorizontal ? 0 : 1f / mWidth);
+            GLES20.glUniform1f(heightOffsetId, isHorizontal ? 1f / mHeight : 0);
+
+            GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, mDrawListBuffer);
+
+            if (!isHorizontal) {
+                GLES20.glDisableVertexAttribArray(positionId);
+                GLES20.glDisableVertexAttribArray(texCoordId);
+            }
+        } finally {
+            resetAllBuffer();
         }
-
-        mTextureUniformId = GLES20.glGetUniformLocation(mProgram, "uTexture");
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, isHorizontal ? mInputTexture.id() : mHorizontalTexture.id());
-        GLES20.glUniform1i(mTextureUniformId, 0);
-
-        mRadiusId = GLES20.glGetUniformLocation(mProgram, "uRadius");
-        mWidthOffsetId = GLES20.glGetUniformLocation(mProgram, "uWidthOffset");
-        mHeightOffsetId = GLES20.glGetUniformLocation(mProgram, "uHeightOffset");
-        GLES20.glUniform1i(mRadiusId, mRadius);
-        GLES20.glUniform1f(mWidthOffsetId, isHorizontal ? 0 : 1f / mWidth);
-        GLES20.glUniform1f(mHeightOffsetId, isHorizontal ? 1f / mHeight : 0);
-
-        GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, mDrawListBuffer);
-
-        if (!isHorizontal) {
-            GLES20.glDisableVertexAttribArray(mPositionId);
-            GLES20.glDisableVertexAttribArray(mTexCoordId);
-        }
-        resetAllBuffer();
 
     }
 
@@ -247,7 +234,7 @@ public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
         if (mHorizontalTexture != null) {
             mHorizontalTexture.delete();
         }
-        mFrameBufferCache.recycleFrameBuffer(mHorizontalFrameBuffer);
+        FrameBufferCache.getInstance().recycleFrameBuffer(mBlurFrameBuffer);
     }
 
 
