@@ -10,4 +10,10 @@ public interface ITexture {
 
     void delete();
 
+    int id();
+
+    int width();
+
+    int height();
+
 }

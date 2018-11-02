@@ -50,6 +50,7 @@ public abstract class Texture implements ITexture {
         mTextureId = textureId;
     }
 
+    @Override
     public int id() {
         return mTextureId;
     }
@@ -58,6 +59,7 @@ public abstract class Texture implements ITexture {
         mWidth = width;
     }
 
+    @Override
     public int width() {
         return mWidth;
     }
@@ -66,6 +68,7 @@ public abstract class Texture implements ITexture {
         mHeight = height;
     }
 
+    @Override
     public int height() {
         return mHeight;
     }

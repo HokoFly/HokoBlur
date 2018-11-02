@@ -89,9 +89,9 @@ public class ScreenBlurRenderer implements IScreenRenderer {
     private int mTexCoordId;
     private int mTexMatrixId;
 
-    private Texture mHorizontalTexture;
-    private Texture mVerticalTexture;
-    private Texture mDisplayTexture;
+    private ITexture mHorizontalTexture;
+    private ITexture mVerticalTexture;
+    private ITexture mDisplayTexture;
 
     private IFrameBuffer mDisplayFrameBuffer;
     private IFrameBuffer mHorizontalFrameBuffer;
