@@ -6,6 +6,8 @@ import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 
 import com.hoko.blur.anno.Mode;
@@ -26,9 +28,22 @@ public class BlurDrawable extends Drawable {
     private Paint mPaint;
     private volatile boolean mBlurEnabled = true;
 
+    private static final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
+
     public BlurDrawable() {
         mBlurRenderer = new ScreenBlurRenderer.Builder().build();
-        mDrawFunctor = new DrawFunctor(mBlurRenderer);
+        mDrawFunctor = new DrawFunctor(new DrawFunctor.DrawLocationObserver() {
+            @Override
+            public void onLocated(DrawFunctor.GLInfo info) {
+                mBlurRenderer.onDrawFrame(info);
+            }
+
+            @Override
+            public void onLocateError(int what) {
+                mBlurEnabled = false;
+                invalidateOnMainThread();
+            }
+        });
         mPaint = new Paint();
         mPaint.setColor(Color.TRANSPARENT);
     }
@@ -52,7 +67,7 @@ public class BlurDrawable extends Drawable {
     @Deprecated
     public void setAlpha(int alpha) {
         this.alpha = alpha;
-        invalidateSelf();
+        invalidateOnMainThread();
     }
 
     /**
@@ -77,19 +92,33 @@ public class BlurDrawable extends Drawable {
         mBlurEnabled = true;
     }
 
+    private void invalidateOnMainThread() {
+        Looper currentLooper = Looper.myLooper();
+        if (currentLooper == null || !currentLooper.equals(Looper.getMainLooper())) {
+            mainThreadHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    invalidateSelf();
+                }
+            });
+        } else {
+            invalidateSelf();
+        }
+    }
+
     public void mode(@Mode int mode) {
         mBlurRenderer.mode(mode);
-        invalidateSelf();
+        invalidateOnMainThread();
     }
 
     public void radius(int radius) {
         mBlurRenderer.radius(radius);
-        invalidateSelf();
+        invalidateOnMainThread();
     }
 
     public void sampleFactor(float factor) {
         mBlurRenderer.sampleFactor(factor);
-        invalidateSelf();
+        invalidateOnMainThread();
     }
 
     public int mode() {

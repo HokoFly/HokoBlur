@@ -377,8 +377,6 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
 
     @Override
     public void free() {
-        TextureCache.getInstance().deleteTextures();
-        FrameBufferCache.getInstance().deleteFrameBuffers();
         GLES20.glDisableVertexAttribArray(mPositionId);
         GLES20.glDisableVertexAttribArray(mTexCoordId);
         deletePrograms();

@@ -22,21 +22,27 @@ public class DrawFunctor {
 
     private static final String TAG = DrawFunctor.class.getSimpleName();
 
-    private long mNativeFunctor;
+    public interface DrawLocationObserver {
+        void onLocated(GLInfo info);
 
-    private IRenderer<GLInfo> mBlurRenderer;
+        void onLocateError(int what);
+    }
+
+    private final long mNativeFunctor;
+
+    private final DrawLocationObserver mObserver;
 
     private static boolean LIB_LOADED;
 
-    public DrawFunctor(IRenderer<GLInfo> blurRenderer) {
+    public DrawFunctor(DrawLocationObserver observer) {
         mNativeFunctor = createNativeFunctor(new WeakReference<DrawFunctor>(this));
-        mBlurRenderer = blurRenderer;
+        mObserver = observer;
 
     }
 
     private static void postEventFromNative(WeakReference<DrawFunctor> functor, DrawFunctor.GLInfo info, int what) {
         if (functor != null && functor.get() != null) {
-            DrawFunctor d = (DrawFunctor) functor.get();
+            DrawFunctor d = functor.get();
             if (info != null) {
                 d.onDraw(info);
             } else {
@@ -85,20 +91,24 @@ public class DrawFunctor {
     }
 
     private void onInvoke(int what) {
+        if (mObserver != null) {
+            mObserver.onLocateError(what);
+        }
         Log.w(TAG, "Cannot get the GLInfo, code=" + what);
     }
 
     private void onDraw(final GLInfo info) {
 //        Log.i("DrawFunctor", "onDraw: " + info);
-        if (mBlurRenderer != null) {
-            // FIX: transform computation caused by the margin
-            if (info.transform[12] < info.clipLeft) {
-                info.transform[12] = info.clipLeft;
-            }
-            if (info.transform[13] < info.clipTop) {
-                info.transform[13] = info.clipTop;
-            }
-            mBlurRenderer.onDrawFrame(info);
+        // FIX: transform computation caused by the margin
+        if (info.transform[12] < info.clipLeft) {
+            info.transform[12] = info.clipLeft;
+        }
+        if (info.transform[13] < info.clipTop) {
+            info.transform[13] = info.clipTop;
+        }
+
+        if (mObserver != null) {
+            mObserver.onLocated(info);
         }
     }
 
