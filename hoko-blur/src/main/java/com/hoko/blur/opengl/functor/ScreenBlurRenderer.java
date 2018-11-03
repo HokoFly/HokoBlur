@@ -192,7 +192,7 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
         }
 
         GLES20.glClearColor(1f, 1f, 1f, 1f);
-        // fuck scissor leads to bugfix for one week !!
+        //scissor test is enabled by default
         GLES20.glDisable(GLES20.GL_SCISSOR_TEST);
 
         mDisplayTexture = TextureCache.getInstance().getTexture(mWidth, mHeight);
