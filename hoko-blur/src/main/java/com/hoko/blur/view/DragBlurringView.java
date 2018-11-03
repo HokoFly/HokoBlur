@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -120,8 +119,8 @@ public class DragBlurringView extends View {
             case MotionEvent.ACTION_MOVE:
                 float dx = event.getRawX() - mOldX;
                 float dy = event.getRawY() - mOldY;
-                ViewCompat.offsetLeftAndRight(this, (int) dx);
-                ViewCompat.offsetTopAndBottom(this, (int) dy);
+                offsetLeftAndRight((int) dx);
+                offsetTopAndBottom((int) dy);
                 mOldX = event.getRawX();
                 mOldY = event.getRawY();
                 invalidate();

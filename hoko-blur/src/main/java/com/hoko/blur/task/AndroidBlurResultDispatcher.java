@@ -6,7 +6,6 @@ import com.hoko.blur.util.SingleMainHandler;
 import java.util.concurrent.Executor;
 
 /**
- * 结果的分发，指定最后回调的线程
  * Created by yuxfzju on 2017/2/7.
  */
 

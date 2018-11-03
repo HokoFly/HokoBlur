@@ -8,7 +8,6 @@ import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
 
 import com.hoko.blur.anno.Mode;
 import com.hoko.blur.opengl.functor.DrawFunctor;
@@ -49,7 +48,7 @@ public class BlurDrawable extends Drawable {
     }
 
     @Override
-    public void draw(@NonNull Canvas canvas) {
+    public void draw(Canvas canvas) {
         if (canvas.isHardwareAccelerated() && mBlurEnabled) {
             boolean isSuccess = mDrawFunctor.doDraw(canvas);
             if (!isSuccess) {
