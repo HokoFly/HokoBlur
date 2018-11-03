@@ -20,9 +20,9 @@ extern "C" {
 #endif
 
 JNIEXPORT void JNICALL Java_com_hoko_blur_filter_NativeBlurFilter_nativeGaussianBlur
-        (JNIEnv *, jobject, jobject, jint, jint, jint, jint);
+        (JNIEnv *, jclass, jobject, jint, jint, jint, jint);
 
-float * makeKernel(jint r);
+float *makeKernel(jint r);
 void gaussianBlurHorizontal(float *, jint *, jint *, jint, jint, jint, jint, jint, jint, jint);
 void gaussianBlurVertical(float *, jint *, jint *, jint, jint, jint, jint, jint, jint, jint);
 

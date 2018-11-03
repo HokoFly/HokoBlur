@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 
 import com.hoko.blur.HokoBlur;
 import com.hoko.blur.api.IBlurProcessor;
+import com.hoko.blur.processor.BlurProcessor;
 
 /**
  * Created by yuxfzju on 16/9/18.
@@ -23,7 +24,7 @@ public class RsBlurLinearLayout extends LinearLayout {
 
     private int[] mLocationInWindow;
 
-    private IBlurProcessor mProcessor;
+    private BlurProcessor mProcessor;
 
     private Bitmap mBitmap;
 

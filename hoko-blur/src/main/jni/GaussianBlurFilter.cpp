@@ -4,20 +4,24 @@
 
 #include "include/GaussianBlurFilter.h"
 
-void JNICALL Java_com_hoko_blur_filter_NativeBlurFilter_nativeGaussianBlur
-        (JNIEnv *env, jobject j_object, jobject jbitmap, jint j_radius, jint j_cores, jint j_index, jint j_direction) {
+void JNICALL Java_com_hoko_blur_filter_NativeBlurFilter_nativeGaussianBlur(JNIEnv *env, jclass type,
+                                                                           jobject jbitmap,
+                                                                           jint j_radius,
+                                                                           jint j_cores,
+                                                                           jint j_index,
+                                                                           jint j_direction) {
 
     if (jbitmap == NULL) {
         return;
     }
 
-    AndroidBitmapInfo bmpInfo={0};
+    AndroidBitmapInfo bmpInfo = {0};
     if (AndroidBitmap_getInfo(env, jbitmap, &bmpInfo) < 0) {
         return;
     }
 
-    int * pixels = NULL;
-    if (AndroidBitmap_lockPixels(env, jbitmap, (void **)&pixels) < 0) {
+    int *pixels = NULL;
+    if (AndroidBitmap_lockPixels(env, jbitmap, (void **) &pixels) < 0) {
         return;
     }
 
@@ -44,7 +48,7 @@ void JNICALL Java_com_hoko_blur_filter_NativeBlurFilter_nativeGaussianBlur
 
         gaussianBlurHorizontal(kernel, copy, pixels, w, h, j_radius, 0, startY, w, deltaY);
 
-    } else if (j_direction == VERTICAL){
+    } else if (j_direction == VERTICAL) {
         int deltaX = w / j_cores;
         int startX = j_index * deltaX;
 
@@ -61,7 +65,8 @@ void JNICALL Java_com_hoko_blur_filter_NativeBlurFilter_nativeGaussianBlur
     free(kernel);
 }
 
-void gaussianBlurHorizontal(float *kernel, jint *inPixels, jint *outPixels, jint width, jint height, jint radius,
+void gaussianBlurHorizontal(float *kernel, jint *inPixels, jint *outPixels, jint width, jint height,
+                            jint radius,
                             jint startX, jint startY, jint deltaX, jint deltaY) {
     jint cols = 2 * radius + 1;
     jint cols2 = cols / 2;
@@ -101,7 +106,9 @@ void gaussianBlurHorizontal(float *kernel, jint *inPixels, jint *outPixels, jint
         }
     }
 }
-void gaussianBlurVertical(float *kernel, jint *inPixels, jint *outPixels, jint width, jint height, jint radius,
+
+void gaussianBlurVertical(float *kernel, jint *inPixels, jint *outPixels, jint width, jint height,
+                          jint radius,
                           jint startX, jint startY, jint deltaX, jint deltaY) {
     jint cols = 2 * radius + 1;
     jint cols2 = cols / 2;

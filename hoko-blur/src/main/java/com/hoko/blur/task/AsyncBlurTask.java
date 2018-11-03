@@ -7,8 +7,10 @@ import com.hoko.blur.api.IBlurProcessor;
 import com.hoko.blur.api.IBlurResultDispatcher;
 import com.hoko.blur.util.SingleMainHandler;
 
+import static com.hoko.blur.task.AndroidBlurResultDispatcher.MAIN_THREAD_DISPATCHER;
+
 /**
- * 异步模糊任务的封装
+ * a wrapper class for async blur task
  * Created by yuxfzju on 2017/2/6.
  */
 
@@ -27,9 +29,7 @@ public class AsyncBlurTask implements Runnable {
         mProcessor = processor;
         mBitmap = bitmap;
         mCallback = callback;
-
-        mResultDelivery = new BlurResultDispatcher(SingleMainHandler.get());
-
+        mResultDelivery = MAIN_THREAD_DISPATCHER;
     }
 
     public AsyncBlurTask(IBlurProcessor processor, View view, Callback callback) {
@@ -61,14 +61,13 @@ public class AsyncBlurTask implements Runnable {
             result.setSuccess(false);
             result.setError(e);
         } finally {
-            mResultDelivery.postResult(result);
+            mResultDelivery.dispatch(result);
         }
 
     }
 
     /**
-     * 可自定义模糊结果的分发，如分发到其他worker thread
-     * @param resultDelivery
+     * set custom dispatcher to dispatch the result to other worker threads
      */
     public void setResultDelivery(IBlurResultDispatcher resultDelivery) {
         mResultDelivery = resultDelivery;

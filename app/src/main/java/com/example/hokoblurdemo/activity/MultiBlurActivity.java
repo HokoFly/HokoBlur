@@ -49,7 +49,7 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
 
     private BlurProcessor.Builder mBlurBuilder;
 
-    private IBlurProcessor mProcessor;
+    private BlurProcessor mProcessor;
 
     private Bitmap mInBitmap;
 

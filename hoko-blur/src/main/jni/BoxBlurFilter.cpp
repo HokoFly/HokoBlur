@@ -4,21 +4,24 @@
 
 #include "include/BoxBlurFilter.h"
 
-JNIEXPORT void JNICALL Java_com_hoko_blur_filter_NativeBlurFilter_nativeBoxBlur
-        (JNIEnv *env, jobject j_object, jobject jbitmap, jint j_radius, jint j_cores, jint j_index, jint j_direction) {
+JNIEXPORT void JNICALL
+Java_com_hoko_blur_filter_NativeBlurFilter_nativeBoxBlur(JNIEnv *env, jclass type,
+                                                         jobject jbitmap, jint j_radius,
+                                                         jint j_cores, jint j_index,
+                                                         jint j_direction) {
 
 
     if (jbitmap == NULL) {
         return;
     }
 
-    AndroidBitmapInfo bmpInfo={0};
+    AndroidBitmapInfo bmpInfo = {0};
     if (AndroidBitmap_getInfo(env, jbitmap, &bmpInfo) < 0) {
         return;
     }
 
-    int * pixels = NULL;
-    if (AndroidBitmap_lockPixels(env, jbitmap, (void **)&pixels) < 0) {
+    int *pixels = NULL;
+    if (AndroidBitmap_lockPixels(env, jbitmap, (void **) &pixels) < 0) {
         return;
     }
 
@@ -42,7 +45,7 @@ JNIEXPORT void JNICALL Java_com_hoko_blur_filter_NativeBlurFilter_nativeBoxBlur
 
         boxBlurHorizontal(copy, pixels, w, h, j_radius, 0, startY, w, deltaY);
 
-    } else if (j_direction == VERTICAL){
+    } else if (j_direction == VERTICAL) {
         int deltaX = w / j_cores;
         int startX = j_index * deltaX;
 
@@ -59,7 +62,8 @@ JNIEXPORT void JNICALL Java_com_hoko_blur_filter_NativeBlurFilter_nativeBoxBlur
 
 }
 
-void boxBlurHorizontal(jint *in, jint *out, jint width, jint height, jint radius, jint startX, jint startY, jint deltaX, jint deltaY) {
+void boxBlurHorizontal(jint *in, jint *out, jint width, jint height, jint radius, jint startX,
+                       jint startY, jint deltaX, jint deltaY) {
     jint widthMinus1 = width - 1;
     jint tableSize = 2 * radius + 1;
     jint divide[256 * tableSize];
@@ -104,7 +108,9 @@ void boxBlurHorizontal(jint *in, jint *out, jint width, jint height, jint radius
 }
 
 
-void boxBlurVertical(jint *in, jint *out, jint width, jint height, jint radius, jint startX, jint startY, jint deltaX, jint deltaY) {
+void
+boxBlurVertical(jint *in, jint *out, jint width, jint height, jint radius, jint startX, jint startY,
+                jint deltaX, jint deltaY) {
     jint heightMinus1 = height - 1;
     jint tableSize = 2 * radius + 1;
     jint divide[256 * tableSize];
@@ -129,7 +135,7 @@ void boxBlurVertical(jint *in, jint *out, jint width, jint height, jint radius, 
 
             jint i1 = y + radius + 1;
             if (i1 > startY + deltaY - 1)
-                i1 = startY +deltaY - 1;
+                i1 = startY + deltaY - 1;
             jint i2 = y - radius;
             if (i2 < startY)
                 i2 = startY;

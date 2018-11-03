@@ -5,6 +5,7 @@
 #include "include/DrawFunctor.h"
 #include "include/BlurDrawable.h"
 #include "ScopeJEnv.h"
+
 using namespace android;
 
 extern "C" void postEventFromNativeC(int, void *, jobject);

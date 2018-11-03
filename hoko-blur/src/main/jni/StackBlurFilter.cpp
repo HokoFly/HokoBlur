@@ -4,20 +4,23 @@
 
 #include "include/StackBlurFilter.h"
 
-JNIEXPORT void JNICALL Java_com_hoko_blur_filter_NativeBlurFilter_nativeStackBlur
-        (JNIEnv *env, jobject j_object, jobject jbitmap, jint j_radius, jint j_cores, jint j_index, jint j_direction) {
+JNIEXPORT void JNICALL
+Java_com_hoko_blur_filter_NativeBlurFilter_nativeStackBlur(JNIEnv *env, jclass type,
+                                                           jobject jbitmap, jint j_radius,
+                                                           jint j_cores, jint j_index,
+                                                           jint j_direction) {
 
     if (jbitmap == NULL) {
         return;
     }
 
-    AndroidBitmapInfo bmpInfo={0};
+    AndroidBitmapInfo bmpInfo = {0};
     if (AndroidBitmap_getInfo(env, jbitmap, &bmpInfo) < 0) {
         return;
     }
 
-    int * pixels = NULL;
-    if (AndroidBitmap_lockPixels(env, jbitmap, (void **)&pixels) < 0) {
+    int *pixels = NULL;
+    if (AndroidBitmap_lockPixels(env, jbitmap, (void **) &pixels) < 0) {
         return;
     }
 
@@ -34,7 +37,7 @@ JNIEXPORT void JNICALL Java_com_hoko_blur_filter_NativeBlurFilter_nativeStackBlu
 
         doHorizontalBlur(pixels, w, h, j_radius, 0, startY, w, deltaY);
 
-    } else if (j_direction == VERTICAL){
+    } else if (j_direction == VERTICAL) {
         int deltaX = w / j_cores;
         int startX = j_index * deltaX;
 
@@ -50,8 +53,8 @@ JNIEXPORT void JNICALL Java_com_hoko_blur_filter_NativeBlurFilter_nativeStackBlu
 }
 
 
-
-void doHorizontalBlur(jint *pix, jint w, jint h, jint radius, jint startX, jint startY, jint deltaX, jint deltaY) {
+void doHorizontalBlur(jint *pix, jint w, jint h, jint radius, jint startX, jint startY, jint deltaX,
+                      jint deltaY) {
 
     jint wm = w - 1;
     jint hm = h - 1;
@@ -171,7 +174,8 @@ void doHorizontalBlur(jint *pix, jint w, jint h, jint radius, jint startX, jint 
 }
 
 
-void doVerticalBlur(jint *pix, jint w, jint h, jint radius, jint startX, jint startY, jint deltaX, jint deltaY) {
+void doVerticalBlur(jint *pix, jint w, jint h, jint radius, jint startX, jint startY, jint deltaX,
+                    jint deltaY) {
 
     jint wm = w - 1;
     jint hm = h - 1;

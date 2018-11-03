@@ -17,7 +17,7 @@ extern "C" {
 #define min(a, b) ((a)<(b)?(a):(b))
 
 JNIEXPORT void JNICALL Java_com_hoko_blur_filter_NativeBlurFilter_nativeStackBlur
-        (JNIEnv *, jobject, jobject, jint, jint, jint, jint);
+        (JNIEnv *, jclass, jobject, jint, jint, jint, jint);
 
 void doHorizontalBlur(jint *, jint , jint , jint, jint, jint, jint, jint);
 void doVerticalBlur(jint *, jint , jint , jint, jint, jint, jint, jint);

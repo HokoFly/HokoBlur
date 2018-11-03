@@ -7,11 +7,10 @@ import android.util.Log;
 import com.hoko.blur.HokoBlur;
 import com.hoko.blur.anno.Mode;
 import com.hoko.blur.api.IFrameBuffer;
-import com.hoko.blur.api.IScreenRenderer;
+import com.hoko.blur.api.IRenderer;
 import com.hoko.blur.api.ITexture;
 import com.hoko.blur.opengl.cache.FrameBufferCache;
 import com.hoko.blur.opengl.cache.TextureCache;
-import com.hoko.blur.opengl.texture.Texture;
 import com.hoko.blur.util.Preconditions;
 
 import java.nio.ByteBuffer;
@@ -31,7 +30,7 @@ import static com.hoko.blur.util.ShaderUtil.getVertexCode;
 /**
  * Created by yuxfzju on 16/11/23.
  */
-public class ScreenBlurRenderer implements IScreenRenderer {
+public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
 
     private static final String TAG = "ScreenBlurRenderer";
 
@@ -395,33 +394,27 @@ public class ScreenBlurRenderer implements IScreenRenderer {
         }
     }
 
-    @Override
     public void mode(@Mode int mode) {
         mMode = mode;
         mNeedRelink = true;
     }
 
-    @Override
     public void radius(int radius) {
         mRadius = radius;
     }
 
-    @Override
     public void sampleFactor(float factor) {
         mSampleFactor = factor;
     }
 
-    @Override
     public int mode() {
         return mMode;
     }
 
-    @Override
     public int radius() {
         return mRadius;
     }
 
-    @Override
     public float sampleFactor() {
         return mSampleFactor;
     }
@@ -437,7 +430,7 @@ public class ScreenBlurRenderer implements IScreenRenderer {
 
         }
 
-        public Builder(IScreenRenderer screenRenderer) {
+        public Builder(ScreenBlurRenderer screenRenderer) {
             Preconditions.checkNotNull(screenRenderer, "ScreenBlurRenderer == null");
             this.mode = screenRenderer.mode();
             this.radius = screenRenderer.radius();
@@ -456,7 +449,7 @@ public class ScreenBlurRenderer implements IScreenRenderer {
             this.sampleFactor = sampleFactor;
         }
 
-        public IScreenRenderer build() {
+        public ScreenBlurRenderer build() {
             return new ScreenBlurRenderer(this);
         }
     }

@@ -36,8 +36,6 @@ class OpenGLBlurProcessor extends BlurProcessor {
     @Override
     protected void free() {
         mEglBuffer.free();
-        TextureCache.getInstance().deleteTextures();
-        FrameBufferCache.getInstance().deleteFrameBuffers();
     }
 
     @Override

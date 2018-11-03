@@ -9,16 +9,16 @@
 
 extern pthread_key_t g_env_key;
 
-ScopeJEnv::ScopeJEnv(JavaVM* jvm, jint _capacity)
+ScopeJEnv::ScopeJEnv(JavaVM *jvm, jint _capacity)
         : vm_(jvm), env_(NULL), we_attach_(false), status_(0) {
     do {
-        env_ = (JNIEnv*)pthread_getspecific(g_env_key);
+        env_ = (JNIEnv *) pthread_getspecific(g_env_key);
 
         if (NULL != env_) {
             break;
         }
 
-        status_ = vm_->GetEnv((void**) &env_, JNI_VERSION_1_6);
+        status_ = vm_->GetEnv((void **) &env_, JNI_VERSION_1_6);
 
         if (JNI_OK == status_) {
             break;
@@ -53,7 +53,7 @@ ScopeJEnv::~ScopeJEnv() {
     }
 }
 
-JNIEnv* ScopeJEnv::GetEnv() {
+JNIEnv *ScopeJEnv::GetEnv() {
     return env_;
 }
 

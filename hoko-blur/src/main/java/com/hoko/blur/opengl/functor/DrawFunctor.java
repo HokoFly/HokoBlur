@@ -13,14 +13,20 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 /**
- * 对函数指针的封装，通过调用callDrawGLFunction，获取硬件绘制区域在屏幕的具体位置
+ * Java wrapper for the native functor.
+ * The native functor is imported when call callDrawGLFunction().
+ * Then the GLInfo about the drawing canvas will be available to locate the blur location.
  * Created by yuxfzju on 16/11/9.
  */
 public class DrawFunctor {
 
+    private static final String TAG = DrawFunctor.class.getSimpleName();
+
     private long mNativeFunctor;
 
     private IRenderer<GLInfo> mBlurRenderer;
+
+    private static boolean LIB_LOADED;
 
     public DrawFunctor(IRenderer<GLInfo> blurRenderer) {
         mNativeFunctor = createNativeFunctor(new WeakReference<DrawFunctor>(this));
@@ -40,43 +46,46 @@ public class DrawFunctor {
         }
     }
 
-    public void doDraw(Canvas canvas) {
-        if (canvas.isHardwareAccelerated()) {
+    public boolean doDraw(Canvas canvas) {
+        if (!LIB_LOADED) {
+            Log.e(TAG, "Native blur library is not loaded, ");
+            return false;
+        }
 
-            try {
-                Class canvasClazz = null;
-                Method callDrawGLFunctionMethod = null;
+        if (!canvas.isHardwareAccelerated()) {
+            return false;
+        }
 
-                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
-                    canvasClazz = Class.forName("android.view.DisplayListCanvas");
-                    callDrawGLFunctionMethod = canvasClazz.getMethod("callDrawGLFunction2", long.class);
-                    callDrawGLFunctionMethod.setAccessible(true);
-                    callDrawGLFunctionMethod.invoke(canvas, mNativeFunctor);
-                } else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP) {
-                    canvasClazz = Class.forName("android.view.HardwareCanvas");
-                    callDrawGLFunctionMethod = canvasClazz.getMethod("callDrawGLFunction", long.class);
-                    callDrawGLFunctionMethod.setAccessible(true);
-                    callDrawGLFunctionMethod.invoke(canvas, mNativeFunctor);
-                } else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP_MR1) {
-                    canvasClazz = Class.forName("android.view.HardwareCanvas");
-                    callDrawGLFunctionMethod = canvasClazz.getMethod("callDrawGLFunction2", long.class);
-                    callDrawGLFunctionMethod.setAccessible(true);
-                    callDrawGLFunctionMethod.invoke(canvas, mNativeFunctor);
-                } else {
-                    canvasClazz = Class.forName("android.view.HardwareCanvas");
-                    callDrawGLFunctionMethod = canvasClazz.getMethod("callDrawGLFunction", int.class);
-                    callDrawGLFunctionMethod.setAccessible(true);
-                    callDrawGLFunctionMethod.invoke(canvas, (int) mNativeFunctor);
-                }
+        try {
+            Class canvasClazz;
+            Method callDrawGLFunctionMethod;
 
-            } catch (Exception e) {
-                e.printStackTrace();
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
+                canvasClazz = Class.forName("android.view.DisplayListCanvas");
+                callDrawGLFunctionMethod = canvasClazz.getMethod("callDrawGLFunction2", long.class);
+            } else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP) {
+                canvasClazz = Class.forName("android.view.HardwareCanvas");
+                callDrawGLFunctionMethod = canvasClazz.getMethod("callDrawGLFunction", long.class);
+            } else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP_MR1) {
+                canvasClazz = Class.forName("android.view.HardwareCanvas");
+                callDrawGLFunctionMethod = canvasClazz.getMethod("callDrawGLFunction2", long.class);
+            } else {
+                canvasClazz = Class.forName("android.view.HardwareCanvas");
+                callDrawGLFunctionMethod = canvasClazz.getMethod("callDrawGLFunction", int.class);
             }
 
+            callDrawGLFunctionMethod.setAccessible(true);
+            callDrawGLFunctionMethod.invoke(canvas, mNativeFunctor);
+            return true;
+
+        } catch (Throwable t) {
+            Log.e(TAG, "canvas function [callDrawGLFunction()] error", t);
+            return false;
         }
     }
 
     private void onInvoke(int what) {
+        Log.w(TAG, "Cannot get the GLInfo, code=" + what);
     }
 
     private void onDraw(final GLInfo info) {
@@ -96,28 +105,29 @@ public class DrawFunctor {
     @Override
     protected void finalize() throws Throwable {
         super.finalize();
-        if (mNativeFunctor != 0) {
-            releaseFunctor(mNativeFunctor);
+        try {
+            if (mNativeFunctor != 0) {
+                releaseFunctor(mNativeFunctor);
+            }
+        } catch (Throwable t) {
+            Log.e(TAG, "Release functor error", t);
         }
-    }
 
-    public IRenderer getRenderer() {
-        return mBlurRenderer;
     }
 
 
     /**
-     * 模糊区域与屏幕的相对位置信息
+     * The blur location on the screen
      */
     public static class GLInfo {
-        public int clipLeft;
-        public int clipTop;
-        public int clipRight;
-        public int clipBottom;
-        public int viewportWidth;
-        public int viewportHeight;
-        public float[] transform;
-        public boolean isLayer;
+        int clipLeft;
+        int clipTop;
+        int clipRight;
+        int clipBottom;
+        int viewportWidth;
+        int viewportHeight;
+        float[] transform;
+        boolean isLayer;
 
         public GLInfo() {
             this.transform = new float[16];
@@ -149,6 +159,12 @@ public class DrawFunctor {
     private native void releaseFunctor(long functorPtr);
 
     static {
-        System.loadLibrary("hoko_blur");
+        try {
+            System.loadLibrary("hoko_blur");
+            LIB_LOADED = true;
+        } catch (Throwable t) {
+            LIB_LOADED = false;
+            Log.e(TAG, "Failed to load hoko blur library", t);
+        }
     }
 }

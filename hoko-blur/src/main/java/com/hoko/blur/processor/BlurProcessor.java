@@ -8,16 +8,17 @@ import com.hoko.blur.HokoBlur;
 import com.hoko.blur.anno.Mode;
 import com.hoko.blur.anno.Scheme;
 import com.hoko.blur.api.IBlurProcessor;
-import com.hoko.blur.api.ITranslate;
 import com.hoko.blur.task.AsyncBlurTask;
 import com.hoko.blur.task.BlurTaskManager;
 import com.hoko.blur.util.BitmapUtil;
 import com.hoko.blur.util.Preconditions;
 
+import java.util.concurrent.Future;
+
 /**
  * Created by yuxfzju on 16/9/8.
  */
-public abstract class BlurProcessor implements IBlurProcessor, ITranslate {
+public abstract class BlurProcessor implements IBlurProcessor {
 
     int mRadius;
 
@@ -47,33 +48,27 @@ public abstract class BlurProcessor implements IBlurProcessor, ITranslate {
         mTranslateY = builder.mTranslateY;
     }
 
-    @Override
     public void mode(@Mode int mode) {
         mMode = mode;
     }
 
-    @Override
     public void radius(int radius) {
         mRadius = radius;
     }
 
-    @Override
     public void sampleFactor(float factor) {
         mSampleFactor = factor;
     }
 
-    @Override
     @Mode
     public int mode() {
         return mMode;
     }
 
-    @Override
     public int radius() {
         return mRadius;
     }
 
-    @Override
     public float sampleFactor() {
         return mSampleFactor;
     }
@@ -92,12 +87,10 @@ public abstract class BlurProcessor implements IBlurProcessor, ITranslate {
     }
 
 
-    @Override
     public int translateX() {
         return mTranslateX;
     }
 
-    @Override
     public int translateY() {
         return mTranslateY;
     }
@@ -133,8 +126,7 @@ public abstract class BlurProcessor implements IBlurProcessor, ITranslate {
 
         Bitmap scaledOutBitmap = doInnerBlur(scaledInBitmap, concurrent);
 
-        Bitmap outBitmap = mNeedUpscale ? BitmapUtil.getScaledBitmap(scaledOutBitmap, 1f / sampleFactor()) : scaledOutBitmap;
-        return outBitmap;
+        return mNeedUpscale ? BitmapUtil.getScaledBitmap(scaledOutBitmap, 1f / sampleFactor()) : scaledOutBitmap;
     }
 
 
@@ -148,19 +140,17 @@ public abstract class BlurProcessor implements IBlurProcessor, ITranslate {
 
         Bitmap scaledOutBitmap = doInnerBlur(viewBitmap, true);
 
-        Bitmap outBitmap = mNeedUpscale ? BitmapUtil.getScaledBitmap(scaledOutBitmap, 1f / sampleFactor()) : scaledOutBitmap;
-
-        return outBitmap;
+        return mNeedUpscale ? BitmapUtil.getScaledBitmap(scaledOutBitmap, 1f / sampleFactor()) : scaledOutBitmap;
     }
 
     @Override
-    public void asyncBlur(Bitmap bitmap, AsyncBlurTask.Callback callback) {
-        BlurTaskManager.getInstance().submit(new AsyncBlurTask(this, bitmap, callback));
+    public Future asyncBlur(Bitmap bitmap, AsyncBlurTask.Callback callback) {
+        return BlurTaskManager.getInstance().submit(new AsyncBlurTask(this, bitmap, callback));
     }
 
     @Override
-    public void asyncBlur(View view, AsyncBlurTask.Callback callback) {
-        BlurTaskManager.getInstance().submit(new AsyncBlurTask(this, view, callback));
+    public Future asyncBlur(View view, AsyncBlurTask.Callback callback) {
+        return BlurTaskManager.getInstance().submit(new AsyncBlurTask(this, view, callback));
     }
 
     protected void free() {

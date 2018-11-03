@@ -13,7 +13,7 @@ pthread_key_t g_env_key;
 jclass mFunctorClazz;
 jclass mGlInfoClazz;
 
-static void __DetachCurrentThread(void* a) {
+static void __DetachCurrentThread(void *a) {
     if (NULL != g_VM) {
         g_VM->DetachCurrentThread();
     }
@@ -34,8 +34,8 @@ Java_com_hoko_blur_opengl_functor_DrawFunctor_createNativeFunctor(JNIEnv *env, j
 
 JNIEXPORT void JNICALL
 Java_com_hoko_blur_opengl_functor_DrawFunctor_releaseFunctor(JNIEnv *env, jobject clazz,
-                                                                      jlong j_functor_ptr) {
-    DrawFunctor * drawFunctor = (DrawFunctor *)j_functor_ptr;
+                                                             jlong j_functor_ptr) {
+    DrawFunctor *drawFunctor = (DrawFunctor *) j_functor_ptr;
 
     delete drawFunctor;
 }
@@ -112,14 +112,14 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
         __android_log_print(ANDROID_LOG_ERROR, "pthread", "create g_env_key fail");
     }
 
-    // 查找要加载的本地方法Class引用
+    // find functor class
     functorCls = env->FindClass("com/hoko/blur/opengl/functor/DrawFunctor");
     glInfoCls = env->FindClass("com/hoko/blur/opengl/functor/DrawFunctor$GLInfo");
 
     if (functorCls == NULL || glInfoCls == NULL) {
         return JNI_ERR;
     }
-    // 将class的引用缓存到全局变量中
+    // cache global reference
     mFunctorClazz = reinterpret_cast<jclass>(env->NewGlobalRef(functorCls));
     mGlInfoClazz = reinterpret_cast<jclass>(env->NewGlobalRef(glInfoCls));
 
@@ -129,11 +129,10 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
     return JNI_VERSION_1_6;
 }
 
-JNIEXPORT void JNICALL JNI_OnUnload(JavaVM* vm, void* reserved)
-{
-    JNIEnv* env = NULL;
+JNIEXPORT void JNICALL JNI_OnUnload(JavaVM *vm, void *reserved) {
+    JNIEnv *env = NULL;
 
-    if (vm->GetEnv((void**) &env, JNI_VERSION_1_6) != JNI_OK) {
+    if (vm->GetEnv((void **) &env, JNI_VERSION_1_6) != JNI_OK) {
         //LOGE("GetEnv failed!");
         return;
     }

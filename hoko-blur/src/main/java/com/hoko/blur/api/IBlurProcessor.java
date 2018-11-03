@@ -6,10 +6,12 @@ import android.view.View;
 import com.hoko.blur.anno.Scheme;
 import com.hoko.blur.task.AsyncBlurTask;
 
+import java.util.concurrent.Future;
+
 /**
  * Created by yuxfzju on 16/9/8.
  */
-public interface IBlurProcessor extends IParams {
+public interface IBlurProcessor {
     /**
      * apply the blur effect to a bitmap
      *
@@ -31,13 +33,13 @@ public interface IBlurProcessor extends IParams {
      * @param bitmap the original bitmap
      * @param callback task callback
      */
-    void asyncBlur(Bitmap bitmap, AsyncBlurTask.Callback callback);
+    Future asyncBlur(Bitmap bitmap, AsyncBlurTask.Callback callback);
 
     /**
      * Asynchronously apply the blur effect to a view
      * @param view the original view
      * @param callback task callback
      */
-    void asyncBlur(View view, AsyncBlurTask.Callback callback);
+    Future asyncBlur(View view, AsyncBlurTask.Callback callback);
 
 }

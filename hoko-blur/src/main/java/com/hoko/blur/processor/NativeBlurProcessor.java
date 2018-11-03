@@ -34,7 +34,7 @@ class NativeBlurProcessor extends BlurProcessor {
 
         try {
             if (concurrent) {
-                int cores = BlurTaskManager.getCores();
+                int cores = BlurTaskManager.getWorkersNum();
                 List<BlurSubTask> hTasks = new ArrayList<>(cores);
                 List<BlurSubTask> vTasks = new ArrayList<>(cores);
 

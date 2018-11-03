@@ -7,7 +7,6 @@ import android.util.Log;
 import com.hoko.blur.anno.Mode;
 import com.hoko.blur.api.IFrameBuffer;
 import com.hoko.blur.api.IRenderer;
-import com.hoko.blur.api.ITexture;
 import com.hoko.blur.opengl.cache.FrameBufferCache;
 import com.hoko.blur.opengl.texture.Texture;
 import com.hoko.blur.opengl.texture.TextureFactory;

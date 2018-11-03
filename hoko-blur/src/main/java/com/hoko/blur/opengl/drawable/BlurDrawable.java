@@ -9,20 +9,17 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 
 import com.hoko.blur.anno.Mode;
-import com.hoko.blur.api.IParams;
-import com.hoko.blur.api.IScreenRenderer;
 import com.hoko.blur.opengl.functor.DrawFunctor;
 import com.hoko.blur.opengl.functor.ScreenBlurRenderer;
-import com.hoko.blur.util.BlurUtil;
 
 /**
  * Created by yuxfzju on 16/11/23.
  */
-public class BlurDrawable extends Drawable implements IParams {
+public class BlurDrawable extends Drawable {
 
     private DrawFunctor mDrawFunctor;
 
-    private IScreenRenderer mBlurRenderer;
+    private ScreenBlurRenderer mBlurRenderer;
 
     private int alpha;
 
@@ -39,23 +36,28 @@ public class BlurDrawable extends Drawable implements IParams {
     @Override
     public void draw(@NonNull Canvas canvas) {
         if (canvas.isHardwareAccelerated() && mBlurEnabled) {
-            mDrawFunctor.doDraw(canvas);
+            boolean isSuccess = mDrawFunctor.doDraw(canvas);
+            if (!isSuccess) {
+                canvas.drawRect(getBounds(), mPaint);
+            }
         } else {
             canvas.drawRect(getBounds(), mPaint);
         }
     }
 
     /**
-     * BlurDrawable设置Alpha值暂时无效，之后将做进一步改进实现
+     * todo setting Alpha is invalid
      */
     @Override
     @Deprecated
     public void setAlpha(int alpha) {
-        // TODO: 2017/2/3
         this.alpha = alpha;
         invalidateSelf();
     }
 
+    /**
+     * todo setting ColorFilter is invalid
+     */
     @Override
     public void setColorFilter(ColorFilter colorFilter) {
         // TODO: 2017/1/25  
@@ -75,35 +77,29 @@ public class BlurDrawable extends Drawable implements IParams {
         mBlurEnabled = true;
     }
 
-    @Override
     public void mode(@Mode int mode) {
         mBlurRenderer.mode(mode);
         invalidateSelf();
     }
 
-    @Override
     public void radius(int radius) {
         mBlurRenderer.radius(radius);
         invalidateSelf();
     }
 
-    @Override
     public void sampleFactor(float factor) {
         mBlurRenderer.sampleFactor(factor);
         invalidateSelf();
     }
 
-    @Override
     public int mode() {
         return mBlurRenderer.mode();
     }
 
-    @Override
     public int radius() {
         return mBlurRenderer.radius();
     }
 
-    @Override
     public float sampleFactor() {
         return mBlurRenderer.sampleFactor();
     }

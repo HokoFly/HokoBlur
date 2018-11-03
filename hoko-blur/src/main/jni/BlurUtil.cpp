@@ -16,19 +16,21 @@ jint clamp(jint i, jint minValue, jint maxValue) {
 
 
 JNIEXPORT void JNICALL
-    Java_com_hoko_blur_util_BitmapUtil_replaceBitmap(JNIEnv *env, jobject instance, jobject jbitmap, jintArray j_inArray, jint j_x, jint j_y, jint j_deltaW, jint j_deltaH) {
+Java_com_hoko_blur_util_BitmapUtil_replaceBitmap(JNIEnv *env, jclass type, jobject jbitmap,
+                                                 jintArray j_inArray, jint j_x, jint j_y,
+                                                 jint j_deltaW, jint j_deltaH) {
 
     if (jbitmap == NULL) {
         return;
     }
 
-    AndroidBitmapInfo bmpInfo={0};
+    AndroidBitmapInfo bmpInfo = {0};
     if (AndroidBitmap_getInfo(env, jbitmap, &bmpInfo) < 0) {
         return;
     }
 
-    int * pixels = NULL;
-    if (AndroidBitmap_lockPixels(env, jbitmap, (void **)&pixels) < 0) {
+    int *pixels = NULL;
+    if (AndroidBitmap_lockPixels(env, jbitmap, (void **) &pixels) < 0) {
         return;
     }
 

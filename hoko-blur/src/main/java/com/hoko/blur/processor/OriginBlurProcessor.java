@@ -27,7 +27,7 @@ class OriginBlurProcessor extends BlurProcessor {
         Preconditions.checkNotNull(scaledInBitmap, "scaledInBitmap == null");
         try {
             if (concurrent) {
-                int cores = BlurTaskManager.getCores();
+                int cores = BlurTaskManager.getWorkersNum();
                 List<BlurSubTask> hTasks = new ArrayList<>(cores);
                 List<BlurSubTask> vTasks = new ArrayList<>(cores);
 
