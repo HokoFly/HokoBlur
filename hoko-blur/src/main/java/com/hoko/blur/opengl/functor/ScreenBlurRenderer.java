@@ -32,7 +32,7 @@ import static com.hoko.blur.util.ShaderUtil.getVertexCode;
  */
 public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
 
-    private static final String TAG = "ScreenBlurRenderer";
+    private static final String TAG = ScreenBlurRenderer.class.getSimpleName();
 
     private static final int COORDS_PER_VERTEX = 3;
     private static final int VERTEX_STRIDE = COORDS_PER_VERTEX * 4;
@@ -82,11 +82,6 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
 
     private int mBlurProgram;
     private int mCopyProgram;
-
-    private int mPositionId;
-    private int mMVPMatrixId;
-    private int mTexCoordId;
-    private int mTexMatrixId;
 
     private ITexture mHorizontalTexture;
     private ITexture mVerticalTexture;
@@ -140,13 +135,14 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
             return;
         }
 
-        if (!prepare()) { //渲染环境错误返回
-            Log.e(TAG, "onDrawFrame: prepare");
+        Preconditions.checkArgument(checkBlurSize(mWidth, mHeight), "Too large blur size, check width < 1800 and height < 3200");
+        //In order to provide cache for the next blur operation, call prepare() even when radius = 0.
+        //Otherwise, a black screen may appear
+        if (!prepare()) {
+            Log.e(TAG, "OpenGL runtime prepare error");
             return;
         }
 
-        //半径为0也需要调用prepare()，这是为了下次模糊提供缓存，
-        // 否则在做动画时，半径从0到1时，会因为需要prepare的额外耗时，使得Drawable出现短暂的黑屏
         if (mRadius > 0) {
             try {
                 copyTextureFromScreen(mInfo);
@@ -164,12 +160,12 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
 
     @Override
     public void onSurfaceCreated() {
-
+        throw new UnsupportedOperationException("onSurfaceCreated");
     }
 
     @Override
     public void onSurfaceChanged(int width, int height) {
-        //surface尺寸始终为整块屏幕
+        throw new UnsupportedOperationException("onSurfaceChanged");
     }
 
     private boolean checkBlurSize(int width, int height) {
@@ -182,8 +178,6 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
             Log.e(TAG, "This thread has no EGLContext.");
             return false;
         }
-
-        Preconditions.checkArgument(checkBlurSize(mWidth, mHeight), "Too large blurred sizes");
 
         initMVPMatrix(mInfo);
 
@@ -229,10 +223,6 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
      * scaled Width&Height               Identity       scaled Width&Height
      */
     private void initMVPMatrix(DrawFunctor.GLInfo info) {
-        if (info == null) {
-            return;
-        }
-
         Matrix.setIdentityM(mModelMatrix, 0);
         Matrix.setIdentityM(mViewMatrix, 0);
         Matrix.setIdentityM(mProjMatrix, 0);
@@ -256,19 +246,19 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
 
             GLES20.glUseProgram(mBlurProgram);
 //
-            mPositionId = GLES20.glGetAttribLocation(mBlurProgram, "aPosition");
-            GLES20.glEnableVertexAttribArray(mPositionId);
-            GLES20.glVertexAttribPointer(mPositionId, COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, VERTEX_STRIDE, mVertexBuffer);
+            int positionId = GLES20.glGetAttribLocation(mBlurProgram, "aPosition");
+            GLES20.glEnableVertexAttribArray(positionId);
+            GLES20.glVertexAttribPointer(positionId, COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, VERTEX_STRIDE, mVertexBuffer);
 
-            mMVPMatrixId = GLES20.glGetUniformLocation(mBlurProgram, "uMVPMatrix");
-            GLES20.glUniformMatrix4fv(mMVPMatrixId, 1, false, mvpMatrix, 0);
+            int mvpMatrixId = GLES20.glGetUniformLocation(mBlurProgram, "uMVPMatrix");
+            GLES20.glUniformMatrix4fv(mvpMatrixId, 1, false, mvpMatrix, 0);
 
-            mTexMatrixId = GLES20.glGetUniformLocation(mBlurProgram, "uTexMatrix");
-            GLES20.glUniformMatrix4fv(mTexMatrixId, 1, false, texMatrix, 0);
+            int texMatrixId = GLES20.glGetUniformLocation(mBlurProgram, "uTexMatrix");
+            GLES20.glUniformMatrix4fv(texMatrixId, 1, false, texMatrix, 0);
 
-            mTexCoordId = GLES20.glGetAttribLocation(mBlurProgram, "aTexCoord");
-            GLES20.glEnableVertexAttribArray(mTexCoordId);
-            GLES20.glVertexAttribPointer(mTexCoordId, 2, GLES20.GL_FLOAT, false, 0, mTexCoordBuffer);
+            int texCoordId = GLES20.glGetAttribLocation(mBlurProgram, "aTexCoord");
+            GLES20.glEnableVertexAttribArray(texCoordId);
+            GLES20.glVertexAttribPointer(texCoordId, 2, GLES20.GL_FLOAT, false, 0, mTexCoordBuffer);
 
             if (isHorizontal) {
                 mHorizontalFrameBuffer.bindSelf();
@@ -290,47 +280,49 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
             GLES20.glUniform1f(heightOffsetId, isHorizontal ? 0 : 1f / mHeight * mSampleFactor);
 
             GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, mDrawListBuffer);
+
         } finally {
-            resetAllBuffer();
+            reset();
         }
 
     }
 
 
     private void upscale(float[] mvpMatrix, float[] texMatrix) {
-        GLES20.glViewport(0, 0, mInfo.viewportWidth, mInfo.viewportHeight);
+        try {
+            GLES20.glViewport(0, 0, mInfo.viewportWidth, mInfo.viewportHeight);
 
-        GLES20.glUseProgram(mCopyProgram);
+            GLES20.glUseProgram(mCopyProgram);
 
-        mPositionId = GLES20.glGetAttribLocation(mCopyProgram, "aPosition");
-        GLES20.glEnableVertexAttribArray(mPositionId);
-        GLES20.glVertexAttribPointer(mPositionId, COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, VERTEX_STRIDE, mVertexBuffer);
+            int positionId = GLES20.glGetAttribLocation(mCopyProgram, "aPosition");
+            GLES20.glEnableVertexAttribArray(positionId);
+            GLES20.glVertexAttribPointer(positionId, COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, VERTEX_STRIDE, mVertexBuffer);
 
-        mMVPMatrixId = GLES20.glGetUniformLocation(mCopyProgram, "uMVPMatrix");
-        GLES20.glUniformMatrix4fv(mMVPMatrixId, 1, false, mvpMatrix, 0);
+            int mvpMatrixId = GLES20.glGetUniformLocation(mCopyProgram, "uMVPMatrix");
+            GLES20.glUniformMatrix4fv(mvpMatrixId, 1, false, mvpMatrix, 0);
 
-        mTexMatrixId = GLES20.glGetUniformLocation(mCopyProgram, "uTexMatrix");
-        GLES20.glUniformMatrix4fv(mTexMatrixId, 1, false, texMatrix, 0);
+            int texMatrixId = GLES20.glGetUniformLocation(mCopyProgram, "uTexMatrix");
+            GLES20.glUniformMatrix4fv(texMatrixId, 1, false, texMatrix, 0);
 
-        mTexCoordId = GLES20.glGetAttribLocation(mCopyProgram, "aTexCoord");
-        GLES20.glEnableVertexAttribArray(mTexCoordId);
-        GLES20.glVertexAttribPointer(mTexCoordId, 2, GLES20.GL_FLOAT, false, 0, mTexCoordBuffer);
+            int texCoordId = GLES20.glGetAttribLocation(mCopyProgram, "aTexCoord");
+            GLES20.glEnableVertexAttribArray(texCoordId);
+            GLES20.glVertexAttribPointer(texCoordId, 2, GLES20.GL_FLOAT, false, 0, mTexCoordBuffer);
 
-        mDisplayFrameBuffer.bindSelf();
+            mDisplayFrameBuffer.bindSelf();
 
-        int textureUniformId = GLES20.glGetUniformLocation(mCopyProgram, "uTexture");
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mVerticalTexture.id());
-        GLES20.glUniform1i(textureUniformId, 0);
+            int textureUniformId = GLES20.glGetUniformLocation(mCopyProgram, "uTexture");
+            GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mVerticalTexture.id());
+            GLES20.glUniform1i(textureUniformId, 0);
 
-        GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, mDrawListBuffer);
+            GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, mDrawListBuffer);
 
-        resetAllBuffer();
-
-
+        } finally {
+            reset();
+        }
     }
 
-    private void resetAllBuffer() {
+    private void reset() {
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
 
@@ -377,8 +369,6 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
 
     @Override
     public void free() {
-        GLES20.glDisableVertexAttribArray(mPositionId);
-        GLES20.glDisableVertexAttribArray(mTexCoordId);
         deletePrograms();
         mNeedRelink = true;
     }
