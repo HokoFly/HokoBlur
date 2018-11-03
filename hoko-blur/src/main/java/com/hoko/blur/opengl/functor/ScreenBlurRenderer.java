@@ -142,19 +142,17 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
             Log.e(TAG, "OpenGL runtime prepare error");
             return;
         }
-
-        if (mRadius > 0) {
-            try {
+        try {
+            if (mRadius > 0) {
                 copyTextureFromScreen(mInfo);
                 getTexMatrix(false);
                 drawOneDimenBlur(mMVPMatrix, mTexMatrix, true);
                 drawOneDimenBlur(mMVPMatrix, mTexMatrix, false);
                 getTexMatrix(true);
                 upscale(mScreenMVPMatrix, mTexMatrix);
-            } finally {
-                onPostBlur();
             }
-
+        } finally {
+            onPostBlur();
         }
     }
 
