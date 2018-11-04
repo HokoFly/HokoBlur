@@ -23,13 +23,13 @@ HokoBlur is an Android component which provides dynamic blur effect.
 ### 2. Getting started
 
 
-#### 2.1 Download
+#### Download
 
 ```groovy
    implementation 'com.hoko:hoko-blur:1.2.2'
 ```
 
-#### 2.2 Static Blur
+#### Static Blur
 
 synchronous api
 
@@ -82,7 +82,7 @@ f.cancel(false);
 
 ```
 
-### 2.3 Sample
+### 3. Sample
 
 #### Animation
 
@@ -95,7 +95,7 @@ f.cancel(false);
 
 
 
-### 3. Dynamic background blur
+### 4. Dynamic background blur
 
 Dynamic Blur provides real-time background blurring of View and ViewGroup, not for Bitmap implementations. The component will blur the area where the View is located.
 
@@ -144,7 +144,7 @@ animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 
 
 
-### 4. Proguard
+### 5. Proguard
 In order to make Hoko blur work normally, you need to add the following rules when using proguard:
 
 ```java
@@ -154,7 +154,7 @@ In order to make Hoko blur work normally, you need to add the following rules wh
 
 
 
-### 5. Tips
+### 6. Tips
 
 
 1. When the Bitmap is not scaled (```sampleFactor(1.0f)```), the incoming Bitmap will be directly modified by the subsequent operations. So when the function returns a bitmap, it can be used immediately.
