@@ -24,23 +24,28 @@ public class ShaderUtil {
             return 0;
         }
 
-        int program = GLES20.glCreateProgram();
-        if (program != 0) {
-            GLES20.glAttachShader(program, vertexShader);
-            GLES20.glAttachShader(program, fragmentShader);
-            GLES20.glLinkProgram(program);
+        int program;
+        try {
+            program = GLES20.glCreateProgram();
+            if (program != 0) {
+                GLES20.glAttachShader(program, vertexShader);
+                GLES20.glAttachShader(program, fragmentShader);
+                GLES20.glLinkProgram(program);
+                checkGLError("Attach Shader");
+                final int[] linkStatus = new int[1];
+                GLES20.glGetProgramiv(program, GLES20.GL_LINK_STATUS, linkStatus, 0);
+                if (linkStatus[0] != 1)  {
+                    Log.e(TAG, "Failed to link program");
+                    GLES20.glDeleteProgram(program);
+                    program = 0;
+                }
+//
+            }
+        } finally {
             GLES20.glDeleteShader(vertexShader);
             GLES20.glDeleteShader(fragmentShader);
-            checkGLError("Attach Shader");
-            final int[] linkStatus = new int[1];
-            GLES20.glGetProgramiv(program, GLES20.GL_LINK_STATUS, linkStatus, 0);
-            if (linkStatus[0] != 1)  {
-                Log.e(TAG, "Failed to link program");
-                GLES20.glDeleteProgram(program);
-                program = 0;
-            }
-
         }
+
         return program;
     }
 

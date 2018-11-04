@@ -6,8 +6,11 @@ import android.util.Log;
 
 import com.hoko.blur.anno.Mode;
 import com.hoko.blur.api.IFrameBuffer;
+import com.hoko.blur.api.IProgram;
 import com.hoko.blur.api.IRenderer;
 import com.hoko.blur.opengl.cache.FrameBufferCache;
+import com.hoko.blur.opengl.program.Program;
+import com.hoko.blur.opengl.program.ProgramFactory;
 import com.hoko.blur.opengl.texture.Texture;
 import com.hoko.blur.opengl.texture.TextureFactory;
 import com.hoko.blur.util.ShaderUtil;
@@ -58,7 +61,7 @@ public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
     private ShortBuffer mDrawListBuffer;
     private FloatBuffer mTexCoordBuffer;
 
-    private int mProgram;
+    private IProgram mProgram;
 
     private Texture mHorizontalTexture;
     private Texture mInputTexture;
@@ -142,11 +145,11 @@ public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
 
         if (mNeedRelink) {
             deletePrograms();
-            mProgram = ShaderUtil.createProgram(vertexShaderCode, ShaderUtil.getFragmentShaderCode(mMode));
+            mProgram = ProgramFactory.create(vertexShaderCode, ShaderUtil.getFragmentShaderCode(mMode));
             mNeedRelink = false;
         }
 
-        if (mProgram == 0) {
+        if (mProgram.id() == 0) {
             Log.e(TAG, "Failed to create program.");
             return false;
         }
@@ -177,16 +180,16 @@ public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
 
     private void drawOneDimenBlur(boolean isHorizontal) {
         try {
-            GLES20.glUseProgram(mProgram);
+            GLES20.glUseProgram(mProgram.id());
 
-            int positionId = GLES20.glGetAttribLocation(mProgram, "aPosition");
+            int positionId = GLES20.glGetAttribLocation(mProgram.id(), "aPosition");
             GLES20.glEnableVertexAttribArray(positionId);
             GLES20.glVertexAttribPointer(positionId, COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, VERTEX_STRIDE, mVertexBuffer);
 
 //        mColorHandle = GLES20.glGetUniformLocation(mProgram, "vColor");
 //        GLES20.glUniform4fv(mColorHandle, 1, fragmentColor, 0);
 
-            int texCoordId = GLES20.glGetAttribLocation(mProgram, "aTexCoord");
+            int texCoordId = GLES20.glGetAttribLocation(mProgram.id(), "aTexCoord");
             GLES20.glEnableVertexAttribArray(texCoordId);
             GLES20.glVertexAttribPointer(texCoordId, 2, GLES20.GL_FLOAT, false, 0, mTexCoordBuffer);
 
@@ -194,14 +197,14 @@ public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
                 mBlurFrameBuffer.bindSelf();
             }
 
-            int textureUniformId = GLES20.glGetUniformLocation(mProgram, "uTexture");
+            int textureUniformId = GLES20.glGetUniformLocation(mProgram.id(), "uTexture");
             GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, isHorizontal ? mInputTexture.id() : mHorizontalTexture.id());
             GLES20.glUniform1i(textureUniformId, 0);
 
-            int radiusId = GLES20.glGetUniformLocation(mProgram, "uRadius");
-            int widthOffsetId = GLES20.glGetUniformLocation(mProgram, "uWidthOffset");
-            int heightOffsetId = GLES20.glGetUniformLocation(mProgram, "uHeightOffset");
+            int radiusId = GLES20.glGetUniformLocation(mProgram.id(), "uRadius");
+            int widthOffsetId = GLES20.glGetUniformLocation(mProgram.id(), "uWidthOffset");
+            int heightOffsetId = GLES20.glGetUniformLocation(mProgram.id(), "uHeightOffset");
             GLES20.glUniform1i(radiusId, mRadius);
             GLES20.glUniform1f(widthOffsetId, isHorizontal ? 0 : 1f / mWidth);
             GLES20.glUniform1f(heightOffsetId, isHorizontal ? 1f / mHeight : 0);
@@ -239,8 +242,8 @@ public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
 
 
     private void deletePrograms() {
-        if (mProgram != 0) {
-            GLES20.glDeleteProgram(mProgram);
+        if (mProgram != null) {
+            mProgram.delete();
         }
     }
 
