@@ -39,12 +39,17 @@ public abstract class CachePool<K, V> {
 
     public final void put(V v) {
         Preconditions.checkNotNull(v, "value == null");
-        synchronized (this) {
-            mList.add(v);
+        try {
+            if (!mList.contains(v)) {
+                synchronized (this) {
+                    if (!mList.contains(v)) {
+                        mList.add(v);
+                    }
+                }
+            }
+        } finally {
+            trimToSize(mMaxSize);
         }
-
-        trimToSize(mMaxSize);
-
 
     }
 

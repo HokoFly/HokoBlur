@@ -6,8 +6,6 @@ import android.os.Build;
 import android.util.Log;
 
 
-import com.hoko.blur.api.IRenderer;
-
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -23,7 +21,7 @@ public class DrawFunctor {
     private static final String TAG = DrawFunctor.class.getSimpleName();
 
     public interface DrawLocationObserver {
-        void onLocated(GLInfo info);
+        void onLocated(GLInfo info, boolean isChild);
 
         void onLocateError(int what);
     }
@@ -31,6 +29,8 @@ public class DrawFunctor {
     private final long mNativeFunctor;
 
     private final DrawLocationObserver mObserver;
+
+    private GLInfo mParentGLInfo;
 
     private static boolean LIB_LOADED;
 
@@ -107,8 +107,16 @@ public class DrawFunctor {
             info.transform[13] = info.clipTop;
         }
 
+        boolean isChildRedraw;
+        if (mParentGLInfo != null && mParentGLInfo.contains(info)) {
+            isChildRedraw = true;
+        } else {
+            mParentGLInfo = info;
+            isChildRedraw = false;
+        }
+
         if (mObserver != null) {
-            mObserver.onLocated(info);
+            mObserver.onLocated(mParentGLInfo, isChildRedraw);
         }
     }
 
@@ -147,6 +155,17 @@ public class DrawFunctor {
         public GLInfo(int width, int height) {
             this.viewportWidth = width;
             this.viewportHeight = height;
+        }
+
+        public boolean contains(GLInfo info) {
+            if (this.clipLeft == info.clipLeft && this.clipRight == info.clipRight
+                    && this.clipTop == info.clipTop && this.clipBottom == info.clipBottom) {
+                return false;
+            }
+
+            return this.clipLeft < this.clipRight && this.clipTop < this.clipBottom
+                    && this.clipLeft <= info.clipLeft && this.clipTop <= info.clipTop
+                    && this.clipRight >= info.clipRight && this.clipBottom >= info.clipBottom;
         }
 
         @Override

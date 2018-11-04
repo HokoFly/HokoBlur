@@ -61,6 +61,7 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
 
     private volatile boolean mNeedRelink = true;
     private DrawFunctor.GLInfo mInfo;
+    private volatile boolean isChildRedraw;
 
     private int mWidth;
     private int mHeight;
@@ -86,6 +87,7 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
     private ITexture mHorizontalTexture;
     private ITexture mVerticalTexture;
     private ITexture mDisplayTexture;
+    private ITexture mParentDisplayTexture;
 
     private IFrameBuffer mDisplayFrameBuffer;
     private IFrameBuffer mHorizontalFrameBuffer;
@@ -123,7 +125,12 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
 
     @Override
     public void onDrawFrame(DrawFunctor.GLInfo info) {
+        onDrawFrame(info, false);
+    }
+
+    public void onDrawFrame(DrawFunctor.GLInfo info, boolean isChildRedraw) {
         mInfo = info;
+        this.isChildRedraw = isChildRedraw;
 
         mWidth = info.clipRight - info.clipLeft;
         mHeight = info.clipBottom - info.clipTop;
@@ -136,15 +143,16 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
         }
 
         Preconditions.checkArgument(checkBlurSize(mWidth, mHeight), "Too large blur size, check width < 1800 and height < 3200");
-        //In order to provide cache for the next blur operation, call prepare() even when radius = 0.
-        //Otherwise, a black screen may appear
-        if (!prepare()) {
-            Log.e(TAG, "OpenGL runtime prepare error");
-            return;
-        }
+
         try {
+            //In order to provide cache for the next blur operation, call prepare() even when radius = 0.
+            //Otherwise, a black screen may appear
+            if (!prepare()) {
+                Log.e(TAG, "OpenGL runtime prepare error");
+                return;
+            }
+            selectDisplayTexture(isChildRedraw);
             if (mRadius > 0) {
-                copyTextureFromScreen(mInfo);
                 getTexMatrix(false);
                 drawOneDimenBlur(mMVPMatrix, mTexMatrix, true);
                 drawOneDimenBlur(mMVPMatrix, mTexMatrix, false);
@@ -195,7 +203,9 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
         //scissor test is enabled by default
         GLES20.glDisable(GLES20.GL_SCISSOR_TEST);
 
-        mDisplayTexture = TextureCache.getInstance().getTexture(mWidth, mHeight);
+        if (!isChildRedraw) {
+            mDisplayTexture = TextureCache.getInstance().getTexture(mWidth, mHeight);
+        }
         mHorizontalTexture = TextureCache.getInstance().getTexture(mScaleW, mScaleH);
         mVerticalTexture = TextureCache.getInstance().getTexture(mScaleW, mScaleH);
 
@@ -342,6 +352,25 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
         }
     }
 
+    private void selectDisplayTexture(boolean isChild) {
+        ITexture parent = mParentDisplayTexture;
+        ITexture current = mDisplayTexture;
+        if (!isChild) {
+            mParentDisplayTexture = null;
+            TextureCache.getInstance().recycleTexture(parent);
+            copyTextureFromScreen(mInfo);
+            mParentDisplayTexture = current;
+        } else {
+            Preconditions.checkArgument(parent != null
+                    && parent.width() == mWidth
+                    && parent.height() == mHeight, "The cached texture sizes do not match");
+
+            mDisplayTexture = null;
+            TextureCache.getInstance().recycleTexture(current);
+            mDisplayTexture = parent;
+        }
+    }
+
     private void copyTextureFromScreen(DrawFunctor.GLInfo info) {
         if (info != null && mDisplayTexture != null && mDisplayTexture.id() != 0) {
             GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
@@ -357,7 +386,7 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
         GLES20.glUseProgram(0);
 
-        TextureCache.getInstance().recycleTexture(mDisplayTexture);
+//        TextureCache.getInstance().recycleTexture(mDisplayTexture);
         TextureCache.getInstance().recycleTexture(mHorizontalTexture);
         TextureCache.getInstance().recycleTexture(mVerticalTexture);
 

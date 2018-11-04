@@ -158,12 +158,14 @@
         android:layout_width="300dp"
         android:layout_height="200dp"
         android:layout_marginTop="20dp"
+
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp">
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="?android:selectableItemBackground"
             android:text="动画"
             android:onClick="animate"/>
     </com.hoko.blur.view.BlurFrameLayout>

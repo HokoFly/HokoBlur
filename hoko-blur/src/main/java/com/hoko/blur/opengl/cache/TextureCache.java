@@ -19,7 +19,7 @@ public class TextureCache {
         mCache = new CachePool<Size, ITexture>() {
 
             @Override
-            protected Texture create(Size size) {
+            protected ITexture create(Size size) {
                 if (size == null) {
                     return null;
                 }

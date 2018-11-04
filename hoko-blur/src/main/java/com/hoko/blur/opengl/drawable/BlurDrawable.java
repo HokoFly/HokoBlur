@@ -33,8 +33,8 @@ public class BlurDrawable extends Drawable {
         mBlurRenderer = new ScreenBlurRenderer.Builder().build();
         mDrawFunctor = new DrawFunctor(new DrawFunctor.DrawLocationObserver() {
             @Override
-            public void onLocated(DrawFunctor.GLInfo info) {
-                mBlurRenderer.onDrawFrame(info);
+            public void onLocated(DrawFunctor.GLInfo info, boolean isChild) {
+                mBlurRenderer.onDrawFrame(info, isChild);
             }
 
             @Override
