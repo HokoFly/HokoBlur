@@ -1,7 +1,9 @@
 package com.hoko.blur.opengl.functor;
 
+import android.graphics.Color;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
+import android.support.annotation.ColorInt;
 import android.util.Log;
 
 import com.hoko.blur.HokoBlur;
@@ -13,6 +15,7 @@ import com.hoko.blur.api.ITexture;
 import com.hoko.blur.opengl.cache.FrameBufferCache;
 import com.hoko.blur.opengl.cache.TextureCache;
 import com.hoko.blur.opengl.program.ProgramFactory;
+import com.hoko.blur.util.ColorUtil;
 import com.hoko.blur.util.Preconditions;
 
 import java.nio.ByteBuffer;
@@ -60,6 +63,10 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
 
     private float mSampleFactor;
 
+    @ColorInt
+    private int mMixColor;
+    private float mMixPercent;
+
     private volatile boolean mNeedRelink = true;
     private DrawFunctor.GLInfo mInfo;
     private volatile boolean isChildRedraw;
@@ -98,6 +105,8 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
         mMode = builder.mode;
         mRadius = builder.radius;
         mSampleFactor = builder.sampleFactor;
+        mMixColor = builder.mixColor;
+        mMixPercent = builder.mixPercent;
 
         ByteBuffer bb = ByteBuffer.allocateDirect(squareCoords.length * 4);
         bb.order(ByteOrder.nativeOrder());
@@ -158,7 +167,7 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
                 drawOneDimenBlur(mMVPMatrix, mTexMatrix, true);
                 drawOneDimenBlur(mMVPMatrix, mTexMatrix, false);
                 getTexMatrix(true);
-                upscale(mScreenMVPMatrix, mTexMatrix);
+                upscaleWithMixColor(mScreenMVPMatrix, mTexMatrix);
             }
         } finally {
             onPostBlur();
@@ -203,6 +212,8 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
         GLES20.glClearColor(1f, 1f, 1f, 1f);
         //scissor test is enabled by default
         GLES20.glDisable(GLES20.GL_SCISSOR_TEST);
+        GLES20.glEnable(GLES20.GL_BLEND);   // 启用Alpha测试
+
 
         if (!isChildRedraw) {
             mDisplayTexture = TextureCache.getInstance().getTexture(mWidth, mHeight);
@@ -297,7 +308,7 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
     }
 
 
-    private void upscale(float[] mvpMatrix, float[] texMatrix) {
+    private void upscaleWithMixColor(float[] mvpMatrix, float[] texMatrix) {
         try {
             GLES20.glViewport(0, 0, mInfo.viewportWidth, mInfo.viewportHeight);
 
@@ -316,6 +327,12 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
             int texCoordId = GLES20.glGetAttribLocation(mCopyProgram.id(), "aTexCoord");
             GLES20.glEnableVertexAttribArray(texCoordId);
             GLES20.glVertexAttribPointer(texCoordId, 2, GLES20.GL_FLOAT, false, 0, mTexCoordBuffer);
+
+            int mixPercentId = GLES20.glGetUniformLocation(mCopyProgram.id(), "mixPercent");
+            GLES20.glUniform1f(mixPercentId, mMixPercent);
+
+            int mixColorId = GLES20.glGetUniformLocation(mCopyProgram.id(), "vMixColor");
+            GLES20.glUniform4fv(mixColorId, 1, ColorUtil.toRgbaFloatComponents(mMixColor), 0);
 
             mDisplayFrameBuffer.bindSelf();
 
@@ -389,7 +406,6 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
         GLES20.glUseProgram(0);
 
-//        TextureCache.getInstance().recycleTexture(mDisplayTexture);
         TextureCache.getInstance().recycleTexture(mHorizontalTexture);
         TextureCache.getInstance().recycleTexture(mVerticalTexture);
 
@@ -426,6 +442,14 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
         mSampleFactor = factor;
     }
 
+    public void mixColor(@ColorInt int mixColor) {
+        mMixColor = mixColor;
+    }
+
+    public void mixPercent(float mixPercent) {
+        mMixPercent = mixPercent;
+    }
+
     public int mode() {
         return mMode;
     }
@@ -438,12 +462,23 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
         return mSampleFactor;
     }
 
+    @ColorInt
+    public int mixColor() {
+        return mMixColor;
+    }
+
+    public float mixPercent() {
+        return mMixPercent;
+    }
 
     public static class Builder {
         @Mode
-        private int mode = HokoBlur.MODE_GAUSSIAN;
+        private int mode = HokoBlur.MODE_STACK;
         private int radius = 5;
         private float sampleFactor = 4.0f;
+        @ColorInt
+        private int mixColor = Color.TRANSPARENT;
+        private float mixPercent = 1.0f;
 
         public Builder() {
 
@@ -456,16 +491,31 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
             this.sampleFactor = screenRenderer.sampleFactor();
         }
 
-        public void mode(int mode) {
+        public Builder mode(int mode) {
             this.mode = mode;
+            return this;
         }
 
-        public void radius(int radius) {
+        public Builder radius(int radius) {
             this.radius = radius;
+            return this;
+
         }
 
-        public void sampleFactor(float sampleFactor) {
+        public Builder sampleFactor(float sampleFactor) {
             this.sampleFactor = sampleFactor;
+            return this;
+        }
+
+        public Builder mixColor(@ColorInt int mixColor) {
+            this.mixColor = mixColor;
+            return this;
+        }
+
+        public Builder mixPercent(float mixPercent) {
+            Preconditions.checkArgument(mixPercent <= 1.0f && mixPercent >= 0, "set 0 <= mixPercent <= 1.0f");
+            this.mixPercent = mixPercent;
+            return this;
         }
 
         public ScreenBlurRenderer build() {

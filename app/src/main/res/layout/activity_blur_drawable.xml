@@ -166,7 +166,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="?android:selectableItemBackground"
-            android:text="动画"
+            android:text="animation"
+            android:textAllCaps="false"
             android:onClick="animate"/>
     </com.hoko.blur.view.BlurFrameLayout>
 
@@ -178,5 +179,6 @@
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
         android:onClick="remove"
-        android:text="缩放"/>
+        android:textAllCaps="false"
+        android:text="resize"/>
 </FrameLayout>

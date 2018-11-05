@@ -8,10 +8,12 @@ import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.ColorInt;
 
 import com.hoko.blur.anno.Mode;
 import com.hoko.blur.opengl.functor.DrawFunctor;
 import com.hoko.blur.opengl.functor.ScreenBlurRenderer;
+import com.hoko.blur.util.Preconditions;
 
 /**
  * Created by yuxfzju on 16/11/23.
@@ -120,6 +122,19 @@ public class BlurDrawable extends Drawable {
         invalidateOnMainThread();
     }
 
+    public void mixColor(@ColorInt int mixColor) {
+        mBlurRenderer.mixColor(mixColor);
+        invalidateOnMainThread();
+
+    }
+
+    public void mixPercent(float mixPercent) {
+        Preconditions.checkArgument(mixPercent <= 1.0f && mixPercent >= 0, "set 0 <= mixPercent <= 1.0f");
+        mBlurRenderer.mixPercent(mixPercent);
+        invalidateOnMainThread();
+    }
+
+
     public int mode() {
         return mBlurRenderer.mode();
     }
@@ -130,6 +145,16 @@ public class BlurDrawable extends Drawable {
 
     public float sampleFactor() {
         return mBlurRenderer.sampleFactor();
+    }
+
+
+    @ColorInt
+    public int mixColor() {
+        return mBlurRenderer.mixColor();
+    }
+
+    public float mixPercent() {
+        return mBlurRenderer.mixPercent();
     }
 
     public void freeGLResource() {

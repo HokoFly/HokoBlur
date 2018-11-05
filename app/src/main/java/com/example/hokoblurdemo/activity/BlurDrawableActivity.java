@@ -2,6 +2,7 @@ package com.example.hokoblurdemo.activity;
 
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -24,6 +25,7 @@ public class BlurDrawableActivity extends Activity {
         mFrameLayout = (BlurFrameLayout) findViewById(R.id.blur_frameLayout);
 
         final BlurDrawable blurDrawable = new BlurDrawable();
+        blurDrawable.mixColor(Color.argb(99, 255, 255, 255));
         findViewById(R.id.test_view).setBackgroundDrawable(blurDrawable);
 
         mAnimator = ValueAnimator.ofInt(0, 20);
