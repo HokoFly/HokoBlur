@@ -26,7 +26,7 @@ public class ShaderUtil {
                 .append("varying vec2 vTexCoord;  \n")
                 .append("void main() {              \n")
                 .append("   gl_Position = uMVPMatrix * vec4(aPosition, 1); \n")
-                .append("   vTexCoord = (uTexMatrix * vec4(aTexCoord,0,1)).st;\n")
+                .append("   vTexCoord = (uTexMatrix * vec4(aTexCoord, 1, 1)).st;\n")
                 .append("}  \n");
 
         return sb.toString();

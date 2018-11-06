@@ -99,14 +99,6 @@ public class DrawFunctor {
 
     private void onDraw(final GLInfo info) {
 //        Log.i("DrawFunctor", "onDraw: " + info);
-        // FIX: transform computation caused by the margin
-        if (info.transform[12] < info.clipLeft) {
-            info.transform[12] = info.clipLeft;
-        }
-        if (info.transform[13] < info.clipTop) {
-            info.transform[13] = info.clipTop;
-        }
-
         boolean isChildRedraw;
         if (mParentGLInfo != null && mParentGLInfo.contains(info)) {
             isChildRedraw = true;

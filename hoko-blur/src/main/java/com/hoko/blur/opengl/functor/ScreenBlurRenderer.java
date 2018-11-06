@@ -45,13 +45,15 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
             0.0F, 0.0F, 0.0F, // top left
             1.0F, 0.0F, 0.0F, // bottom left
             0.0F, 1.0F, 0.0F, // bottom right
-            1.0F, 1.0F, 0.0F}; // top right
+            1.0F, 1.0F, 0.0F, // top right
+    };
 
     private static final float mTexHorizontalCoords[] = {
             0.0f, 0.0f,
             1.0f, 0.0f,
             0.0f, 1.0f,
-            1.0f, 1.0f};
+            1.0f, 1.0f
+    };
 
     private static final short drawOrder[] = {0, 1, 2, 2, 3, 1};
 
@@ -163,10 +165,8 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
             }
             selectDisplayTexture(isChildRedraw);
             if (mRadius > 0) {
-                getTexMatrix(false);
                 drawOneDimenBlur(mMVPMatrix, mTexMatrix, true);
                 drawOneDimenBlur(mMVPMatrix, mTexMatrix, false);
-                getTexMatrix(true);
                 upscaleWithMixColor(mScreenMVPMatrix, mTexMatrix);
             }
         } finally {
@@ -214,7 +214,6 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
         GLES20.glDisable(GLES20.GL_SCISSOR_TEST);
         GLES20.glEnable(GLES20.GL_BLEND);   // 启用Alpha测试
 
-
         if (!isChildRedraw) {
             mDisplayTexture = TextureCache.getInstance().getTexture(mWidth, mHeight);
         }
@@ -243,6 +242,8 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
      * scaled Width&Height               Identity       scaled Width&Height
      */
     private void initMVPMatrix(DrawFunctor.GLInfo info) {
+        Matrix.setIdentityM(mTexMatrix, 0);
+
         Matrix.setIdentityM(mModelMatrix, 0);
         Matrix.setIdentityM(mViewMatrix, 0);
         Matrix.setIdentityM(mProjMatrix, 0);
@@ -251,10 +252,11 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
         Matrix.multiplyMM(mMVPMatrix, 0, mViewMatrix, 0, mModelMatrix, 0);
         Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mMVPMatrix, 0);
 
-        System.arraycopy(info.transform, 0, mModelMatrix, 0, 16);
+        Matrix.setIdentityM(mModelMatrix, 0);
+        Matrix.translateM(mModelMatrix, 0, info.clipLeft, info.viewportHeight - info.clipBottom, 0);
         Matrix.scaleM(mModelMatrix, 0, mWidth, mHeight, 1f);
         Matrix.setIdentityM(mProjMatrix, 0);
-        Matrix.orthoM(mProjMatrix, 0, 0, info.viewportWidth, info.viewportHeight, 0, -100f, 100f);
+        Matrix.orthoM(mProjMatrix, 0, 0, info.viewportWidth, 0, info.viewportHeight, -100f, 100f);
         Matrix.multiplyMM(mScreenMVPMatrix, 0, mViewMatrix, 0, mModelMatrix, 0);
         Matrix.multiplyMM(mScreenMVPMatrix, 0, mProjMatrix, 0, mScreenMVPMatrix, 0);
     }
@@ -357,18 +359,6 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
         mDrawListBuffer.rewind();
     }
 
-
-    private void getTexMatrix(boolean flipY) {
-        Matrix.setIdentityM(mTexMatrix, 0);
-
-        if (flipY) {
-            Matrix.translateM(mTexMatrix, 0, 0, 1.0f, 0);
-            Matrix.scaleM(mTexMatrix, 0, 1.0f, -1.0f, 1.0F);
-        } else {
-            Matrix.translateM(mTexMatrix, 0, 0, 0, 0);
-            Matrix.scaleM(mTexMatrix, 0, 1.0f, 1.0f, 1.0F);
-        }
-    }
 
     private void selectDisplayTexture(boolean isChild) {
         ITexture parent = mParentDisplayTexture;
