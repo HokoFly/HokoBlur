@@ -69,19 +69,25 @@ public class DrawFunctor {
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
                 canvasClazz = Class.forName("android.view.DisplayListCanvas");
                 callDrawGLFunctionMethod = canvasClazz.getMethod("callDrawGLFunction2", long.class);
+                callDrawGLFunctionMethod.setAccessible(true);
+                callDrawGLFunctionMethod.invoke(canvas, mNativeFunctor);
             } else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP) {
                 canvasClazz = Class.forName("android.view.HardwareCanvas");
                 callDrawGLFunctionMethod = canvasClazz.getMethod("callDrawGLFunction", long.class);
+                callDrawGLFunctionMethod.setAccessible(true);
+                callDrawGLFunctionMethod.invoke(canvas, mNativeFunctor);
             } else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP_MR1) {
                 canvasClazz = Class.forName("android.view.HardwareCanvas");
                 callDrawGLFunctionMethod = canvasClazz.getMethod("callDrawGLFunction2", long.class);
+                callDrawGLFunctionMethod.setAccessible(true);
+                callDrawGLFunctionMethod.invoke(canvas, mNativeFunctor);
             } else {
                 canvasClazz = Class.forName("android.view.HardwareCanvas");
                 callDrawGLFunctionMethod = canvasClazz.getMethod("callDrawGLFunction", int.class);
+                callDrawGLFunctionMethod.setAccessible(true);
+                callDrawGLFunctionMethod.invoke(canvas, (int) mNativeFunctor);
             }
 
-            callDrawGLFunctionMethod.setAccessible(true);
-            callDrawGLFunctionMethod.invoke(canvas, mNativeFunctor);
             return true;
 
         } catch (Throwable t) {
@@ -100,7 +106,8 @@ public class DrawFunctor {
     private void onDraw(final GLInfo info) {
 //        Log.i("DrawFunctor", "onDraw: " + info);
         boolean isChildRedraw;
-        if (mParentGLInfo != null && mParentGLInfo.contains(info)) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT
+                && mParentGLInfo != null && mParentGLInfo.contains(info)) {
             isChildRedraw = true;
         } else {
             mParentGLInfo = info;
