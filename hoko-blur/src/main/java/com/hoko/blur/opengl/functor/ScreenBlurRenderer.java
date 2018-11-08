@@ -141,7 +141,7 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
     }
 
     public void onDrawFrame(DrawFunctor.GLInfo info, boolean isChildRedraw) {
-        mInfo = info;
+        mInfo = checkClipSize(info);
         this.isChildRedraw = isChildRedraw;
 
         mWidth = info.clipRight - info.clipLeft;
@@ -186,6 +186,15 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
 
     private boolean checkBlurSize(int width, int height) {
         return width <= 1800 && height <= 3200;
+    }
+    private DrawFunctor.GLInfo checkClipSize(DrawFunctor.GLInfo info) {
+        if (info.viewportHeight != 0 && (info.clipBottom - info.clipTop >= info.viewportHeight)) {
+            info.clipTop = info.clipTop + 1;
+        }
+        if (info.viewportWidth != 0 && (info.clipRight - info.clipLeft >= info.viewportWidth)) {
+            info.clipLeft = info.clipLeft + 1;
+        }
+        return info;
     }
 
     private boolean prepare() {
