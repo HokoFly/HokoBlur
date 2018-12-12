@@ -21,7 +21,6 @@ import android.widget.TextView;
 
 import com.example.hokoblurdemo.R;
 import com.hoko.blur.HokoBlur;
-import com.hoko.blur.api.IBlurProcessor;
 import com.hoko.blur.processor.BlurProcessor;
 
 public class MultiBlurActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener, SeekBar.OnSeekBarChangeListener {
@@ -168,23 +167,30 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
         final int spinnerId = parent.getId();
         if (spinnerId == R.id.scheme_spinner) {
             switch (position) {
-                case 0: mBlurBuilder.scheme(HokoBlur.SCHEME_RENDER_SCRIPT);
+                case 0:
+                    mBlurBuilder.scheme(HokoBlur.SCHEME_RENDER_SCRIPT);
                     break;
-                case 1: mBlurBuilder.scheme(HokoBlur.SCHEME_OPENGL);
+                case 1:
+                    mBlurBuilder.scheme(HokoBlur.SCHEME_OPENGL);
                     break;
-                case 2: mBlurBuilder.scheme(HokoBlur.SCHEME_NATIVE);
+                case 2:
+                    mBlurBuilder.scheme(HokoBlur.SCHEME_NATIVE);
                     break;
-                case 3: mBlurBuilder.scheme(HokoBlur.SCHEME_JAVA);
+                case 3:
+                    mBlurBuilder.scheme(HokoBlur.SCHEME_JAVA);
                     break;
             }
 
         } else if (spinnerId == R.id.mode_spinner) {
             switch (position) {
-                case 0: mBlurBuilder.mode(HokoBlur.MODE_GAUSSIAN);
+                case 0:
+                    mBlurBuilder.mode(HokoBlur.MODE_GAUSSIAN);
                     break;
-                case 1: mBlurBuilder.mode(HokoBlur.MODE_STACK);
+                case 1:
+                    mBlurBuilder.mode(HokoBlur.MODE_STACK);
                     break;
-                case 2: mBlurBuilder.mode(HokoBlur.MODE_BOX);
+                case 2:
+                    mBlurBuilder.mode(HokoBlur.MODE_BOX);
                     break;
             }
 
@@ -233,7 +239,6 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
                 }
                 break;
         }
-
 
 
     }

@@ -16,4 +16,5 @@ import static com.hoko.blur.HokoBlur.SCHEME_RENDER_SCRIPT;
 
 @IntDef({SCHEME_RENDER_SCRIPT, SCHEME_OPENGL, SCHEME_NATIVE, SCHEME_JAVA})
 @Retention(RetentionPolicy.SOURCE)
-public @interface Scheme {}
+public @interface Scheme {
+}

@@ -5,7 +5,6 @@ import android.opengl.Matrix;
 import android.os.Build;
 import android.util.Log;
 
-
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.util.Arrays;

@@ -4,7 +4,6 @@ import android.opengl.GLES20;
 
 import com.hoko.blur.api.IFrameBuffer;
 import com.hoko.blur.api.ITexture;
-import com.hoko.blur.opengl.texture.Texture;
 
 /**
  * Created by yuxfzju on 2017/1/22.

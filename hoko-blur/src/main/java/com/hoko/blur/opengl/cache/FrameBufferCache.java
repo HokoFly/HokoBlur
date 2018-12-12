@@ -1,7 +1,7 @@
 package com.hoko.blur.opengl.cache;
 
-import com.hoko.blur.opengl.framebuffer.FrameBufferFactory;
 import com.hoko.blur.api.IFrameBuffer;
+import com.hoko.blur.opengl.framebuffer.FrameBufferFactory;
 
 /**
  * Created by yuxfzju on 2017/1/21.

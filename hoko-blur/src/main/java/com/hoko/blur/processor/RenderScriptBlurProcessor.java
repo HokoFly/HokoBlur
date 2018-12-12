@@ -60,12 +60,13 @@ class RenderScriptBlurProcessor extends BlurProcessor {
 
     /**
      * RenderScript built-in parallel implementation
+     *
      * @param scaledInBitmap
      * @param concurrent
      * @return
      */
     @Override
-    protected Bitmap doInnerBlur(Bitmap scaledInBitmap,  boolean concurrent) {
+    protected Bitmap doInnerBlur(Bitmap scaledInBitmap, boolean concurrent) {
         Preconditions.checkNotNull(scaledInBitmap, "scaledInBitmap == null");
 
         if (!rsRuntimeInited) {

@@ -10,7 +10,6 @@ import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 
 import com.hoko.blur.HokoBlur;
-import com.hoko.blur.api.IBlurProcessor;
 import com.hoko.blur.processor.BlurProcessor;
 
 /**

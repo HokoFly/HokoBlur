@@ -13,7 +13,7 @@ import com.example.hokoblurdemo.R;
 import com.hoko.blur.opengl.drawable.BlurDrawable;
 import com.hoko.blur.view.BlurLinearLayout;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Button mMultiBlurBtn;
     private Button mDynamicBtn;

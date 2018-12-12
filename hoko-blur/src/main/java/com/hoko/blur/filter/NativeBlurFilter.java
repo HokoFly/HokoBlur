@@ -35,7 +35,9 @@ public class NativeBlurFilter {
     }
 
     private static native void nativeBoxBlur(Bitmap bitmap, int radius, int cores, int index, int direction);
+
     private static native void nativeStackBlur(Bitmap bitmap, int radius, int cores, int index, int direction);
+
     private static native void nativeGaussianBlur(Bitmap bitmap, int radius, int cores, int index, int direction);
 
 }

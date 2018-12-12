@@ -10,7 +10,7 @@ import com.hoko.blur.opengl.drawable.BlurDrawable;
 /**
  * Created by yuxfzju on 16/11/9.
  */
-public class BlurFrameLayout extends FrameLayout{
+public class BlurFrameLayout extends FrameLayout {
     private BlurDrawable mBlurDrawable;
 
     public BlurFrameLayout(Context context) {

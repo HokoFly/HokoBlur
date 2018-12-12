@@ -10,7 +10,7 @@ public class ColorUtil {
         int g = Color.green(color);
         int b = Color.blue(color);
         int a = Color.alpha(color);
-        return new float[] {
+        return new float[]{
                 r / 255f,
                 g / 255f,
                 b / 255f,

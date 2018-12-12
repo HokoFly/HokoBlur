@@ -4,9 +4,9 @@ import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.hoko.blur.HokoBlur;
+import com.hoko.blur.filter.NativeBlurFilter;
 import com.hoko.blur.task.BlurSubTask;
 import com.hoko.blur.task.BlurTaskManager;
-import com.hoko.blur.filter.NativeBlurFilter;
 import com.hoko.blur.util.Preconditions;
 
 import java.util.ArrayList;

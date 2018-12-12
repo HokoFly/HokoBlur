@@ -14,7 +14,7 @@ import com.example.hokoblurdemo.opengl.textureview.GLRenderThread;
 import com.example.hokoblurdemo.opengl.textureview.TextureViewRenderer;
 
 
-public class TextureViewActivity extends AppCompatActivity implements TextureView.SurfaceTextureListener{
+public class TextureViewActivity extends AppCompatActivity implements TextureView.SurfaceTextureListener {
 
     private TextureView mTextureView;
     private TextureViewRenderer mGLRenderer;
@@ -44,7 +44,7 @@ public class TextureViewActivity extends AppCompatActivity implements TextureVie
         options.inScaled = false;   // No pre-scaling
         mBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.sample5, options);
 
-        if(mTextureView.isAvailable()) {
+        if (mTextureView.isAvailable()) {
             onSurfaceTextureAvailable(mTextureView.getSurfaceTexture(), mTextureView.getWidth(), mTextureView.getHeight());
         }
 

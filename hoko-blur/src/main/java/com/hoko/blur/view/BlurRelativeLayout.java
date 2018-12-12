@@ -3,7 +3,6 @@ package com.hoko.blur.view;
 import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.hoko.blur.opengl.drawable.BlurDrawable;
@@ -11,7 +10,7 @@ import com.hoko.blur.opengl.drawable.BlurDrawable;
 /**
  * Created by yuxfzju on 16/11/9.
  */
-public class BlurRelativeLayout extends RelativeLayout{
+public class BlurRelativeLayout extends RelativeLayout {
     private BlurDrawable mBlurDrawable;
 
     public BlurRelativeLayout(Context context) {

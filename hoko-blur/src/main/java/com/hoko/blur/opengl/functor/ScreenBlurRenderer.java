@@ -187,6 +187,7 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
     private boolean checkBlurSize(int width, int height) {
         return width <= 1800 && height <= 3200;
     }
+
     private DrawFunctor.GLInfo checkClipSize(DrawFunctor.GLInfo info) {
         if (info.viewportHeight != 0 && (info.clipBottom - info.clipTop >= info.viewportHeight)) {
             info.clipTop = info.clipTop + 1;

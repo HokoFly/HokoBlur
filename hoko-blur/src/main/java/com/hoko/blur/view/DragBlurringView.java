@@ -137,5 +137,4 @@ public class DragBlurringView extends View {
     }
 
 
-
 }

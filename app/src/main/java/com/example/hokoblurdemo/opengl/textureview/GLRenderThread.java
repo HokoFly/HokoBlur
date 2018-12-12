@@ -51,11 +51,11 @@ public class GLRenderThread extends Thread {
 
         mEGLDisplay = mEgl.eglGetDisplay(EGL10.EGL_DEFAULT_DISPLAY);
 
-        int []version = new int[2];
+        int[] version = new int[2];
 
         mEgl.eglInitialize(mEGLDisplay, version);
 
-        int []configAttribs = {
+        int[] configAttribs = {
                 EGL10.EGL_BUFFER_SIZE, 32,
                 EGL10.EGL_ALPHA_SIZE, 8,
                 EGL10.EGL_BLUE_SIZE, 8,
@@ -66,13 +66,13 @@ public class GLRenderThread extends Thread {
                 EGL10.EGL_NONE
         };
 
-        int []numConfigs = new int[1];
+        int[] numConfigs = new int[1];
 
         mEglConfigs = new EGLConfig[1];
 
         mEgl.eglChooseConfig(mEGLDisplay, configAttribs, mEglConfigs, 1, numConfigs);
 
-        int []contextAttribs = {
+        int[] contextAttribs = {
                 EGL_CONTEXT_CLIENT_VERSION, 2,
                 EGL10.EGL_NONE
         };
@@ -94,13 +94,13 @@ public class GLRenderThread extends Thread {
     public void run() {
         mEgl.eglMakeCurrent(mEGLDisplay, mEGLSurface, mEGLSurface, mEGLContext);
 
-        while(mRunDraw) {
+        while (mRunDraw) {
 
             mGLRenderer.onDrawFrame(mBitmap);
             mEgl.eglSwapBuffers(mEGLDisplay, mEGLSurface);
             try {
                 sleep(5);
-            } catch(InterruptedException e) {
+            } catch (InterruptedException e) {
 
             }
         }

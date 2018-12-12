@@ -165,7 +165,7 @@ public abstract class BlurProcessor implements IBlurProcessor {
         @Mode
         private int mMode = HokoBlur.MODE_STACK;
         @Scheme
-        private int mScheme =  HokoBlur.SCHEME_NATIVE;
+        private int mScheme = HokoBlur.SCHEME_NATIVE;
         private int mRadius = 5;
         private float mSampleFactor = 5.0f;
         private boolean mIsForceCopy = false;
@@ -231,6 +231,7 @@ public abstract class BlurProcessor implements IBlurProcessor {
             mTranslateX = translateX;
             return this;
         }
+
         public Builder translateY(int translateY) {
             mTranslateY = translateY;
             return this;

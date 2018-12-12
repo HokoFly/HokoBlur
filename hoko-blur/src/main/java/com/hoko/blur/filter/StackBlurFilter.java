@@ -4,20 +4,20 @@ import com.hoko.blur.HokoBlur;
 import com.hoko.blur.anno.Direction;
 
 /**
- *  Stack HokoBlur v1.0 from
+ * Stack HokoBlur v1.0 from
  * http://www.quasimondo.com/StackBlurForCanvas/StackBlurDemo.html
- *
+ * <p>
  * Java Author: Mario Klingemann <a href="mailto:mario@quasimondo.com">mario@quasimondo.com</a>
  * http://incubator.quasimondo.com
  * created Feburary 29, 2004
  * Android port : Yahel Bouaziz  <a href="mailto:yahel@kayenko.com">yahel@kayenko.com</a>
  * http://www.kayenko.com
  * ported april 5th, 2012
- *
+ * <p>
  * This is a compromise between Gaussian HokoBlur and Box blur
  * It creates much better looking blurs than Box HokoBlur, but is
  * 7x faster than my Gaussian HokoBlur implementation.
- *
+ * <p>
  * I called it Stack HokoBlur because this describes best how this
  * filter works internally: it creates a kind of moving stack
  * of colors whilst scanning through the image. Thereby it
@@ -26,10 +26,10 @@ import com.hoko.blur.anno.Direction;
  * colors on the topmost layer of the stack are either added on
  * or reduced by one, depending on if they are on the right or
  * on the left side of the stack.
- *
+ * <p>
  * If you are using this algorithm in your code please add
  * the following line:
- *
+ * <p>
  * Stack HokoBlur Algorithm by Mario Klingemann  <a href="mailto:mario@quasimondo.com">mario@quasimondo.com</a>
  **/
 final class StackBlurFilter {

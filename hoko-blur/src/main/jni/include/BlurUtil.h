@@ -13,7 +13,7 @@
 extern "C" {
 #endif
 
-enum Direction{
+enum Direction {
     HORIZONTAL,
     VERTICAL,
     BOTH
@@ -22,8 +22,8 @@ enum Direction{
 jint clamp(jint i, jint minValue, jint maxValue);
 
 JNIEXPORT void JNICALL
-        Java_com_hoko_blur_util_BitmapUtil_replaceBitmap(JNIEnv *env, jclass type, jobject bitmap,
-                                                         jintArray j_inArray, jint, jint, jint, jint);
+Java_com_hoko_blur_util_BitmapUtil_replaceBitmap(JNIEnv *env, jclass type, jobject bitmap,
+                                                 jintArray j_inArray, jint, jint, jint, jint);
 
 #ifdef __cplusplus
 }

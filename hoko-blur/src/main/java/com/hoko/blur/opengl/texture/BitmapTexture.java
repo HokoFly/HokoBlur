@@ -25,7 +25,7 @@ public class BitmapTexture extends Texture {
 
     @Override
     protected void onTextureCreated() {
-        if (width() != 0 && height() != 0 && mBitmapWeakRef != null ) {
+        if (width() != 0 && height() != 0 && mBitmapWeakRef != null) {
             Bitmap bitmap = mBitmapWeakRef.get();
 
             if (bitmap != null && !bitmap.isRecycled()) {

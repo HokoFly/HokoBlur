@@ -11,6 +11,7 @@ class BlurResultDeliveryRunnable implements Runnable {
     BlurResultDeliveryRunnable(BlurResult result) {
         mResult = result;
     }
+
     @Override
     public void run() {
         if (mResult != null) {

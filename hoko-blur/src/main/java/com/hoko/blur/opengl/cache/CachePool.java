@@ -88,7 +88,7 @@ public abstract class CachePool<K, V> {
     protected abstract boolean checkHit(K a, V b);
 
     private void trimToSize(int maxSize) {
-        while(true) {
+        while (true) {
             synchronized (this) {
                 if (mList.size() <= maxSize || mList.isEmpty()) {
                     break;
@@ -108,7 +108,7 @@ public abstract class CachePool<K, V> {
     }
 
     public final void evictAll() {
-       trimToSize(-1);
+        trimToSize(-1);
     }
 
 }

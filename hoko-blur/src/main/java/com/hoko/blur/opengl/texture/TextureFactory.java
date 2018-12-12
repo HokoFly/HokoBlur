@@ -2,7 +2,6 @@ package com.hoko.blur.opengl.texture;
 
 import android.graphics.Bitmap;
 
-import com.hoko.blur.api.ITexture;
 import com.hoko.blur.util.Preconditions;
 
 /**

@@ -4,7 +4,7 @@ project(Hoko_blur)
 set(CMAKE_CXX_STANDARD 11)
 
 include_directories(
-    ${CMAKE_SOURCE_DIR}/include
+        ${CMAKE_SOURCE_DIR}/include
 )
 
 add_compile_options(-fPIC)

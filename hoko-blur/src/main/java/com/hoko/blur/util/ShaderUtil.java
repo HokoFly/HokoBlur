@@ -88,7 +88,6 @@ public class ShaderUtil {
     }
 
 
-
     /**
      * If set kernel weight array in advance, the GPU registers have no enough space.
      * So compute the weight in the code directly.
@@ -184,7 +183,7 @@ public class ShaderUtil {
         StringBuilder sb = new StringBuilder("  vec2 offsets[" + d + "]; \n");
 
         for (int i = -radius; i <= radius; i++) {
-                sb.append("  offsets[")
+            sb.append("  offsets[")
                     .append(i + radius)
                     .append("] = vec2(")
                     .append(i)
@@ -243,7 +242,6 @@ public class ShaderUtil {
 //
 //        return sb.toString().replace("KERNEL_SIZE", d + "");
 //    }
-
 
 
 }

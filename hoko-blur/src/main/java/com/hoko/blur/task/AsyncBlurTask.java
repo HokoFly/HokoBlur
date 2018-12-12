@@ -5,7 +5,6 @@ import android.view.View;
 
 import com.hoko.blur.api.IBlurProcessor;
 import com.hoko.blur.api.IBlurResultDispatcher;
-import com.hoko.blur.util.SingleMainHandler;
 
 import static com.hoko.blur.task.AndroidBlurResultDispatcher.MAIN_THREAD_DISPATCHER;
 
@@ -33,7 +32,7 @@ public class AsyncBlurTask implements Runnable {
     }
 
     public AsyncBlurTask(IBlurProcessor processor, View view, Callback callback) {
-        this(processor, (Bitmap)null, callback);
+        this(processor, (Bitmap) null, callback);
         mView = view;
     }
 

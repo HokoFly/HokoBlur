@@ -2,13 +2,13 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
-    android:layout_width="match_parent"
-    >
+    android:layout_width="match_parent">
+
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@mipmap/sample6"
-        android:scaleType="centerCrop"/>
+        android:scaleType="centerCrop" />
 
     <com.hoko.blur.view.BlurLinearLayout
         android:layout_width="match_parent"
@@ -27,34 +27,35 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAllCaps="false"
-            android:text="@string/blur_algorithm"/>
+            android:text="@string/blur_algorithm" />
 
         <Button
             android:id="@+id/dynamic_blur"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAllCaps="false"
-            android:text="@string/dynamic_blur"/>
+            android:text="@string/dynamic_blur" />
+
         <Button
             android:id="@+id/layout_blur"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAllCaps="false"
-            android:text="@string/layout_blur"/>
+            android:text="@string/layout_blur" />
 
         <Button
             android:id="@+id/drawable_blur"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAllCaps="false"
-            android:text="@string/drawable_blur"/>
+            android:text="@string/drawable_blur" />
 
         <Button
             android:id="@+id/easy_blur"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAllCaps="false"
-            android:text="@string/blur_effect_maker"/>
+            android:text="@string/blur_effect_maker" />
 
     </com.hoko.blur.view.BlurLinearLayout>
 

@@ -20,6 +20,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="Get Bitmap"/>
+        android:text="Get Bitmap" />
 
 </LinearLayout>

@@ -33,7 +33,7 @@ public final class OriginBlurFilter {
             }
 
             deltaX = w;
-        } else if (direction == HokoBlur.VERTICAL){
+        } else if (direction == HokoBlur.VERTICAL) {
             deltaX = w / cores;
             x = index * deltaX;
 

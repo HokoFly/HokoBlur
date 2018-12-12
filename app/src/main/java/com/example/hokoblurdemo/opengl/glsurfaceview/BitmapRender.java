@@ -16,7 +16,7 @@ import javax.microedition.khronos.opengles.GL10;
 /**
  * Created by yuxfzju on 16/8/10.
  */
-public class BitmapRender implements GLSurfaceView.Renderer{
+public class BitmapRender implements GLSurfaceView.Renderer {
 
 
     private float[] mVMatrix = new float[16];

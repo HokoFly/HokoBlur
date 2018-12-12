@@ -39,7 +39,7 @@ public class Program implements IProgram {
                 checkGLError("Attach Shader");
                 final int[] linkStatus = new int[1];
                 GLES20.glGetProgramiv(id, GLES20.GL_LINK_STATUS, linkStatus, 0);
-                if (linkStatus[0] != 1)  {
+                if (linkStatus[0] != 1) {
                     Log.e(TAG, "Failed to link program");
                     GLES20.glDeleteProgram(id);
                     id = 0;

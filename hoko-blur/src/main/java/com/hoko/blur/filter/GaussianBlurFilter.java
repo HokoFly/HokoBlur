@@ -65,6 +65,7 @@ final class GaussianBlurFilter {
             }
         }
     }
+
     private static void gaussianBlurVertical(float[] kernel, int[] inPixels, int[] outPixels, int width, int height) {
         int cols = kernel.length;
         int cols2 = cols / 2;

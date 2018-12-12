@@ -6,8 +6,8 @@ import com.hoko.blur.HokoBlur;
 import com.hoko.blur.anno.Direction;
 import com.hoko.blur.anno.Mode;
 import com.hoko.blur.anno.Scheme;
-import com.hoko.blur.filter.OriginBlurFilter;
 import com.hoko.blur.filter.NativeBlurFilter;
+import com.hoko.blur.filter.OriginBlurFilter;
 import com.hoko.blur.util.Preconditions;
 
 import java.util.concurrent.Callable;
@@ -15,7 +15,7 @@ import java.util.concurrent.Callable;
 /**
  * Every bitmap blur sub task only process a partition of bitmap.
  * Just blur a bitmap in parallel
- *
+ * <p>
  * Created by yuxfzju on 2017/2/17.
  */
 

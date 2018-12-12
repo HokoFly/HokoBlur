@@ -1,7 +1,7 @@
 package com.example.hokoblurdemo.activity;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
 import com.example.hokoblurdemo.R;
 import com.example.hokoblurdemo.opengl.glsurfaceview.BlurGLSurfaceView;

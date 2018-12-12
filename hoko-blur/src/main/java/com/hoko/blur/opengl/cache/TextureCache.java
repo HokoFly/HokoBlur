@@ -1,7 +1,6 @@
 package com.hoko.blur.opengl.cache;
 
 import com.hoko.blur.api.ITexture;
-import com.hoko.blur.opengl.texture.Texture;
 import com.hoko.blur.opengl.texture.TextureFactory;
 import com.hoko.blur.opengl.util.Size;
 

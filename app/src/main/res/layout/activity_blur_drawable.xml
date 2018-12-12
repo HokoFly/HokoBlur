@@ -24,49 +24,56 @@
                 android:layout_height="150dp"
                 android:src="@mipmap/cat"
                 android:scaleType="fitXY"
-                android:layout_marginBottom="10dp"/>
+                android:layout_marginBottom="10dp" />
+
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
                 android:src="@mipmap/cat"
                 android:scaleType="fitXY"
-                android:layout_marginBottom="10dp"/>
+                android:layout_marginBottom="10dp" />
+
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
                 android:src="@mipmap/cat"
                 android:scaleType="fitXY"
-                android:layout_marginBottom="10dp"/>
+                android:layout_marginBottom="10dp" />
+
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
                 android:src="@mipmap/cat"
                 android:scaleType="fitXY"
-                android:layout_marginBottom="10dp"/>
+                android:layout_marginBottom="10dp" />
+
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
                 android:src="@mipmap/cat"
                 android:scaleType="fitXY"
-                android:layout_marginBottom="10dp"/>
+                android:layout_marginBottom="10dp" />
+
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
                 android:src="@mipmap/cat"
                 android:scaleType="fitXY"
-                android:layout_marginBottom="10dp"/>
+                android:layout_marginBottom="10dp" />
+
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
                 android:src="@mipmap/cat"
                 android:scaleType="fitXY"
-                android:layout_marginBottom="10dp"/>
+                android:layout_marginBottom="10dp" />
+
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
                 android:src="@mipmap/cat"
                 android:scaleType="fitXY"
-                android:layout_marginBottom="10dp"/>
+                android:layout_marginBottom="10dp" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -76,7 +83,8 @@
                 android:text="0"
                 android:gravity="center"
                 android:textSize="30dp"
-                android:background="#ff0000"/>
+                android:background="#ff0000" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
@@ -85,7 +93,8 @@
                 android:text="1"
                 android:gravity="center"
                 android:textSize="30dp"
-                android:background="#9479af"/>
+                android:background="#9479af" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
@@ -94,7 +103,8 @@
                 android:text="2"
                 android:gravity="center"
                 android:textSize="30dp"
-                android:background="#ccaf65"/>
+                android:background="#ccaf65" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
@@ -103,7 +113,8 @@
                 android:text="3"
                 android:gravity="center"
                 android:textSize="30dp"
-                android:background="#83b96a"/>
+                android:background="#83b96a" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
@@ -112,7 +123,8 @@
                 android:text="4"
                 android:gravity="center"
                 android:textSize="30dp"
-                android:background="#3fc285"/>
+                android:background="#3fc285" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
@@ -121,7 +133,8 @@
                 android:text="5"
                 android:gravity="center"
                 android:textSize="30dp"
-                android:background="#64a4d9"/>
+                android:background="#64a4d9" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
@@ -130,7 +143,8 @@
                 android:text="6"
                 android:gravity="center"
                 android:textSize="30dp"
-                android:background="#8053ae"/>
+                android:background="#8053ae" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
@@ -139,7 +153,8 @@
                 android:text="7"
                 android:gravity="center"
                 android:textSize="30dp"
-                android:background="#6c6a6c"/>
+                android:background="#6c6a6c" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
@@ -148,7 +163,7 @@
                 android:text="8"
                 android:gravity="center"
                 android:textSize="30dp"
-                android:background="#ffffff"/>
+                android:background="#ffffff" />
 
         </LinearLayout>
     </ScrollView>
@@ -169,7 +184,7 @@
             android:layout_marginLeft="50dp"
             android:text="animation"
             android:textAllCaps="false"
-            android:onClick="animate"/>
+            android:onClick="animate" />
     </com.hoko.blur.view.BlurFrameLayout>
 
     <Button
@@ -181,5 +196,5 @@
         android:layout_marginRight="30dp"
         android:onClick="remove"
         android:textAllCaps="false"
-        android:text="resize"/>
+        android:text="resize" />
 </FrameLayout>

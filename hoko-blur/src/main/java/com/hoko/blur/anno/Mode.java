@@ -15,4 +15,5 @@ import static com.hoko.blur.HokoBlur.MODE_STACK;
 
 @IntDef({MODE_BOX, MODE_GAUSSIAN, MODE_STACK})
 @Retention(RetentionPolicy.SOURCE)
-public @interface Mode {}
+public @interface Mode {
+}

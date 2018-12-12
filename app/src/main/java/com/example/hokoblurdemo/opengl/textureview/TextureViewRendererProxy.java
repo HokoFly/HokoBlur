@@ -16,16 +16,16 @@ public class TextureViewRendererProxy {
 
     private final String vertexShaderCode =
             "uniform mat4 uMVPMatrix;   \n" +
-            "attribute vec2 aTexCoord;   \n" +
-            "attribute vec4 aPosition;  \n" +
-            "varying vec2 vTexCoord;  \n" +
-            "void main() {              \n" +
-            "  gl_Position = uMVPMatrix * aPosition; \n" +
-            "  vTexCoord = aTexCoord; \n" +
-            "}  \n";
+                    "attribute vec2 aTexCoord;   \n" +
+                    "attribute vec4 aPosition;  \n" +
+                    "varying vec2 vTexCoord;  \n" +
+                    "void main() {              \n" +
+                    "  gl_Position = uMVPMatrix * aPosition; \n" +
+                    "  vTexCoord = aTexCoord; \n" +
+                    "}  \n";
 
     private final String fragmentShaderCode =
-                    "precision mediump float;   \n" +
+            "precision mediump float;   \n" +
                     "uniform vec4 vColor;   \n" +
                     "varying vec2 vTexCoord;   \n" +
                     "uniform sampler2D uTexture;   \n" +
@@ -81,14 +81,14 @@ public class TextureViewRendererProxy {
     private float squareCoords[];
 
     private static float texCoords[] = {
-        1.0f, 0.0f,
-        1.0f, 1.0f,
-        0.0f, 1.0f,
-        0.0f, 0.0f};
+            1.0f, 0.0f,
+            1.0f, 1.0f,
+            0.0f, 1.0f,
+            0.0f, 0.0f};
 
-    private short drawOrder[] = { 0, 1, 2, 0, 2, 3 };
+    private short drawOrder[] = {0, 1, 2, 0, 2, 3};
 
-    private float fragmentColor[] = {00.2f, 0.709803922f, 0.898039216f, 1.0f };
+    private float fragmentColor[] = {00.2f, 0.709803922f, 0.898039216f, 1.0f};
 
     private int mVertexShader;
     private int mFragmentShader;
@@ -144,18 +144,18 @@ public class TextureViewRendererProxy {
         if (mWidth < mHeight) {
             final float ratio = (float) mWidth / mHeight;
             squareCoords = new float[]{
-                -ratio / 2,  0.5f, 0.0f,   // top left
-                -ratio / 2, -0.5f, 0.0f,   // bottom left
-                ratio / 2, -0.5f, 0.0f,   // bottom right
-                ratio / 2,  0.5f, 0.0f // top right
+                    -ratio / 2, 0.5f, 0.0f,   // top left
+                    -ratio / 2, -0.5f, 0.0f,   // bottom left
+                    ratio / 2, -0.5f, 0.0f,   // bottom right
+                    ratio / 2, 0.5f, 0.0f // top right
             };
         } else {
             final float ratio = (float) mHeight / mWidth;
-            squareCoords = new float[] {
-                -0.5f, ratio / 2, 0.0f,
-                -0.5f, -ratio / 2, 0.0f,
-                0.5f, -ratio / 2, 0.0f,
-                0.5f, ratio / 2, 0.0f
+            squareCoords = new float[]{
+                    -0.5f, ratio / 2, 0.0f,
+                    -0.5f, -ratio / 2, 0.0f,
+                    0.5f, -ratio / 2, 0.0f,
+                    0.5f, ratio / 2, 0.0f
             };
         }
 
