@@ -8,9 +8,9 @@ import com.hoko.blur.anno.Mode;
 import com.hoko.blur.api.IFrameBuffer;
 import com.hoko.blur.api.IProgram;
 import com.hoko.blur.api.IRenderer;
+import com.hoko.blur.api.ITexture;
 import com.hoko.blur.opengl.cache.FrameBufferCache;
 import com.hoko.blur.opengl.program.ProgramFactory;
-import com.hoko.blur.opengl.texture.Texture;
 import com.hoko.blur.opengl.texture.TextureFactory;
 import com.hoko.blur.util.ShaderUtil;
 
@@ -62,8 +62,8 @@ public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
 
     private IProgram mProgram;
 
-    private Texture mHorizontalTexture;
-    private Texture mInputTexture;
+    private ITexture mHorizontalTexture;
+    private ITexture mInputTexture;
 
     private IFrameBuffer mBlurFrameBuffer;
 

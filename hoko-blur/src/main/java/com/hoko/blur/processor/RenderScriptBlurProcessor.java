@@ -13,7 +13,7 @@ import com.hoko.blur.HokoBlur;
 import com.hoko.blur.renderscript.ScriptC_BoxblurHorizontal;
 import com.hoko.blur.renderscript.ScriptC_BoxblurVertical;
 import com.hoko.blur.renderscript.ScriptC_Stackblur;
-import com.hoko.blur.util.BlurUtil;
+import com.hoko.blur.util.MathUtil;
 import com.hoko.blur.util.Preconditions;
 
 /**
@@ -126,7 +126,7 @@ class RenderScriptBlurProcessor extends BlurProcessor {
             throw new IllegalStateException("The blur script is unavailable");
         }
         // RenderScript won't work, if too large blur radius
-        mRadius = BlurUtil.clampRadius(mRadius, RS_MAX_RADIUS);
+        mRadius = MathUtil.clamp(mRadius, 0, RS_MAX_RADIUS);
         mGaussianBlurScirpt.setRadius(mRadius);
 //        mAllocationIn.copyFrom(input);
         mGaussianBlurScirpt.setInput(mAllocationIn);

@@ -4,7 +4,7 @@ package com.hoko.blur.util;
  * Created by yuxfzju on 2017/2/3.
  */
 
-public class BlurUtil {
+public class MathUtil {
     public static int clamp(int i, int minValue, int maxValue) {
         if (i < minValue) {
             return minValue;
@@ -14,9 +14,4 @@ public class BlurUtil {
             return i;
         }
     }
-
-    public static int clampRadius(int radius, int max) {
-        return clamp(radius, 0, max);
-    }
-
 }

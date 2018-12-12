@@ -3,7 +3,7 @@ package com.hoko.blur.filter;
 import com.hoko.blur.HokoBlur;
 import com.hoko.blur.anno.Direction;
 
-import static com.hoko.blur.util.BlurUtil.clamp;
+import static com.hoko.blur.util.MathUtil.clamp;
 
 /**
  * Created by yuxfzju on 16/9/10.
