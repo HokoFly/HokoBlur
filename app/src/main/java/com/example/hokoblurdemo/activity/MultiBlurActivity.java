@@ -23,6 +23,10 @@ import com.example.hokoblurdemo.R;
 import com.hoko.blur.HokoBlur;
 import com.hoko.blur.processor.BlurProcessor;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class MultiBlurActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
     private static final float SAMPLE_FACTOR = 8.0f;
@@ -52,13 +56,13 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
 
     private Bitmap mInBitmap;
 
-    private BlurTask mLatestTask;
-
     private int mRadius = INIT_RADIUS;
 
     private ValueAnimator mAnimator;
 
     private boolean mIsBlurAnimating;
+
+    private Map<BlurTask, Object> blurTasks = new ConcurrentHashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -263,12 +267,18 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
     private void updateImage(int radius) {
         mRadius = radius;
 //        mSeekBar.setProgress((int) (mRadius / 25f * 1000));
-        if (mLatestTask != null) {
-            mLatestTask.cancel(false);
-        }
+        cancelAllTasks();
 
-        mLatestTask = new BlurTask();
-        mLatestTask.execute(radius);
+        BlurTask task = new BlurTask();
+        blurTasks.put(task, new Object());
+        task.execute(radius);
+    }
+
+    private void cancelAllTasks() {
+        for (BlurTask task : blurTasks.keySet()) {
+            task.cancel(false);
+        }
+        blurTasks.clear();
     }
 
     private class BlurTask extends AsyncTask<Integer, Void, Bitmap> {
@@ -299,6 +309,8 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
                 return;
             }
             mImageView.setImageBitmap(bitmap);
+            blurTasks.remove(this);
+
         }
 
         @Override
@@ -306,14 +318,13 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
             if (mIssued && bitmap != null) {
                 mImageView.setImageBitmap(bitmap);
             }
+            blurTasks.remove(this);
         }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mLatestTask != null) {
-            mLatestTask.cancel(true);
-        }
+        cancelAllTasks();
     }
 }
