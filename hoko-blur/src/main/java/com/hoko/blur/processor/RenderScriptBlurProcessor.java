@@ -98,6 +98,9 @@ class RenderScriptBlurProcessor extends BlurProcessor {
             mAllocationOut.copyTo(scaledInBitmap);
         } catch (Throwable e) {
             Log.e(TAG, "Blur the bitmap error", e);
+        } finally {
+            mAllocationIn.destroy();
+            mAllocationOut.destroy();
         }
 
 
@@ -110,20 +113,25 @@ class RenderScriptBlurProcessor extends BlurProcessor {
         if (mBoxBlurScriptH == null || mBoxBlurScriptV == null) {
             throw new IllegalStateException("The blur script is unavailable");
         }
-        mBoxBlurScriptH.set_input(mAllocationIn);
-        mBoxBlurScriptH.set_output(mAllocationOut);
+
+        Allocation in = mAllocationIn;
+        Allocation out = mAllocationOut;
+        mBoxBlurScriptH.set_input(in);
+        mBoxBlurScriptH.set_output(out);
         mBoxBlurScriptH.set_width(input.getWidth());
         mBoxBlurScriptH.set_height(input.getHeight());
         mBoxBlurScriptH.set_radius(mRadius);
-        mBoxBlurScriptH.forEach_boxblur_h(mAllocationIn);
+        mBoxBlurScriptH.forEach_boxblur_h(in);
 
-        mBoxBlurScriptV.set_input(mAllocationOut);
-        mBoxBlurScriptV.set_output(mAllocationIn);
+        mBoxBlurScriptV.set_input(out);
+        mBoxBlurScriptV.set_output(in);
         mBoxBlurScriptV.set_width(input.getWidth());
         mBoxBlurScriptV.set_height(input.getHeight());
         mBoxBlurScriptV.set_radius(mRadius);
-        mBoxBlurScriptV.forEach_boxblur_v(mAllocationOut);
-        mAllocationOut = mAllocationIn;
+        mBoxBlurScriptV.forEach_boxblur_v(out);
+
+        mAllocationIn = out;
+        mAllocationOut = in;
     }
 
     private void doGaussianBlur(Bitmap input) {
@@ -143,17 +151,22 @@ class RenderScriptBlurProcessor extends BlurProcessor {
             throw new IllegalStateException("The blur script is unavailable");
         }
 
-        mStackBlurScript.set_input(mAllocationIn);
-        mStackBlurScript.set_output(mAllocationOut);
+        Allocation in = mAllocationIn;
+        Allocation out = mAllocationOut;
+
+        mStackBlurScript.set_input(in);
+        mStackBlurScript.set_output(out);
         mStackBlurScript.set_width(input.getWidth());
         mStackBlurScript.set_height(input.getHeight());
         mStackBlurScript.set_radius(mRadius);
-        mStackBlurScript.forEach_stackblur_v(mAllocationIn);
+        mStackBlurScript.forEach_stackblur_v(in);
 
-        mStackBlurScript.set_input(mAllocationOut);
-        mStackBlurScript.set_output(mAllocationIn);
-        mStackBlurScript.forEach_stackblur_h(mAllocationOut);
-        mAllocationOut = mAllocationIn;
+        mStackBlurScript.set_input(out);
+        mStackBlurScript.set_output(in);
+        mStackBlurScript.forEach_stackblur_h(out);
+
+        mAllocationIn = out;
+        mAllocationOut = in;
     }
 
 }
