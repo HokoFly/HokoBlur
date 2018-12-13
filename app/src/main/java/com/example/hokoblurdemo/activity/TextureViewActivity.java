@@ -42,7 +42,7 @@ public class TextureViewActivity extends AppCompatActivity implements TextureVie
         mGLRenderer = new TextureViewRenderer();
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inScaled = false;   // No pre-scaling
-        mBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.sample5, options);
+        mBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.sample1, options);
 
         if (mTextureView.isAvailable()) {
             onSurfaceTextureAvailable(mTextureView.getSurfaceTexture(), mTextureView.getWidth(), mTextureView.getHeight());

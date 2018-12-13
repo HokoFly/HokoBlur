@@ -29,11 +29,10 @@ public class EasyBlurActivity extends AppCompatActivity {
                 .scheme(HokoBlur.SCHEME_RENDER_SCRIPT)
                 .sampleFactor(3.0f)
                 .radius(20)
-                .processor()
                 .blur(bitmap));
 
         imageView1.setImageBitmap(bitmap);
-//        HokoBlur.with(this).forceCopy(true).scheme(HokoBlur.SCHEME_NATIVE).sampleFactor(2.0f).radius(2).processor().asyncBlur(bitmap, new AsyncBlurTask.Callback() {
+//        HokoBlur.with(this).forceCopy(true).scheme(HokoBlur.SCHEME_NATIVE).sampleFactor(2.0f).radius(2).asyncBlur(bitmap, new AsyncBlurTask.Callback() {
 //            @Override
 //            public void onBlurSuccess(Bitmap bitmap) {
 //                imageView1.setImageBitmap(bitmap);
@@ -50,7 +49,6 @@ public class EasyBlurActivity extends AppCompatActivity {
                 .forceCopy(false)
                 .sampleFactor(5.0f)
                 .needUpscale(true)
-                .processor()
                 .asyncBlur(bitmap, new AsyncBlurTask.Callback() {
                     @Override
                     public void onBlurSuccess(Bitmap bitmap) {
@@ -70,7 +68,6 @@ public class EasyBlurActivity extends AppCompatActivity {
                         .scheme(HokoBlur.SCHEME_NATIVE)
                         .translateX(100)
                         .translateY(100)
-                        .processor()
                         .asyncBlur(imageView1, new AsyncBlurTask.Callback() {
                             @Override
                             public void onBlurSuccess(Bitmap bitmap) {
@@ -91,9 +88,6 @@ public class EasyBlurActivity extends AppCompatActivity {
             public void run() {
                 HokoBlur.with(EasyBlurActivity.this)
                         .scheme(HokoBlur.SCHEME_RENDER_SCRIPT)
-                        .processor()
-                        .newBuilder()
-                        .processor()
                         .asyncBlur(imageView1, new AsyncBlurTask.Callback() {
                             @Override
                             public void onBlurSuccess(Bitmap bitmap) {

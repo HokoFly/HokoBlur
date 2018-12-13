@@ -33,7 +33,7 @@ public class BitmapRender implements GLSurfaceView.Renderer {
         mCtx = context;
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inScaled = false;   // No pre-scaling
-        mBitmap = BitmapFactory.decodeResource(mCtx.getResources(), R.mipmap.sample5, options);
+        mBitmap = BitmapFactory.decodeResource(mCtx.getResources(), R.mipmap.sample1, options);
         mRectangle = new TextureViewRendererProxy();
     }
 

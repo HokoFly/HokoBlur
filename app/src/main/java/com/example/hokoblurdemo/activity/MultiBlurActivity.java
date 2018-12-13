@@ -21,9 +21,9 @@ import android.widget.TextView;
 
 import com.example.hokoblurdemo.R;
 import com.hoko.blur.HokoBlur;
+import com.hoko.blur.api.IBlurBuild;
 import com.hoko.blur.processor.BlurProcessor;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -32,7 +32,7 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
     private static final float SAMPLE_FACTOR = 8.0f;
     private static final int INIT_RADIUS = 5;
 
-    private static int[] testImageRes = {R.mipmap.sample1, R.mipmap.sample2, R.mipmap.sample3, R.mipmap.sample4, R.mipmap.sample5};
+    private static int[] testImageRes = {R.mipmap.sample1, R.mipmap.sample2};
 
     private int mCurrentImageRes = testImageRes[0];
 
@@ -50,7 +50,7 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
 
     private ImageView mImageView;
 
-    private BlurProcessor.Builder mBlurBuilder;
+    private IBlurBuild mBlurBuilder;
 
     private BlurProcessor mProcessor;
 
@@ -269,7 +269,7 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
 //        mSeekBar.setProgress((int) (mRadius / 25f * 1000));
         cancelAllTasks();
 
-        BlurTask task = new BlurTask();
+        BlurTask task = new BlurTask(mInBitmap, mProcessor, mImageView, blurTasks);
         blurTasks.put(task, new Object());
         task.execute(radius);
     }
@@ -281,8 +281,21 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
         blurTasks.clear();
     }
 
-    private class BlurTask extends AsyncTask<Integer, Void, Bitmap> {
+    private static class BlurTask extends AsyncTask<Integer, Void, Bitmap> {
         private boolean mIssued = false;
+
+        private Bitmap bitmap;
+
+        private BlurProcessor blurProcessor;
+        private ImageView imageView;
+        Map<BlurTask, Object> blurTasks;
+
+        public BlurTask(Bitmap bitmap, BlurProcessor blurProcessor, ImageView imageView, Map<BlurTask, Object> blurTasks) {
+            this.bitmap = bitmap;
+            this.blurProcessor = blurProcessor;
+            this.imageView = imageView;
+            this.blurTasks = blurTasks;
+        }
 
         @Override
         protected Bitmap doInBackground(Integer... params) {
@@ -291,10 +304,10 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
             if (!isCancelled()) {
                 mIssued = true;
                 int radius = params[0];
-                if (mInBitmap != null && !mInBitmap.isRecycled() && mProcessor != null) {
-                    mProcessor.radius(radius);
+                if (bitmap != null && !bitmap.isRecycled() && blurProcessor != null) {
+                    blurProcessor.radius(radius);
                     long start = System.nanoTime();
-                    output = mProcessor.blur(mInBitmap);
+                    output = blurProcessor.blur(bitmap);
                     long stop = System.nanoTime();
                     Log.i("Total elapsed time", (stop - start) / 1000000f + "ms");
                 }
@@ -308,17 +321,19 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
             if (bitmap == null) {
                 return;
             }
-            mImageView.setImageBitmap(bitmap);
+            imageView.setImageBitmap(bitmap);
             blurTasks.remove(this);
+            imageView = null;
 
         }
 
         @Override
         protected void onCancelled(Bitmap bitmap) {
             if (mIssued && bitmap != null) {
-                mImageView.setImageBitmap(bitmap);
+                imageView.setImageBitmap(bitmap);
             }
             blurTasks.remove(this);
+            imageView = null;
         }
     }
 

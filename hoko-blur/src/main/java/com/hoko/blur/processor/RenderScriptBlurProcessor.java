@@ -35,7 +35,7 @@ class RenderScriptBlurProcessor extends BlurProcessor {
 
     private volatile boolean rsRuntimeInited = false;
 
-    RenderScriptBlurProcessor(Builder builder) {
+    RenderScriptBlurProcessor(HokoBlurBuild builder) {
         super(builder);
         init(builder.mCtx);
     }
@@ -78,7 +78,6 @@ class RenderScriptBlurProcessor extends BlurProcessor {
 
         mAllocationIn = Allocation.createFromBitmap(mRenderScript, scaledInBitmap);
         mAllocationOut = Allocation.createFromBitmap(mRenderScript, scaledOutBitmap);
-
         try {
             switch (mMode) {
                 case HokoBlur.MODE_BOX:
@@ -99,6 +98,8 @@ class RenderScriptBlurProcessor extends BlurProcessor {
             mAllocationIn.destroy();
             mAllocationOut.destroy();
         }
+
+
 
         return scaledInBitmap;
     }
@@ -164,10 +165,4 @@ class RenderScriptBlurProcessor extends BlurProcessor {
         mAllocationOut = in;
     }
 
-    @Override
-    public Builder newBuilder() {
-        Builder builder = super.newBuilder();
-        builder.context(mRenderScript.getApplicationContext());
-        return builder;
-    }
 }
