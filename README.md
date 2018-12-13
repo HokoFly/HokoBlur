@@ -51,7 +51,7 @@ HokoBlur.with(context)
 Daily development does not need such complicated settings. If you want a blur effect, just use as follow:
 
 ```java
-Bitmap outBitmap = Blur.with(context).processor().blur(bitmap);
+Bitmap outBitmap = Blur.with(context).blur(bitmap);
 
 ```
 
@@ -66,7 +66,6 @@ Future f = HokoBlur.with(this)
     .sampleFactor(2.0f)
     .forceCopy(false)
     .needUpscale(true)
-    .processor()
     .asyncBlur(bitmap, new AsyncBlurTask.CallBack() {
         @Override
         public void onBlurSuccess(Bitmap outBitmap) {
@@ -238,7 +237,7 @@ HokoBlur.with(context)
 
 ```java
 //doBlur()将返回模糊后的Bitmap
-Bitmap outBitmap = Blur.with(context).processor().blur(bitmap);
+Bitmap outBitmap = Blur.with(context).blur(bitmap);
 
 ```
 
@@ -253,7 +252,6 @@ HokoBlur.with(this)
     .sampleFactor(2.0f)
     .forceCopy(false)
     .needUpscale(true)
-    .processor()
     .asyncBlur(bitmap, new AsyncBlurTask.CallBack() {
         @Override
         public void onBlurSuccess(Bitmap outBitmap) {
