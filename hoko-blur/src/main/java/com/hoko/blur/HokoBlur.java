@@ -2,7 +2,8 @@ package com.hoko.blur;
 
 import android.content.Context;
 
-import com.hoko.blur.processor.BlurProcessor;
+import com.hoko.blur.api.IBlurBuild;
+import com.hoko.blur.processor.HokoBlurBuild;
 
 /**
  * Created by yuxfzju on 16/9/7.
@@ -22,8 +23,8 @@ public class HokoBlur {
     public static final int VERTICAL = 1;
     public static final int BOTH = 2;
 
-    public static BlurProcessor.Builder with(Context context) {
-        return new BlurProcessor.Builder(context.getApplicationContext());
+    public static IBlurBuild with(Context context) {
+        return new HokoBlurBuild(context.getApplicationContext());
     }
 
 }

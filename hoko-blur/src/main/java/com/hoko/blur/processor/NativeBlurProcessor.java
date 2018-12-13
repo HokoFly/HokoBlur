@@ -19,7 +19,7 @@ class NativeBlurProcessor extends BlurProcessor {
     private static final String TAG = NativeBlurProcessor.class.getSimpleName();
     private static boolean LIB_LOADED;
 
-    NativeBlurProcessor(Builder builder) {
+    NativeBlurProcessor(HokoBlurBuild builder) {
         super(builder);
     }
 

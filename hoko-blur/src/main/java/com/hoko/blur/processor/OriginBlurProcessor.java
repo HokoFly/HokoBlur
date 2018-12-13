@@ -18,7 +18,7 @@ import java.util.List;
 class OriginBlurProcessor extends BlurProcessor {
     private static final String TAG = OriginBlurProcessor.class.getSimpleName();
 
-    OriginBlurProcessor(Builder builder) {
+    OriginBlurProcessor(HokoBlurBuild builder) {
         super(builder);
     }
 

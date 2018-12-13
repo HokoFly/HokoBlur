@@ -29,7 +29,6 @@ public class EasyBlurActivity extends AppCompatActivity {
                 .scheme(HokoBlur.SCHEME_RENDER_SCRIPT)
                 .sampleFactor(3.0f)
                 .radius(20)
-                .processor()
                 .blur(bitmap));
 
         imageView1.setImageBitmap(bitmap);
@@ -50,7 +49,6 @@ public class EasyBlurActivity extends AppCompatActivity {
                 .forceCopy(false)
                 .sampleFactor(5.0f)
                 .needUpscale(true)
-                .processor()
                 .asyncBlur(bitmap, new AsyncBlurTask.Callback() {
                     @Override
                     public void onBlurSuccess(Bitmap bitmap) {
@@ -91,9 +89,6 @@ public class EasyBlurActivity extends AppCompatActivity {
             public void run() {
                 HokoBlur.with(EasyBlurActivity.this)
                         .scheme(HokoBlur.SCHEME_RENDER_SCRIPT)
-                        .processor()
-                        .newBuilder()
-                        .processor()
                         .asyncBlur(imageView1, new AsyncBlurTask.Callback() {
                             @Override
                             public void onBlurSuccess(Bitmap bitmap) {

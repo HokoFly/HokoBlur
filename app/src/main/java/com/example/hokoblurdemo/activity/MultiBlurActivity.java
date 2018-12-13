@@ -21,7 +21,9 @@ import android.widget.TextView;
 
 import com.example.hokoblurdemo.R;
 import com.hoko.blur.HokoBlur;
+import com.hoko.blur.api.IBlurBuild;
 import com.hoko.blur.processor.BlurProcessor;
+import com.hoko.blur.processor.HokoBlurBuild;
 
 public class MultiBlurActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
@@ -46,7 +48,7 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
 
     private ImageView mImageView;
 
-    private BlurProcessor.Builder mBlurBuilder;
+    private IBlurBuild mBlurBuilder;
 
     private BlurProcessor mProcessor;
 

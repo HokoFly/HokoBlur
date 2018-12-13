@@ -2,6 +2,7 @@ package com.hoko.blur.processor;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.View;
 
 import com.hoko.blur.HokoBlur;
@@ -37,7 +38,7 @@ public abstract class BlurProcessor implements IBlurProcessor {
     private int mTranslateX;
     private int mTranslateY;
 
-    public BlurProcessor(Builder builder) {
+    public BlurProcessor(HokoBlurBuild builder) {
         mMode = builder.mMode;
         mScheme = builder.mScheme;
         mRadius = builder.mRadius;
@@ -126,7 +127,11 @@ public abstract class BlurProcessor implements IBlurProcessor {
 
         Bitmap scaledOutBitmap = doInnerBlur(scaledInBitmap, concurrent);
 
-        return mNeedUpscale ? BitmapUtil.getScaledBitmap(scaledOutBitmap, 1f / sampleFactor()) : scaledOutBitmap;
+        long start = System.nanoTime();
+        Bitmap ret = mNeedUpscale ? BitmapUtil.getScaledBitmap(scaledOutBitmap, 1f / sampleFactor()) : scaledOutBitmap;
+        long stop = System.nanoTime();
+        Log.i("Scale elapsed time", (stop - start) / 1000000f + "ms");
+        return ret;
     }
 
 
@@ -157,92 +162,4 @@ public abstract class BlurProcessor implements IBlurProcessor {
 
     }
 
-    public Builder newBuilder() {
-        return new Builder(this);
-    }
-
-    public static class Builder {
-        @Mode
-        private int mMode = HokoBlur.MODE_STACK;
-        @Scheme
-        private int mScheme = HokoBlur.SCHEME_NATIVE;
-        private int mRadius = 5;
-        private float mSampleFactor = 5.0f;
-        private boolean mIsForceCopy = false;
-        private boolean mNeedUpscale = true;
-
-        private int mTranslateX = 0;
-        private int mTranslateY = 0;
-
-        Context mCtx;
-
-        public Builder(Context context) {
-            Preconditions.checkNotNull(context, "context == null");
-            mCtx = context.getApplicationContext();
-        }
-
-        public Builder(BlurProcessor blurProcessor) {
-            mMode = blurProcessor.mode();
-            mScheme = blurProcessor.scheme();
-            mRadius = blurProcessor.radius();
-            mSampleFactor = blurProcessor.sampleFactor();
-            mIsForceCopy = blurProcessor.forceCopy();
-            mNeedUpscale = blurProcessor.needUpscale();
-            mTranslateX = blurProcessor.translateX();
-            mTranslateY = blurProcessor.translateY();
-        }
-
-        public Builder context(Context ctx) {
-            mCtx = ctx;
-            return this;
-        }
-
-        public Builder mode(@Mode int mode) {
-            mMode = mode;
-            return this;
-        }
-
-        public Builder scheme(@Scheme int scheme) {
-            mScheme = scheme;
-            return this;
-        }
-
-        public Builder radius(int radius) {
-            mRadius = radius;
-            return this;
-        }
-
-        public Builder sampleFactor(float factor) {
-            mSampleFactor = factor;
-            return this;
-        }
-
-        public Builder forceCopy(boolean isForceCopy) {
-            mIsForceCopy = isForceCopy;
-            return this;
-        }
-
-        public Builder needUpscale(boolean needUpscale) {
-            mNeedUpscale = needUpscale;
-            return this;
-        }
-
-        public Builder translateX(int translateX) {
-            mTranslateX = translateX;
-            return this;
-        }
-
-        public Builder translateY(int translateY) {
-            mTranslateY = translateY;
-            return this;
-        }
-
-        /**
-         * Get different types of Blur Processors
-         */
-        public BlurProcessor processor() {
-            return BlurProcessorFactory.getBlurProcessor(mScheme, this);
-        }
-
-    }
 }
