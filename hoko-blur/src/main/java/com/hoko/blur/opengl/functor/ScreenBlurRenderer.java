@@ -174,15 +174,6 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
         }
     }
 
-    @Override
-    public void onSurfaceCreated() {
-        throw new UnsupportedOperationException("onSurfaceCreated");
-    }
-
-    @Override
-    public void onSurfaceChanged(int width, int height) {
-        throw new UnsupportedOperationException("onSurfaceChanged");
-    }
 
     private boolean checkBlurSize(int width, int height) {
         return width <= 1800 && height <= 3200;
@@ -413,7 +404,6 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
         FrameBufferCache.getInstance().recycleFrameBuffer(mVerticalFrameBuffer);
     }
 
-    @Override
     public void free() {
         deletePrograms();
         mNeedRelink = true;

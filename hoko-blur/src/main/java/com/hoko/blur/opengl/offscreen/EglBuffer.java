@@ -33,27 +33,22 @@ public class EglBuffer {
     private static final int EGL_OPENGL_ES2_BIT = 4;
 
     private EGLConfig[] mEglConfigs = new EGLConfig[1];
-    private int[] mContextAttribs;
+    private int[] mContextAttribs = new int[]{
+            EGL_CONTEXT_CLIENT_VERSION, 2, EGL10.EGL_NONE
+    };
+
 
     //EGLContext、EGLSurface and Renderer are bound to current thread.
     // So here use the ThreadLocal to implement Thread isolation。
-    private ThreadLocal<OffScreenBlurRenderer> mThreadRenderer = new ThreadLocal<OffScreenBlurRenderer>();
+    private ThreadLocal<OffScreenBlurRenderer> mThreadRenderer = new ThreadLocal<>();
 
-    private ThreadLocal<EGLContext> mThreadEGLContext = new ThreadLocal<EGLContext>();
+    private ThreadLocal<EGLContext> mThreadEGLContext = new ThreadLocal<>();
 
     public EglBuffer() {
         initGL();
     }
 
     private void initGL() {
-
-        mEgl = (EGL10) EGLContext.getEGL();
-
-        mEGLDisplay = mEgl.eglGetDisplay(EGL10.EGL_DEFAULT_DISPLAY);
-
-        int[] version = new int[2];
-
-        mEgl.eglInitialize(mEGLDisplay, version);
 
         int[] configAttribs = {
                 EGL10.EGL_BUFFER_SIZE, 32,
@@ -66,14 +61,10 @@ public class EglBuffer {
                 EGL10.EGL_NONE
         };
 
-        int[] numConfigs = new int[1];
-
-        mEgl.eglChooseConfig(mEGLDisplay, configAttribs, mEglConfigs, 1, numConfigs);
-
-        mContextAttribs = new int[]{
-                EGL_CONTEXT_CLIENT_VERSION, 2, EGL10.EGL_NONE
-        };
-
+        mEgl = (EGL10) EGLContext.getEGL();
+        mEGLDisplay = mEgl.eglGetDisplay(EGL10.EGL_DEFAULT_DISPLAY);
+        mEgl.eglInitialize(mEGLDisplay, new int[2]);
+        mEgl.eglChooseConfig(mEGLDisplay, configAttribs, mEglConfigs, 1, new int[1]);
     }
 
     private EGLSurface createSurface(int width, int height) {
@@ -103,10 +94,8 @@ public class EglBuffer {
                 return bitmap;
             }
 
-            IRenderer<Bitmap> renderer = getRenderer();
+            OffScreenBlurRenderer renderer = getRenderer();
             if (renderer != null) {
-                renderer.onSurfaceCreated();
-                renderer.onSurfaceChanged(w, h);
                 renderer.onDrawFrame(bitmap);
                 mEgl.eglSwapBuffers(mEGLDisplay, eglSurface);
             } else {

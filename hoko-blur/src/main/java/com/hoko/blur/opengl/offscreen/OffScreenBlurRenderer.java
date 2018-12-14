@@ -5,6 +5,7 @@ import android.opengl.GLES20;
 import android.util.Log;
 
 import com.hoko.blur.anno.Mode;
+import com.hoko.blur.anno.NotThreadSafe;
 import com.hoko.blur.api.IFrameBuffer;
 import com.hoko.blur.api.IProgram;
 import com.hoko.blur.api.IRenderer;
@@ -27,6 +28,8 @@ import static com.hoko.blur.util.ShaderUtil.checkGLError;
 /**
  * Created by yuxfzju on 16/8/10.
  */
+
+@NotThreadSafe
 public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
     private final static String TAG = OffScreenBlurRenderer.class.getSimpleName();
 
@@ -46,13 +49,15 @@ public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
             -1f, 1f, 0.0f,   // top left
             -1f, -1f, 0.0f,   // bottom left
             1f, -1f, 0.0f,   // bottom right
-            1f, 1f, 0.0f}; // top right
+            1f, 1f, 0.0f    // top right
+    };
 
     private static final float mTexHorizontalCoords[] = {
             1.0f, 1.0f,
             1.0f, 0.0f,
             0.0f, 0.0f,
-            0.0f, 1.0f};
+            0.0f, 1.0f
+    };
 
     private static final short drawOrder[] = {0, 1, 2, 0, 2, 3};
 
@@ -124,16 +129,6 @@ public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
         }
     }
 
-    @Override
-    public void onSurfaceCreated() {
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-
-    }
-
-    @Override
-    public void onSurfaceChanged(int width, int height) {
-        GLES20.glViewport(0, 0, width, height);
-    }
 
     private boolean prepare() {
         EGLContext context = ((EGL10) EGLContext.getEGL()).eglGetCurrentContext();
@@ -153,7 +148,9 @@ public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
             return false;
         }
 
-        GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1f);
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+        GLES20.glViewport(0, 0, mWidth, mHeight);
+
         //todo Textures share problem is not solved. Here create a new texture directly, not get from the texture cache
         //It doesn't affect performance seriously.
         mInputTexture = TextureFactory.create(mBitmap);
@@ -246,18 +243,17 @@ public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
         }
     }
 
-    @Override
     public void free() {
         mNeedRelink = true;
         deletePrograms();
     }
 
-    public void setBlurMode(@Mode int mode) {
+    void setBlurMode(@Mode int mode) {
         mNeedRelink = true;
         mMode = mode;
     }
 
-    public void setBlurRadius(int radius) {
+    void setBlurRadius(int radius) {
         mRadius = radius;
     }
 

@@ -36,13 +36,11 @@ public class TextureViewRenderer implements IRenderer<Bitmap> {
 
     }
 
-    @Override
     public void onSurfaceCreated() {
         Matrix.setLookAtM(mVMatrix, 0, 0, 0, -3, 0, 0, 0, 0, 1, 0);
 
     }
 
-    @Override
     public void onSurfaceChanged(int width, int height) {
         mWidth = width;
         mHeight = height;
@@ -52,7 +50,6 @@ public class TextureViewRenderer implements IRenderer<Bitmap> {
         Matrix.frustumM(mProjMatrix, 0, -ratio, ratio, -1, 1, 3, 7);
     }
 
-    @Override
     public void free() {
         if (mRendererProxy != null) {
             mRendererProxy.free();
