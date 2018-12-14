@@ -1,15 +1,14 @@
 //
 // Created by yuxfzju on 16/11/9.
 //
+#ifndef HOKO_BLUR_DRAWABLE_H
+#define HOKO_BLUR_DRAWABLE_H
+
 #include <jni.h>
 #include "DrawGlInfo.h"
 #include "DrawFunctor.h"
 #include <android/log.h>
 #include <pthread.h>
-
-
-#ifndef HOKO_BLUR_DRAWABLE_H
-#define HOKO_BLUR_DRAWABLE_H
 
 #ifdef __cplusplus
 extern "C" {
