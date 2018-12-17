@@ -24,21 +24,15 @@ public final class BlurTaskManager {
 
     private static final ExecutorService CONCURRENT_BLUR_EXECUTOR = Executors.newFixedThreadPool(EXECUTOR_THREADS);
 
-    private static volatile BlurTaskManager sInstance;
+    private static class BlurTaskManagerHolder {
+        private static final BlurTaskManager INSTANCE = new BlurTaskManager();
+    }
 
     private BlurTaskManager() {
     }
 
     public static BlurTaskManager getInstance() {
-        if (sInstance == null) {
-            synchronized (BlurTaskManager.class) {
-                if (sInstance == null) {
-                    sInstance = new BlurTaskManager();
-                }
-            }
-        }
-
-        return sInstance;
+       return BlurTaskManagerHolder.INSTANCE;
     }
 
     public Future submit(AsyncBlurTask task) {

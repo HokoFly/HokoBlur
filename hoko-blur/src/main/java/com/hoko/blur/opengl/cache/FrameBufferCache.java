@@ -9,7 +9,9 @@ import com.hoko.blur.opengl.framebuffer.FrameBufferFactory;
 
 public class FrameBufferCache {
 
-    private static volatile FrameBufferCache sInstance;
+    private static class FrameBufferCacheHolder {
+        private static final FrameBufferCache INSTANCE = new FrameBufferCache();
+    }
 
     private CachePool<Object, IFrameBuffer> mCache;
 
@@ -23,7 +25,7 @@ public class FrameBufferCache {
             }
 
             @Override
-            protected boolean checkHit(Object a, IFrameBuffer b) {
+            protected boolean checkHit(Object key, IFrameBuffer frameBuffer) {
                 return true;
             }
 
@@ -38,15 +40,7 @@ public class FrameBufferCache {
     }
 
     public static FrameBufferCache getInstance() {
-        if (sInstance == null) {
-            synchronized (FrameBufferCache.class) {
-                if (sInstance == null) {
-                    sInstance = new FrameBufferCache();
-                }
-            }
-        }
-
-        return sInstance;
+        return FrameBufferCacheHolder.INSTANCE;
     }
 
     public IFrameBuffer getFrameBuffer() {

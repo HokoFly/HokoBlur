@@ -2,7 +2,10 @@ package com.hoko.blur.opengl.cache;
 
 import com.hoko.blur.util.Preconditions;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by yuxfzju on 2017/1/21.
@@ -14,7 +17,7 @@ public abstract class CachePool<K, V> {
 
     private int mMaxSize;
 
-    private LinkedList<V> mList;
+    private List<V> mInternalCache;
 
     public CachePool() {
         this(MAX_SIZE);
@@ -23,7 +26,7 @@ public abstract class CachePool<K, V> {
     public CachePool(int maxSize) {
         Preconditions.checkArgument(maxSize > 0, "maxSize <= 0");
         mMaxSize = maxSize;
-        mList = new LinkedList<>();
+        mInternalCache = new LinkedList<>();
     }
 
     public final V get(K key) {
@@ -40,10 +43,10 @@ public abstract class CachePool<K, V> {
     public final void put(V v) {
         Preconditions.checkNotNull(v, "value == null");
         try {
-            if (!mList.contains(v)) {
+            if (!mInternalCache.contains(v)) {
                 synchronized (this) {
-                    if (!mList.contains(v)) {
-                        mList.add(v);
+                    if (!mInternalCache.contains(v)) {
+                        mInternalCache.add(v);
                     }
                 }
             }
@@ -58,9 +61,12 @@ public abstract class CachePool<K, V> {
 
         V previous = null;
         synchronized (this) {
-            for (V v : mList) {
-                if (checkHit(key, v)) {
-                    previous = mList.remove(mList.indexOf(v));
+            Iterator<V> it = mInternalCache.iterator();
+            while(it.hasNext()) {
+                V value = it.next();
+                if (checkHit(key, value)) {
+                    it.remove();
+                    previous = value;
                     break;
                 }
             }
@@ -85,22 +91,25 @@ public abstract class CachePool<K, V> {
 
     }
 
-    protected abstract boolean checkHit(K a, V b);
+    protected abstract boolean checkHit(K key, V value);
 
     private void trimToSize(int maxSize) {
-        while (true) {
-            synchronized (this) {
-                if (mList.size() <= maxSize || mList.isEmpty()) {
-                    break;
-                }
-
-                V removed = mList.removeFirst();
+        List<V> removedCollection = new ArrayList<>();
+        synchronized (this) {
+            while (mInternalCache.size() > maxSize && !mInternalCache.isEmpty()) {
+                V removed = mInternalCache.remove(0);
                 if (removed != null) {
-                    entryDeleted(removed);
+                    removedCollection.add(removed);
                 }
-
             }
         }
+
+        for(V removed : removedCollection) {
+            if (removed != null) {
+                entryDeleted(removed);
+            }
+        }
+
     }
 
     public synchronized final int maxSize() {

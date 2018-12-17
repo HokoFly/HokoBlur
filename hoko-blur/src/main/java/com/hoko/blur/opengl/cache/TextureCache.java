@@ -10,7 +10,9 @@ import com.hoko.blur.opengl.util.Size;
 
 public class TextureCache {
 
-    private static volatile TextureCache sInstance;
+    private static class TextureCacheHolder {
+        private static final TextureCache INSTANCE = new TextureCache();
+    }
 
     private CachePool<Size, ITexture> mCache;
 
@@ -34,22 +36,14 @@ public class TextureCache {
             }
 
             @Override
-            protected boolean checkHit(Size a, ITexture b) {
-                return a != null && b != null && a.width() == b.width() && a.height() == b.height();
+            protected boolean checkHit(Size size, ITexture texture) {
+                return size != null && texture != null && size.width() == texture.width() && size.height() == texture.height();
             }
         };
     }
 
     public static TextureCache getInstance() {
-        if (sInstance == null) {
-            synchronized (TextureCache.class) {
-                if (sInstance == null) {
-                    sInstance = new TextureCache();
-                }
-            }
-        }
-
-        return sInstance;
+        return TextureCacheHolder.INSTANCE;
     }
 
     public ITexture getTexture(int width, int height) {
