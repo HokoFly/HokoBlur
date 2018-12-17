@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
 
+import com.hoko.blur.util.Preconditions;
+
 import java.lang.ref.WeakReference;
 
 /**
@@ -15,12 +17,10 @@ public class BitmapTexture extends Texture {
     private WeakReference<Bitmap> mBitmapWeakRef;
 
     BitmapTexture(Bitmap bitmap) {
-        if (bitmap != null && !bitmap.isRecycled()) {
-            width(bitmap.getWidth());
-            height(bitmap.getHeight());
-            mBitmapWeakRef = new WeakReference<Bitmap>(bitmap);
-            create();
-        }
+        super(bitmap.getWidth(), bitmap.getHeight());
+        mBitmapWeakRef = new WeakReference<>(bitmap);
+        create();
+
     }
 
     @Override

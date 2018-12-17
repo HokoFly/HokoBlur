@@ -16,6 +16,11 @@ public abstract class Texture implements ITexture {
 
     private int mHeight;
 
+    public Texture(int width, int height) {
+        this.mWidth = width;
+        this.mHeight = height;
+    }
+
     @Override
     public void create() {
 
@@ -46,26 +51,14 @@ public abstract class Texture implements ITexture {
         }
     }
 
-    public void id(int textureId) {
-        mTextureId = textureId;
-    }
-
     @Override
     public int id() {
         return mTextureId;
     }
 
-    public void width(int width) {
-        mWidth = width;
-    }
-
     @Override
     public int width() {
         return mWidth;
-    }
-
-    public void height(int height) {
-        mHeight = height;
     }
 
     @Override

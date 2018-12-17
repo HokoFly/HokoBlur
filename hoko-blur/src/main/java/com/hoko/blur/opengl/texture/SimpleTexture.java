@@ -13,8 +13,7 @@ import java.nio.Buffer;
 class SimpleTexture extends Texture {
 
     SimpleTexture(int width, int height) {
-        width(width);
-        height(height);
+        super(width, height);
         create();
     }
 

@@ -17,6 +17,7 @@ public class TextureFactory {
 
     public static Texture create(Bitmap bitmap) {
         Preconditions.checkNotNull(bitmap, "bitmap == null");
+        Preconditions.checkArgument(!bitmap.isRecycled(), "bitmap is recycled");
         return new BitmapTexture(bitmap);
     }
 }
