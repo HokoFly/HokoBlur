@@ -2,7 +2,6 @@ package com.hoko.blur.opengl.offscreen;
 
 import android.graphics.Bitmap;
 import android.opengl.GLES20;
-import android.util.Log;
 
 import com.hoko.blur.anno.Mode;
 import com.hoko.blur.anno.NotThreadSafe;
@@ -22,8 +21,6 @@ import java.nio.ShortBuffer;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLContext;
-
-import static com.hoko.blur.util.ShaderUtil.checkGLError;
 
 /**
  * Created by yuxfzju on 16/8/10.
@@ -67,16 +64,6 @@ public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
 
     private IProgram mProgram;
 
-    private ITexture mHorizontalTexture;
-    private ITexture mInputTexture;
-
-    private IFrameBuffer mBlurFrameBuffer;
-
-    private Bitmap mBitmap;
-
-    private int mWidth;
-    private int mHeight;
-
     private int mRadius;
     @Mode
     private int mMode;
@@ -112,29 +99,24 @@ public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
             return;
         }
 
-        mBitmap = bitmap;
-        mWidth = mBitmap.getWidth();
-        mHeight = mBitmap.getHeight();
-
-        if (mWidth == 0 || mHeight == 0) {
+        if (bitmap.getWidth() == 0 || bitmap.getHeight() == 0) {
             return;
         }
 
+        BlurContext blurContext = null;
         try {
-            if (prepare()) {
-                draw();
-            }
+            blurContext = prepare(bitmap);
+            draw(blurContext);
         } finally {
-            onPostBlur();
+            onPostBlur(blurContext);
         }
     }
 
 
-    private boolean prepare() {
+    private BlurContext prepare(Bitmap bitmap) {
         EGLContext context = ((EGL10) EGLContext.getEGL()).eglGetCurrentContext();
         if (context.equals(EGL10.EGL_NO_CONTEXT)) {
-            Log.e(TAG, "This thread has no EGLContext.");
-            return false;
+            throw new IllegalStateException("This thread has no EGLContext.");
         }
 
         if (mNeedRelink) {
@@ -144,37 +126,27 @@ public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
         }
 
         if (mProgram.id() == 0) {
-            Log.e(TAG, "Failed to create program.");
-            return false;
+            throw new IllegalStateException("Failed to create program.");
         }
+
+        int w = bitmap.getWidth();
+        int h = bitmap.getHeight();
 
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-        GLES20.glViewport(0, 0, mWidth, mHeight);
+        GLES20.glViewport(0, 0, w, h);
 
-        //todo Textures share problem is not solved. Here create a new texture directly, not get from the texture cache
-        //It doesn't affect performance seriously.
-        mInputTexture = TextureFactory.create(mBitmap);
-        mHorizontalTexture = TextureFactory.create(mWidth, mHeight);
-        mBlurFrameBuffer = FrameBufferCache.getInstance().getFrameBuffer();
-        if (mBlurFrameBuffer != null) {
-            mBlurFrameBuffer.bindTexture(mHorizontalTexture);
-        } else {
-            Log.e(TAG, "Failed to create framebuffer.");
-            return false;
-        }
-
-        return checkGLError("Prepare to blurring");
+        return new BlurContext(bitmap);
 
     }
 
 
-    private void draw() {
-        drawOneDimenBlur(true);
-        drawOneDimenBlur(false);
+    private void draw(BlurContext blurContext) {
+        drawOneDimenBlur(blurContext, true);
+        drawOneDimenBlur(blurContext, false);
 
     }
 
-    private void drawOneDimenBlur(boolean isHorizontal) {
+    private void drawOneDimenBlur(BlurContext blurContext, boolean isHorizontal) {
         try {
             GLES20.glUseProgram(mProgram.id());
 
@@ -190,20 +162,20 @@ public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
             GLES20.glVertexAttribPointer(texCoordId, 2, GLES20.GL_FLOAT, false, 0, mTexCoordBuffer);
 
             if (isHorizontal) {
-                mBlurFrameBuffer.bindSelf();
+                blurContext.getBlurFrameBuffer().bindSelf();
             }
 
             int textureUniformId = GLES20.glGetUniformLocation(mProgram.id(), "uTexture");
             GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, isHorizontal ? mInputTexture.id() : mHorizontalTexture.id());
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, isHorizontal ? blurContext.getInputTexture().id() : blurContext.getHorizontalTexture().id());
             GLES20.glUniform1i(textureUniformId, 0);
 
             int radiusId = GLES20.glGetUniformLocation(mProgram.id(), "uRadius");
             int widthOffsetId = GLES20.glGetUniformLocation(mProgram.id(), "uWidthOffset");
             int heightOffsetId = GLES20.glGetUniformLocation(mProgram.id(), "uHeightOffset");
             GLES20.glUniform1i(radiusId, mRadius);
-            GLES20.glUniform1f(widthOffsetId, isHorizontal ? 0 : 1f / mWidth);
-            GLES20.glUniform1f(heightOffsetId, isHorizontal ? 1f / mHeight : 0);
+            GLES20.glUniform1f(widthOffsetId, isHorizontal ? 0 : 1f / blurContext.getBitmap().getWidth());
+            GLES20.glUniform1f(heightOffsetId, isHorizontal ? 1f / blurContext.getBitmap().getHeight() : 0);
 
             GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, mDrawListBuffer);
 
@@ -226,14 +198,10 @@ public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
         mDrawListBuffer.rewind();
     }
 
-    private void onPostBlur() {
-        if (mInputTexture != null) {
-            mInputTexture.delete();
+    private void onPostBlur(BlurContext blurContext) {
+        if (blurContext != null) {
+            blurContext.finish();
         }
-        if (mHorizontalTexture != null) {
-            mHorizontalTexture.delete();
-        }
-        FrameBufferCache.getInstance().recycleFrameBuffer(mBlurFrameBuffer);
     }
 
 
@@ -255,6 +223,53 @@ public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
 
     void setBlurRadius(int radius) {
         mRadius = radius;
+    }
+
+    private static class BlurContext {
+        private ITexture inputTexture;
+        private ITexture horizontalTexture;
+        private IFrameBuffer blurFrameBuffer;
+        private Bitmap bitmap;
+
+        private BlurContext(Bitmap bitmap) {
+            //todo Textures share problem is not solved. Here create a new texture directly, not get from the texture cache
+            //It doesn't affect performance seriously.
+            this.bitmap = bitmap;
+            inputTexture = TextureFactory.create(bitmap);
+            horizontalTexture = TextureFactory.create(bitmap.getWidth(), bitmap.getHeight());
+            blurFrameBuffer = FrameBufferCache.getInstance().getFrameBuffer();
+            if (blurFrameBuffer != null) {
+                blurFrameBuffer.bindTexture(horizontalTexture);
+            } else {
+                throw new IllegalStateException("Failed to create framebuffer.");
+            }
+        }
+
+        private ITexture getInputTexture() {
+            return inputTexture;
+        }
+
+        private ITexture getHorizontalTexture() {
+            return horizontalTexture;
+        }
+
+        private IFrameBuffer getBlurFrameBuffer() {
+            return blurFrameBuffer;
+        }
+
+        private Bitmap getBitmap() {
+            return bitmap;
+        }
+
+        private void finish() {
+            if (inputTexture != null) {
+                inputTexture.delete();
+            }
+            if (horizontalTexture != null) {
+                horizontalTexture.delete();
+            }
+            FrameBufferCache.getInstance().recycleFrameBuffer(blurFrameBuffer);
+        }
     }
 
 }

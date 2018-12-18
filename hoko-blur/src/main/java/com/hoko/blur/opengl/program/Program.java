@@ -11,9 +11,6 @@ public class Program implements IProgram {
 
     private static final String TAG = Program.class.getSimpleName();
 
-    private int vertexShader;
-    private int fragmentShader;
-
     private int id;
 
     Program(String vertexShaderCode, String fragmentShaderCode) {
@@ -23,6 +20,8 @@ public class Program implements IProgram {
     @Override
     public void create(String vertexShaderCode, String fragmentShaderCode) {
 
+        int vertexShader = 0;
+        int fragmentShader = 0;
         try {
             vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
             fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
