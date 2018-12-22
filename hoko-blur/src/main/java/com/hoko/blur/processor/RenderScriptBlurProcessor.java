@@ -10,9 +10,8 @@ import android.support.v8.renderscript.ScriptIntrinsicBlur;
 import android.util.Log;
 
 import com.hoko.blur.HokoBlur;
-import com.hoko.blur.renderscript.ScriptC_BoxblurHorizontal;
-import com.hoko.blur.renderscript.ScriptC_BoxblurVertical;
-import com.hoko.blur.renderscript.ScriptC_Stackblur;
+import com.hoko.blur.renderscript.ScriptC_BoxBlur;
+import com.hoko.blur.renderscript.ScriptC_StackBlur;
 import com.hoko.blur.util.MathUtil;
 import com.hoko.blur.util.Preconditions;
 
@@ -24,9 +23,8 @@ class RenderScriptBlurProcessor extends BlurProcessor {
 
     private RenderScript mRenderScript;
     private ScriptIntrinsicBlur mGaussianBlurScirpt;
-    private ScriptC_BoxblurHorizontal mBoxBlurScriptH;
-    private ScriptC_BoxblurVertical mBoxBlurScriptV;
-    private ScriptC_Stackblur mStackBlurScript;
+    private ScriptC_BoxBlur mBoxBlurScript;
+    private ScriptC_StackBlur mStackBlurScript;
 
     private Allocation mAllocationIn;
     private Allocation mAllocationOut;
@@ -46,9 +44,8 @@ class RenderScriptBlurProcessor extends BlurProcessor {
         try {
             mRenderScript = RenderScript.create(context.getApplicationContext());
             mGaussianBlurScirpt = ScriptIntrinsicBlur.create(mRenderScript, Element.U8_4(mRenderScript));
-            mBoxBlurScriptH = new ScriptC_BoxblurHorizontal(mRenderScript);
-            mBoxBlurScriptV = new ScriptC_BoxblurVertical(mRenderScript);
-            mStackBlurScript = new ScriptC_Stackblur(mRenderScript);
+            mBoxBlurScript = new ScriptC_BoxBlur(mRenderScript);
+            mStackBlurScript = new ScriptC_StackBlur(mRenderScript);
             rsRuntimeInited = true;
         } catch (RSRuntimeException e) {
             Log.e(TAG, "Failed to init RenderScript runtime", e);
@@ -106,25 +103,22 @@ class RenderScriptBlurProcessor extends BlurProcessor {
 
 
     private void doBoxBlur(Bitmap input) {
-        if (mBoxBlurScriptH == null || mBoxBlurScriptV == null) {
+        if (mBoxBlurScript == null) {
             throw new IllegalStateException("The blur script is unavailable");
         }
 
         Allocation in = mAllocationIn;
         Allocation out = mAllocationOut;
-        mBoxBlurScriptH.set_input(in);
-        mBoxBlurScriptH.set_output(out);
-        mBoxBlurScriptH.set_width(input.getWidth());
-        mBoxBlurScriptH.set_height(input.getHeight());
-        mBoxBlurScriptH.set_radius(mRadius);
-        mBoxBlurScriptH.forEach_boxblur_h(in);
+        mBoxBlurScript.set_input(in);
+        mBoxBlurScript.set_output(out);
+        mBoxBlurScript.set_width(input.getWidth());
+        mBoxBlurScript.set_height(input.getHeight());
+        mBoxBlurScript.set_radius(mRadius);
+        mBoxBlurScript.forEach_boxblur_h(in);
 
-        mBoxBlurScriptV.set_input(out);
-        mBoxBlurScriptV.set_output(in);
-        mBoxBlurScriptV.set_width(input.getWidth());
-        mBoxBlurScriptV.set_height(input.getHeight());
-        mBoxBlurScriptV.set_radius(mRadius);
-        mBoxBlurScriptV.forEach_boxblur_v(out);
+        mBoxBlurScript.set_input(out);
+        mBoxBlurScript.set_output(in);
+        mBoxBlurScript.forEach_boxblur_v(out);
 
         mAllocationIn = out;
         mAllocationOut = in;

@@ -38,7 +38,7 @@ public class EglBuffer {
 
 
     //EGLContext、EGLSurface and Renderer are bound to current thread.
-    // So here use the ThreadLocal to implement Thread isolation。
+    // So here use the ThreadLocal to implement Thread isolation.
     private ThreadLocal<OffScreenBlurRenderer> mThreadRenderer = new ThreadLocal<>();
 
     private ThreadLocal<EGLContext> mThreadEGLContext = new ThreadLocal<>();
