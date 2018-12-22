@@ -22,12 +22,9 @@ class RenderScriptBlurProcessor extends BlurProcessor {
     private static final String TAG = RenderScriptBlurProcessor.class.getSimpleName();
 
     private RenderScript mRenderScript;
-    private ScriptIntrinsicBlur mGaussianBlurScirpt;
+    private ScriptIntrinsicBlur mGaussianBlurScript;
     private ScriptC_BoxBlur mBoxBlurScript;
     private ScriptC_StackBlur mStackBlurScript;
-
-    private Allocation mAllocationIn;
-    private Allocation mAllocationOut;
 
     private static final int RS_MAX_RADIUS = 25;
 
@@ -43,7 +40,7 @@ class RenderScriptBlurProcessor extends BlurProcessor {
 
         try {
             mRenderScript = RenderScript.create(context.getApplicationContext());
-            mGaussianBlurScirpt = ScriptIntrinsicBlur.create(mRenderScript, Element.U8_4(mRenderScript));
+            mGaussianBlurScript = ScriptIntrinsicBlur.create(mRenderScript, Element.U8_4(mRenderScript));
             mBoxBlurScript = new ScriptC_BoxBlur(mRenderScript);
             mStackBlurScript = new ScriptC_StackBlur(mRenderScript);
             rsRuntimeInited = true;
@@ -58,57 +55,57 @@ class RenderScriptBlurProcessor extends BlurProcessor {
     /**
      * RenderScript built-in parallel implementation
      *
-     * @param scaledInBitmap
+     * @param bitmap
      * @param concurrent
      * @return
      */
     @Override
-    protected Bitmap doInnerBlur(Bitmap scaledInBitmap, boolean concurrent) {
-        Preconditions.checkNotNull(scaledInBitmap, "scaledInBitmap == null");
+    protected Bitmap doInnerBlur(Bitmap bitmap, boolean concurrent) {
+        Preconditions.checkNotNull(bitmap, "scaledInBitmap == null");
 
         if (!rsRuntimeInited) {
             Log.e(TAG, "RenderScript Runtime is not initialized");
-            return scaledInBitmap;
+            return bitmap;
         }
 
-        Bitmap scaledOutBitmap = Bitmap.createBitmap(scaledInBitmap.getWidth(), scaledInBitmap.getHeight(), Bitmap.Config.ARGB_8888);
 
-        mAllocationIn = Allocation.createFromBitmap(mRenderScript, scaledInBitmap);
-        mAllocationOut = Allocation.createFromBitmap(mRenderScript, scaledOutBitmap);
+        Allocation allocationIn = Allocation.createFromBitmap(mRenderScript, bitmap);
+        Allocation allocationOut = Allocation.createFromBitmap(mRenderScript, Bitmap.createBitmap(bitmap));
         try {
             switch (mMode) {
                 case HokoBlur.MODE_BOX:
-                    doBoxBlur(scaledInBitmap);
+                    doBoxBlur(bitmap, allocationIn, allocationOut);
+                    allocationIn.copyTo(bitmap);
+
                     break;
                 case HokoBlur.MODE_STACK:
-                    doStackBlur(scaledInBitmap);
+                    doStackBlur(bitmap, allocationIn, allocationOut);
+                    allocationIn.copyTo(bitmap);
+
                     break;
                 case HokoBlur.MODE_GAUSSIAN:
-                    doGaussianBlur(scaledInBitmap);
+                    doGaussianBlur(allocationIn, allocationOut);
+                    allocationOut.copyTo(bitmap);
+
                     break;
             }
 
-            mAllocationOut.copyTo(scaledInBitmap);
         } catch (Throwable e) {
             Log.e(TAG, "Blur the bitmap error", e);
         } finally {
-            mAllocationIn.destroy();
-            mAllocationOut.destroy();
+            allocationIn.destroy();
+            allocationOut.destroy();
         }
 
-
-
-        return scaledInBitmap;
+        return bitmap;
     }
 
 
-    private void doBoxBlur(Bitmap input) {
+    private void doBoxBlur(Bitmap input, Allocation in, Allocation out) {
         if (mBoxBlurScript == null) {
             throw new IllegalStateException("The blur script is unavailable");
         }
 
-        Allocation in = mAllocationIn;
-        Allocation out = mAllocationOut;
         mBoxBlurScript.set_input(in);
         mBoxBlurScript.set_output(out);
         mBoxBlurScript.set_width(input.getWidth());
@@ -120,29 +117,24 @@ class RenderScriptBlurProcessor extends BlurProcessor {
         mBoxBlurScript.set_output(in);
         mBoxBlurScript.forEach_boxblur_v(out);
 
-        mAllocationIn = out;
-        mAllocationOut = in;
     }
 
-    private void doGaussianBlur(Bitmap input) {
-        if (mGaussianBlurScirpt == null) {
+    private void doGaussianBlur(Allocation in, Allocation out) {
+        if (mGaussianBlurScript == null) {
             throw new IllegalStateException("The blur script is unavailable");
         }
         // RenderScript won't work, if too large blur radius
         mRadius = MathUtil.clamp(mRadius, 0, RS_MAX_RADIUS);
-        mGaussianBlurScirpt.setRadius(mRadius);
+        mGaussianBlurScript.setRadius(mRadius);
 //        mAllocationIn.copyFrom(input);
-        mGaussianBlurScirpt.setInput(mAllocationIn);
-        mGaussianBlurScirpt.forEach(mAllocationOut);
+        mGaussianBlurScript.setInput(in);
+        mGaussianBlurScript.forEach(out);
     }
 
-    private void doStackBlur(Bitmap input) {
+    private void doStackBlur(Bitmap input, Allocation in, Allocation out) {
         if (mStackBlurScript == null) {
             throw new IllegalStateException("The blur script is unavailable");
         }
-
-        Allocation in = mAllocationIn;
-        Allocation out = mAllocationOut;
 
         mStackBlurScript.set_input(in);
         mStackBlurScript.set_output(out);
@@ -154,9 +146,6 @@ class RenderScriptBlurProcessor extends BlurProcessor {
         mStackBlurScript.set_input(out);
         mStackBlurScript.set_output(in);
         mStackBlurScript.forEach_stackblur_h(out);
-
-        mAllocationIn = out;
-        mAllocationOut = in;
     }
 
 }
