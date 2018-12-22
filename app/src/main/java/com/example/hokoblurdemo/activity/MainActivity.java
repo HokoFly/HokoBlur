@@ -15,14 +15,6 @@ import com.hoko.blur.view.BlurLinearLayout;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Button mMultiBlurBtn;
-    private Button mDynamicBtn;
-    private Button mLayoutBtn;
-    private Button mDrawableBtn;
-    private Button mEasyBlurBtn;
-
-    private BlurLinearLayout mBlurLayout;
-
     private boolean mHasBlurred;
     private BlurDrawable mBlurDrawable;
 
@@ -39,20 +31,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             getSupportActionBar().hide();
         }
 
-        mMultiBlurBtn = (Button) findViewById(R.id.multi_blur);
-        mDynamicBtn = (Button) findViewById(R.id.dynamic_blur);
-        mLayoutBtn = (Button) findViewById(R.id.layout_blur);
-        mBlurLayout = (BlurLinearLayout) findViewById(R.id.blur_layout);
-        mDrawableBtn = (Button) findViewById(R.id.drawable_blur);
-        mEasyBlurBtn = (Button) findViewById(R.id.easy_blur);
+        Button multiBlurBtn = findViewById(R.id.multi_blur);
+        Button dynamicBtn = findViewById(R.id.dynamic_blur);
+        Button layoutBtn = findViewById(R.id.layout_blur);
+        BlurLinearLayout blurLayout = findViewById(R.id.blur_layout);
+        Button drawableBtn = findViewById(R.id.drawable_blur);
+        Button easyBlurBtn = findViewById(R.id.easy_blur);
 
-        mMultiBlurBtn.setOnClickListener(this);
-        mDynamicBtn.setOnClickListener(this);
-        mLayoutBtn.setOnClickListener(this);
-        mDrawableBtn.setOnClickListener(this);
-        mEasyBlurBtn.setOnClickListener(this);
+        multiBlurBtn.setOnClickListener(this);
+        dynamicBtn.setOnClickListener(this);
+        layoutBtn.setOnClickListener(this);
+        drawableBtn.setOnClickListener(this);
+        easyBlurBtn.setOnClickListener(this);
 
-        mBlurDrawable = mBlurLayout.getBlurDrawable();
+        mBlurDrawable = blurLayout.getBlurDrawable();
 
     }
 
@@ -86,12 +78,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-
-    }
 
     @Override
     public void onAttachedToWindow() {

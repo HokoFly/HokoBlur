@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:textColor="#848184"
         android:layout_marginBottom="15dp"
-        android:text="* 点击图片进行切换" />
+        android:text="* click on images to switch" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -49,7 +49,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@android:color/black"
-                        android:text="选择模糊方案" />
+                        android:text="Blur Scheme" />
 
                     <Spinner
                         android:id="@+id/scheme_spinner"
@@ -68,7 +68,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@android:color/black"
-                        android:text="选择模糊算法" />
+                        android:text="Blur Algorithm" />
 
                     <Spinner
                         android:id="@+id/mode_spinner"
@@ -82,7 +82,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/black"
-                android:text="模糊半径: 0" />
+                android:text="Blur Radius: 0" />
 
             <SeekBar
                 android:id="@+id/radius_seekbar"
@@ -96,13 +96,15 @@
                 android:id="@+id/reset_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="复位" />
+                android:textAllCaps="false"
+                android:text="Reset" />
 
             <Button
                 android:id="@+id/anim_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="动画" />
+                android:textAllCaps="false"
+                android:text="Animation" />
 
         </LinearLayout>
 

@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.ArrayRes;
 import android.support.annotation.DrawableRes;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -17,6 +18,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import com.example.hokoblurdemo.R;
@@ -38,13 +40,7 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
 
     private int index = 0;
 
-    private Spinner mSchemeSpinner;
-    private Spinner mModeSpinner;
-
     private SeekBar mSeekBar;
-
-    private Button mResetBtn;
-    private Button mAnimBtn;
 
     private TextView mRadiusText;
 
@@ -75,38 +71,38 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
 
         mBlurBuilder = HokoBlur.with(this).sampleFactor(SAMPLE_FACTOR);
 
-        mImageView = (ImageView) findViewById(R.id.photo);
-        mSchemeSpinner = (Spinner) findViewById(R.id.scheme_spinner);
-        mModeSpinner = (Spinner) findViewById(R.id.mode_spinner);
-        mSeekBar = (SeekBar) findViewById(R.id.radius_seekbar);
-        mResetBtn = (Button) findViewById(R.id.reset_btn);
-        mAnimBtn = (Button) findViewById(R.id.anim_btn);
+        mImageView = findViewById(R.id.photo);
+        Spinner schemeSpinner = findViewById(R.id.scheme_spinner);
+        Spinner modeSpinner = findViewById(R.id.mode_spinner);
+        mSeekBar = findViewById(R.id.radius_seekbar);
+        Button resetBtn = findViewById(R.id.reset_btn);
+        Button animBtn = findViewById(R.id.anim_btn);
 
-        mRadiusText = (TextView) findViewById(R.id.blur_radius);
+        mRadiusText = findViewById(R.id.blur_radius);
 
-        ArrayAdapter<CharSequence> schemeAdapter = ArrayAdapter.createFromResource(this,
-                R.array.blur_schemes, android.R.layout.simple_spinner_item);
-        schemeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        ArrayAdapter<CharSequence> modeAdapter = ArrayAdapter.createFromResource(this,
-                R.array.blur_modes, android.R.layout.simple_spinner_item);
-        modeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        schemeSpinner.setAdapter(makeSpinnerAdapter(R.array.blur_schemes));
+        modeSpinner.setAdapter(makeSpinnerAdapter(R.array.blur_modes));
 
-        mSchemeSpinner.setAdapter(schemeAdapter);
-        mModeSpinner.setAdapter(modeAdapter);
-
-        mSchemeSpinner.setOnItemSelectedListener(this);
-        mModeSpinner.setOnItemSelectedListener(this);
+        schemeSpinner.setOnItemSelectedListener(this);
+        modeSpinner.setOnItemSelectedListener(this);
 
         mSeekBar.setOnSeekBarChangeListener(this);
 
-        mResetBtn.setOnClickListener(this);
-        mAnimBtn.setOnClickListener(this);
+        resetBtn.setOnClickListener(this);
+        animBtn.setOnClickListener(this);
 
         mImageView.setOnClickListener(this);
 
         setImage(mCurrentImageRes);
 
+    }
+
+    private SpinnerAdapter makeSpinnerAdapter(@ArrayRes int arrayRes) {
+        ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(this,
+                arrayRes, android.R.layout.simple_spinner_item);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        return spinnerAdapter;
     }
 
 
@@ -250,7 +246,7 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         final int radius = (int) (progress / 1000f * 25);
-        mRadiusText.setText("模糊半径: " + radius);
+        mRadiusText.setText("Blur Radius: " + radius);
         updateImage(radius);
     }
 
@@ -266,7 +262,6 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
 
     private void updateImage(int radius) {
         mRadius = radius;
-//        mSeekBar.setProgress((int) (mRadius / 25f * 1000));
         cancelAllTasks();
 
         BlurTask task = new BlurTask(mInBitmap, mProcessor, mImageView, blurTasks);
