@@ -119,7 +119,7 @@ public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
             throw new IllegalStateException("This thread has no EGLContext.");
         }
 
-        if (mNeedRelink) {
+        if (mNeedRelink || mProgram == null) {
             deletePrograms();
             mProgram = ProgramFactory.create(vertexShaderCode, ShaderUtil.getFragmentShaderCode(mMode));
             mNeedRelink = false;
@@ -153,9 +153,6 @@ public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
             int positionId = GLES20.glGetAttribLocation(mProgram.id(), "aPosition");
             GLES20.glEnableVertexAttribArray(positionId);
             GLES20.glVertexAttribPointer(positionId, COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, VERTEX_STRIDE, mVertexBuffer);
-
-//        mColorHandle = GLES20.glGetUniformLocation(mProgram, "vColor");
-//        GLES20.glUniform4fv(mColorHandle, 1, fragmentColor, 0);
 
             int texCoordId = GLES20.glGetAttribLocation(mProgram.id(), "aTexCoord");
             GLES20.glEnableVertexAttribArray(texCoordId);

@@ -19,10 +19,10 @@ public class EasyBlurActivity extends AppCompatActivity {
 
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.cat);
 
-        final ImageView imageView = ((ImageView) findViewById(R.id.image));
-        final ImageView imageView1 = ((ImageView) findViewById(R.id.image1));
-        final ImageView imageView2 = ((ImageView) findViewById(R.id.image2));
-        final ImageView imageView3 = ((ImageView) findViewById(R.id.image3));
+        final ImageView imageView = findViewById(R.id.image);
+        final ImageView imageView1 = findViewById(R.id.image1);
+        final ImageView imageView2 = findViewById(R.id.image2);
+        final ImageView imageView3 = findViewById(R.id.image3);
 
         imageView.setImageBitmap(HokoBlur.with(this)
                 .forceCopy(true)

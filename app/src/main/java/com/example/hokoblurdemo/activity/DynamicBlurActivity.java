@@ -9,20 +9,16 @@ import com.hoko.blur.view.DragBlurringView;
 
 public class DynamicBlurActivity extends AppCompatActivity {
 
-    private View mBlurredView;
-
-    private DragBlurringView mDragBlurringView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dynamic_blur);
 
-        mBlurredView = findViewById(R.id.container);
+        View blurredView = findViewById(R.id.container);
 
-        mDragBlurringView = (DragBlurringView) findViewById(R.id.blurring);
+        DragBlurringView dragBlurringView = findViewById(R.id.blurring);
 
-        mDragBlurringView.setBlurredView(mBlurredView);
+        dragBlurringView.setBlurredView(blurredView);
 
     }
 }

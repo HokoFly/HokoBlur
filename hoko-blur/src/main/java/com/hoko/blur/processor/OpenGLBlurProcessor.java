@@ -25,7 +25,7 @@ class OpenGLBlurProcessor extends BlurProcessor {
         Preconditions.checkNotNull(scaledInBitmap, "scaledInBitmap == null");
         Preconditions.checkArgument(!scaledInBitmap.isRecycled(), "You must input an unrecycled bitmap !");
 
-        // TODO: 2017/2/20 opengl 的并发处理
+        // TODO: 2017/2/20 opengl process parallel
         mEglBuffer.setBlurRadius(mRadius);
         mEglBuffer.setBlurMode(mMode);
         return mEglBuffer.getBlurBitmap(scaledInBitmap);

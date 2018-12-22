@@ -5,7 +5,6 @@ import android.opengl.GLES20;
 import android.util.Log;
 
 import com.hoko.blur.anno.Mode;
-import com.hoko.blur.api.IRenderer;
 
 import java.nio.IntBuffer;
 
@@ -33,7 +32,7 @@ public class EglBuffer {
     private static final int EGL_OPENGL_ES2_BIT = 4;
 
     private EGLConfig[] mEglConfigs = new EGLConfig[1];
-    private int[] mContextAttribs = new int[]{
+    private int[] mContextAttrs = new int[]{
             EGL_CONTEXT_CLIENT_VERSION, 2, EGL10.EGL_NONE
     };
 
@@ -68,13 +67,13 @@ public class EglBuffer {
     }
 
     private EGLSurface createSurface(int width, int height) {
-        int[] surfaceAttribs = {
+        int[] surfaceAttrs = {
                 EGL10.EGL_WIDTH, width,
                 EGL10.EGL_HEIGHT, height,
                 EGL10.EGL_NONE
         };
 
-        EGLSurface eglSurface = mEgl.eglCreatePbufferSurface(mEGLDisplay, mEglConfigs[0], surfaceAttribs);
+        EGLSurface eglSurface = mEgl.eglCreatePbufferSurface(mEGLDisplay, mEglConfigs[0], surfaceAttrs);
 
         mEgl.eglMakeCurrent(mEGLDisplay, eglSurface, eglSurface, getEGLContext());
 
@@ -121,15 +120,7 @@ public class EglBuffer {
         GLES20.glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, ib);
         int[] ia = ib.array();
 
-//        for (int i = 0; i < mHeight; i++) {
-//            for (int j = 0; j < mWidth; j++) {
-//                iat[(mHeight - i - 1) * mWidth + j] = ia[i * mWidth + j];
-//            }
-//        }
-
         bitmap.copyPixelsFromBuffer(IntBuffer.wrap(ia));
-//        mOutputBitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
-//        mOutputBitmap.copyPixelsFromBuffer(IntBuffer.wrap(ia));
     }
 
     /**
@@ -155,7 +146,7 @@ public class EglBuffer {
     private EGLContext getEGLContext() {
         EGLContext eglContext = mThreadEGLContext.get();
         if (eglContext == null) {
-            eglContext = mEgl.eglCreateContext(mEGLDisplay, mEglConfigs[0], EGL10.EGL_NO_CONTEXT, mContextAttribs);
+            eglContext = mEgl.eglCreateContext(mEGLDisplay, mEglConfigs[0], EGL10.EGL_NO_CONTEXT, mContextAttrs);
             mThreadEGLContext.set(eglContext);
         }
 

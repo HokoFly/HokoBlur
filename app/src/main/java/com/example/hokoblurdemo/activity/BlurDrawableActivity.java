@@ -13,8 +13,6 @@ import com.hoko.blur.view.BlurFrameLayout;
 
 public class BlurDrawableActivity extends Activity {
 
-    private BlurFrameLayout mFrameLayout;
-
     private ValueAnimator mAnimator;
 
     @Override
@@ -22,7 +20,7 @@ public class BlurDrawableActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_blur_drawable);
 
-        mFrameLayout = (BlurFrameLayout) findViewById(R.id.blur_frameLayout);
+        final BlurFrameLayout frameLayout = findViewById(R.id.blur_frameLayout);
 
         final BlurDrawable blurDrawable = new BlurDrawable();
         blurDrawable.mixColor(Color.argb(99, 255, 255, 255));
@@ -33,7 +31,7 @@ public class BlurDrawableActivity extends Activity {
         mAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                mFrameLayout.getBlurDrawable().radius((Integer) animation.getAnimatedValue());
+                frameLayout.getBlurDrawable().radius((Integer) animation.getAnimatedValue());
             }
         });
     }
