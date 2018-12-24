@@ -6,9 +6,6 @@ import android.util.Log;
 import com.hoko.blur.HokoBlur;
 import com.hoko.blur.anno.Mode;
 
-import javax.microedition.khronos.egl.EGL10;
-import javax.microedition.khronos.egl.EGLContext;
-
 /**
  * Created by yuxfzju on 16/9/4.
  */
@@ -45,16 +42,6 @@ public class ShaderUtil {
         return error == 0;
     }
 
-    public static boolean checkEGLContext() {
-        EGLContext context = ((EGL10) EGLContext.getEGL()).eglGetCurrentContext();
-        if (context.equals(EGL10.EGL_NO_CONTEXT)) {
-            Log.e(TAG, "This thread is no EGLContext.");
-            return false;
-        } else {
-            return true;
-        }
-    }
-
     public static String getFragmentShaderCode(@Mode int mode) {
 
         StringBuilder sb = new StringBuilder();
@@ -69,10 +56,6 @@ public class ShaderUtil {
                 .append("{ \n")
                 .append("   return 1.0 / sigma * exp(-(currentPos * currentPos) / (2.0 * sigma * sigma)); \n")
                 .append("} \n")
-
-                /**
-                 * Android 4.4一下系统编译器优化，这里注释暂时不用的GLSL代码
-                 */
                 .append("void main() {   \n");
 
         if (mode == HokoBlur.MODE_BOX) {
@@ -161,41 +144,6 @@ public class ShaderUtil {
         return sb.toString();
     }
 
-    public static String getKernelInitCode(float[] kernel) {
-        if (kernel == null || kernel.length == 0) {
-            return "";
-        }
-
-        StringBuilder sb = new StringBuilder("  float kernel[" + kernel.length + "]; \n");
-
-        for (int i = 0; i < kernel.length; i++) {
-            sb.append("  kernel[");
-            sb.append(i);
-            sb.append("] = ");
-            sb.append(kernel[i] + "f; \n");
-        }
-
-        return sb.toString();
-    }
-
-    public static String getOffsetInitCode(int radius) {
-        final int d = 2 * radius + 1;
-        StringBuilder sb = new StringBuilder("  vec2 offsets[" + d + "]; \n");
-
-        for (int i = -radius; i <= radius; i++) {
-            sb.append("  offsets[")
-                    .append(i + radius)
-                    .append("] = vec2(")
-                    .append(i)
-                    .append(".f * uWidthOffset, ")
-                    .append(i)
-                    .append(".f * uHeightOffset); \n");
-        }
-
-        return sb.toString();
-
-    }
-
     /**
      * copy the texture
      */
@@ -213,35 +161,5 @@ public class ShaderUtil {
                 .append("}   \n");
         return sb.toString();
     }
-
-
-    /**
-     * get color fragment
-     */
-    public static String getColorFragmentCode() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("precision mediump float;   \n")
-                .append("uniform vec4 vColor;   \n")
-                .append("void main() {   \n")
-                .append("   gl_FragColor = vColor;   \n")
-                .append("} \n");
-
-        return sb.toString();
-    }
-
-//    public static String getSampleCode(int d) {
-//        StringBuilder sb = new StringBuilder();
-//        sb.append("  vec3 sampleTex[KERNEL_SIZE];\n")
-//                .append("  for(int i = 0; i < KERNEL_SIZE; i++) {\n")
-//                .append("        sampleTex[i] = vec3(texture2D(uTexture, 1.0f - (vTexCoord.st + offsets[i])));\n")
-//                .append("  } \n")
-//                .append("  vec3 col;  \n")
-//                .append("  for(int i = 0; i < KERNEL_SIZE; i++) \n")
-//                .append("        col += sampleTex[i] * kernel[i]; \n")
-//                .append("  gl_FragColor = vec4(col, 1.0);   \n");
-//
-//        return sb.toString().replace("KERNEL_SIZE", d + "");
-//    }
-
 
 }
