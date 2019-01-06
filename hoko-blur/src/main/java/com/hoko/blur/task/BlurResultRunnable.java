@@ -4,12 +4,16 @@ package com.hoko.blur.task;
  * Created by yuxfzju on 2017/2/7.
  */
 
-class BlurResultDeliveryRunnable implements Runnable {
+class BlurResultRunnable implements Runnable {
 
     private BlurResult mResult;
 
-    BlurResultDeliveryRunnable(BlurResult result) {
+    private BlurResultRunnable(BlurResult result) {
         mResult = result;
+    }
+
+    public static BlurResultRunnable of(BlurResult result) {
+        return new BlurResultRunnable(result);
     }
 
     @Override

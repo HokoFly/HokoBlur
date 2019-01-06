@@ -9,16 +9,12 @@ import android.os.Looper;
  */
 
 public class SingleMainHandler {
-    private static volatile Handler sMainHandler;
+
+    private static class MainHandlerHolder {
+        private static Handler sMainHandler = new Handler(Looper.getMainLooper());
+    }
 
     public static Handler get() {
-        if (sMainHandler == null) {
-            synchronized (SingleMainHandler.class) {
-                if (sMainHandler == null) {
-                    sMainHandler = new Handler(Looper.getMainLooper());
-                }
-            }
-        }
-        return sMainHandler;
+        return MainHandlerHolder.sMainHandler;
     }
 }

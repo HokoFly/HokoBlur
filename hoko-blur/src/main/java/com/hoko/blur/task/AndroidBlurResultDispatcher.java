@@ -28,6 +28,6 @@ public class AndroidBlurResultDispatcher implements IBlurResultDispatcher {
 
     @Override
     public void dispatch(BlurResult result) {
-        mResultPoster.execute(new BlurResultDeliveryRunnable(result));
+        mResultPoster.execute(BlurResultRunnable.of(result));
     }
 }

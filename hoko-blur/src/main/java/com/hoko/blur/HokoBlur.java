@@ -8,7 +8,7 @@ import com.hoko.blur.processor.HokoBlurBuild;
 /**
  * Created by yuxfzju on 16/9/7.
  */
-public class HokoBlur {
+public final class HokoBlur {
 
     public static final int MODE_BOX = 0;
     public static final int MODE_GAUSSIAN = 1;

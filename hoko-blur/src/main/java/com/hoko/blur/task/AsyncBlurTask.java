@@ -22,13 +22,13 @@ public class AsyncBlurTask implements Runnable {
 
     private View mView;
 
-    private IBlurResultDispatcher mResultDelivery;
+    private IBlurResultDispatcher mResultDispatcher;
 
     public AsyncBlurTask(IBlurProcessor processor, Bitmap bitmap, Callback callback) {
         mProcessor = processor;
         mBitmap = bitmap;
         mCallback = callback;
-        mResultDelivery = MAIN_THREAD_DISPATCHER;
+        mResultDispatcher = MAIN_THREAD_DISPATCHER;
     }
 
     public AsyncBlurTask(IBlurProcessor processor, View view, Callback callback) {
@@ -60,7 +60,7 @@ public class AsyncBlurTask implements Runnable {
             result.setSuccess(false);
             result.setError(e);
         } finally {
-            mResultDelivery.dispatch(result);
+            mResultDispatcher.dispatch(result);
         }
 
     }
@@ -68,8 +68,8 @@ public class AsyncBlurTask implements Runnable {
     /**
      * set custom dispatcher to dispatch the result to other worker threads
      */
-    public void setResultDelivery(IBlurResultDispatcher resultDelivery) {
-        mResultDelivery = resultDelivery;
+    public void setResultDispatcher(IBlurResultDispatcher resultDispatcher) {
+        mResultDispatcher = resultDispatcher;
     }
 
     public interface Callback {
