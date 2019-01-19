@@ -4,10 +4,11 @@ import android.graphics.Bitmap;
 import android.view.View;
 
 import com.hoko.blur.api.IBlurProcessor;
+import com.hoko.blur.api.IBlurResultDispatcher;
 
 public class ViewAsyncBlurTask extends AsyncBlurTask<View> {
-    public ViewAsyncBlurTask(IBlurProcessor processor, View target, Callback callback) {
-        super(processor, target, callback);
+    public ViewAsyncBlurTask(IBlurProcessor processor, View target, Callback callback, IBlurResultDispatcher dispatcher) {
+        super(processor, target, callback, dispatcher);
     }
 
     @Override

@@ -4,8 +4,7 @@ import android.graphics.Bitmap;
 
 import com.hoko.blur.api.IBlurProcessor;
 import com.hoko.blur.api.IBlurResultDispatcher;
-
-import static com.hoko.blur.task.AndroidBlurResultDispatcher.MAIN_THREAD_DISPATCHER;
+import com.hoko.blur.util.Preconditions;
 
 /**
  * a wrapper class for async blur task
@@ -21,18 +20,15 @@ public abstract class AsyncBlurTask<T> implements Runnable {
 
     private IBlurResultDispatcher mResultDispatcher;
 
-    public AsyncBlurTask(IBlurProcessor processor, T target, Callback callback) {
+    public AsyncBlurTask(IBlurProcessor processor, T target, Callback callback, IBlurResultDispatcher dispatcher) {
         mProcessor = processor;
         mTarget = target;
         mCallback = callback;
-        mResultDispatcher = MAIN_THREAD_DISPATCHER;
+        mResultDispatcher = dispatcher;
     }
 
     @Override
     public void run() {
-        /**
-         * do blur
-         */
         BlurResult result = new BlurResult(mCallback);
         try {
             if (mProcessor == null) {
@@ -47,19 +43,13 @@ public abstract class AsyncBlurTask<T> implements Runnable {
             result.setSuccess(false);
             result.setError(e);
         } finally {
-            mResultDispatcher.dispatch(result);
+            Preconditions.checkNotNull(mResultDispatcher, "dispatcher == null");
+            mResultDispatcher.dispatch(BlurResultRunnable.of(result));
         }
 
     }
 
     protected abstract Bitmap makeBlur(T target);
-
-    /**
-     * set custom dispatcher to dispatch the result to other worker threads
-     */
-    public void setResultDispatcher(IBlurResultDispatcher resultDispatcher) {
-        mResultDispatcher = resultDispatcher;
-    }
 
     public interface Callback {
         void onBlurSuccess(Bitmap bitmap);

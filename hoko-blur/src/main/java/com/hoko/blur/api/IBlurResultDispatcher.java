@@ -1,7 +1,7 @@
 package com.hoko.blur.api;
 
-import com.hoko.blur.task.BlurResult;
+import com.hoko.blur.task.BlurResultRunnable;
 
 public interface IBlurResultDispatcher {
-    void dispatch(BlurResult result);
+    void dispatch(BlurResultRunnable result);
 }

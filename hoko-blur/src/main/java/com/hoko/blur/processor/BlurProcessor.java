@@ -6,6 +6,7 @@ import android.view.View;
 import com.hoko.blur.anno.Mode;
 import com.hoko.blur.anno.Scheme;
 import com.hoko.blur.api.IBlurProcessor;
+import com.hoko.blur.api.IBlurResultDispatcher;
 import com.hoko.blur.task.AsyncBlurTask;
 import com.hoko.blur.task.BitmapAsyncBlurTask;
 import com.hoko.blur.task.BlurTaskManager;
@@ -37,6 +38,8 @@ public abstract class BlurProcessor implements IBlurProcessor {
     private int mTranslateX;
     private int mTranslateY;
 
+    private IBlurResultDispatcher mDispatcher;
+
     public BlurProcessor(HokoBlurBuild builder) {
         mMode = builder.mMode;
         mScheme = builder.mScheme;
@@ -46,6 +49,7 @@ public abstract class BlurProcessor implements IBlurProcessor {
         mNeedUpscale = builder.mNeedUpscale;
         mTranslateX = builder.mTranslateX;
         mTranslateY = builder.mTranslateY;
+        mDispatcher = builder.mDispatcher;
     }
 
     public void mode(@Mode int mode) {
@@ -145,12 +149,12 @@ public abstract class BlurProcessor implements IBlurProcessor {
 
     @Override
     public Future asyncBlur(Bitmap bitmap, AsyncBlurTask.Callback callback) {
-        return BlurTaskManager.getInstance().submit(new BitmapAsyncBlurTask(this, bitmap, callback));
+        return BlurTaskManager.getInstance().submit(new BitmapAsyncBlurTask(this, bitmap, callback, mDispatcher));
     }
 
     @Override
     public Future asyncBlur(View view, AsyncBlurTask.Callback callback) {
-        return BlurTaskManager.getInstance().submit(new ViewAsyncBlurTask(this, view, callback));
+        return BlurTaskManager.getInstance().submit(new ViewAsyncBlurTask(this, view, callback, mDispatcher));
     }
 
     protected void free() {

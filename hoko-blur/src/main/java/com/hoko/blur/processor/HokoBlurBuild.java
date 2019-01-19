@@ -8,9 +8,12 @@ import com.hoko.blur.HokoBlur;
 import com.hoko.blur.anno.Mode;
 import com.hoko.blur.anno.Scheme;
 import com.hoko.blur.api.IBlurBuild;
+import com.hoko.blur.api.IBlurResultDispatcher;
 import com.hoko.blur.task.AsyncBlurTask;
 
 import java.util.concurrent.Future;
+
+import static com.hoko.blur.task.AndroidBlurResultDispatcher.MAIN_THREAD_DISPATCHER;
 
 public class HokoBlurBuild implements IBlurBuild {
 
@@ -25,6 +28,8 @@ public class HokoBlurBuild implements IBlurBuild {
 
     int mTranslateX = 0;
     int mTranslateY = 0;
+
+    IBlurResultDispatcher mDispatcher = MAIN_THREAD_DISPATCHER;
 
     Context mCtx;
 
@@ -87,6 +92,11 @@ public class HokoBlurBuild implements IBlurBuild {
         return this;
     }
 
+    @Override
+    public IBlurBuild dispatcher(IBlurResultDispatcher dispatcher) {
+        mDispatcher = dispatcher;
+        return this;
+    }
 
     @Override
     public BlurProcessor processor() {
@@ -116,6 +126,5 @@ public class HokoBlurBuild implements IBlurBuild {
         BlurProcessor processor = processor();
         return processor.asyncBlur(view, callback);
     }
-
 
 }

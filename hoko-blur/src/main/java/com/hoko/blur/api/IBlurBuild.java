@@ -30,6 +30,8 @@ public interface IBlurBuild {
 
     IBlurBuild translateY(int translateY);
 
+    IBlurBuild dispatcher(IBlurResultDispatcher dispatcher);
+
     /**
      * Get different types of Blur Processors
      */

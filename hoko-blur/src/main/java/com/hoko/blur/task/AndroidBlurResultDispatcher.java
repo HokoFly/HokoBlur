@@ -11,7 +11,7 @@ import java.util.concurrent.Executor;
 
 public class AndroidBlurResultDispatcher implements IBlurResultDispatcher {
 
-    static final IBlurResultDispatcher MAIN_THREAD_DISPATCHER = new AndroidBlurResultDispatcher(SingleMainHandler.get());
+    public static final IBlurResultDispatcher MAIN_THREAD_DISPATCHER = new AndroidBlurResultDispatcher(SingleMainHandler.get());
 
     private Executor mResultPoster;
 
@@ -27,7 +27,7 @@ public class AndroidBlurResultDispatcher implements IBlurResultDispatcher {
     }
 
     @Override
-    public void dispatch(BlurResult result) {
-        mResultPoster.execute(BlurResultRunnable.of(result));
+    public void dispatch(BlurResultRunnable runnable) {
+        mResultPoster.execute(runnable);
     }
 }
