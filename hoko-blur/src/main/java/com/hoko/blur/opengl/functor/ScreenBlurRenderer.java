@@ -22,6 +22,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
+import java.util.Locale;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLContext;
@@ -154,7 +155,8 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
             return;
         }
 
-        Preconditions.checkArgument(checkBlurSize(mWidth, mHeight), "Too large blur size, check width < 1800 and height < 3200");
+        Preconditions.checkArgument(checkBlurSize(mWidth, mHeight),
+                String.format(Locale.getDefault(), "Too large blur size, check width < 1800 and height < 3200, now width = %d and height = %d", mWidth, mHeight));
 
         try {
             //In order to provide cache for the next blur operation, call prepare() even when radius = 0.
@@ -176,7 +178,7 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
 
 
     private boolean checkBlurSize(int width, int height) {
-        return width <= 1800 && height <= 3200;
+        return width <= 3200 && height <= 3200;
     }
 
     private DrawFunctor.GLInfo checkClipSize(DrawFunctor.GLInfo info) {
@@ -213,7 +215,7 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
         GLES20.glClearColor(1f, 1f, 1f, 1f);
         //scissor test is enabled by default
         GLES20.glDisable(GLES20.GL_SCISSOR_TEST);
-        GLES20.glEnable(GLES20.GL_BLEND);   // 启用Alpha测试
+        GLES20.glEnable(GLES20.GL_BLEND);   // enable Alpha Test
 
         if (!isChildRedraw) {
             mDisplayTexture = TextureCache.getInstance().getTexture(mWidth, mHeight);
@@ -237,7 +239,7 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
 
 
     /**
-     * MVP的取值
+     * MVP values
      * Model                            View           Projection
      * transform + scaled Width&Height   Identity       viewport
      * scaled Width&Height               Identity       scaled Width&Height
