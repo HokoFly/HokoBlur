@@ -26,7 +26,7 @@ HokoBlur is an Android component which provides dynamic blur effect.
 #### Download
 
 ```groovy
-   implementation 'com.hoko:hoko-blur:1.3.2'
+   implementation 'com.hoko:hoko-blur:1.3.3'
 ```
 
 #### Static Blur
@@ -205,7 +205,7 @@ In order to make Hoko blur work normally, you need to add the following rules wh
 ### 2. 组件版本
 
 ```groovy
-   implementation 'com.hoko:hoko-blur:1.3.2'
+   implementation 'com.hoko:hoko-blur:1.3.3'
 ```
 
 ### 3. 原理及性能分析

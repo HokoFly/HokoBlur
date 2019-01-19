@@ -51,7 +51,7 @@ final class BoxBlurFilter {
             }
 
             int baseIndex = y * width;
-            for (int x = 0; x < width; x++) { // 滑动窗口的方式运算.
+            for (int x = 0; x < width; x++) {
                 out[baseIndex + x] = (divide[ta] << 24) | (divide[tr] << 16) | (divide[tg] << 8) | divide[tb];
 
                 int i1 = x + radius + 1;
