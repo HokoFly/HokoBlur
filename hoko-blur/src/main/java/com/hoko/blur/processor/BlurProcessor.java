@@ -7,7 +7,9 @@ import com.hoko.blur.anno.Mode;
 import com.hoko.blur.anno.Scheme;
 import com.hoko.blur.api.IBlurProcessor;
 import com.hoko.blur.task.AsyncBlurTask;
+import com.hoko.blur.task.BitmapAsyncBlurTask;
 import com.hoko.blur.task.BlurTaskManager;
+import com.hoko.blur.task.ViewAsyncBlurTask;
 import com.hoko.blur.util.BitmapUtil;
 import com.hoko.blur.util.Preconditions;
 
@@ -143,12 +145,12 @@ public abstract class BlurProcessor implements IBlurProcessor {
 
     @Override
     public Future asyncBlur(Bitmap bitmap, AsyncBlurTask.Callback callback) {
-        return BlurTaskManager.getInstance().submit(new AsyncBlurTask(this, bitmap, callback));
+        return BlurTaskManager.getInstance().submit(new BitmapAsyncBlurTask(this, bitmap, callback));
     }
 
     @Override
     public Future asyncBlur(View view, AsyncBlurTask.Callback callback) {
-        return BlurTaskManager.getInstance().submit(new AsyncBlurTask(this, view, callback));
+        return BlurTaskManager.getInstance().submit(new ViewAsyncBlurTask(this, view, callback));
     }
 
     protected void free() {

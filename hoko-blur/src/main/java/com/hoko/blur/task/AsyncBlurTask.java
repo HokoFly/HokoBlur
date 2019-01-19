@@ -1,7 +1,6 @@
 package com.hoko.blur.task;
 
 import android.graphics.Bitmap;
-import android.view.View;
 
 import com.hoko.blur.api.IBlurProcessor;
 import com.hoko.blur.api.IBlurResultDispatcher;
@@ -13,27 +12,20 @@ import static com.hoko.blur.task.AndroidBlurResultDispatcher.MAIN_THREAD_DISPATC
  * Created by yuxfzju on 2017/2/6.
  */
 
-public class AsyncBlurTask implements Runnable {
+public abstract class AsyncBlurTask<T> implements Runnable {
     private Callback mCallback;
 
-    private IBlurProcessor mProcessor;
+    IBlurProcessor mProcessor;
 
-    private Bitmap mBitmap;
-
-    private View mView;
+    private T mTarget;
 
     private IBlurResultDispatcher mResultDispatcher;
 
-    public AsyncBlurTask(IBlurProcessor processor, Bitmap bitmap, Callback callback) {
+    public AsyncBlurTask(IBlurProcessor processor, T target, Callback callback) {
         mProcessor = processor;
-        mBitmap = bitmap;
+        mTarget = target;
         mCallback = callback;
         mResultDispatcher = MAIN_THREAD_DISPATCHER;
-    }
-
-    public AsyncBlurTask(IBlurProcessor processor, View view, Callback callback) {
-        this(processor, (Bitmap) null, callback);
-        mView = view;
     }
 
     @Override
@@ -48,12 +40,7 @@ public class AsyncBlurTask implements Runnable {
                 return;
             }
 
-            if (mView != null) {
-                result.setBitmap(mProcessor.blur(mView));
-            } else {
-                result.setBitmap(mProcessor.blur(mBitmap));
-            }
-
+            result.setBitmap(makeBlur(mTarget));
             result.setSuccess(true);
         } catch (Throwable e) {
             e.printStackTrace();
@@ -64,6 +51,8 @@ public class AsyncBlurTask implements Runnable {
         }
 
     }
+
+    protected abstract Bitmap makeBlur(T target);
 
     /**
      * set custom dispatcher to dispatch the result to other worker threads

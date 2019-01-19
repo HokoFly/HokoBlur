@@ -7,7 +7,7 @@ import android.graphics.Bitmap;
  */
 
 public class BlurResult {
-    private boolean isSuccess;
+    private boolean success;
 
     private Bitmap bitmap;
 
@@ -20,11 +20,11 @@ public class BlurResult {
     }
 
     public boolean isSuccess() {
-        return isSuccess;
+        return success;
     }
 
     public void setSuccess(boolean success) {
-        isSuccess = success;
+        this.success = success;
     }
 
     public Bitmap getBitmap() {
