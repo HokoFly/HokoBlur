@@ -24,7 +24,7 @@ public class BlurDrawableActivity extends Activity {
 
         final BlurDrawable blurDrawable = new BlurDrawable();
         blurDrawable.mixColor(Color.argb(99, 255, 255, 255));
-        findViewById(R.id.test_view).setBackgroundDrawable(blurDrawable);
+        findViewById(R.id.test_view).setBackground(blurDrawable);
 
         mAnimator = ValueAnimator.ofInt(0, 20);
         mAnimator.setDuration(2000);

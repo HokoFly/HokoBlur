@@ -1,5 +1,16 @@
 apply plugin: 'com.android.library'
 
+def isReleaseBuildType = false
+gradle.startParameter.taskNames.each({
+    String taskNameL = it.toLowerCase()
+    if (taskNameL.contains("release")) {
+        isReleaseBuildType = true
+    }
+    if (taskNameL.equalsIgnoreCase('uploadArchives')) {
+        isReleaseBuildType = true
+    }
+})
+
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
@@ -10,15 +21,15 @@ android {
         versionName "1.0"
 
         renderscriptTargetApi rootProject.ext.renderscriptTargetApi
-        renderscriptSupportModeEnabled true
+        renderscriptSupportModeEnabled rootProject.ext.renderscriptSupportModeEnabled
 
         externalNativeBuild {
             cmake {
                 arguments '-DANDROID_PLATFORM=android-13', '-DANDROID_TOOLCHAIN=clang'
                 cppFlags "-std=c++11 -frtti -fexceptions"
-                abiFilters 'x86', 'armeabi-v7a'
             }
         }
+        externalNativeBuild.cmake.abiFilters = isReleaseBuildType ? ['armeabi-v7a', 'arm64-v8a'] : ['armeabi-v7a', 'arm64-v8a', 'x86']
     }
     buildTypes {
         release {

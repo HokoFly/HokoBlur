@@ -1,5 +1,6 @@
 package com.hoko.blur.opengl.functor;
 
+import android.annotation.SuppressLint;
 import android.graphics.Canvas;
 import android.opengl.Matrix;
 import android.os.Build;
@@ -51,6 +52,7 @@ public class DrawFunctor {
         }
     }
 
+    @SuppressLint("PrivateApi")
     public boolean doDraw(Canvas canvas) {
         if (!LIB_LOADED) {
             Log.e(TAG, "Native blur library is not loaded, ");

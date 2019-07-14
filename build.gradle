@@ -6,7 +6,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.1'
+        classpath 'com.android.tools.build:gradle:3.4.2'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
         // NOTE: Do not place your application dependencies here; they belong
@@ -26,10 +26,9 @@ task clean(type: Delete) {
 }
 
 ext {
-    minSdkVersion = 15
-
+    minSdkVersion = 16
     compileSdkVersion = 28
-    targetSdkVersion = 18
-
-    renderscriptTargetApi = 15
+    targetSdkVersion = 28
+    renderscriptTargetApi = 16
+    renderscriptSupportModeEnabled = true
 }
