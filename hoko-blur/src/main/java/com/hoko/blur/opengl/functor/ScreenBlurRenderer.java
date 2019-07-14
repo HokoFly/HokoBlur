@@ -151,7 +151,7 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
         mScaleW = (int) (mWidth / mSampleFactor);
         mScaleH = (int) (mHeight / mSampleFactor);
 
-        if (mWidth <= 0 || mHeight <= 0 || mScaleW <= 0 || mScaleH <= 0) {
+        if (mWidth <= 0 || mHeight <= 0 || mScaleW <= 0 || mScaleH <= 0 || info.viewportHeight <= 0 || info.viewportWidth <= 0) {
             return;
         }
 
@@ -167,9 +167,16 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
             }
             selectDisplayTexture(isChildRedraw);
             if (mRadius > 0) {
-                drawOneDimenBlur(mMVPMatrix, mTexMatrix, true);
-                drawOneDimenBlur(mMVPMatrix, mTexMatrix, false);
-                upscaleWithMixColor(mScreenMVPMatrix, mTexMatrix);
+                boolean ret = false;
+                ret = drawOneDimenBlur(mMVPMatrix, mTexMatrix, true);
+                if (!ret) {
+                    return;
+                }
+                ret = drawOneDimenBlur(mMVPMatrix, mTexMatrix, false);
+                if (!ret) {
+                    return;
+                }
+                ret = upscaleWithMixColor(mScreenMVPMatrix, mTexMatrix);
             }
         } finally {
             onPostBlur();
@@ -251,7 +258,7 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
         Matrix.setIdentityM(mViewMatrix, 0);
         Matrix.setIdentityM(mProjMatrix, 0);
         Matrix.scaleM(mModelMatrix, 0, mScaleW, mScaleH, 1.0f);
-        Matrix.orthoM(mProjMatrix, 0, 0, mScaleW, 0, mScaleH, -100f, 100f);
+        Matrix.orthoM(mProjMatrix, 0, 0, mScaleW, 0, mScaleH, 0, 1f);
         Matrix.multiplyMM(mMVPMatrix, 0, mViewMatrix, 0, mModelMatrix, 0);
         Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mMVPMatrix, 0);
 
@@ -259,13 +266,13 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
         Matrix.translateM(mModelMatrix, 0, info.clipLeft, info.viewportHeight - info.clipBottom, 0);
         Matrix.scaleM(mModelMatrix, 0, mWidth, mHeight, 1f);
         Matrix.setIdentityM(mProjMatrix, 0);
-        Matrix.orthoM(mProjMatrix, 0, 0, info.viewportWidth, 0, info.viewportHeight, -100f, 100f);
+        Matrix.orthoM(mProjMatrix, 0, 0, info.viewportWidth, 0, info.viewportHeight, 0, 1f);
         Matrix.multiplyMM(mScreenMVPMatrix, 0, mViewMatrix, 0, mModelMatrix, 0);
         Matrix.multiplyMM(mScreenMVPMatrix, 0, mProjMatrix, 0, mScreenMVPMatrix, 0);
     }
 
 
-    private void drawOneDimenBlur(float[] mvpMatrix, float[] texMatrix, boolean isHorizontal) {
+    private boolean drawOneDimenBlur(float[] mvpMatrix, float[] texMatrix, boolean isHorizontal) {
         try {
             GLES20.glViewport(0, 0, mScaleW, mScaleH);
 
@@ -305,7 +312,7 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
             GLES20.glUniform1f(heightOffsetId, isHorizontal ? 0 : 1f / mHeight * mSampleFactor);
 
             GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, mDrawListBuffer);
-
+            return checkGLError("Failed to drawOneDimenBlur");
         } finally {
             reset();
         }
@@ -313,7 +320,7 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
     }
 
 
-    private void upscaleWithMixColor(float[] mvpMatrix, float[] texMatrix) {
+    private boolean upscaleWithMixColor(float[] mvpMatrix, float[] texMatrix) {
         try {
             GLES20.glViewport(0, 0, mInfo.viewportWidth, mInfo.viewportHeight);
 
@@ -347,6 +354,7 @@ public class ScreenBlurRenderer implements IRenderer<DrawFunctor.GLInfo> {
             GLES20.glUniform1i(textureUniformId, 0);
 
             GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length, GLES20.GL_UNSIGNED_SHORT, mDrawListBuffer);
+            return checkGLError("Failed to upscaleWithMixColor");
 
         } finally {
             reset();

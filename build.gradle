@@ -29,6 +29,6 @@ ext {
     minSdkVersion = 16
     compileSdkVersion = 28
     targetSdkVersion = 28
-    renderscriptTargetApi = 16
+    renderscriptTargetApi = 28
     renderscriptSupportModeEnabled = true
 }

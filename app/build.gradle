@@ -11,7 +11,7 @@ android {
         versionName "1.0"
 
         renderscriptTargetApi rootProject.ext.renderscriptTargetApi
-        renderscriptSupportModeEnabled true
+        renderscriptSupportModeEnabled rootProject.ext.renderscriptSupportModeEnabled
 
     }
     buildTypes {

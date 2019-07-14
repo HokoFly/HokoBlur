@@ -21,63 +21,63 @@
 
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="200dp"
                 android:src="@mipmap/cat"
                 android:scaleType="fitXY"
                 android:layout_marginBottom="10dp" />
 
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="200dp"
                 android:src="@mipmap/cat"
                 android:scaleType="fitXY"
                 android:layout_marginBottom="10dp" />
 
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="200dp"
                 android:src="@mipmap/cat"
                 android:scaleType="fitXY"
                 android:layout_marginBottom="10dp" />
 
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="200dp"
                 android:src="@mipmap/cat"
                 android:scaleType="fitXY"
                 android:layout_marginBottom="10dp" />
 
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="200dp"
                 android:src="@mipmap/cat"
                 android:scaleType="fitXY"
                 android:layout_marginBottom="10dp" />
 
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="200dp"
                 android:src="@mipmap/cat"
                 android:scaleType="fitXY"
                 android:layout_marginBottom="10dp" />
 
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="200dp"
                 android:src="@mipmap/cat"
                 android:scaleType="fitXY"
                 android:layout_marginBottom="10dp" />
 
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="200dp"
                 android:src="@mipmap/cat"
                 android:scaleType="fitXY"
                 android:layout_marginBottom="10dp" />
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="120dp"
+                android:layout_height="200dp"
                 android:layout_marginBottom="10dp"
                 android:scaleType="centerCrop"
                 android:text="0"
