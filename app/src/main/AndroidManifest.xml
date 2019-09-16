@@ -26,7 +26,6 @@
         <activity
             android:name=".activity.MultiBlurActivity"
             android:hardwareAccelerated="true" />
-        <activity android:name=".activity.BlurDrawableActivity" />
         <activity android:name=".activity.EasyBlurActivity" />
     </application>
 
