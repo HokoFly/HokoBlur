@@ -1,8 +1,9 @@
 package com.example.hokoblurdemo.activity;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hokoblurdemo.R;
 import com.hoko.blur.view.DragBlurringView;
