@@ -89,12 +89,19 @@ f.cancel(false);
 
 #### Arbitrary Locaton Blur
 
-
 <img src="doc/graphic/dynamic_blur.gif" width = "370" height = "600" alt="动态模糊" />
 
 
 
-### 4. Tips
+### 4. Dynamic background blur
+
+Dynamic Blur provides real-time background blurring of View and ViewGroup, not based on Bitmap implementations. The component will blur the area where the View is located.  See the repository [HokoBlurDrawable](https://github.com/HokoFly/HokoBlurDrawable).
+
+<img src="doc/graphic/blur_drawable.gif" width = "370" alt="动态模糊" />
+
+
+
+### 5. Tips
 
 
 1. When the Bitmap is not scaled (```sampleFactor(1.0f)```), the incoming Bitmap will be directly modified by the subsequent operations. So when the function returns a bitmap, it can be used immediately.
@@ -212,6 +219,10 @@ HokoBlur.with(this)
 
 <img src="doc/graphic/dynamic_blur.gif" width = "370" height = "600" alt="动态模糊" />
 
+#### 4.3 动态背景模糊
+动态模糊提供了对View以及ViewGroup的实时背景模糊，并不是针对Bitmap的实现。组件将会对View所在区域进行模糊。详情参见工程 [HokoBlurDrawable](https://github.com/HokoFly/HokoBlurDrawable).
+
+<img src="doc/graphic/blur_drawable.gif" width = "370" alt="动态模糊" />
 
 
 ### 5. 注意事项
