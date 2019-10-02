@@ -4,6 +4,10 @@
 
 #include "include/BoxBlurFilter.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void boxBlurHorizontal(jint *in, jint *out, jint width, jint height, jint radius, jint startX,
                        jint startY, jint deltaX, jint deltaY) {
     jint widthMinus1 = width - 1;
@@ -98,8 +102,7 @@ Java_com_hoko_blur_filter_NativeBlurFilter_nativeBoxBlur(JNIEnv *env, jclass typ
                                                          jint j_cores, jint j_index,
                                                          jint j_direction) {
 
-
-    if (jbitmap == NULL) {
+    if (jbitmap == nullptr) {
         return;
     }
 
@@ -108,7 +111,7 @@ Java_com_hoko_blur_filter_NativeBlurFilter_nativeBoxBlur(JNIEnv *env, jclass typ
         return;
     }
 
-    int *pixels = NULL;
+    int *pixels = nullptr;
     if (AndroidBitmap_lockPixels(env, jbitmap, (void **) &pixels) < 0) {
         return;
     }
@@ -116,7 +119,7 @@ Java_com_hoko_blur_filter_NativeBlurFilter_nativeBoxBlur(JNIEnv *env, jclass typ
     int w = bmpInfo.width;
     int h = bmpInfo.height;
 
-    jint *copy = NULL;
+    jint *copy = nullptr;
     copy = (jint *) malloc(sizeof(jint) * w * h);
 
     for (int i = 0; i < w * h; i++) {
@@ -149,3 +152,7 @@ Java_com_hoko_blur_filter_NativeBlurFilter_nativeBoxBlur(JNIEnv *env, jclass typ
     free(copy);
 
 }
+
+#ifdef __cplusplus
+}
+#endif

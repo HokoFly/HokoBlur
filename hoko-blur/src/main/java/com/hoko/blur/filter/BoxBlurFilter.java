@@ -30,7 +30,7 @@ final class BoxBlurFilter {
     private static void boxBlurHorizontal(int[] in, int[] out, int width, int height, int radius) {
         int widthMinus1 = width - 1;
         int tableSize = 2 * radius + 1;
-        int divide[] = new int[256 * tableSize];
+        int[] divide = new int[256 * tableSize];
 
         // construct a query table from 0 to 255
         for (int i = 0; i < 256 * tableSize; i++)
@@ -76,7 +76,7 @@ final class BoxBlurFilter {
     private static void boxBlurVertical(int[] in, int[] out, int width, int height, int radius) {
         int heightMinus1 = height - 1;
         int tableSize = 2 * radius + 1;
-        int divide[] = new int[256 * tableSize];
+        int[] divide = new int[256 * tableSize];
 
         // construct a query table from 0 to 255
         for (int i = 0; i < 256 * tableSize; i++)

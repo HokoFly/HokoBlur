@@ -42,21 +42,21 @@ public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
     private static final int COORDS_PER_VERTEX = 3;
     private static final int VERTEX_STRIDE = COORDS_PER_VERTEX * 4;
 
-    private static final float squareCoords[] = {
+    private static final float[] squareCoords = {
             -1f, 1f, 0.0f,   // top left
             -1f, -1f, 0.0f,   // bottom left
             1f, -1f, 0.0f,   // bottom right
             1f, 1f, 0.0f    // top right
     };
 
-    private static final float mTexHorizontalCoords[] = {
+    private static final float[] mTexHorizontalCoords = {
             1.0f, 1.0f,
             1.0f, 0.0f,
             0.0f, 0.0f,
             0.0f, 1.0f
     };
 
-    private static final short drawOrder[] = {0, 1, 2, 0, 2, 3};
+    private static final short[] drawOrder = {0, 1, 2, 0, 2, 3};
 
     private FloatBuffer mVertexBuffer;
     private ShortBuffer mDrawListBuffer;

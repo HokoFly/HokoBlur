@@ -17,15 +17,12 @@ public class NativeBlurFilter {
             case HokoBlur.MODE_BOX:
                 nativeBoxBlur(bitmap, radius, cores, index, direction);
                 break;
-//
             case HokoBlur.MODE_STACK:
                 nativeStackBlur(bitmap, radius, cores, index, direction);
                 break;
-
             case HokoBlur.MODE_GAUSSIAN:
                 nativeGaussianBlur(bitmap, radius, cores, index, direction);
                 break;
-
         }
     }
 

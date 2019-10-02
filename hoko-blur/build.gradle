@@ -31,6 +31,12 @@ android {
         }
         externalNativeBuild.cmake.abiFilters = isReleaseBuildType ? ['armeabi-v7a', 'arm64-v8a'] : ['armeabi-v7a', 'arm64-v8a', 'x86']
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -50,14 +56,13 @@ android {
         cmake {
             path 'src/main/jni/CMakeLists.txt'
         }
-
     }
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     testImplementation 'junit:junit:4.12'
-    implementation 'androidx.annotation:annotation:1.0.0'
+    implementation 'androidx.annotation:annotation:1.1.0'
 }
 
 ext {

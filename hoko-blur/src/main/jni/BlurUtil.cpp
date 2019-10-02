@@ -4,6 +4,10 @@
 
 #include "include/BlurUtil.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 jint clamp(jint i, jint minValue, jint maxValue) {
     if (i < minValue) {
         return minValue;
@@ -20,7 +24,7 @@ Java_com_hoko_blur_util_BitmapUtil_replaceBitmap(JNIEnv *env, jclass type, jobje
                                                  jintArray j_inArray, jint j_x, jint j_y,
                                                  jint j_deltaW, jint j_deltaH) {
 
-    if (jbitmap == NULL) {
+    if (jbitmap == nullptr) {
         return;
     }
 
@@ -29,14 +33,14 @@ Java_com_hoko_blur_util_BitmapUtil_replaceBitmap(JNIEnv *env, jclass type, jobje
         return;
     }
 
-    int *pixels = NULL;
+    int *pixels = nullptr;
     if (AndroidBitmap_lockPixels(env, jbitmap, (void **) &pixels) < 0) {
         return;
     }
 
 
     jint *c_inArray;
-    c_inArray = env->GetIntArrayElements(j_inArray, NULL);
+    c_inArray = env->GetIntArrayElements(j_inArray, nullptr);
 
     int w = bmpInfo.width;
     int h = bmpInfo.height;
@@ -68,3 +72,7 @@ Java_com_hoko_blur_util_BitmapUtil_replaceBitmap(JNIEnv *env, jclass type, jobje
     env->ReleaseIntArrayElements(j_inArray, c_inArray, 0);
 
 }
+
+#ifdef __cplusplus
+}
+#endif

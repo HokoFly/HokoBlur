@@ -92,31 +92,21 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
 
     private void setImage(@DrawableRes final int id) {
         mImageView.setImageResource(id);
-        mDispatcher.submit(new Runnable() {
-            @Override
-            public void run() {
-                mInBitmap = BitmapFactory.decodeResource(getResources(), id);
+        mDispatcher.submit(() -> {
+            mInBitmap = BitmapFactory.decodeResource(getResources(), id);
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        endAnimators();
-                        mAnimator = ValueAnimator.ofInt(0, (int) (mRadius / 25f * 1000));
-                        mAnimator.setInterpolator(new LinearInterpolator());
-                        mAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                            @Override
-                            public void onAnimationUpdate(ValueAnimator animation) {
-                                mSeekBar.setProgress((Integer) animation.getAnimatedValue());
-                                updateImage((int) ((Integer) animation.getAnimatedValue() / 1000f * 25f));
-                            }
-
-                        });
-
-                        mAnimator.setDuration(300);
-                        mAnimator.start();
-                    }
+            runOnUiThread(() -> {
+                endAnimators();
+                mAnimator = ValueAnimator.ofInt(0, (int) (mRadius / 25f * 1000));
+                mAnimator.setInterpolator(new LinearInterpolator());
+                mAnimator.addUpdateListener(animation -> {
+                    mSeekBar.setProgress((Integer) animation.getAnimatedValue());
+                    updateImage((int) ((Integer) animation.getAnimatedValue() / 1000f * 25f));
                 });
-            }
+
+                mAnimator.setDuration(300);
+                mAnimator.start();
+            });
         });
     }
 
@@ -178,13 +168,10 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
                 endAnimators();
                 mRoundAnimator = ValueAnimator.ofInt(0, 1000, 0);
                 mRoundAnimator.setInterpolator(new LinearInterpolator());
-                mRoundAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator animation) {
-                        mSeekBar.setProgress((int) animation.getAnimatedValue());
-                        final int radius = (int) ((int) animation.getAnimatedValue() / 1000f * 25);
-                        updateImage(radius);
-                    }
+                mRoundAnimator.addUpdateListener(animation -> {
+                    mSeekBar.setProgress((int) animation.getAnimatedValue());
+                    final int radius = (int) ((int) animation.getAnimatedValue() / 1000f * 25);
+                    updateImage(radius);
                 });
                 mRoundAnimator.setDuration(2000);
                 mRoundAnimator.start();
@@ -222,12 +209,7 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
             @Override
             void onBlurSuccess(final Bitmap bitmap) {
                 if (!isFinishing() && bitmap != null) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mImageView.setImageBitmap(bitmap);
-                        }
-                    });
+                    runOnUiThread(() -> mImageView.setImageBitmap(bitmap));
                 }
             }
         });
@@ -235,7 +217,7 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
 
     private void cancelPreTask() {
         if (mFuture != null && !mFuture.isCancelled() && !mFuture.isDone()) {
-            mFuture.cancel(true);
+            mFuture.cancel(false);
             mFuture = null;
         }
     }

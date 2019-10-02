@@ -4,6 +4,10 @@
 
 #include "include/GaussianBlurFilter.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void gaussianBlurHorizontal(float *kernel, jint *inPixels, jint *outPixels, jint width, jint height,
                             jint radius,
                             jint startX, jint startY, jint deltaX, jint deltaY) {
@@ -115,7 +119,7 @@ void JNICALL Java_com_hoko_blur_filter_NativeBlurFilter_nativeGaussianBlur(JNIEn
                                                                            jint j_index,
                                                                            jint j_direction) {
 
-    if (jbitmap == NULL) {
+    if (jbitmap == nullptr) {
         return;
     }
 
@@ -124,7 +128,7 @@ void JNICALL Java_com_hoko_blur_filter_NativeBlurFilter_nativeGaussianBlur(JNIEn
         return;
     }
 
-    int *pixels = NULL;
+    int *pixels = nullptr;
     if (AndroidBitmap_lockPixels(env, jbitmap, (void **) &pixels) < 0) {
         return;
     }
@@ -132,10 +136,10 @@ void JNICALL Java_com_hoko_blur_filter_NativeBlurFilter_nativeGaussianBlur(JNIEn
     int w = bmpInfo.width;
     int h = bmpInfo.height;
 
-    float *kernel = NULL;
+    float *kernel = nullptr;
     kernel = makeKernel(j_radius);
 
-    jint *copy = NULL;
+    jint *copy = nullptr;
     copy = (jint *) malloc(sizeof(jint) * w * h);
 
     for (int i = 0; i < w * h; i++) {
@@ -168,3 +172,7 @@ void JNICALL Java_com_hoko_blur_filter_NativeBlurFilter_nativeGaussianBlur(JNIEn
     free(copy);
     free(kernel);
 }
+
+#ifdef __cplusplus
+}
+#endif

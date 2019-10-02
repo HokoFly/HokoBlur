@@ -12,8 +12,13 @@ android {
 
         renderscriptTargetApi rootProject.ext.renderscriptTargetApi
         renderscriptSupportModeEnabled rootProject.ext.renderscriptSupportModeEnabled
-
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     buildTypes {
         release {
             minifyEnabled true
@@ -39,7 +44,7 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     testImplementation 'junit:junit:4.12'
-    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation project(':hoko-blur')
 //    implementation "com.hoko:hoko-blur:${HOKO_BLUR_VERSION}"
 }

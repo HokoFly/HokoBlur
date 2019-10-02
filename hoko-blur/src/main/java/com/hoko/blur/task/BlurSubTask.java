@@ -59,11 +59,9 @@ public class BlurSubTask implements Callable<Void> {
             case HokoBlur.SCHEME_NATIVE:
                 NativeBlurFilter.doBlur(mMode, mBitmapOut, mRadius, mCores, mIndex, mDirection);
                 break;
-
             case HokoBlur.SCHEME_JAVA:
                 OriginBlurFilter.doBlur(mMode, mBitmapOut, mRadius, mCores, mIndex, mDirection);
                 break;
-
             case HokoBlur.SCHEME_OPENGL:
                 throw new UnsupportedOperationException("Blur in parallel not supported !");
             case HokoBlur.SCHEME_RENDER_SCRIPT:
@@ -71,8 +69,6 @@ public class BlurSubTask implements Callable<Void> {
                 break;
             default:
                 break;
-
         }
-
     }
 }

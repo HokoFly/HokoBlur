@@ -29,14 +29,11 @@ public class RsBlurLinearLayout extends LinearLayout {
 
     private Canvas mCanvas;
 
-    private final ViewTreeObserver.OnPreDrawListener mOnPreDrawListener = new ViewTreeObserver.OnPreDrawListener() {
-        @Override
-        public boolean onPreDraw() {
-            if (getVisibility() == View.VISIBLE) {
-                prepare();
-            }
-            return true;
+    private final ViewTreeObserver.OnPreDrawListener mOnPreDrawListener = () -> {
+        if (getVisibility() == View.VISIBLE) {
+            prepare();
         }
+        return true;
     };
 
     public RsBlurLinearLayout(Context context) {

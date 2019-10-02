@@ -51,27 +51,21 @@ public class EasyBlurActivity extends AppCompatActivity {
                     }
                 });
 
-        imageView1.post(new Runnable() {
-            @Override
-            public void run() {
-                HokoBlur.with(EasyBlurActivity.this)
-                        .scheme(HokoBlur.SCHEME_NATIVE)
-                        .translateX(100)
-                        .translateY(100)
-                        .asyncBlur(imageView1, new AsyncBlurTask.Callback() {
-                            @Override
-                            public void onBlurSuccess(Bitmap bitmap) {
-                                imageView3.setImageBitmap(bitmap);
-                            }
+        imageView1.post(() -> HokoBlur.with(EasyBlurActivity.this)
+                .scheme(HokoBlur.SCHEME_NATIVE)
+                .translateX(100)
+                .translateY(100)
+                .asyncBlur(imageView1, new AsyncBlurTask.Callback() {
+                    @Override
+                    public void onBlurSuccess(Bitmap bitmap1) {
+                        imageView3.setImageBitmap(bitmap1);
+                    }
 
-                            @Override
-                            public void onBlurFailed(Throwable e) {
-                                e.printStackTrace();
-                            }
-                        });
-
-            }
-        });
+                    @Override
+                    public void onBlurFailed(Throwable e) {
+                        e.printStackTrace();
+                    }
+                }));
 
     }
 }

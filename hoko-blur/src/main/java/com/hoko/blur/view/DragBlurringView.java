@@ -26,7 +26,6 @@ public class DragBlurringView extends View {
     private View mBlurredView;
 
     private Bitmap mToBlurBitmap;
-    private Bitmap mBlurredBitmap;
     private Canvas mBlurringCanvas;
     private IBlurProcessor mProcessor;
 
@@ -66,12 +65,12 @@ public class DragBlurringView extends View {
                 }
 
                 mBlurredView.draw(mBlurringCanvas);
-                mBlurredBitmap = mProcessor.blur(mToBlurBitmap);
+                Bitmap blurredBitmap = mProcessor.blur(mToBlurBitmap);
 
                 canvas.save();
                 canvas.translate(mBlurredView.getX() - getX(), mBlurredView.getY() - getY());
                 canvas.scale(DOWNSAMPLE_FACTOR, DOWNSAMPLE_FACTOR);
-                canvas.drawBitmap(mBlurredBitmap, 0, 0, null);
+                canvas.drawBitmap(blurredBitmap, 0, 0, null);
                 canvas.restore();
             }
 

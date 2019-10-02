@@ -16,12 +16,9 @@ public class AndroidBlurResultDispatcher implements IBlurResultDispatcher {
     private Executor mResultPoster;
 
     public AndroidBlurResultDispatcher(final android.os.Handler handler) {
-        mResultPoster = new Executor() {
-            @Override
-            public void execute(Runnable command) {
-                if (handler != null) {
-                    handler.post(command);
-                }
+        mResultPoster = command -> {
+            if (handler != null) {
+                handler.post(command);
             }
         };
     }
