@@ -14,12 +14,8 @@ public class DynamicBlurActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dynamic_blur);
-
         View blurredView = findViewById(R.id.container);
-
         DragBlurringView dragBlurringView = findViewById(R.id.blurring);
-
         dragBlurringView.setBlurredView(blurredView);
-
     }
 }

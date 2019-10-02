@@ -1,15 +1,9 @@
 package com.example.hokoblurdemo.activity;
 
-import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.annotation.ArrayRes;
-import androidx.annotation.DrawableRes;
-import androidx.appcompat.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.AdapterView;
@@ -21,80 +15,70 @@ import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
+import androidx.annotation.ArrayRes;
+import androidx.annotation.DrawableRes;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.hokoblurdemo.R;
 import com.hoko.blur.HokoBlur;
 import com.hoko.blur.api.IBlurBuild;
 import com.hoko.blur.processor.BlurProcessor;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class MultiBlurActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
     private static final float SAMPLE_FACTOR = 8.0f;
     private static final int INIT_RADIUS = 5;
 
-    private static int[] testImageRes = {R.mipmap.sample1, R.mipmap.sample2};
+    private static final int[] TEST_IMAGE_RES = {R.drawable.sample1, R.drawable.sample2};
 
-    private int mCurrentImageRes = testImageRes[0];
-
+    private int mCurrentImageRes = TEST_IMAGE_RES[0];
     private int index = 0;
-
     private SeekBar mSeekBar;
-
     private TextView mRadiusText;
-
     private ImageView mImageView;
 
     private IBlurBuild mBlurBuilder;
-
     private BlurProcessor mProcessor;
-
     private Bitmap mInBitmap;
-
     private int mRadius = INIT_RADIUS;
-
     private ValueAnimator mAnimator;
-
-    private boolean mIsBlurAnimating;
-
-    private Map<BlurTask, Object> blurTasks = new ConcurrentHashMap<>();
+    private ValueAnimator mRoundAnimator;
+    private volatile Future mFuture;
+    private ExecutorService mDispatcher = Executors.newSingleThreadExecutor();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_multi_blur);
-
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
 
-        mBlurBuilder = HokoBlur.with(this).sampleFactor(SAMPLE_FACTOR);
-
         mImageView = findViewById(R.id.photo);
-        Spinner schemeSpinner = findViewById(R.id.scheme_spinner);
-        Spinner modeSpinner = findViewById(R.id.mode_spinner);
+        mImageView.setOnClickListener(this);
         mSeekBar = findViewById(R.id.radius_seekbar);
-        Button resetBtn = findViewById(R.id.reset_btn);
-        Button animBtn = findViewById(R.id.anim_btn);
-
+        mSeekBar.setOnSeekBarChangeListener(this);
         mRadiusText = findViewById(R.id.blur_radius);
 
-
+        Spinner schemeSpinner = findViewById(R.id.scheme_spinner);
         schemeSpinner.setAdapter(makeSpinnerAdapter(R.array.blur_schemes));
-        modeSpinner.setAdapter(makeSpinnerAdapter(R.array.blur_modes));
-
         schemeSpinner.setOnItemSelectedListener(this);
+
+        Spinner modeSpinner = findViewById(R.id.mode_spinner);
+        modeSpinner.setAdapter(makeSpinnerAdapter(R.array.blur_modes));
         modeSpinner.setOnItemSelectedListener(this);
 
-        mSeekBar.setOnSeekBarChangeListener(this);
-
+        Button resetBtn = findViewById(R.id.reset_btn);
         resetBtn.setOnClickListener(this);
+        Button animBtn = findViewById(R.id.anim_btn);
         animBtn.setOnClickListener(this);
 
-        mImageView.setOnClickListener(this);
-
         setImage(mCurrentImageRes);
+        mBlurBuilder = HokoBlur.with(this).sampleFactor(SAMPLE_FACTOR);
 
     }
 
@@ -108,18 +92,15 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
 
     private void setImage(@DrawableRes final int id) {
         mImageView.setImageResource(id);
-        new Thread(new Runnable() {
+        mDispatcher.submit(new Runnable() {
             @Override
             public void run() {
-                mIsBlurAnimating = true;
                 mInBitmap = BitmapFactory.decodeResource(getResources(), id);
 
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (mAnimator != null && mAnimator.isRunning()) {
-                            mAnimator.end();
-                        }
+                        endAnimators();
                         mAnimator = ValueAnimator.ofInt(0, (int) (mRadius / 25f * 1000));
                         mAnimator.setInterpolator(new LinearInterpolator());
                         mAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -127,39 +108,16 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
                             public void onAnimationUpdate(ValueAnimator animation) {
                                 mSeekBar.setProgress((Integer) animation.getAnimatedValue());
                                 updateImage((int) ((Integer) animation.getAnimatedValue() / 1000f * 25f));
-
                             }
 
                         });
 
-                        mAnimator.addListener(new Animator.AnimatorListener() {
-                            @Override
-                            public void onAnimationStart(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-                                mIsBlurAnimating = false;
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animator animation) {
-
-                            }
-                        });
                         mAnimator.setDuration(300);
                         mAnimator.start();
                     }
                 });
-
             }
-        }).start();
+        });
     }
 
     @Override
@@ -195,7 +153,7 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
             }
 
         }
-
+        endAnimators();
         mProcessor = mBlurBuilder.processor();
         mProcessor.radius(mRadius);
         updateImage(mRadius);
@@ -212,31 +170,28 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
         final int id = v.getId();
         switch (id) {
             case R.id.reset_btn:
+                endAnimators();
                 mImageView.setImageResource(mCurrentImageRes);
                 mSeekBar.setProgress(0);
                 break;
             case R.id.anim_btn:
-                ValueAnimator animator = ValueAnimator.ofInt(0, 1000, 0);
-                animator.setInterpolator(new LinearInterpolator());
-                animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                endAnimators();
+                mRoundAnimator = ValueAnimator.ofInt(0, 1000, 0);
+                mRoundAnimator.setInterpolator(new LinearInterpolator());
+                mRoundAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                     @Override
                     public void onAnimationUpdate(ValueAnimator animation) {
                         mSeekBar.setProgress((int) animation.getAnimatedValue());
-
                         final int radius = (int) ((int) animation.getAnimatedValue() / 1000f * 25);
-
                         updateImage(radius);
-
                     }
                 });
-                animator.setDuration(2000);
-                animator.start();
+                mRoundAnimator.setDuration(2000);
+                mRoundAnimator.start();
                 break;
             case R.id.photo:
-                if (!mIsBlurAnimating) {
-                    mCurrentImageRes = testImageRes[++index % testImageRes.length];
-                    setImage(mCurrentImageRes);
-                }
+                mCurrentImageRes = TEST_IMAGE_RES[++index % TEST_IMAGE_RES.length];
+                setImage(mCurrentImageRes);
                 break;
         }
 
@@ -262,79 +217,63 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
 
     private void updateImage(int radius) {
         mRadius = radius;
-        cancelAllTasks();
-
-        BlurTask task = new BlurTask(mInBitmap, mProcessor, mImageView, blurTasks);
-        blurTasks.put(task, new Object());
-        task.execute(radius);
-    }
-
-    private void cancelAllTasks() {
-        for (BlurTask task : blurTasks.keySet()) {
-            task.cancel(false);
-        }
-        blurTasks.clear();
-    }
-
-    private static class BlurTask extends AsyncTask<Integer, Void, Bitmap> {
-        private boolean mIssued = false;
-
-        private Bitmap bitmap;
-
-        private BlurProcessor blurProcessor;
-        private ImageView imageView;
-        Map<BlurTask, Object> blurTasks;
-
-        public BlurTask(Bitmap bitmap, BlurProcessor blurProcessor, ImageView imageView, Map<BlurTask, Object> blurTasks) {
-            this.bitmap = bitmap;
-            this.blurProcessor = blurProcessor;
-            this.imageView = imageView;
-            this.blurTasks = blurTasks;
-        }
-
-        @Override
-        protected Bitmap doInBackground(Integer... params) {
-            Bitmap output = null;
-
-            if (!isCancelled()) {
-                mIssued = true;
-                int radius = params[0];
-                if (bitmap != null && !bitmap.isRecycled() && blurProcessor != null) {
-                    blurProcessor.radius(radius);
-                    long start = System.nanoTime();
-                    output = blurProcessor.blur(bitmap);
-                    long stop = System.nanoTime();
-                    Log.i("Total elapsed time", (stop - start) / 1000000f + "ms");
+        cancelPreTask();
+        mFuture = mDispatcher.submit(new BlurTask(mInBitmap, mProcessor, radius) {
+            @Override
+            void onBlurSuccess(final Bitmap bitmap) {
+                if (!isFinishing() && bitmap != null) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mImageView.setImageBitmap(bitmap);
+                        }
+                    });
                 }
             }
+        });
+    }
 
-            return output;
+    private void cancelPreTask() {
+        if (mFuture != null && !mFuture.isCancelled() && !mFuture.isDone()) {
+            mFuture.cancel(true);
+            mFuture = null;
         }
+    }
 
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            if (bitmap == null) {
-                return;
-            }
-            imageView.setImageBitmap(bitmap);
-            blurTasks.remove(this);
-            imageView = null;
-
+    private void endAnimators() {
+        if (mAnimator != null && mAnimator.isStarted()) {
+            mAnimator.end();
         }
-
-        @Override
-        protected void onCancelled(Bitmap bitmap) {
-            if (mIssued && bitmap != null) {
-                imageView.setImageBitmap(bitmap);
-            }
-            blurTasks.remove(this);
-            imageView = null;
+        if (mRoundAnimator != null && mRoundAnimator.isStarted()) {
+            mRoundAnimator.end();
         }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        cancelAllTasks();
+        cancelPreTask();
+    }
+
+    private abstract static class BlurTask implements Runnable {
+        private Bitmap bitmap;
+        private BlurProcessor blurProcessor;
+        private int radius;
+
+        BlurTask(Bitmap bitmap, BlurProcessor blurProcessor, int radius) {
+            this.bitmap = bitmap;
+            this.blurProcessor = blurProcessor;
+            this.radius = radius;
+        }
+
+        @Override
+        public void run() {
+            if (bitmap != null && !bitmap.isRecycled() && blurProcessor != null) {
+                blurProcessor.radius(radius);
+                onBlurSuccess(blurProcessor.blur(bitmap));
+            }
+        }
+
+        abstract void onBlurSuccess(Bitmap bitmap);
     }
 }

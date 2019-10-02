@@ -3,8 +3,9 @@ package com.example.hokoblurdemo.activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
 import android.widget.ImageView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hokoblurdemo.R;
 import com.hoko.blur.HokoBlur;
@@ -17,31 +18,20 @@ public class EasyBlurActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_easy_blur);
 
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.cat);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cat);
 
         final ImageView imageView = findViewById(R.id.image);
         final ImageView imageView1 = findViewById(R.id.image1);
         final ImageView imageView2 = findViewById(R.id.image2);
         final ImageView imageView3 = findViewById(R.id.image3);
 
-        imageView.setImageBitmap(HokoBlur.with(this)
+        imageView.setImageBitmap(bitmap);
+        imageView1.setImageBitmap(HokoBlur.with(this)
                 .forceCopy(true)
                 .scheme(HokoBlur.SCHEME_RENDER_SCRIPT)
                 .sampleFactor(3.0f)
                 .radius(20)
                 .blur(bitmap));
-
-        imageView1.setImageBitmap(bitmap);
-//        HokoBlur.with(this).forceCopy(true).scheme(HokoBlur.SCHEME_NATIVE).sampleFactor(2.0f).radius(2).asyncBlur(bitmap, new AsyncBlurTask.Callback() {
-//            @Override
-//            public void onBlurSuccess(Bitmap bitmap) {
-//                imageView1.setImageBitmap(bitmap);
-//            }
-//
-//            @Override
-//            public void onBlurFailed() {
-//            }
-//        });
         HokoBlur.with(this)
                 .scheme(HokoBlur.SCHEME_OPENGL)
                 .translateX(150)
@@ -68,26 +58,6 @@ public class EasyBlurActivity extends AppCompatActivity {
                         .scheme(HokoBlur.SCHEME_NATIVE)
                         .translateX(100)
                         .translateY(100)
-                        .asyncBlur(imageView1, new AsyncBlurTask.Callback() {
-                            @Override
-                            public void onBlurSuccess(Bitmap bitmap) {
-                                imageView3.setImageBitmap(bitmap);
-                            }
-
-                            @Override
-                            public void onBlurFailed(Throwable e) {
-                                e.printStackTrace();
-                            }
-                        });
-
-            }
-        });
-
-        imageView1.post(new Runnable() {
-            @Override
-            public void run() {
-                HokoBlur.with(EasyBlurActivity.this)
-                        .scheme(HokoBlur.SCHEME_RENDER_SCRIPT)
                         .asyncBlur(imageView1, new AsyncBlurTask.Callback() {
                             @Override
                             public void onBlurSuccess(Bitmap bitmap) {

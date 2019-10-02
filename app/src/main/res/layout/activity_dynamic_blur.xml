@@ -16,7 +16,7 @@
             android:id="@+id/image0"
             android:layout_width="200dp"
             android:layout_height="200dp"
-            android:src="@mipmap/cat"
+            android:src="@drawable/cat"
             android:layout_marginRight="20dp" />
 
         <ImageView
@@ -25,7 +25,7 @@
             android:layout_height="200dp"
             android:layout_alignTop="@id/image0"
             android:layout_toRightOf="@id/image0"
-            android:src="@mipmap/dog" />
+            android:src="@drawable/dog" />
 
     </RelativeLayout>
 
