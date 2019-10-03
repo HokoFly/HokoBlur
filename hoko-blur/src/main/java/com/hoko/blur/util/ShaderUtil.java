@@ -80,8 +80,8 @@ public class ShaderUtil {
         StringBuilder sb = new StringBuilder();
 
         sb.append("   int diameter = 2 * uRadius + 1;  \n")
-                .append("   vec4 sampleTex;\n")
-                .append("   vec3 col;  \n")
+                .append("   vec4 sampleTex = vec4(0, 0, 0, 0);\n")
+                .append("   vec3 col = vec3(0, 0, 0);  \n")
                 .append("   float weightSum = 0.0; \n")
                 .append("   for(int i = 0; i < diameter; i++) {\n")
                 .append("       vec2 offset = vec2(float(i - uRadius) * uWidthOffset, float(i - uRadius) * uHeightOffset);  \n")
@@ -105,8 +105,8 @@ public class ShaderUtil {
         StringBuilder sb = new StringBuilder();
 
         sb.append("   int diameter = 2 * uRadius + 1; \n")
-                .append("   vec4 sampleTex;\n")
-                .append("   vec3 col;  \n")
+                .append("   vec4 sampleTex = vec4(0, 0, 0, 0);\n")
+                .append("   vec3 col = vec3(0, 0, 0);  \n")
                 .append("   float weightSum = 0.0; \n")
                 .append("   for(int i = 0; i < diameter; i++) {\n")
                 .append("       vec2 offset = vec2(float(i - uRadius) * uWidthOffset, float(i - uRadius) * uHeightOffset);  \n")
@@ -128,8 +128,8 @@ public class ShaderUtil {
         StringBuilder sb = new StringBuilder();
 
         sb.append("int diameter = 2 * uRadius + 1;  \n")
-                .append("   vec4 sampleTex;\n")
-                .append("   vec3 col;  \n")
+                .append("   vec4 sampleTex = vec4(0, 0, 0, 0);\n")
+                .append("   vec3 col = vec3(0, 0, 0);  \n")
                 .append("   float weightSum = 0.0; \n")
                 .append("   for(int i = 0; i < diameter; i++) {\n")
                 .append("       vec2 offset = vec2(float(i - uRadius) * uWidthOffset, float(i - uRadius) * uHeightOffset);  \n")
