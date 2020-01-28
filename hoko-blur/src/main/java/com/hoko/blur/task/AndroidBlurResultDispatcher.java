@@ -24,7 +24,7 @@ public class AndroidBlurResultDispatcher implements IBlurResultDispatcher {
     }
 
     @Override
-    public void dispatch(BlurResultRunnable runnable) {
+    public void dispatch(Runnable runnable) {
         mResultPoster.execute(runnable);
     }
 }
