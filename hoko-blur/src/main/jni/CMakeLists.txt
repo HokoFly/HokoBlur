@@ -15,11 +15,11 @@ set(BLUR_LIB_NAME hoko_blur)
 
 add_library(${BLUR_LIB_NAME} SHARED ${SOURCE_FILES})
 
-#日志库
+#Android log
 find_library(log-lib log)
 target_link_libraries(${BLUR_LIB_NAME} ${log-lib})
 
-#Android图形库
+#Android graphic
 find_library(graphics-lib jnigraphics)
 target_link_libraries(${BLUR_LIB_NAME} ${graphics-lib})
 
