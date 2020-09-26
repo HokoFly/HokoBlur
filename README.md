@@ -4,6 +4,7 @@
 
 HokoBlur is an Android component which provides dynamic blur effect.
 
+See the Kotlin implement [HokoBlur-Kotlin](https://github.com/HokoFly/HokoBlur-Kotlin)
 
 
 ### 1. Introductions
@@ -131,6 +132,8 @@ Dynamic Blur provides real-time background blurring of View and ViewGroup, not b
 
 
 ### 1. 描述
+
+Kotlin实现版本见 [HokoBlur-Kotlin](https://github.com/HokoFly/HokoBlur-Kotlin)
 
 - 组件主要提供以下功能：
 
