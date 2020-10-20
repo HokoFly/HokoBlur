@@ -17,6 +17,7 @@ android {
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
+        buildToolsVersion rootProject.ext.buildToolsVersion
         versionCode 1
         versionName "1.0"
 
@@ -61,7 +62,7 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13'
     implementation 'androidx.annotation:annotation:1.1.0'
 }
 

@@ -7,6 +7,7 @@ android {
         applicationId "com.example.hokoblurdemo"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
+        buildToolsVersion rootProject.ext.buildToolsVersion
         versionCode 1
         versionName "1.0"
 
@@ -43,8 +44,8 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    testImplementation 'junit:junit:4.12'
-    implementation 'androidx.appcompat:appcompat:1.1.0'
+    testImplementation 'junit:junit:4.13'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation project(':hoko-blur')
 //    implementation "com.hoko:hoko-blur:${HOKO_BLUR_VERSION}"
 }
