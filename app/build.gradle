@@ -44,8 +44,8 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    testImplementation 'junit:junit:4.13'
-    implementation 'androidx.appcompat:appcompat:1.2.0'
+    testImplementation "junit:junit:${deps.junitVersion}"
+    implementation "androidx.appcompat:appcompat:${deps.appcompatVersion}"
     implementation project(':hoko-blur')
 //    implementation "com.hoko:hoko-blur:${HOKO_BLUR_VERSION}"
 }
