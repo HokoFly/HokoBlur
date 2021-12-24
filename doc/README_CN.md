@@ -18,7 +18,7 @@ Kotlin实现版本见 [HokoBlur-Kotlin](https://github.com/HokoFly/HokoBlur-Kotl
 ### 2. 组件版本
 
 ```groovy
-   implementation 'io.github.hokofly:hoko-blur:1.3.6'
+   implementation 'io.github.hokofly:hoko-blur:1.3.7'
 ```
 
 ### 3.使用姿势
