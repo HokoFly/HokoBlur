@@ -15,3 +15,5 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+-keep class androidx.renderscript.** { *; }
+-keep class com.hoko.blur.opengl.functor.** { *; }
