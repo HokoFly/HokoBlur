@@ -1,0 +1,68 @@
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+
+task androidSourcesJar(type: Jar) {
+    archiveClassifier.set("sources")
+    from android.sourceSets.main.java.source
+    exclude "**/R.class"
+    exclude "**/BuildConfig.class"
+}
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+project.afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                groupId publishedGroupId
+                artifactId artifact
+                version libraryVersion
+                artifact("$buildDir/outputs/aar/${project.getName()}-release.aar")
+                artifact androidSourcesJar
+                pom {
+
+                    name = libraryName
+                    description = libraryDescription
+                    url = siteUrl
+                    licenses {
+                        license {
+                            name = licenseName
+                            url = licenseUrl
+                        }
+                    }
+                    developers {
+                        developer {
+                            name = developerName
+                            email = developerEmail
+                        }
+                    }
+                    scm {
+                        url = siteUrl
+                        connection = gitUrl
+                        developerConnection = gitUrl
+                    }
+                }
+            }
+        }
+
+        repositories {
+            maven {
+                def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+                def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+                url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+                credentials {
+                    username properties.getProperty("ossrh.username")
+                    password properties.getProperty("ossrh.password")
+                }
+            }
+        }
+    }
+
+    project.ext["signing.keyId"] = properties.getProperty("signing.keyId")
+    project.ext["signing.password"] = properties.getProperty("signing.password")
+    project.ext["signing.secretKeyRingFile"] = properties.getProperty("signing.secretKeyRingFile")
+    signing {
+        sign publishing.publications
+    }
+}

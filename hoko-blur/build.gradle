@@ -65,10 +65,7 @@ dependencies {
 }
 
 ext {
-    bintrayRepo = 'Hoko'
-    bintrayName = 'HokoBlur'
-
-    publishedGroupId = 'com.hoko'
+    publishedGroupId = 'io.github.hokofly'
     libraryName = 'HokoBlur'
     artifact = 'hoko-blur'
 
@@ -79,7 +76,6 @@ ext {
 
     libraryVersion = HOKO_BLUR_VERSION
 
-    developerId = 'HokoFly'
     developerName = 'HokoFly'
     developerEmail = 'yuxfzju@gmail.com'
 
@@ -87,3 +83,5 @@ ext {
     licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
     allLicenses = ["Apache-2.0"]
 }
+
+apply from: file('maven-center.gradle')
