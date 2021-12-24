@@ -18,8 +18,6 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         buildToolsVersion rootProject.ext.buildToolsVersion
-        versionCode 1
-        versionName "1.0"
 
         renderscriptTargetApi rootProject.ext.renderscriptTargetApi
         renderscriptSupportModeEnabled rootProject.ext.renderscriptSupportModeEnabled
@@ -67,10 +65,7 @@ dependencies {
 }
 
 ext {
-    bintrayRepo = 'Hoko'
-    bintrayName = 'HokoBlur'
-
-    publishedGroupId = 'com.hoko'
+    publishedGroupId = 'io.github.hokofly'
     libraryName = 'HokoBlur'
     artifact = 'hoko-blur'
 
@@ -81,7 +76,6 @@ ext {
 
     libraryVersion = HOKO_BLUR_VERSION
 
-    developerId = 'HokoFly'
     developerName = 'HokoFly'
     developerEmail = 'yuxfzju@gmail.com'
 
@@ -90,4 +84,4 @@ ext {
     allLicenses = ["Apache-2.0"]
 }
 
-apply from: rootProject.file('gradle/bintray.gradle')
+apply from: file('maven-center.gradle')

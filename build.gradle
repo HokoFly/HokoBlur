@@ -2,13 +2,11 @@
 
 buildscript {
     repositories {
-        jcenter()
+        mavenCentral()
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.2.1'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
+        classpath 'com.android.tools.build:gradle:7.0.4'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -16,7 +14,7 @@ buildscript {
 
 allprojects {
     repositories {
-        jcenter()
+        mavenCentral()
         google()
     }
 }
@@ -27,15 +25,15 @@ task clean(type: Delete) {
 
 ext {
     minSdkVersion = 16
-    compileSdkVersion = 28
-    targetSdkVersion = 28
-    buildToolsVersion = "29.0.3"
-    renderscriptTargetApi = 28
+    compileSdkVersion = 32
+    targetSdkVersion = 32
+    buildToolsVersion = "32.0.0"
+    renderscriptTargetApi = 31
     renderscriptSupportModeEnabled = true
 
     deps = [
-            appcompatVersion: "1.3.0",
-            annotationVersion: "1.2.0",
-            junitVersion: "4.13"
+            appcompatVersion: "1.4.0",
+            annotationVersion: "1.3.0",
+            junitVersion: "4.13.12"
     ]
 }

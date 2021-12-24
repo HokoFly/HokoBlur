@@ -36,7 +36,6 @@ android {
 
     sourceSets {
         main {
-            jni.srcDir "src/main/jni"
             jniLibs.srcDir "src/main/libs"
         }
     }
@@ -47,5 +46,5 @@ dependencies {
     testImplementation "junit:junit:${deps.junitVersion}"
     implementation "androidx.appcompat:appcompat:${deps.appcompatVersion}"
     implementation project(':hoko-blur')
-//    implementation "com.hoko:hoko-blur:${HOKO_BLUR_VERSION}"
+//    implementation "io.github.hokofly:hoko-blur:${HOKO_BLUR_VERSION}"
 }
