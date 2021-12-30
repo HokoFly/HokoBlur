@@ -16,4 +16,3 @@
 #   public *;
 #}
 -keep class androidx.renderscript.** { *; }
--keep class com.hoko.blur.opengl.functor.** { *; }
