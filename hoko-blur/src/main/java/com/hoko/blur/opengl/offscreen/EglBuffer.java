@@ -27,6 +27,8 @@ public class EglBuffer {
 
     private EGLDisplay mEGLDisplay = EGL10.EGL_NO_DISPLAY;
 
+    private EGLSurface mEGLSurface;
+
     private static final int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
 
     private static final int EGL_OPENGL_ES2_BIT = 4;
@@ -87,8 +89,8 @@ public class EglBuffer {
         final int h = bitmap.getHeight();
 
         try {
-            EGLSurface eglSurface = createSurface(w, h);
-            if (eglSurface == null) {
+            mEGLSurface = createSurface(w, h);
+            if (mEGLSurface == null) {
                 Log.e(TAG, "Create surface error");
                 return bitmap;
             }
@@ -96,7 +98,7 @@ public class EglBuffer {
             OffScreenBlurRenderer renderer = getRenderer();
             if (renderer != null) {
                 renderer.onDrawFrame(bitmap);
-                mEgl.eglSwapBuffers(mEGLDisplay, eglSurface);
+                mEgl.eglSwapBuffers(mEGLDisplay, mEGLSurface);
             } else {
                 Log.e(TAG, "Renderer is unavailable");
                 return bitmap;
@@ -105,7 +107,7 @@ public class EglBuffer {
         } catch (Throwable t) {
             Log.e(TAG, "Blur the bitmap error", t);
         } finally {
-            unbindEglCurrent();
+            destroyEglSurface();
         }
 
         return bitmap;
@@ -128,9 +130,11 @@ public class EglBuffer {
      * Then the EGLContext could be reused for other threads. Make it possible to share the EGLContext
      * To bind the EGLContext to current Thread, just call eglMakeCurrent()
      */
-    private void unbindEglCurrent() {
+    private void destroyEglSurface() {
         mEgl.eglMakeCurrent(mEGLDisplay, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);
-
+        if (mEGLSurface != null) {
+            mEgl.eglDestroySurface(mEGLDisplay, mEGLSurface);
+        }
     }
 
     private OffScreenBlurRenderer getRenderer() {
@@ -163,6 +167,11 @@ public class EglBuffer {
 
     public void free() {
         getRenderer().free();
+        EGLContext eglContext = mThreadEGLContext.get();
+        if (eglContext != null) {
+            mEgl.eglDestroyContext(mEGLDisplay, eglContext);
+        }
+        mThreadEGLContext.set(null);
     }
 
 }
