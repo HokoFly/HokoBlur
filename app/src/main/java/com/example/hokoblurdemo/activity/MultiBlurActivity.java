@@ -166,7 +166,7 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
                 break;
             case R.id.anim_btn:
                 endAnimators();
-                mRoundAnimator = ValueAnimator.ofInt(0, 1000, 0);
+                mRoundAnimator = ValueAnimator.ofInt(mSeekBar.getProgress(), 1000, mSeekBar.getProgress());
                 mRoundAnimator.setInterpolator(new LinearInterpolator());
                 mRoundAnimator.addUpdateListener(animation -> {
                     mSeekBar.setProgress((int) animation.getAnimatedValue());
