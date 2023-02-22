@@ -148,12 +148,12 @@ public abstract class BlurProcessor implements IBlurProcessor {
     }
 
     @Override
-    public Future asyncBlur(Bitmap bitmap, AsyncBlurTask.Callback callback) {
+    public Future<?> asyncBlur(Bitmap bitmap, AsyncBlurTask.Callback callback) {
         return BlurTaskManager.getInstance().submit(new BitmapAsyncBlurTask(this, bitmap, callback, mDispatcher));
     }
 
     @Override
-    public Future asyncBlur(View view, AsyncBlurTask.Callback callback) {
+    public Future<?> asyncBlur(View view, AsyncBlurTask.Callback callback) {
         return BlurTaskManager.getInstance().submit(new ViewAsyncBlurTask(this, view, callback, mDispatcher));
     }
 

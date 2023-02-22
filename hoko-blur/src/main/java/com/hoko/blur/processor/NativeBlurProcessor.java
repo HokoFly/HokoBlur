@@ -26,23 +26,19 @@ class NativeBlurProcessor extends BlurProcessor {
     @Override
     protected Bitmap doInnerBlur(Bitmap scaledInBitmap, boolean concurrent) {
         Preconditions.checkNotNull(scaledInBitmap, "scaledInBitmap == null");
-
         if (!LIB_LOADED) {
             Log.e(TAG, "Native blur library is not loaded");
             return scaledInBitmap;
         }
-
         try {
             if (concurrent) {
                 int cores = BlurTaskManager.getWorkersNum();
                 List<BlurSubTask> hTasks = new ArrayList<>(cores);
                 List<BlurSubTask> vTasks = new ArrayList<>(cores);
-
                 for (int i = 0; i < cores; i++) {
                     hTasks.add(new BlurSubTask(HokoBlur.SCHEME_NATIVE, mMode, scaledInBitmap, mRadius, cores, i, HokoBlur.HORIZONTAL));
                     vTasks.add(new BlurSubTask(HokoBlur.SCHEME_NATIVE, mMode, scaledInBitmap, mRadius, cores, i, HokoBlur.VERTICAL));
                 }
-
                 BlurTaskManager.getInstance().invokeAll(hTasks);
                 BlurTaskManager.getInstance().invokeAll(vTasks);
             } else {
@@ -51,7 +47,6 @@ class NativeBlurProcessor extends BlurProcessor {
         } catch (Throwable e) {
             Log.e(TAG, "Blur the bitmap error", e);
         }
-
         return scaledInBitmap;
     }
 
@@ -65,6 +60,5 @@ class NativeBlurProcessor extends BlurProcessor {
             Log.e(TAG, "Failed to load the hoko blur native library", t);
         }
     }
-
 
 }

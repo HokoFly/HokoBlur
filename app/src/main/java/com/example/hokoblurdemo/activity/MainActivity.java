@@ -16,7 +16,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         initView();
     }
 
@@ -24,11 +23,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
-
         Button multiBlurBtn = findViewById(R.id.multi_blur);
         Button dynamicBtn = findViewById(R.id.dynamic_blur);
         Button easyBlurBtn = findViewById(R.id.easy_blur);
-
         multiBlurBtn.setOnClickListener(this);
         dynamicBtn.setOnClickListener(this);
         easyBlurBtn.setOnClickListener(this);
@@ -36,7 +33,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-
         final Intent intent = new Intent();
         switch (view.getId()) {
             case R.id.multi_blur:
@@ -48,14 +44,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.easy_blur:
                 intent.setClass(MainActivity.this, EasyBlurActivity.class);
                 break;
-
         }
-
         ComponentName componentName = intent.resolveActivity(getPackageManager());
         if (componentName != null) {
             startActivity(intent);
         }
-
     }
 
 }

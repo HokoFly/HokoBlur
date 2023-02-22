@@ -6,7 +6,7 @@ package com.hoko.blur.task;
 
 public class BlurResultRunnable implements Runnable {
 
-    private BlurResult mResult;
+    private final BlurResult mResult;
 
     private BlurResultRunnable(BlurResult result) {
         mResult = result;

@@ -17,7 +17,6 @@ class OpenGLBlurProcessor extends BlurProcessor {
     OpenGLBlurProcessor(HokoBlurBuild builder) {
         super(builder);
         mEglBuffer = new EglBuffer();
-
     }
 
     @Override

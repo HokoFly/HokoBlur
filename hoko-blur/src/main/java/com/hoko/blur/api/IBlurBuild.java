@@ -41,8 +41,8 @@ public interface IBlurBuild {
 
     Bitmap blur(View view);
 
-    Future asyncBlur(Bitmap bitmap, AsyncBlurTask.Callback callback);
+    Future<?> asyncBlur(Bitmap bitmap, AsyncBlurTask.Callback callback);
 
-    Future asyncBlur(View view, AsyncBlurTask.Callback callback);
+    Future<?> asyncBlur(View view, AsyncBlurTask.Callback callback);
 
 }

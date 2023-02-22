@@ -23,13 +23,9 @@ public abstract class Texture implements ITexture {
 
     @Override
     public void create() {
-
         final int[] textureIds = new int[1];
-
         GLES20.glGenTextures(1, textureIds, 0);
-
         mTextureId = textureIds[0];
-
         if (mTextureId != 0) {
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureId);
             GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
@@ -38,7 +34,6 @@ public abstract class Texture implements ITexture {
             GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
             onTextureCreated();
         }
-
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
     }
 

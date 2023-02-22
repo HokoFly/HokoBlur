@@ -13,7 +13,7 @@ public class FrameBufferCache {
         private static final FrameBufferCache INSTANCE = new FrameBufferCache();
     }
 
-    private CachePool<Object, IFrameBuffer> mCache;
+    private final CachePool<Object, IFrameBuffer> mCache;
 
     private volatile IFrameBuffer sDisplayFrameBuffer;
 
@@ -58,7 +58,6 @@ public class FrameBufferCache {
                 }
             }
         }
-
         return sDisplayFrameBuffer;
     }
 
@@ -72,7 +71,6 @@ public class FrameBufferCache {
         if (mCache != null) {
             mCache.evictAll();
         }
-
         synchronized (this) {
             if (sDisplayFrameBuffer != null) {
                 sDisplayFrameBuffer.delete();

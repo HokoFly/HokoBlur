@@ -15,7 +15,6 @@ public class ShaderUtil {
 
     public static String getVertexCode() {
         StringBuilder sb = new StringBuilder();
-
         sb.append("uniform mat4 uMVPMatrix;   \n")
                 .append("uniform mat4 uTexMatrix;   \n")
                 .append("attribute vec2 aTexCoord;   \n")
@@ -25,7 +24,6 @@ public class ShaderUtil {
                 .append("   gl_Position = uMVPMatrix * vec4(aPosition, 1); \n")
                 .append("   vTexCoord = (uTexMatrix * vec4(aTexCoord, 1, 1)).st;\n")
                 .append("}  \n");
-
         return sb.toString();
 
     }
@@ -38,12 +36,10 @@ public class ShaderUtil {
         if (error != 0) {
             Log.e(TAG, "checkGLError: error=" + error + ", msg=" + msg);
         }
-
         return error == 0;
     }
 
     public static String getFragmentShaderCode(@Mode int mode) {
-
         StringBuilder sb = new StringBuilder();
         sb.append(" \n")
                 .append("precision mediump float;   \n")
@@ -57,7 +53,6 @@ public class ShaderUtil {
                 .append("   return 1.0 / sigma * exp(-(currentPos * currentPos) / (2.0 * sigma * sigma)); \n")
                 .append("} \n")
                 .append("void main() {   \n");
-
         if (mode == HokoBlur.MODE_BOX) {
             sb.append(ShaderUtil.getBoxSampleCode());
         } else if (mode == HokoBlur.MODE_GAUSSIAN) {
@@ -66,7 +61,6 @@ public class ShaderUtil {
             sb.append(ShaderUtil.getStackSampleCode());
         }
         sb.append("}   \n");
-
         return sb.toString();
     }
 
@@ -76,9 +70,7 @@ public class ShaderUtil {
      * So compute the weight in the code directly.
      */
     private static String getGaussianSampleCode() {
-
         StringBuilder sb = new StringBuilder();
-
         sb.append("   int diameter = 2 * uRadius + 1;  \n")
                 .append("   vec4 sampleTex = vec4(0, 0, 0, 0);\n")
                 .append("   vec3 col = vec3(0, 0, 0);  \n")
@@ -93,7 +85,6 @@ public class ShaderUtil {
                 .append("       weightSum += gaussWeight;\n")
                 .append("   }   \n")
                 .append("   gl_FragColor = vec4(col / weightSum, sampleTex.a);   \n");
-
         return sb.toString();
     }
 
@@ -103,7 +94,6 @@ public class ShaderUtil {
      */
     private static String getBoxSampleCode() {
         StringBuilder sb = new StringBuilder();
-
         sb.append("   int diameter = 2 * uRadius + 1; \n")
                 .append("   vec4 sampleTex = vec4(0, 0, 0, 0);\n")
                 .append("   vec3 col = vec3(0, 0, 0);  \n")
@@ -126,7 +116,6 @@ public class ShaderUtil {
      */
     private static String getStackSampleCode() {
         StringBuilder sb = new StringBuilder();
-
         sb.append("int diameter = 2 * uRadius + 1;  \n")
                 .append("   vec4 sampleTex = vec4(0, 0, 0, 0);\n")
                 .append("   vec3 col = vec3(0, 0, 0);  \n")
@@ -140,7 +129,6 @@ public class ShaderUtil {
                 .append("       weightSum += boxWeight;\n")
                 .append("   }   \n")
                 .append("   gl_FragColor = vec4(col / weightSum, sampleTex.a);   \n");
-
         return sb.toString();
     }
 

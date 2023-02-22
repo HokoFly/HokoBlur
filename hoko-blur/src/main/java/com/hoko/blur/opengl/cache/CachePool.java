@@ -15,9 +15,9 @@ public abstract class CachePool<K, V> {
 
     private static final int MAX_SIZE = 1024;
 
-    private int mMaxSize;
+    private final int mMaxSize;
 
-    private List<V> mInternalCache;
+    private final List<V> mInternalCache;
 
     public CachePool() {
         this(MAX_SIZE);
@@ -35,8 +35,6 @@ public abstract class CachePool<K, V> {
         if (listValue != null) {
             return listValue;
         }
-
-        //listValue is null
         return create(key);
     }
 
@@ -53,12 +51,10 @@ public abstract class CachePool<K, V> {
         } finally {
             trimToSize(mMaxSize);
         }
-
     }
 
     private V remove(K key) {
         Preconditions.checkNotNull(key, "key == null");
-
         V previous = null;
         synchronized (this) {
             Iterator<V> it = mInternalCache.iterator();
@@ -71,7 +67,6 @@ public abstract class CachePool<K, V> {
                 }
             }
         }
-
         return previous;
     }
 
@@ -103,13 +98,11 @@ public abstract class CachePool<K, V> {
                 }
             }
         }
-
         for(V removed : removedCollection) {
             if (removed != null) {
                 entryDeleted(removed);
             }
         }
-
     }
 
     public synchronized final int maxSize() {

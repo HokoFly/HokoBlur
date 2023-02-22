@@ -6,7 +6,7 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hokoblurdemo.R;
-import com.hoko.blur.view.DragBlurringView;
+import com.example.hokoblurdemo.view.DragBlurringView;
 
 public class DynamicBlurActivity extends AppCompatActivity {
 

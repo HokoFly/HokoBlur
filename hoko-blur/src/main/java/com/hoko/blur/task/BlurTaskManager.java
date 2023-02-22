@@ -35,7 +35,7 @@ public final class BlurTaskManager {
        return BlurTaskManagerHolder.INSTANCE;
     }
 
-    public Future submit(AsyncBlurTask task) {
+    public Future<?> submit(AsyncBlurTask<?> task) {
         Preconditions.checkNotNull(task, "task == null");
         return ASYNC_BLUR_EXECUTOR.submit(task);
     }

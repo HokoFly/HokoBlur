@@ -116,13 +116,13 @@ public class HokoBlurBuild implements IBlurBuild {
     }
 
     @Override
-    public Future asyncBlur(Bitmap bitmap, AsyncBlurTask.Callback callback) {
+    public Future<?> asyncBlur(Bitmap bitmap, AsyncBlurTask.Callback callback) {
         BlurProcessor processor = processor();
         return processor.asyncBlur(bitmap, callback);
     }
 
     @Override
-    public Future asyncBlur(View view, AsyncBlurTask.Callback callback) {
+    public Future<?> asyncBlur(View view, AsyncBlurTask.Callback callback) {
         BlurProcessor processor = processor();
         return processor.asyncBlur(view, callback);
     }

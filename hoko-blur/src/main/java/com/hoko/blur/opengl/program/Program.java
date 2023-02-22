@@ -19,17 +19,14 @@ public class Program implements IProgram {
 
     @Override
     public void create(String vertexShaderCode, String fragmentShaderCode) {
-
         int vertexShader = 0;
         int fragmentShader = 0;
         try {
             vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
             fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
-
             if (vertexShader == 0 || fragmentShader == 0) {
                 return;
             }
-
             id = GLES20.glCreateProgram();
             if (id != 0) {
                 GLES20.glAttachShader(id, vertexShader);
@@ -43,7 +40,6 @@ public class Program implements IProgram {
                     GLES20.glDeleteProgram(id);
                     id = 0;
                 }
-//
             }
         } finally {
             GLES20.glDetachShader(id, vertexShader);

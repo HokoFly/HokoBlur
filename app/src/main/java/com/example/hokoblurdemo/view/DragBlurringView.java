@@ -1,4 +1,4 @@
-package com.hoko.blur.view;
+package com.example.hokoblurdemo.view;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -32,7 +32,6 @@ public class DragBlurringView extends View {
     public DragBlurringView(Context context) {
         super(context);
         init();
-
     }
 
     public DragBlurringView(Context context, AttributeSet attrs) {
@@ -55,18 +54,14 @@ public class DragBlurringView extends View {
         super.onDraw(canvas);
 
         if (mBlurredView != null) {
-
             if (prepare()) {
-
                 if (mBlurredView.getBackground() != null && mBlurredView.getBackground() instanceof ColorDrawable) {
                     mToBlurBitmap.eraseColor(((ColorDrawable) mBlurredView.getBackground()).getColor());
                 } else {
                     mToBlurBitmap.eraseColor(Color.TRANSPARENT);
                 }
-
                 mBlurredView.draw(mBlurringCanvas);
                 Bitmap blurredBitmap = mProcessor.blur(mToBlurBitmap);
-
                 canvas.save();
                 canvas.translate(mBlurredView.getX() - getX(), mBlurredView.getY() - getY());
                 canvas.scale(DOWNSAMPLE_FACTOR, DOWNSAMPLE_FACTOR);
@@ -81,24 +76,18 @@ public class DragBlurringView extends View {
     private boolean prepare() {
         final int width = mBlurredView.getWidth();
         final int height = mBlurredView.getHeight();
-
         if (mBlurringCanvas == null) {
-
             int scaledWidth = width / DOWNSAMPLE_FACTOR;
             int scaleHeight = height / DOWNSAMPLE_FACTOR;
-
             if (mToBlurBitmap == null) {
                 mToBlurBitmap = Bitmap.createBitmap(scaledWidth, scaleHeight, Bitmap.Config.ARGB_8888);
             }
-
             if (mToBlurBitmap == null) {
                 return false;
             }
-
             mBlurringCanvas = new Canvas(mToBlurBitmap);
             mBlurringCanvas.scale(1.0f / DOWNSAMPLE_FACTOR, 1.0f / DOWNSAMPLE_FACTOR);
         }
-
         return true;
     }
 
@@ -114,7 +103,6 @@ public class DragBlurringView extends View {
                 mOldX = event.getRawX();
                 mOldY = event.getRawY();
                 return true;
-
             case MotionEvent.ACTION_MOVE:
                 float dx = event.getRawX() - mOldX;
                 float dy = event.getRawY() - mOldY;
@@ -124,14 +112,10 @@ public class DragBlurringView extends View {
                 mOldY = event.getRawY();
                 invalidate();
                 break;
-
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
                 break;
-
         }
-
-
         return super.onTouchEvent(event);
     }
 

@@ -13,7 +13,7 @@ public class AndroidBlurResultDispatcher implements IBlurResultDispatcher {
 
     public static final IBlurResultDispatcher MAIN_THREAD_DISPATCHER = new AndroidBlurResultDispatcher(SingleMainHandler.get());
 
-    private Executor mResultPoster;
+    private final Executor mResultPoster;
 
     public AndroidBlurResultDispatcher(final android.os.Handler handler) {
         mResultPoster = command -> {

@@ -12,13 +12,13 @@ import com.hoko.blur.util.Preconditions;
  */
 
 public abstract class AsyncBlurTask<T> implements Runnable {
-    private Callback mCallback;
+    private final Callback mCallback;
 
     IBlurProcessor mProcessor;
 
-    private T mTarget;
+    private final T mTarget;
 
-    private IBlurResultDispatcher mResultDispatcher;
+    private final IBlurResultDispatcher mResultDispatcher;
 
     public AsyncBlurTask(IBlurProcessor processor, T target, Callback callback, IBlurResultDispatcher dispatcher) {
         mProcessor = processor;
@@ -35,7 +35,6 @@ public abstract class AsyncBlurTask<T> implements Runnable {
                 result.setSuccess(false);
                 return;
             }
-
             result.setBitmap(makeBlur(mTarget));
             result.setSuccess(true);
         } catch (Throwable e) {

@@ -58,9 +58,9 @@ public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
 
     private static final short[] drawOrder = {0, 1, 2, 0, 2, 3};
 
-    private FloatBuffer mVertexBuffer;
-    private ShortBuffer mDrawListBuffer;
-    private FloatBuffer mTexCoordBuffer;
+    private final FloatBuffer mVertexBuffer;
+    private final ShortBuffer mDrawListBuffer;
+    private final FloatBuffer mTexCoordBuffer;
 
     private IProgram mProgram;
 
@@ -71,7 +71,6 @@ public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
     private volatile boolean mNeedRelink;
 
     public OffScreenBlurRenderer() {
-
         ByteBuffer bb = ByteBuffer.allocateDirect(squareCoords.length * 4);
         bb.order(ByteOrder.nativeOrder());
         mVertexBuffer = bb.asFloatBuffer();
@@ -98,11 +97,9 @@ public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
         if (bitmap == null || bitmap.isRecycled()) {
             return;
         }
-
         if (bitmap.getWidth() == 0 || bitmap.getHeight() == 0) {
             return;
         }
-
         BlurContext blurContext = null;
         try {
             blurContext = prepare(bitmap);
@@ -118,32 +115,25 @@ public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
         if (context.equals(EGL10.EGL_NO_CONTEXT)) {
             throw new IllegalStateException("This thread has no EGLContext.");
         }
-
         if (mNeedRelink || mProgram == null) {
             deletePrograms();
             mProgram = ProgramFactory.create(vertexShaderCode, ShaderUtil.getFragmentShaderCode(mMode));
             mNeedRelink = false;
         }
-
         if (mProgram.id() == 0) {
             throw new IllegalStateException("Failed to create program.");
         }
-
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
-
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
         GLES20.glViewport(0, 0, w, h);
-
         return new BlurContext(bitmap);
-
     }
 
 
     private void draw(BlurContext blurContext) {
         drawOneDimenBlur(blurContext, true);
         drawOneDimenBlur(blurContext, false);
-
     }
 
     private void drawOneDimenBlur(BlurContext blurContext, boolean isHorizontal) {
@@ -223,10 +213,10 @@ public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
     }
 
     private static class BlurContext {
-        private ITexture inputTexture;
-        private ITexture horizontalTexture;
-        private IFrameBuffer blurFrameBuffer;
-        private Bitmap bitmap;
+        private final ITexture inputTexture;
+        private final ITexture horizontalTexture;
+        private final IFrameBuffer blurFrameBuffer;
+        private final Bitmap bitmap;
 
         private BlurContext(Bitmap bitmap) {
             //todo Textures share problem is not solved. Here create a new texture directly, not get from the texture cache

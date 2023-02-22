@@ -34,9 +34,7 @@ class FrameBuffer implements IFrameBuffer {
     @Override
     public void create() {
         final int[] frameBufferIds = new int[1];
-
         GLES20.glGenFramebuffers(1, frameBufferIds, 0);
-
         mFrameBufferId = frameBufferIds[0];
     }
 
@@ -46,14 +44,11 @@ class FrameBuffer implements IFrameBuffer {
             return;
         }
         mTexture = texture;
-
         if (texture.id() != 0) {
             GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFrameBufferId);
-
             GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0,
                     GLES20.GL_TEXTURE_2D, texture.id(), 0);
         }
-
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
     }
 

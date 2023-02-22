@@ -11,7 +11,7 @@ public class BlurResult {
 
     private Bitmap bitmap;
 
-    private AsyncBlurTask.Callback callback;
+    private final AsyncBlurTask.Callback callback;
 
     private Throwable e;
 

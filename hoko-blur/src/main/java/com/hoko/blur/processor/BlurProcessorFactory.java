@@ -6,9 +6,7 @@ import com.hoko.blur.anno.Scheme;
 class BlurProcessorFactory {
 
     static BlurProcessor getBlurProcessor(@Scheme int scheme, HokoBlurBuild builder) {
-
         BlurProcessor blurProcessor = null;
-
         switch (scheme) {
             case HokoBlur.SCHEME_RENDER_SCRIPT:
                 blurProcessor = new RenderScriptBlurProcessor(builder);
@@ -25,7 +23,6 @@ class BlurProcessorFactory {
             default:
                 throw new IllegalArgumentException("Unsupported blur scheme!");
         }
-
         return blurProcessor;
     }
 }

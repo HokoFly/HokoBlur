@@ -10,9 +10,7 @@ import static com.hoko.blur.util.MathUtil.clamp;
  */
 final class GaussianBlurFilter {
 
-
     static void doBlur(int[] in, int width, int height, int radius, @Direction int direction) {
-
         int[] result = new int[width * height];
         float[] kernel = makeKernel(radius);
 
@@ -22,12 +20,10 @@ final class GaussianBlurFilter {
         } else if (direction == HokoBlur.VERTICAL) {
             gaussianBlurVertical(kernel, in, result, width, height);
             System.arraycopy(result, 0, in, 0, result.length);
-
         } else {
             gaussianBlurHorizontal(kernel, in, result, width, height);
             gaussianBlurVertical(kernel, result, in, width, height);
         }
-
 
     }
 
@@ -42,7 +38,6 @@ final class GaussianBlurFilter {
                 int moffset = cols2;
                 for (int col = -cols2; col <= cols2; col++) {
                     float f = kernel[moffset + col];
-
                     if (f != 0) {
                         int ix = x + col;
                         if (ix < 0) {
@@ -76,7 +71,6 @@ final class GaussianBlurFilter {
                 int moffset = cols2;
                 for (int col = -cols2; col <= cols2; col++) {
                     float f = kernel[moffset + col];
-
                     if (f != 0) {
                         int iy = y + col;
                         if (iy < 0) {
@@ -98,7 +92,6 @@ final class GaussianBlurFilter {
                 outPixels[outIndex] = (ia << 24) | (ir << 16) | (ig << 8) | ib;
             }
         }
-//
     }
 
     /**
@@ -113,13 +106,12 @@ final class GaussianBlurFilter {
         int index = 0;
         for (int row = -r; row <= r; row++) {
             matrix[index] = (float) (Math.exp(-1 * (row * row) / sigma22) / sigma);
-
             total += matrix[index];
             index++;
         }
-        for (int i = 0; i < rows; i++)
+        for (int i = 0; i < rows; i++) {
             matrix[i] /= total;
-
+        }
         return matrix;
     }
 

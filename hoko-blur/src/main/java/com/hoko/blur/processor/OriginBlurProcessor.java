@@ -30,12 +30,10 @@ class OriginBlurProcessor extends BlurProcessor {
                 int cores = BlurTaskManager.getWorkersNum();
                 List<BlurSubTask> hTasks = new ArrayList<>(cores);
                 List<BlurSubTask> vTasks = new ArrayList<>(cores);
-
                 for (int i = 0; i < cores; i++) {
                     hTasks.add(new BlurSubTask(HokoBlur.SCHEME_JAVA, mMode, scaledInBitmap, mRadius, cores, i, HokoBlur.HORIZONTAL));
                     vTasks.add(new BlurSubTask(HokoBlur.SCHEME_JAVA, mMode, scaledInBitmap, mRadius, cores, i, HokoBlur.VERTICAL));
                 }
-
                 BlurTaskManager.getInstance().invokeAll(hTasks);
                 BlurTaskManager.getInstance().invokeAll(vTasks);
             } else {

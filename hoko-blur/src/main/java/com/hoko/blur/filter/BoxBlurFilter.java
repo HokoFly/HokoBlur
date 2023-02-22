@@ -12,18 +12,15 @@ final class BoxBlurFilter {
 
     static void doBlur(int[] in, int width, int height, int radius, @Direction int round) {
         int[] result = new int[width * height];
-
         if (round == HokoBlur.HORIZONTAL) {
             boxBlurHorizontal(in, result, width, height, radius);
             System.arraycopy(result, 0, in, 0, result.length);
         } else if (round == HokoBlur.VERTICAL) {
             boxBlurVertical(in, result, width, height, radius);
             System.arraycopy(result, 0, in, 0, result.length);
-
         } else {
             boxBlurHorizontal(in, result, width, height, radius);
             boxBlurVertical(result, in, width, height, radius);
-
         }
     }
 
@@ -37,8 +34,6 @@ final class BoxBlurFilter {
             divide[i] = i / tableSize;
 
         int inIndex = 0;
-
-        //
         for (int y = 0; y < height; y++) {
             int ta = 0, tr = 0, tg = 0, tb = 0; // ARGB
 
@@ -67,7 +62,6 @@ final class BoxBlurFilter {
                 tr += ((rgb1 & 0xff0000) - (rgb2 & 0xff0000)) >> 16;
                 tg += ((rgb1 & 0xff00) - (rgb2 & 0xff00)) >> 8;
                 tb += (rgb1 & 0xff) - (rgb2 & 0xff);
-//                outIndex += height;
             }
             inIndex += width;
         }

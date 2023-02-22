@@ -28,7 +28,7 @@ class RenderScriptBlurProcessor extends BlurProcessor {
 
     private static final int RS_MAX_RADIUS = 25;
 
-    private volatile boolean rsRuntimeInited = false;
+    private volatile boolean rsRuntimeInitialized = false;
 
     RenderScriptBlurProcessor(HokoBlurBuild builder) {
         super(builder);
@@ -37,18 +37,16 @@ class RenderScriptBlurProcessor extends BlurProcessor {
 
     private void init(Context context) {
         Preconditions.checkNotNull(context, "Please set context for renderscript scheme, forget to set context for builder?");
-
         try {
             mRenderScript = RenderScript.create(context.getApplicationContext());
             mGaussianBlurScript = ScriptIntrinsicBlur.create(mRenderScript, Element.U8_4(mRenderScript));
             mBoxBlurScript = new ScriptC_BoxBlur(mRenderScript);
             mStackBlurScript = new ScriptC_StackBlur(mRenderScript);
-            rsRuntimeInited = true;
+            rsRuntimeInitialized = true;
         } catch (RSRuntimeException e) {
             Log.e(TAG, "Failed to init RenderScript runtime", e);
-            rsRuntimeInited = false;
+            rsRuntimeInitialized = false;
         }
-
     }
 
 
@@ -62,13 +60,10 @@ class RenderScriptBlurProcessor extends BlurProcessor {
     @Override
     protected Bitmap doInnerBlur(Bitmap bitmap, boolean concurrent) {
         Preconditions.checkNotNull(bitmap, "scaledInBitmap == null");
-
-        if (!rsRuntimeInited) {
+        if (!rsRuntimeInitialized) {
             Log.e(TAG, "RenderScript Runtime is not initialized");
             return bitmap;
         }
-
-
         Allocation allocationIn = Allocation.createFromBitmap(mRenderScript, bitmap);
         Allocation allocationOut = Allocation.createFromBitmap(mRenderScript, Bitmap.createBitmap(bitmap));
         try {
@@ -76,27 +71,22 @@ class RenderScriptBlurProcessor extends BlurProcessor {
                 case HokoBlur.MODE_BOX:
                     doBoxBlur(bitmap, allocationIn, allocationOut);
                     allocationIn.copyTo(bitmap);
-
                     break;
                 case HokoBlur.MODE_STACK:
                     doStackBlur(bitmap, allocationIn, allocationOut);
                     allocationIn.copyTo(bitmap);
-
                     break;
                 case HokoBlur.MODE_GAUSSIAN:
                     doGaussianBlur(allocationIn, allocationOut);
                     allocationOut.copyTo(bitmap);
-
                     break;
             }
-
         } catch (Throwable e) {
             Log.e(TAG, "Blur the bitmap error", e);
         } finally {
             allocationIn.destroy();
             allocationOut.destroy();
         }
-
         return bitmap;
     }
 
@@ -105,7 +95,6 @@ class RenderScriptBlurProcessor extends BlurProcessor {
         if (mBoxBlurScript == null) {
             throw new IllegalStateException("The blur script is unavailable");
         }
-
         mBoxBlurScript.set_input(in);
         mBoxBlurScript.set_output(out);
         mBoxBlurScript.set_width(input.getWidth());
@@ -135,7 +124,6 @@ class RenderScriptBlurProcessor extends BlurProcessor {
         if (mStackBlurScript == null) {
             throw new IllegalStateException("The blur script is unavailable");
         }
-
         mStackBlurScript.set_input(in);
         mStackBlurScript.set_output(out);
         mStackBlurScript.set_width(input.getWidth());

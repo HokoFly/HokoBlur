@@ -13,7 +13,6 @@ import static com.hoko.blur.util.BitmapUtil.replaceBitmap;
  */
 
 public final class OriginBlurFilter {
-
     public static void doBlur(@Mode int mode, Bitmap bitmap, int radius, int cores, int index, @Direction int direction) {
 
         int w = bitmap.getWidth();
@@ -27,23 +26,18 @@ public final class OriginBlurFilter {
         if (direction == HokoBlur.HORIZONTAL) {
             deltaY = h / cores;
             y = index * deltaY;
-
             if (index == cores - 1) {
                 deltaY = h - (cores - 1) * deltaY;
             }
-
             deltaX = w;
         } else if (direction == HokoBlur.VERTICAL) {
             deltaX = w / cores;
             x = index * deltaX;
-
             if (index == cores - 1) {
                 deltaX = w - (cores - 1) * deltaX;
             }
-
             deltaY = h;
         }
-
 
         final int[] pixels = new int[deltaX * deltaY];
         bitmap.getPixels(pixels, 0, deltaX, x, y, deltaX, deltaY);
@@ -52,11 +46,9 @@ public final class OriginBlurFilter {
             case HokoBlur.MODE_BOX:
                 BoxBlurFilter.doBlur(pixels, deltaX, deltaY, radius, direction);
                 break;
-
             case HokoBlur.MODE_GAUSSIAN:
                 GaussianBlurFilter.doBlur(pixels, deltaX, deltaY, radius, direction);
                 break;
-
             case HokoBlur.MODE_STACK:
                 StackBlurFilter.doBlur(pixels, deltaX, deltaY, radius, direction);
                 break;

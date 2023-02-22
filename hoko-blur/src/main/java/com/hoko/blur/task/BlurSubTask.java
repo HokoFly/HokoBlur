@@ -48,9 +48,7 @@ public class BlurSubTask implements Callable<Void> {
         Preconditions.checkNotNull(mBitmapOut, "mBitmapOut == null");
         Preconditions.checkArgument(!mBitmapOut.isRecycled(), "You must input an unrecycled bitmap !");
         Preconditions.checkArgument(mCores > 0, "mCores < 0");
-
         applyPixelsBlur();
-
         return null;
     }
 

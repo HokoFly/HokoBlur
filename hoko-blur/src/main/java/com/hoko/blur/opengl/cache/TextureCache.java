@@ -14,7 +14,7 @@ public class TextureCache {
         private static final TextureCache INSTANCE = new TextureCache();
     }
 
-    private CachePool<Size, ITexture> mCache;
+    private final CachePool<Size, ITexture> mCache;
 
     private TextureCache() {
         mCache = new CachePool<Size, ITexture>() {
@@ -47,11 +47,9 @@ public class TextureCache {
     }
 
     public ITexture getTexture(int width, int height) {
-
         if (mCache != null) {
             return mCache.get(new Size(width, height));
         }
-
         return null;
     }
 

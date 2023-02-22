@@ -35,7 +35,6 @@ import com.hoko.blur.anno.Direction;
 final class StackBlurFilter {
 
     public static void doBlur(int[] pix, int w, int h, int radius, @Direction int direction) {
-
         if (direction == HokoBlur.HORIZONTAL) {
             doHorizontalBlur(pix, w, h, radius);
         } else if (direction == HokoBlur.VERTICAL) {
@@ -49,14 +48,13 @@ final class StackBlurFilter {
 
     private static void doHorizontalBlur(int[] pix, int w, int h, int radius) {
         int wm = w - 1;
-        int hm = h - 1;
         int wh = w * h;
         int div = radius + radius + 1;
 
         int[] r = new int[wh];
         int[] g = new int[wh];
         int[] b = new int[wh];
-        int rsum, gsum, bsum, x, y, i, p, yp, yi, yw;
+        int rsum, gsum, bsum, x, y, i, p, yi, yw;
         int[] vmin = new int[Math.max(w, h)];
 
         int divsum = (div + 1) >> 1;
@@ -76,7 +74,6 @@ final class StackBlurFilter {
         int r1 = radius + 1;
         int routsum, goutsum, boutsum;
         int rinsum, ginsum, binsum;
-
 
         for (y = 0; y < h; y++) {
             rinsum = ginsum = binsum = routsum = goutsum = boutsum = rsum = gsum = bsum = 0;
@@ -164,7 +161,7 @@ final class StackBlurFilter {
         int[] r = new int[wh];
         int[] g = new int[wh];
         int[] b = new int[wh];
-        int rsum, gsum, bsum, x, y, i, p, yp, yi, yw;
+        int rsum, gsum, bsum, x, y, i, p, yp, yi;
         int[] vmin = new int[Math.max(w, h)];
 
         int divsum = (div + 1) >> 1;
@@ -173,8 +170,6 @@ final class StackBlurFilter {
         for (i = 0; i < 256 * divsum; i++) {
             dv[i] = (i / divsum);
         }
-
-        yw = yi = 0;
 
         int[][] stack = new int[div][3];
         int stackpointer;
@@ -186,7 +181,6 @@ final class StackBlurFilter {
         int rinsum, ginsum, binsum;
 
         for (i = 0; i < wh; i++) {
-
             r[i] = (pix[i] & 0xff0000) >> 16;
             g[i] = (pix[i] & 0x00ff00) >> 8;
             b[i] = (pix[i] & 0x0000ff);
