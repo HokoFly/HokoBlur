@@ -1,4 +1,5 @@
 #!/bin/bash
 
 ./gradlew clean
-./gradlew bintrayUpload
+./gradlew hoko-blur:assemble
+./gradlew hoko-blur:publish
