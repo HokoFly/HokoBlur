@@ -13,12 +13,11 @@ Kotlin实现版本见 [HokoBlur-Kotlin](https://github.com/HokoFly/HokoBlur-Kotl
 	- 多种实现方案，包括RenderScript、OpenGL、Native和Java；
 	- 多种算法，包括Box、Stack和Gaussian算法，满足不同的模糊效果；
 	- 多核多线程，提升模糊效率，增加异步调用Api；
-	- 🚀类似iOS的动态背景模糊，相比使用RenderScript处理Bitmap的动态模糊方案，具有更好的效果和性能
 	
 ### 2. 组件版本
 
 ```groovy
-   implementation 'io.github.hokofly:hoko-blur:1.3.7'
+   implementation 'io.github.hokofly:hoko-blur:1.3.8'
 ```
 
 ### 3.使用姿势

@@ -18,8 +18,6 @@ See the Kotlin implement [HokoBlur-Kotlin](https://github.com/HokoFly/HokoBlur-K
 	- Multiple schemes: RenderScript、OpenGL、Native and Java；
 	- Multiple algorithms: Box、Stack and Gaussian algorithms. Provide different blur effect；
 	- Multi-core and multi-threading, accelerate blurring，asynchronous interface；
-	- 🚀iOS-like dynamic backgroud blur: Compared to using RenderScript to process bitmaps, the component has better performance and effect.
-
 
 ### 2. Getting started
 
