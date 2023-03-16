@@ -119,6 +119,7 @@ void doHorizontalBlur(jint *pix, jint w, jint h, jint radius, jint startX, jint 
     }
 
 
+    free(vmin);
     free(dv);
     free(stack);
 }
@@ -231,6 +232,7 @@ void doVerticalBlur(jint *pix, jint w, jint h, jint radius, jint startX, jint st
         }
     }
 
+    free(vmin);
     free(dv);
     free(stack);
 }

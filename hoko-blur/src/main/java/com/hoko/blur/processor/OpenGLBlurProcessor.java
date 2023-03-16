@@ -11,33 +11,18 @@ import com.hoko.blur.util.Preconditions;
  */
 class OpenGLBlurProcessor extends BlurProcessor {
     private static final String TAG = OpenGLBlurProcessor.class.getSimpleName();
-
-    private final EglBuffer mEglBuffer;
+    private final EglBuffer mEglBuffer = new EglBuffer();
 
     OpenGLBlurProcessor(HokoBlurBuild builder) {
         super(builder);
-        mEglBuffer = new EglBuffer();
     }
 
     @Override
     protected Bitmap doInnerBlur(Bitmap scaledInBitmap, boolean concurrent) {
         Preconditions.checkNotNull(scaledInBitmap, "scaledInBitmap == null");
         Preconditions.checkArgument(!scaledInBitmap.isRecycled(), "You must input an unrecycled bitmap !");
+        return mEglBuffer.getBlurBitmap(scaledInBitmap, mRadius, mMode);
 
-        // TODO: 2017/2/20 opengl process parallel
-        mEglBuffer.setBlurRadius(mRadius);
-        mEglBuffer.setBlurMode(mMode);
-        return mEglBuffer.getBlurBitmap(scaledInBitmap);
     }
 
-    @Override
-    protected void free() {
-        mEglBuffer.free();
-    }
-
-    @Override
-    protected void finalize() throws Throwable {
-        free();
-        super.finalize();
-    }
 }

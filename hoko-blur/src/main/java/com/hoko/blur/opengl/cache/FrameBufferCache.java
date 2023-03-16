@@ -18,7 +18,7 @@ public class FrameBufferCache {
     private volatile IFrameBuffer sDisplayFrameBuffer;
 
     private FrameBufferCache() {
-        mCache = new CachePool<Object, IFrameBuffer>() {
+        mCache = new CachePool<Object, IFrameBuffer>(32) {
             @Override
             protected IFrameBuffer create(Object key) {
                 return FrameBufferFactory.create();

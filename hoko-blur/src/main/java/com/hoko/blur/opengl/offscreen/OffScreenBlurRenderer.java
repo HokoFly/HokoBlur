@@ -189,22 +189,26 @@ public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
         if (blurContext != null) {
             blurContext.finish();
         }
+        mVertexBuffer.clear();
+        mTexCoordBuffer.clear();
+        mDrawListBuffer.clear();
+        deletePrograms();
     }
 
 
     private void deletePrograms() {
+        mNeedRelink = true;
         if (mProgram != null) {
             mProgram.delete();
+            mProgram = null;
         }
     }
 
-    public void free() {
-        mNeedRelink = true;
-        deletePrograms();
-    }
-
     void setBlurMode(@Mode int mode) {
-        mNeedRelink = true;
+        if (mMode != mode) {
+            mNeedRelink = true;
+            deletePrograms();
+        }
         mMode = mode;
     }
 

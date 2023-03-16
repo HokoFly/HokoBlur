@@ -6,7 +6,8 @@ import android.util.Log;
 
 import com.hoko.blur.anno.Mode;
 
-import java.nio.IntBuffer;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
@@ -23,136 +24,104 @@ import static javax.microedition.khronos.opengles.GL10.GL_UNSIGNED_BYTE;
 public class EglBuffer {
     private static final String TAG = EglBuffer.class.getSimpleName();
 
-    private EGL10 mEgl;
-
-    private EGLDisplay mEGLDisplay = EGL10.EGL_NO_DISPLAY;
-
-    private EGLSurface mEGLSurface;
-
+    private static final EGL10 EGL = (EGL10) EGLContext.getEGL();
     private static final int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
-
     private static final int EGL_OPENGL_ES2_BIT = 4;
-
-    private final EGLConfig[] mEglConfigs = new EGLConfig[1];
-    private final int[] mContextAttrs = new int[]{
+    private static final int[] CONFIG_ATTRIB_LIST = {
+            EGL10.EGL_BUFFER_SIZE, 32,
+            EGL10.EGL_ALPHA_SIZE, 8,
+            EGL10.EGL_BLUE_SIZE, 8,
+            EGL10.EGL_GREEN_SIZE, 8,
+            EGL10.EGL_RED_SIZE, 8,
+            EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+            EGL10.EGL_SURFACE_TYPE, EGL10.EGL_PBUFFER_BIT,
+            EGL10.EGL_NONE
+    };
+    private final int[] CONTEXT_ATTRIB_LIST = new int[]{
             EGL_CONTEXT_CLIENT_VERSION, 2, EGL10.EGL_NONE
     };
 
-    //EGLContext、EGLSurface and Renderer are bound to current thread.
-    // So here use the ThreadLocal to implement Thread isolation.
-    private final ThreadLocal<OffScreenBlurRenderer> mThreadRenderer = new ThreadLocal<>();
-
-    private final ThreadLocal<EGLContext> mThreadEGLContext = new ThreadLocal<>();
-
-    public EglBuffer() {
-        initGL();
+    public Bitmap getBlurBitmap(Bitmap bitmap, int radius, @Mode int mode) {
+        final int w = bitmap.getWidth();
+        final int h = bitmap.getHeight();
+        EGLDisplay eglDisplay = EGL10.EGL_NO_DISPLAY;
+        EGLSurface eglSurface = null;
+        EGLContext eglContext = null;
+        EGLConfig[] eglConfigs = new EGLConfig[1];
+        OffScreenBlurRenderer renderer = null;
+        try {
+            eglDisplay = createDisplay(eglConfigs);
+            eglSurface = createSurface(w, h, eglDisplay, eglConfigs);
+            eglContext = createEGLContext(eglDisplay, eglConfigs);
+            EGL.eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
+            renderer = createRenderer(radius, mode);
+            renderer.onDrawFrame(bitmap);
+            EGL.eglSwapBuffers(eglDisplay, eglSurface);
+            convertToBitmap(bitmap);
+        } catch (Throwable t) {
+            Log.e(TAG, "Blur the bitmap error", t);
+        } finally {
+            destroyEglSurface(eglDisplay, eglSurface);
+            destroyEglContext(eglDisplay, eglContext);
+        }
+        return bitmap;
     }
 
-    private void initGL() {
-        int[] configAttribs = {
-                EGL10.EGL_BUFFER_SIZE, 32,
-                EGL10.EGL_ALPHA_SIZE, 8,
-                EGL10.EGL_BLUE_SIZE, 8,
-                EGL10.EGL_GREEN_SIZE, 8,
-                EGL10.EGL_RED_SIZE, 8,
-                EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-                EGL10.EGL_SURFACE_TYPE, EGL10.EGL_PBUFFER_BIT,
-                EGL10.EGL_NONE
-        };
-        mEgl = (EGL10) EGLContext.getEGL();
-        mEGLDisplay = mEgl.eglGetDisplay(EGL10.EGL_DEFAULT_DISPLAY);
-        mEgl.eglInitialize(mEGLDisplay, new int[2]);
-        mEgl.eglChooseConfig(mEGLDisplay, configAttribs, mEglConfigs, 1, new int[1]);
+
+    private void convertToBitmap(Bitmap bitmap) {
+        final int w = bitmap.getWidth();
+        final int h = bitmap.getHeight();
+        ByteBuffer buffer = null;
+        try {
+            buffer = ByteBuffer.allocateDirect(w * h * 4);
+            buffer.order(ByteOrder.LITTLE_ENDIAN);
+            GLES20.glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+            buffer.rewind();
+            bitmap.copyPixelsFromBuffer(buffer);
+        } finally {
+            if (buffer != null) {
+                buffer.clear();
+                buffer = null;
+            }
+        }
     }
 
-    private EGLSurface createSurface(int width, int height) {
+    private EGLDisplay createDisplay(EGLConfig[] eglConfigs) {
+        EGLDisplay eglDisplay = EGL.eglGetDisplay(EGL10.EGL_DEFAULT_DISPLAY);
+        EGL.eglInitialize(eglDisplay, new int[2]);
+        EGL.eglChooseConfig(eglDisplay, CONFIG_ATTRIB_LIST, eglConfigs, 1, new int[1]);
+        return eglDisplay;
+    }
+
+    private EGLSurface createSurface(int width, int height, EGLDisplay eglDisplay, EGLConfig[] eglConfigs) {
         int[] surfaceAttrs = {
                 EGL10.EGL_WIDTH, width,
                 EGL10.EGL_HEIGHT, height,
                 EGL10.EGL_NONE
         };
-        EGLSurface eglSurface = mEgl.eglCreatePbufferSurface(mEGLDisplay, mEglConfigs[0], surfaceAttrs);
-        mEgl.eglMakeCurrent(mEGLDisplay, eglSurface, eglSurface, getEGLContext());
-        return eglSurface;
+        return EGL.eglCreatePbufferSurface(eglDisplay, eglConfigs[0], surfaceAttrs);
     }
 
-
-    public Bitmap getBlurBitmap(Bitmap bitmap) {
-        final int w = bitmap.getWidth();
-        final int h = bitmap.getHeight();
-        try {
-            mEGLSurface = createSurface(w, h);
-            if (mEGLSurface == null) {
-                Log.e(TAG, "Create surface error");
-                return bitmap;
-            }
-            OffScreenBlurRenderer renderer = getRenderer();
-            renderer.onDrawFrame(bitmap);
-            mEgl.eglSwapBuffers(mEGLDisplay, mEGLSurface);
-            convertToBitmap(bitmap);
-        } catch (Throwable t) {
-            Log.e(TAG, "Blur the bitmap error", t);
-        } finally {
-            destroyEglSurface();
-        }
-        return bitmap;
-
-    }
-
-    private void convertToBitmap(Bitmap bitmap) {
-        final int w = bitmap.getWidth();
-        final int h = bitmap.getHeight();
-        IntBuffer ib = IntBuffer.allocate(w * h);
-        GLES20.glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, ib);
-        int[] ia = ib.array();
-        bitmap.copyPixelsFromBuffer(IntBuffer.wrap(ia));
-    }
-
-    /**
-     * When the current thread finish renderring and reading pixels, the EGLContext should be unbound.
-     * Then the EGLContext could be reused for other threads. Make it possible to share the EGLContext
-     * To bind the EGLContext to current Thread, just call eglMakeCurrent()
-     */
-    private void destroyEglSurface() {
-        mEgl.eglMakeCurrent(mEGLDisplay, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);
-        if (mEGLSurface != null) {
-            mEgl.eglDestroySurface(mEGLDisplay, mEGLSurface);
+    private void destroyEglSurface(EGLDisplay eglDisplay, EGLSurface eglSurface) {
+        EGL.eglMakeCurrent(eglDisplay, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);
+        if (eglSurface != null) {
+            EGL.eglDestroySurface(eglDisplay, eglSurface);
         }
     }
 
-    private OffScreenBlurRenderer getRenderer() {
-        OffScreenBlurRenderer renderer = mThreadRenderer.get();
-        if (renderer == null) {
-            renderer = new OffScreenBlurRenderer();
-            mThreadRenderer.set(renderer);
-        }
+    private EGLContext createEGLContext(EGLDisplay eglDisplay, EGLConfig[] eglConfigs) {
+        return EGL.eglCreateContext(eglDisplay, eglConfigs[0], EGL10.EGL_NO_CONTEXT, CONTEXT_ATTRIB_LIST);
+    }
+
+    private void destroyEglContext(EGLDisplay eglDisplay, EGLContext eglContext) {
+        EGL.eglDestroyContext(eglDisplay, eglContext);
+    }
+
+    private OffScreenBlurRenderer createRenderer(int radius, @Mode int mode) {
+        OffScreenBlurRenderer renderer = new OffScreenBlurRenderer();
+        renderer.setBlurRadius(radius);
+        renderer.setBlurMode(mode);
         return renderer;
-    }
-
-    private EGLContext getEGLContext() {
-        EGLContext eglContext = mThreadEGLContext.get();
-        if (eglContext == null) {
-            eglContext = mEgl.eglCreateContext(mEGLDisplay, mEglConfigs[0], EGL10.EGL_NO_CONTEXT, mContextAttrs);
-            mThreadEGLContext.set(eglContext);
-        }
-        return eglContext;
-    }
-
-    public void setBlurRadius(int radius) {
-        getRenderer().setBlurRadius(radius);
-    }
-
-    public void setBlurMode(@Mode int mode) {
-        getRenderer().setBlurMode(mode);
-    }
-
-    public void free() {
-        getRenderer().free();
-        EGLContext eglContext = mThreadEGLContext.get();
-        if (eglContext != null) {
-            mEgl.eglDestroyContext(mEGLDisplay, eglContext);
-        }
-        mThreadEGLContext.set(null);
     }
 
 }
