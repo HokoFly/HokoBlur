@@ -5,7 +5,7 @@
         <item>RenderScript</item>
         <item>OpenGL</item>
         <item>Native C/C++</item>
-        <item>JAVA</item>
+        <item>Java</item>
     </string-array>
 
     <string-array name="blur_modes">

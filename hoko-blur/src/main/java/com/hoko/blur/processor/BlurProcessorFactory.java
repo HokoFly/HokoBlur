@@ -21,7 +21,7 @@ class BlurProcessorFactory {
                 blurProcessor = new OriginBlurProcessor(builder);
                 break;
             default:
-                throw new IllegalArgumentException("Unsupported blur scheme!");
+                throw new IllegalArgumentException("Unsupported blur scheme: " + scheme + "!");
         }
         return blurProcessor;
     }
