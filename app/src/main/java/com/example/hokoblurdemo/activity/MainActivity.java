@@ -20,9 +20,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initView() {
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
-        }
         Button multiBlurBtn = findViewById(R.id.multi_blur);
         Button dynamicBtn = findViewById(R.id.dynamic_blur);
         Button easyBlurBtn = findViewById(R.id.easy_blur);
