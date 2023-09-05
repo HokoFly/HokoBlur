@@ -46,8 +46,7 @@ android {
             jniDebuggable true
         }
     }
-
-    lintOptions {
+    lint {
         abortOnError false
     }
 
@@ -56,6 +55,7 @@ android {
             path 'src/main/jni/CMakeLists.txt'
         }
     }
+    namespace 'com.hoko.blur'
 }
 
 dependencies {

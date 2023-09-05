@@ -30,7 +30,7 @@ android {
             jniDebuggable = true
         }
     }
-    lintOptions {
+    lint {
         abortOnError false
     }
 
@@ -39,6 +39,7 @@ android {
             jniLibs.srcDir "src/main/libs"
         }
     }
+    namespace 'com.example.hokoblurdemo'
 }
 
 dependencies {
