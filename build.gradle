@@ -35,7 +35,9 @@ ext {
 
     deps = [
             appcompatVersion: "1.4.0",
-            annotationVersion: "1.3.0",
-            junitVersion: "4.13.2"
+            annotationVersion: "1.7.0",
+            junitVersion: "4.13.2",
+            androidTestJunitVersion: "1.1.5",
+            espressoCoreVersion: "3.5.1"
     ]
 }

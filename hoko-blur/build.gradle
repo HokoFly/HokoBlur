@@ -21,6 +21,7 @@ android {
 
         renderscriptTargetApi rootProject.ext.renderscriptTargetApi
         renderscriptSupportModeEnabled rootProject.ext.renderscriptSupportModeEnabled
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         externalNativeBuild {
             cmake {
@@ -64,6 +65,8 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     testImplementation "junit:junit:${deps.junitVersion}"
+    androidTestImplementation "androidx.test.ext:junit:${deps.androidTestJunitVersion}"
+    androidTestImplementation "androidx.test.espresso:espresso-core:${deps.espressoCoreVersion}"
     implementation "androidx.annotation:annotation:${deps.annotationVersion}"
 }
 

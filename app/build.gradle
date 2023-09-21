@@ -13,6 +13,7 @@ android {
 
         renderscriptTargetApi rootProject.ext.renderscriptTargetApi
         renderscriptSupportModeEnabled rootProject.ext.renderscriptSupportModeEnabled
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     compileOptions {
@@ -45,6 +46,8 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     testImplementation "junit:junit:${deps.junitVersion}"
+    androidTestImplementation "androidx.test.ext:junit:${deps.androidTestJunitVersion}"
+    androidTestImplementation "androidx.test.espresso:espresso-core:${deps.espressoCoreVersion}"
     implementation "androidx.appcompat:appcompat:${deps.appcompatVersion}"
     implementation project(':hoko-blur')
 //    implementation "io.github.hokofly:hoko-blur:${HOKO_BLUR_VERSION}"
