@@ -6,7 +6,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.2'
+        classpath 'com.android.tools.build:gradle:8.1.2'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -24,14 +24,14 @@ task clean(type: Delete) {
 }
 
 ext {
-    minSdkVersion = 16
-    compileSdkVersion = 32
-    targetSdkVersion = 32
-    buildToolsVersion = "32.0.0"
-    renderscriptTargetApi = 32
+    minSdkVersion = 21
+    compileSdkVersion = 34
+    targetSdkVersion = 34
+    buildToolsVersion = "34.0.0"
+    renderscriptTargetApi = 34
     renderscriptEnabled = true
     renderscriptSupportModeEnabled = true
-    javaVersion = JavaVersion.VERSION_1_8
+    javaVersion = JavaVersion.VERSION_17
 
     deps = [
             appcompatVersion: "1.4.0",
