@@ -25,7 +25,7 @@ See the Kotlin implement [HokoBlur-Kotlin](https://github.com/HokoFly/HokoBlur-K
 #### Download
 
 ```groovy
-   implementation 'io.github.hokofly:hoko-blur:1.5.0'
+   implementation 'io.github.hokofly:hoko-blur:1.5.1'
 ```
 
 #### Static Blur
