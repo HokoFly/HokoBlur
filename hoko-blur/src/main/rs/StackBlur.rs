@@ -13,7 +13,7 @@ int height;
 int radius;
 
 
-void __attribute__((kernel)) stackblur_h(uchar4 in, uint32_t x, uint32_t y) {
+void __attribute__((kernel)) stackblur_h(uchar4 in, int32_t x, int32_t y) {
 
     float4 sum = 0;
     uchar4 result;
@@ -40,7 +40,7 @@ void __attribute__((kernel)) stackblur_h(uchar4 in, uint32_t x, uint32_t y) {
 
 }
 
-void __attribute__((kernel)) stackblur_v(uchar4 in, uint32_t x, uint32_t y) {
+void __attribute__((kernel)) stackblur_v(uchar4 in, int32_t x, int32_t y) {
 
     float4 sum = 0;
     uchar4 result;
