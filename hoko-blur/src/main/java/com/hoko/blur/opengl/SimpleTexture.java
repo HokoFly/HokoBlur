@@ -1,4 +1,4 @@
-package com.hoko.blur.opengl.texture;
+package com.hoko.blur.opengl;
 
 import android.opengl.GLES20;
 

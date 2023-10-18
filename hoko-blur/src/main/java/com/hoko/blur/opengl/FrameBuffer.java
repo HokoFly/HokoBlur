@@ -1,25 +1,32 @@
-package com.hoko.blur.opengl.framebuffer;
+package com.hoko.blur.opengl;
 
 import android.opengl.GLES20;
-
-import com.hoko.blur.api.IFrameBuffer;
-import com.hoko.blur.api.ITexture;
 
 /**
  * Created by yuxfzju on 2017/1/22.
  */
 
-class FrameBuffer implements IFrameBuffer {
+class FrameBuffer {
 
     private int mFrameBufferId;
 
-    private ITexture mTexture;
+    private Texture mTexture;
 
-    FrameBuffer() {
-        create();
+    public static FrameBuffer create() {
+        return new FrameBuffer();
     }
 
-    FrameBuffer(int id) {
+    public static FrameBuffer create(int id) {
+        return new FrameBuffer(id);
+    }
+
+    private FrameBuffer() {
+        final int[] frameBufferIds = new int[1];
+        GLES20.glGenFramebuffers(1, frameBufferIds, 0);
+        mFrameBufferId = frameBufferIds[0];
+    }
+
+    private FrameBuffer(int id) {
         mFrameBufferId = id;
     }
 
@@ -31,15 +38,8 @@ class FrameBuffer implements IFrameBuffer {
         mFrameBufferId = frameBufferId;
     }
 
-    @Override
-    public void create() {
-        final int[] frameBufferIds = new int[1];
-        GLES20.glGenFramebuffers(1, frameBufferIds, 0);
-        mFrameBufferId = frameBufferIds[0];
-    }
 
-    @Override
-    public void bindTexture(ITexture texture) {
+    public void bindTexture(Texture texture) {
         if (texture == null) {
             return;
         }
@@ -52,18 +52,16 @@ class FrameBuffer implements IFrameBuffer {
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
     }
 
-    public ITexture bindTexture() {
+    public Texture bindTexture() {
         return mTexture;
     }
 
-    @Override
     public void bindSelf() {
         if (mFrameBufferId != 0) {
             GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFrameBufferId);
         }
     }
 
-    @Override
     public void delete() {
         if (mFrameBufferId != 0) {
             GLES20.glDeleteFramebuffers(1, new int[]{mFrameBufferId}, 0);

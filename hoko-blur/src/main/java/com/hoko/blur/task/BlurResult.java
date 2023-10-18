@@ -6,7 +6,7 @@ import android.graphics.Bitmap;
  * Created by yuxfzju on 2017/2/7.
  */
 
-public class BlurResult {
+class BlurResult {
     private boolean success;
 
     private Bitmap bitmap;

@@ -1,10 +1,8 @@
-package com.hoko.blur.opengl.texture;
+package com.hoko.blur.opengl;
 
 import android.graphics.Bitmap;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
-
-import com.hoko.blur.util.Preconditions;
 
 import java.lang.ref.WeakReference;
 
@@ -12,7 +10,7 @@ import java.lang.ref.WeakReference;
  * Created by yuxfzju on 2017/1/24.
  */
 
-public class BitmapTexture extends Texture {
+class BitmapTexture extends Texture {
 
     private final WeakReference<Bitmap> mBitmapWeakRef;
 

@@ -1,4 +1,4 @@
-package com.hoko.blur.opengl.cache;
+package com.hoko.blur.opengl;
 
 import com.hoko.blur.util.Preconditions;
 
@@ -11,7 +11,7 @@ import java.util.List;
  * Created by yuxfzju on 2017/1/21.
  */
 
-public abstract class CachePool<K, V> {
+abstract class CachePool<K, V> {
 
     private static final int MAX_SIZE = 1024;
 

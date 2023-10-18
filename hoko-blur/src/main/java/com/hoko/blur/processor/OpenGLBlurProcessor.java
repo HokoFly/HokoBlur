@@ -2,7 +2,7 @@ package com.hoko.blur.processor;
 
 import android.graphics.Bitmap;
 
-import com.hoko.blur.opengl.offscreen.EglBuffer;
+import com.hoko.blur.opengl.EglBuffer;
 import com.hoko.blur.util.Preconditions;
 
 

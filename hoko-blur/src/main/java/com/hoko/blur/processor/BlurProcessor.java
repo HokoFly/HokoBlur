@@ -19,7 +19,7 @@ import java.util.concurrent.Future;
 /**
  * Created by yuxfzju on 16/9/8.
  */
-public abstract class BlurProcessor implements IBlurProcessor {
+abstract class BlurProcessor implements IBlurProcessor {
 
     int mRadius;
 

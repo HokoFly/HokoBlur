@@ -3,6 +3,7 @@ package com.hoko.blur.api;
 import android.graphics.Bitmap;
 import android.view.View;
 
+import com.hoko.blur.anno.Mode;
 import com.hoko.blur.task.AsyncBlurTask;
 
 import java.util.concurrent.Future;
@@ -42,5 +43,11 @@ public interface IBlurProcessor {
      * @param callback task callback
      */
     Future asyncBlur(View view, AsyncBlurTask.Callback callback);
+
+    void mode(@Mode int mode);
+
+    void radius(int radius);
+
+    void sampleFactor(float factor);
 
 }

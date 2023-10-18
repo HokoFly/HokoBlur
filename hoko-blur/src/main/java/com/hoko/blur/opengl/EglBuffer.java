@@ -1,4 +1,4 @@
-package com.hoko.blur.opengl.offscreen;
+package com.hoko.blur.opengl;
 
 import android.graphics.Bitmap;
 import android.opengl.GLES20;

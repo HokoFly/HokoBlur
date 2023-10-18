@@ -6,7 +6,6 @@ import android.view.View;
 
 import com.hoko.blur.anno.Mode;
 import com.hoko.blur.anno.Scheme;
-import com.hoko.blur.processor.BlurProcessor;
 import com.hoko.blur.task.AsyncBlurTask;
 
 import java.util.concurrent.Future;
@@ -35,7 +34,7 @@ public interface IBlurBuild {
     /**
      * Get different types of Blur Processors
      */
-    BlurProcessor processor();
+    IBlurProcessor processor();
 
     Bitmap blur(Bitmap bitmap);
 

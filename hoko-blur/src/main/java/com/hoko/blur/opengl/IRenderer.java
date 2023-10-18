@@ -1,10 +1,10 @@
-package com.hoko.blur.api;
+package com.hoko.blur.opengl;
 
 
 /**
  * Created by yuxfzju on 2017/2/10.
  */
-public interface IRenderer<T> {
+interface IRenderer<T> {
 
     void onDrawFrame(T t);
 

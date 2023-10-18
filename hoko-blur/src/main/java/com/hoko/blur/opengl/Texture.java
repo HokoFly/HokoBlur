@@ -1,14 +1,15 @@
-package com.hoko.blur.opengl.texture;
+package com.hoko.blur.opengl;
 
+import android.graphics.Bitmap;
 import android.opengl.GLES20;
 
-import com.hoko.blur.api.ITexture;
+import com.hoko.blur.util.Preconditions;
 
 /**
  * Created by yuxfzju on 17/1/20.
  */
 
-public abstract class Texture implements ITexture {
+public abstract class Texture {
 
     private int mTextureId;
 
@@ -16,13 +17,23 @@ public abstract class Texture implements ITexture {
 
     private int mHeight;
 
+    public static Texture create(int width, int height) {
+        Preconditions.checkArgument(width > 0 && height > 0, "width > 0 and height > 0");
+        return new SimpleTexture(width, height);
+    }
+
+    public static Texture create(Bitmap bitmap) {
+        Preconditions.checkNotNull(bitmap, "bitmap == null");
+        Preconditions.checkArgument(!bitmap.isRecycled(), "bitmap is recycled");
+        return new BitmapTexture(bitmap);
+    }
+
     public Texture(int width, int height) {
         this.mWidth = width;
         this.mHeight = height;
     }
 
-    @Override
-    public void create() {
+    protected void create() {
         final int[] textureIds = new int[1];
         GLES20.glGenTextures(1, textureIds, 0);
         mTextureId = textureIds[0];
@@ -39,24 +50,20 @@ public abstract class Texture implements ITexture {
 
     protected abstract void onTextureCreated();
 
-    @Override
     public void delete() {
         if (mTextureId != 0) {
             GLES20.glDeleteTextures(1, new int[]{mTextureId}, 0);
         }
     }
 
-    @Override
     public int id() {
         return mTextureId;
     }
 
-    @Override
     public int width() {
         return mWidth;
     }
 
-    @Override
     public int height() {
         return mHeight;
     }

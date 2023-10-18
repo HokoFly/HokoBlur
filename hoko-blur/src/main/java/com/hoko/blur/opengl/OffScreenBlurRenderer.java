@@ -1,17 +1,10 @@
-package com.hoko.blur.opengl.offscreen;
+package com.hoko.blur.opengl;
 
 import android.graphics.Bitmap;
 import android.opengl.GLES20;
 
 import com.hoko.blur.anno.Mode;
 import com.hoko.blur.anno.NotThreadSafe;
-import com.hoko.blur.api.IFrameBuffer;
-import com.hoko.blur.api.IProgram;
-import com.hoko.blur.api.IRenderer;
-import com.hoko.blur.api.ITexture;
-import com.hoko.blur.opengl.cache.FrameBufferCache;
-import com.hoko.blur.opengl.program.ProgramFactory;
-import com.hoko.blur.opengl.texture.TextureFactory;
 import com.hoko.blur.util.ShaderUtil;
 
 import java.nio.ByteBuffer;
@@ -27,7 +20,7 @@ import javax.microedition.khronos.egl.EGLContext;
  */
 
 @NotThreadSafe
-public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
+class OffScreenBlurRenderer implements IRenderer<Bitmap> {
     private final static String TAG = OffScreenBlurRenderer.class.getSimpleName();
 
     private static final String vertexShaderCode =
@@ -62,7 +55,7 @@ public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
     private final ShortBuffer mDrawListBuffer;
     private final FloatBuffer mTexCoordBuffer;
 
-    private IProgram mProgram;
+    private Program mProgram;
 
     private int mRadius;
     @Mode
@@ -117,7 +110,7 @@ public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
         }
         if (mNeedRelink || mProgram == null) {
             deletePrograms();
-            mProgram = ProgramFactory.create(vertexShaderCode, ShaderUtil.getFragmentShaderCode(mMode));
+            mProgram = Program.of(vertexShaderCode, ShaderUtil.getFragmentShaderCode(mMode));
             mNeedRelink = false;
         }
         if (mProgram.id() == 0) {
@@ -217,17 +210,17 @@ public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
     }
 
     private static class BlurContext {
-        private final ITexture inputTexture;
-        private final ITexture horizontalTexture;
-        private final IFrameBuffer blurFrameBuffer;
+        private final Texture inputTexture;
+        private final Texture horizontalTexture;
+        private final FrameBuffer blurFrameBuffer;
         private final Bitmap bitmap;
 
         private BlurContext(Bitmap bitmap) {
             //todo Textures share problem is not solved. Here create a new texture directly, not get from the texture cache
             //It doesn't affect performance seriously.
             this.bitmap = bitmap;
-            inputTexture = TextureFactory.create(bitmap);
-            horizontalTexture = TextureFactory.create(bitmap.getWidth(), bitmap.getHeight());
+            inputTexture = Texture.create(bitmap);
+            horizontalTexture = Texture.create(bitmap.getWidth(), bitmap.getHeight());
             blurFrameBuffer = FrameBufferCache.getInstance().getFrameBuffer();
             if (blurFrameBuffer != null) {
                 blurFrameBuffer.bindTexture(horizontalTexture);
@@ -236,15 +229,15 @@ public class OffScreenBlurRenderer implements IRenderer<Bitmap> {
             }
         }
 
-        private ITexture getInputTexture() {
+        private Texture getInputTexture() {
             return inputTexture;
         }
 
-        private ITexture getHorizontalTexture() {
+        private Texture getHorizontalTexture() {
             return horizontalTexture;
         }
 
-        private IFrameBuffer getBlurFrameBuffer() {
+        private FrameBuffer getBlurFrameBuffer() {
             return blurFrameBuffer;
         }
 

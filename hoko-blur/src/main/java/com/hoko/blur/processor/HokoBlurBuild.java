@@ -8,6 +8,7 @@ import com.hoko.blur.HokoBlur;
 import com.hoko.blur.anno.Mode;
 import com.hoko.blur.anno.Scheme;
 import com.hoko.blur.api.IBlurBuild;
+import com.hoko.blur.api.IBlurProcessor;
 import com.hoko.blur.api.IBlurResultDispatcher;
 import com.hoko.blur.task.AsyncBlurTask;
 
@@ -99,32 +100,28 @@ public class HokoBlurBuild implements IBlurBuild {
     }
 
     @Override
-    public BlurProcessor processor() {
+    public IBlurProcessor processor() {
         return BlurProcessorFactory.getBlurProcessor(mScheme, this);
     }
 
     @Override
     public Bitmap blur(Bitmap bitmap) {
-        BlurProcessor processor = processor();
-        return processor.blur(bitmap);
+        return processor().blur(bitmap);
     }
 
     @Override
     public Bitmap blur(View view) {
-        BlurProcessor processor = processor();
-        return processor.blur(view);
+        return processor().blur(view);
     }
 
     @Override
     public Future<?> asyncBlur(Bitmap bitmap, AsyncBlurTask.Callback callback) {
-        BlurProcessor processor = processor();
-        return processor.asyncBlur(bitmap, callback);
+        return processor().asyncBlur(bitmap, callback);
     }
 
     @Override
     public Future<?> asyncBlur(View view, AsyncBlurTask.Callback callback) {
-        BlurProcessor processor = processor();
-        return processor.asyncBlur(view, callback);
+        return processor().asyncBlur(view, callback);
     }
 
 }

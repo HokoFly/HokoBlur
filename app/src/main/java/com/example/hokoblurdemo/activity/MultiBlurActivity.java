@@ -22,7 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.hokoblurdemo.R;
 import com.hoko.blur.HokoBlur;
 import com.hoko.blur.api.IBlurBuild;
-import com.hoko.blur.processor.BlurProcessor;
+import com.hoko.blur.api.IBlurProcessor;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -42,7 +42,7 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
     private ImageView mImageView;
 
     private IBlurBuild mBlurBuilder;
-    private BlurProcessor mProcessor;
+    private IBlurProcessor mProcessor;
     private Bitmap mInBitmap;
     private int mRadius = INIT_RADIUS;
     private ValueAnimator mAnimator;
@@ -239,10 +239,10 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
 
     private abstract static class BlurTask implements Runnable {
         private Bitmap bitmap;
-        private BlurProcessor blurProcessor;
+        private IBlurProcessor blurProcessor;
         private int radius;
 
-        BlurTask(Bitmap bitmap, BlurProcessor blurProcessor, int radius) {
+        BlurTask(Bitmap bitmap, IBlurProcessor blurProcessor, int radius) {
             this.bitmap = bitmap;
             this.blurProcessor = blurProcessor;
             this.radius = radius;

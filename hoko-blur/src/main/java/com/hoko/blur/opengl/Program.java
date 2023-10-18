@@ -1,23 +1,24 @@
-package com.hoko.blur.opengl.program;
+package com.hoko.blur.opengl;
 
 import android.opengl.GLES20;
 import android.util.Log;
 
-import com.hoko.blur.api.IProgram;
-
 import static com.hoko.blur.util.ShaderUtil.checkGLError;
 
-public class Program implements IProgram {
+class Program {
 
     private static final String TAG = Program.class.getSimpleName();
 
     private int id;
 
-    Program(String vertexShaderCode, String fragmentShaderCode) {
+    public static Program of(String vertexShaderCode, String fragmentShaderCode) {
+        return new Program(vertexShaderCode, fragmentShaderCode);
+    }
+
+    private Program(String vertexShaderCode, String fragmentShaderCode) {
         create(vertexShaderCode, fragmentShaderCode);
     }
 
-    @Override
     public void create(String vertexShaderCode, String fragmentShaderCode) {
         int vertexShader = 0;
         int fragmentShader = 0;
@@ -49,7 +50,6 @@ public class Program implements IProgram {
         }
     }
 
-    @Override
     public void delete() {
         if (id != 0) {
             GLES20.glUseProgram(0);
@@ -74,7 +74,6 @@ public class Program implements IProgram {
         return shader;
     }
 
-    @Override
     public int id() {
         return id;
     }
