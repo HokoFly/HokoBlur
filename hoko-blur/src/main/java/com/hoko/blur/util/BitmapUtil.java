@@ -11,7 +11,7 @@ import android.view.View;
 /**
  * Created by yuxfzju on 16/9/12.
  */
-public class BitmapUtil {
+public final class BitmapUtil {
     private static final Paint SCALE_PAINT = new Paint();
     public static Bitmap getScaledBitmap(Bitmap bitmap, float factor) {
         if (bitmap == null) {

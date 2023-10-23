@@ -19,7 +19,7 @@ import java.util.concurrent.Callable;
  * Created by yuxfzju on 2017/2/17.
  */
 
-public class BlurSubTask implements Callable<Void> {
+public final class BlurSubTask implements Callable<Void> {
 
     @Scheme
     private final int mScheme;

@@ -9,7 +9,7 @@ import java.util.concurrent.Executor;
  * Created by yuxfzju on 2017/2/7.
  */
 
-public class AndroidBlurResultDispatcher implements IBlurResultDispatcher {
+public final class AndroidBlurResultDispatcher implements IBlurResultDispatcher {
 
     public static final IBlurResultDispatcher MAIN_THREAD_DISPATCHER = new AndroidBlurResultDispatcher(SingleMainHandler.get());
 

@@ -2,7 +2,7 @@ package com.hoko.blur.util;
 
 import androidx.annotation.Nullable;
 
-public class Preconditions {
+public final class Preconditions {
     /**
      * Ensures that an object reference passed as a parameter to the calling method is not null.
      *

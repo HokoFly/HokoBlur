@@ -8,7 +8,7 @@ import android.os.Looper;
  * Created by yuxfzju on 2017/2/7.
  */
 
-public class SingleMainHandler {
+public final class SingleMainHandler {
 
     private static class MainHandlerHolder {
         private static Handler sMainHandler = new Handler(Looper.getMainLooper());

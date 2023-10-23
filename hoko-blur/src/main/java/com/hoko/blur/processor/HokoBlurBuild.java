@@ -16,7 +16,7 @@ import java.util.concurrent.Future;
 
 import static com.hoko.blur.task.AndroidBlurResultDispatcher.MAIN_THREAD_DISPATCHER;
 
-public class HokoBlurBuild implements IBlurBuild {
+public final class HokoBlurBuild implements IBlurBuild {
 
     @Mode
     int mMode = HokoBlur.MODE_STACK;

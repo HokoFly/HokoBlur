@@ -10,7 +10,7 @@ import com.hoko.blur.anno.Mode;
  * Created by yuxfzju on 2017/2/18.
  */
 
-public class NativeBlurFilter {
+public final class NativeBlurFilter {
     public static void doBlur(@Mode int mode, Bitmap bitmap, int radius, int cores, int index, @Direction int direction) {
         switch (mode) {
             case HokoBlur.MODE_BOX:

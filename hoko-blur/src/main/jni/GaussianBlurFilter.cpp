@@ -14,10 +14,8 @@ void gaussianBlurHorizontal(float *kernel, jint *inPixels, jint *outPixels, jint
     jint cols = 2 * radius + 1;
     jint cols2 = cols / 2;
     jint x, y, col;
-
     jint endY = startY + deltaY;
     jint endX = startX + deltaX;
-
     for (y = startY; y < endY; y++) {
         jint ioffset = y * width;
         for (x = startX; x < endX; x++) {
@@ -25,7 +23,6 @@ void gaussianBlurHorizontal(float *kernel, jint *inPixels, jint *outPixels, jint
             int moffset = cols2;
             for (col = -cols2; col <= cols2; col++) {
                 float f = kernel[moffset + col];
-
                 if (f != 0) {
                     jint ix = x + col;
                     if (ix < startX) {
@@ -39,7 +36,6 @@ void gaussianBlurHorizontal(float *kernel, jint *inPixels, jint *outPixels, jint
                     b += f * (rgb & 0xff);
                 }
             }
-
             jint outIndex = ioffset + x;
             jint ia = (inPixels[ioffset + x] >> 24) & 0xff;
             jint ir = clamp((jint) (r + 0.5), 0, 255);
@@ -56,10 +52,8 @@ void gaussianBlurVertical(float *kernel, jint *inPixels, jint *outPixels, jint w
     jint cols = 2 * radius + 1;
     jint cols2 = cols / 2;
     jint x, y, col;
-
     jint endY = startY + deltaY;
     jint endX = startX + deltaX;
-
     for (x = startX; x < endX; x++) {
         jint ioffset = x;
         for (y = startY; y < endY; y++) {
@@ -67,7 +61,6 @@ void gaussianBlurVertical(float *kernel, jint *inPixels, jint *outPixels, jint w
             int moffset = cols2;
             for (col = -cols2; col <= cols2; col++) {
                 float f = kernel[moffset + col];
-
                 if (f != 0) {
                     jint iy = y + col;
                     if (iy < startY) {
@@ -107,7 +100,6 @@ float *makeKernel(jint r) {
     for (i = 0; i < rows; i++) {
         matrix[i] /= total;
     }
-
     return matrix;
 }
 
@@ -118,57 +110,42 @@ void JNICALL Java_com_hoko_blur_filter_NativeBlurFilter_nativeGaussianBlur(JNIEn
                                                                            jint j_cores,
                                                                            jint j_index,
                                                                            jint j_direction) {
-
     if (jbitmap == nullptr) {
         return;
     }
-
     AndroidBitmapInfo bmpInfo = {0};
     if (AndroidBitmap_getInfo(env, jbitmap, &bmpInfo) < 0) {
         return;
     }
-
     int *pixels = nullptr;
     if (AndroidBitmap_lockPixels(env, jbitmap, (void **) &pixels) < 0) {
         return;
     }
-
     int w = bmpInfo.width;
     int h = bmpInfo.height;
-
     float *kernel = nullptr;
     kernel = makeKernel(j_radius);
-
     jint *copy = nullptr;
     copy = (jint *) malloc(sizeof(jint) * w * h);
-
     for (int i = 0; i < w * h; i++) {
         copy[i] = pixels[i];
     }
-
     if (j_direction == HORIZONTAL) {
         int deltaY = h / j_cores;
         int startY = j_index * deltaY;
-
         if (j_index == j_cores - 1) {
             deltaY = h - (j_cores - 1) * deltaY;
         }
-
         gaussianBlurHorizontal(kernel, copy, pixels, w, h, j_radius, 0, startY, w, deltaY);
-
     } else if (j_direction == VERTICAL) {
         int deltaX = w / j_cores;
         int startX = j_index * deltaX;
-
         if (j_index == j_cores - 1) {
             deltaX = w - (j_cores - 1) * (w / j_cores);
         }
-
         gaussianBlurVertical(kernel, copy, pixels, w, h, j_radius, startX, 0, deltaX, h);
     }
-
     AndroidBitmap_unlockPixels(env, jbitmap);
-
     free(copy);
     free(kernel);
 }

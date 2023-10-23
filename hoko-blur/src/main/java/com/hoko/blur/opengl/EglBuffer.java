@@ -21,7 +21,7 @@ import static javax.microedition.khronos.opengles.GL10.GL_UNSIGNED_BYTE;
 /**
  * Created by yuxfzju on 16/8/29.
  */
-public class EglBuffer {
+public final class EglBuffer {
     private static final String TAG = EglBuffer.class.getSimpleName();
 
     private static final EGL10 EGL = (EGL10) EGLContext.getEGL();

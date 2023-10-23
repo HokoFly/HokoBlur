@@ -9,7 +9,7 @@ import com.hoko.blur.anno.Mode;
 /**
  * Created by yuxfzju on 16/9/4.
  */
-public class ShaderUtil {
+public final class ShaderUtil {
 
     private static final String TAG = ShaderUtil.class.getSimpleName();
 
