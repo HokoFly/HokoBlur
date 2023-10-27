@@ -25,7 +25,6 @@ public final class HokoBlurBuild implements IBlurBuild {
     int mRadius = 5;
     float mSampleFactor = 5.0f;
     boolean mIsForceCopy = false;
-    boolean mNeedUpscale = true;
 
     int mTranslateX = 0;
     int mTranslateY = 0;
@@ -65,6 +64,9 @@ public final class HokoBlurBuild implements IBlurBuild {
 
     @Override
     public IBlurBuild sampleFactor(float sampleFactor) {
+        if (sampleFactor < 1.0f) {
+            sampleFactor = 1.0f;
+        }
         this.mSampleFactor = sampleFactor;
         return this;
     }
@@ -72,12 +74,6 @@ public final class HokoBlurBuild implements IBlurBuild {
     @Override
     public IBlurBuild forceCopy(boolean isForceCopy) {
         this.mIsForceCopy = isForceCopy;
-        return this;
-    }
-
-    @Override
-    public IBlurBuild needUpscale(boolean needUpscale) {
-        this.mNeedUpscale = needUpscale;
         return this;
     }
 

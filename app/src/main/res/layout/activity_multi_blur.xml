@@ -88,8 +88,7 @@
                 android:id="@+id/radius_seekbar"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
-                android:layout_marginBottom="30dp"
-                android:max="1000" />
+                android:layout_marginBottom="30dp"/>
 
 
             <Button

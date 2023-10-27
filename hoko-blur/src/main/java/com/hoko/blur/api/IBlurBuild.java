@@ -23,8 +23,6 @@ public interface IBlurBuild {
 
     IBlurBuild forceCopy(boolean isForceCopy);
 
-    IBlurBuild needUpscale(boolean needUpscale);
-
     IBlurBuild translateX(int translateX);
 
     IBlurBuild translateY(int translateY);

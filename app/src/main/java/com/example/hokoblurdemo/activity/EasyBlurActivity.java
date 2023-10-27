@@ -38,7 +38,6 @@ public class EasyBlurActivity extends AppCompatActivity {
                 .translateY(150)
                 .forceCopy(false)
                 .sampleFactor(5.0f)
-                .needUpscale(true)
                 .asyncBlur(bitmap, new AsyncBlurTask.Callback() {
                     @Override
                     public void onBlurSuccess(Bitmap bitmap) {

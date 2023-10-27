@@ -39,7 +39,6 @@ HokoBlur.with(context)
     .radius(10) //blur radius，max=25，default=5
     .sampleFactor(2.0f) //scale factor，if factor=2，the width and height of a bitmap will be scale to 1/2 sizes，default=5
     .forceCopy(false) //If scale factor=1.0f，the origin bitmap will be modified. You could set forceCopy=true to avoid it. default=false
-    .needUpscale(true) //After blurring，the bitmap will be upscaled to origin sizes，default=true
     .translateX(150)//add x axis offset when blurring
     .translateY(150)//add y axis offset when blurring
     .processor() //build a blur processor
@@ -64,7 +63,6 @@ Future f = HokoBlur.with(this)
     .radius(10)
     .sampleFactor(2.0f)
     .forceCopy(false)
-    .needUpscale(true)
     .asyncBlur(bitmap, new AsyncBlurTask.CallBack() {
         @Override
         public void onBlurSuccess(Bitmap outBitmap) {

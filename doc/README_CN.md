@@ -33,7 +33,6 @@ HokoBlur.with(context)
     .radius(10) //设置模糊半径，内部最大限制为25，默认值5
     .sampleFactor(2.0f) // 设置scale因子，factor = 2时，内部将bitmap的宽高scale为原来的 1/2，默认值5
     .forceCopy(false) //对于scale因子为1.0f时，会直接修改传入的bitmap，如果你不希望修改原bitmap，设置forceCopy为true即可，默认值false
-    .needUpscale(true) //设置模糊之后，是否upscale为原Bitmap的尺寸，默认值true
     .translateX(150)//可对部分区域进行模糊，这里设置x轴的偏移量
     .translateY(150)//可对部分区域进行模糊，这里设置y轴的偏移量
     .processor() //获得模糊实现类
@@ -58,7 +57,6 @@ HokoBlur.with(this)
     .radius(10)
     .sampleFactor(2.0f)
     .forceCopy(false)
-    .needUpscale(true)
     .asyncBlur(bitmap, new AsyncBlurTask.CallBack() {
         @Override
         public void onBlurSuccess(Bitmap outBitmap) {

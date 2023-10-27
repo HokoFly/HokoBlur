@@ -33,8 +33,6 @@ abstract class BlurProcessor implements IBlurProcessor {
 
     private boolean mIsForceCopy;
 
-    private boolean mNeedUpscale;
-
     private int mTranslateX;
     private int mTranslateY;
 
@@ -46,7 +44,6 @@ abstract class BlurProcessor implements IBlurProcessor {
         mRadius = builder.mRadius;
         mSampleFactor = builder.mSampleFactor;
         mIsForceCopy = builder.mIsForceCopy;
-        mNeedUpscale = builder.mNeedUpscale;
         mTranslateX = builder.mTranslateX;
         mTranslateY = builder.mTranslateY;
         mDispatcher = builder.mDispatcher;
@@ -61,6 +58,9 @@ abstract class BlurProcessor implements IBlurProcessor {
     }
 
     public void sampleFactor(float factor) {
+        if (factor < 1.0f) {
+            factor = 1.0f;
+        }
         mSampleFactor = factor;
     }
 
@@ -86,11 +86,6 @@ abstract class BlurProcessor implements IBlurProcessor {
         return mIsForceCopy;
     }
 
-    public boolean needUpscale() {
-        return mNeedUpscale;
-    }
-
-
     public int translateX() {
         return mTranslateX;
     }
@@ -107,30 +102,19 @@ abstract class BlurProcessor implements IBlurProcessor {
     private Bitmap doBlur(Bitmap bitmap, boolean concurrent) {
         Preconditions.checkNotNull(bitmap, "bitmap == null");
         Preconditions.checkArgument(!bitmap.isRecycled(), "You must input an unrecycled bitmap !");
-
-        if (mRadius <= 0) {
-            mRadius = 1;
-        }
-
-        if (mSampleFactor < 1.0f) {
-            mSampleFactor = 1.0f;
-        }
-
-        Bitmap inBitmap = null;
-
+        Bitmap inBitmap;
         if (mIsForceCopy) {
             inBitmap = bitmap.copy(bitmap.getConfig(), true);
         } else {
             inBitmap = bitmap;
         }
-
+        if (mRadius <= 0) {
+            return inBitmap;
+        }
         Bitmap transInBitmap = BitmapUtil.transformBitmap(inBitmap, translateX(), translateY());
-
         Bitmap scaledInBitmap = BitmapUtil.getScaledBitmap(transInBitmap, sampleFactor());
-
         Bitmap scaledOutBitmap = doInnerBlur(scaledInBitmap, concurrent);
-
-        return mNeedUpscale ? BitmapUtil.getScaledBitmap(scaledOutBitmap, 1f / sampleFactor()) : scaledOutBitmap;
+        return BitmapUtil.getScaledBitmap(scaledOutBitmap, 1f / sampleFactor());
     }
 
 
@@ -139,12 +123,12 @@ abstract class BlurProcessor implements IBlurProcessor {
     @Override
     public Bitmap blur(View view) {
         Preconditions.checkNotNull(view, "You must input a view !");
-
+        if (mRadius <= 0) {
+            return BitmapUtil.getViewBitmap(view, translateX(), translateY(), 1.0f);
+        }
         Bitmap viewBitmap = BitmapUtil.getViewBitmap(view, translateX(), translateY(), sampleFactor());
-
         Bitmap scaledOutBitmap = doInnerBlur(viewBitmap, true);
-
-        return mNeedUpscale ? BitmapUtil.getScaledBitmap(scaledOutBitmap, 1f / sampleFactor()) : scaledOutBitmap;
+        return BitmapUtil.getScaledBitmap(scaledOutBitmap, 1f / sampleFactor());
     }
 
     @Override
@@ -155,10 +139,6 @@ abstract class BlurProcessor implements IBlurProcessor {
     @Override
     public Future<?> asyncBlur(View view, AsyncBlurTask.Callback callback) {
         return BlurTaskManager.getInstance().submit(new ViewAsyncBlurTask(this, view, callback, mDispatcher));
-    }
-
-    protected void free() {
-
     }
 
 }

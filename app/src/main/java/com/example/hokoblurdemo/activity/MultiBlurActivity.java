@@ -47,7 +47,7 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
     private int mRadius = INIT_RADIUS;
     private ValueAnimator mAnimator;
     private ValueAnimator mRoundAnimator;
-    private volatile Future mFuture;
+    private volatile Future<?> mFuture;
     private ExecutorService mDispatcher = Executors.newSingleThreadExecutor();
 
     @Override
@@ -97,11 +97,11 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
 
             runOnUiThread(() -> {
                 endAnimators();
-                mAnimator = ValueAnimator.ofInt(0, (int) (mRadius / 25f * 1000));
+                mAnimator = ValueAnimator.ofFloat(0, mRadius / 25f);
                 mAnimator.setInterpolator(new LinearInterpolator());
                 mAnimator.addUpdateListener(animation -> {
-                    mSeekBar.setProgress((Integer) animation.getAnimatedValue());
-                    updateImage((int) ((Integer) animation.getAnimatedValue() / 1000f * 25f));
+                    mSeekBar.setProgress((int) ((float) animation.getAnimatedValue() * 100));
+                    updateImage((int) ((float) animation.getAnimatedValue() * 25f));
                 });
 
                 mAnimator.setDuration(300);
@@ -166,11 +166,11 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
                 break;
             case R.id.anim_btn:
                 endAnimators();
-                mRoundAnimator = ValueAnimator.ofInt(mSeekBar.getProgress(), 1000, mSeekBar.getProgress());
+                mRoundAnimator = ValueAnimator.ofInt(mSeekBar.getProgress(), 100, mSeekBar.getProgress());
                 mRoundAnimator.setInterpolator(new LinearInterpolator());
                 mRoundAnimator.addUpdateListener(animation -> {
                     mSeekBar.setProgress((int) animation.getAnimatedValue());
-                    final int radius = (int) ((int) animation.getAnimatedValue() / 1000f * 25);
+                    final int radius = (int) ((int) animation.getAnimatedValue() / 100f * 25);
                     updateImage(radius);
                 });
                 mRoundAnimator.setDuration(2000);
@@ -187,7 +187,7 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        final int radius = (int) (progress / 1000f * 25);
+        final int radius = (int) (progress / 100f * 25);
         mRadiusText.setText("Blur Radius: " + radius);
         updateImage(radius);
     }
