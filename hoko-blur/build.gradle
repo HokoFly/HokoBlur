@@ -1,13 +1,13 @@
 apply plugin: 'com.android.library'
 
-def isReleaseBuildType = false
+def isReleaseBuild = false
 gradle.startParameter.taskNames.each({
-    String taskNameL = it.toLowerCase()
-    if (taskNameL.contains("release")) {
-        isReleaseBuildType = true
+    String taskName = it.toLowerCase()
+    if (taskName.contains("release")) {
+        isReleaseBuild = true
     }
-    if (taskNameL.equalsIgnoreCase('uploadArchives')) {
-        isReleaseBuildType = true
+    if (taskName.equalsIgnoreCase('uploadArchives')) {
+        isReleaseBuild = true
     }
 })
 
@@ -29,7 +29,6 @@ android {
                 cppFlags "-std=c++11 -frtti -fexceptions"
             }
         }
-        externalNativeBuild.cmake.abiFilters = isReleaseBuildType ? ['armeabi-v7a', 'arm64-v8a'] : ['armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64']
         consumerProguardFiles 'proguard-rules.pro'
     }
 
@@ -41,12 +40,30 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+            externalNativeBuild {
+                cmake {
+                    abiFilters = ['armeabi-v7a', 'arm64-v8a']
+                }
+            }
         }
 
         debug {
             jniDebuggable true
+            externalNativeBuild {
+                cmake {
+                    abiFilters = ['armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64']
+                }
+            }
         }
     }
+
+    packagingOptions {
+        if (isReleaseBuild) {
+            exclude 'lib/x86_64/*.so'
+            exclude 'lib/x86/*.so'
+        }
+    }
+
     lint {
         abortOnError false
     }
@@ -56,7 +73,9 @@ android {
             path 'src/main/jni/CMakeLists.txt'
         }
     }
+
     namespace 'com.hoko.blur'
+
     buildFeatures {
         renderScript rootProject.ext.renderscriptEnabled
     }
