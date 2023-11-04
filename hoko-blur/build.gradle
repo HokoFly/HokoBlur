@@ -76,6 +76,8 @@ android {
 
     namespace 'com.hoko.blur'
 
+    ndkVersion rootProject.ext.ndkVersion
+
     buildFeatures {
         renderScript rootProject.ext.renderscriptEnabled
     }

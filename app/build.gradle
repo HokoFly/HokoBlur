@@ -11,8 +11,6 @@ android {
         versionCode 1
         versionName "1.0"
 
-        renderscriptTargetApi rootProject.ext.renderscriptTargetApi
-        renderscriptSupportModeEnabled rootProject.ext.renderscriptSupportModeEnabled
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 

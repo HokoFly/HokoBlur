@@ -32,6 +32,7 @@ ext {
     renderscriptEnabled = true
     renderscriptSupportModeEnabled = true
     javaVersion = JavaVersion.VERSION_17
+    ndkVersion = "26.1.10909125"
 
     deps = [
             appcompatVersion: "1.4.0",
