@@ -1,5 +1,5 @@
 apply plugin: 'com.android.library'
-apply from: file('../stripe.gradle')
+apply from: rootProject.file("stripe.gradle")
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
