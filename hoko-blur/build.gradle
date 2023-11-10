@@ -1,4 +1,9 @@
-apply plugin: 'com.android.library'
+import com.hoko.blur.plugin.Deps
+
+plugins {
+    id('com.android.library')
+    id('com.hoko.blur.dependencies-plugin')
+}
 
 def isReleaseBuild = false
 gradle.startParameter.taskNames.each({
@@ -12,15 +17,14 @@ gradle.startParameter.taskNames.each({
 })
 
 android {
-    compileSdkVersion rootProject.ext.compileSdkVersion
-
+    compileSdk(Deps.compileSdkVersion)
     defaultConfig {
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
-        buildToolsVersion rootProject.ext.buildToolsVersion
+        minSdkVersion Deps.minSdkVersion
+        targetSdkVersion Deps.targetSdkVersion
+        buildToolsVersion Deps.buildToolsVersion
 
-        renderscriptTargetApi rootProject.ext.renderscriptTargetApi
-        renderscriptSupportModeEnabled rootProject.ext.renderscriptSupportModeEnabled
+        renderscriptTargetApi Deps.renderscriptTargetApi
+        renderscriptSupportModeEnabled Deps.renderscriptSupportModeEnabled
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         externalNativeBuild {
@@ -33,8 +37,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility rootProject.ext.javaVersion
-        targetCompatibility rootProject.ext.javaVersion
+        sourceCompatibility Deps.javaVersion
+        targetCompatibility Deps.javaVersion
     }
 
     buildTypes {
@@ -77,16 +81,16 @@ android {
     namespace 'com.hoko.blur'
 
     buildFeatures {
-        renderScript rootProject.ext.renderscriptEnabled
+        renderScript Deps.renderscriptEnabled
     }
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    testImplementation "junit:junit:${deps.junitVersion}"
-    androidTestImplementation "androidx.test.ext:junit:${deps.androidTestJunitVersion}"
-    androidTestImplementation "androidx.test.espresso:espresso-core:${deps.espressoCoreVersion}"
-    implementation "androidx.annotation:annotation:${deps.annotationVersion}"
+    testImplementation Deps.junit
+    androidTestImplementation Deps.androidTestJunit
+    androidTestImplementation Deps.espressoCore
+    implementation Deps.androidAnnotation
 }
 
 ext {

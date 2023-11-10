@@ -22,22 +22,3 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
-
-ext {
-    minSdkVersion = 21
-    compileSdkVersion = 34
-    targetSdkVersion = 34
-    buildToolsVersion = "34.0.0"
-    renderscriptTargetApi = 34
-    renderscriptEnabled = true
-    renderscriptSupportModeEnabled = true
-    javaVersion = JavaVersion.VERSION_17
-
-    deps = [
-            appcompatVersion: "1.4.0",
-            annotationVersion: "1.7.0",
-            junitVersion: "4.13.2",
-            androidTestJunitVersion: "1.1.5",
-            espressoCoreVersion: "3.5.1"
-    ]
-}

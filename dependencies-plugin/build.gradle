@@ -1,0 +1,17 @@
+plugins {
+    id 'java-gradle-plugin'
+}
+
+repositories {
+    mavenCentral()
+    google()
+}
+
+gradlePlugin {
+    plugins {
+        version {
+            id = 'com.hoko.blur.dependencies-plugin'
+            implementationClass = 'com.hoko.blur.plugin.Deps'
+        }
+    }
+}

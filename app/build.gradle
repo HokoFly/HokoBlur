@@ -1,24 +1,29 @@
-apply plugin: 'com.android.application'
+import com.hoko.blur.plugin.Deps
+
+plugins {
+    id('com.android.application')
+    id('com.hoko.blur.dependencies-plugin')
+}
 
 android {
-    compileSdkVersion rootProject.ext.compileSdkVersion
+    compileSdk(Deps.compileSdkVersion)
 
     defaultConfig {
         applicationId "com.example.hokoblurdemo"
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
-        buildToolsVersion rootProject.ext.buildToolsVersion
+        minSdkVersion Deps.minSdkVersion
+        targetSdkVersion Deps.targetSdkVersion
+        buildToolsVersion = Deps.buildToolsVersion
         versionCode 1
         versionName "1.0"
 
-        renderscriptTargetApi rootProject.ext.renderscriptTargetApi
-        renderscriptSupportModeEnabled rootProject.ext.renderscriptSupportModeEnabled
+        renderscriptTargetApi Deps.renderscriptTargetApi
+        renderscriptSupportModeEnabled Deps.renderscriptSupportModeEnabled
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     compileOptions {
-        sourceCompatibility rootProject.ext.javaVersion
-        targetCompatibility rootProject.ext.javaVersion
+        sourceCompatibility Deps.javaVersion
+        targetCompatibility Deps.javaVersion
     }
 
     buildTypes {
@@ -45,10 +50,10 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    testImplementation "junit:junit:${deps.junitVersion}"
-    androidTestImplementation "androidx.test.ext:junit:${deps.androidTestJunitVersion}"
-    androidTestImplementation "androidx.test.espresso:espresso-core:${deps.espressoCoreVersion}"
-    implementation "androidx.appcompat:appcompat:${deps.appcompatVersion}"
+    testImplementation Deps.junit
+    androidTestImplementation Deps.androidTestJunit
+    androidTestImplementation Deps.espressoCore
+    implementation Deps.appcompat
     implementation project(':hoko-blur')
 //    implementation "io.github.hokofly:hoko-blur:${HOKO_BLUR_VERSION}"
 }
