@@ -4,17 +4,7 @@ plugins {
     alias libs.plugins.android.library
     id('com.hoko.blur.dependencies-plugin')
 }
-
-def isReleaseBuild = false
-gradle.startParameter.taskNames.each({
-    String taskName = it.toLowerCase()
-    if (taskName.contains("release")) {
-        isReleaseBuild = true
-    }
-    if (taskName.equalsIgnoreCase('uploadArchives')) {
-        isReleaseBuild = true
-    }
-})
+apply from: rootProject.file("stripe.gradle")
 
 android {
     compileSdk(Deps.compileSdkVersion)
@@ -61,13 +51,6 @@ android {
         }
     }
 
-    packagingOptions {
-        if (isReleaseBuild) {
-            exclude 'lib/x86_64/*.so'
-            exclude 'lib/x86/*.so'
-        }
-    }
-
     lint {
         abortOnError false
     }
@@ -79,6 +62,8 @@ android {
     }
 
     namespace 'com.hoko.blur'
+
+    ndkVersion Deps.ndkVersion
 
     buildFeatures {
         renderScript Deps.renderscriptEnabled

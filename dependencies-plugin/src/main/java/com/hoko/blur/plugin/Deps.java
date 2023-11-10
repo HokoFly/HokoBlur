@@ -18,8 +18,7 @@ public class Deps implements Plugin<Project> {
     public static final boolean renderscriptEnabled = true;
     public static final boolean renderscriptSupportModeEnabled = true;
     public static final JavaVersion javaVersion = JavaVersion.VERSION_17;
-
-
+    public static final String ndkVersion = "26.1.10909125";
 
     public static final String appcompat = "androidx.appcompat:appcompat:1.4.0";
     public static final String junit = "junit:junit:4.13.2";

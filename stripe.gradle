@@ -1,0 +1,19 @@
+def isReleaseBuild = false
+gradle.startParameter.taskNames.each({
+    String taskName = it.toLowerCase()
+    if (taskName.contains("release")) {
+        isReleaseBuild = true
+    }
+    if (taskName.equalsIgnoreCase('uploadArchives')) {
+        isReleaseBuild = true
+    }
+})
+
+android {
+    packagingOptions {
+        if (isReleaseBuild) {
+            exclude 'lib/x86_64/*.so'
+            exclude 'lib/x86/*.so'
+        }
+    }
+}

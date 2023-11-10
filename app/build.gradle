@@ -4,6 +4,7 @@ plugins {
     alias libs.plugins.android.application
     id('com.hoko.blur.dependencies-plugin')
 }
+apply from: rootProject.file("stripe.gradle")
 
 android {
     compileSdk(Deps.compileSdkVersion)
@@ -30,6 +31,7 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
         }
 
         debug {
