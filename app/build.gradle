@@ -1,7 +1,7 @@
 import com.hoko.blur.plugin.Deps
 
 plugins {
-    id('com.android.application')
+    alias libs.plugins.android.application
     id('com.hoko.blur.dependencies-plugin')
 }
 
