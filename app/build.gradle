@@ -2,7 +2,7 @@ import com.hoko.blur.plugin.Deps
 
 plugins {
     alias libs.plugins.android.application
-    id('com.hoko.blur.dependencies-plugin')
+    alias libs.plugins.dependencies.plugin
 }
 apply from: rootProject.file("stripe.gradle")
 
