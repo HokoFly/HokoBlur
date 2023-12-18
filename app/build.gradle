@@ -57,5 +57,5 @@ dependencies {
     androidTestImplementation Deps.espressoCore
     implementation Deps.appcompat
     implementation project(':hoko-blur')
-//    implementation "io.github.hokofly:hoko-blur:${HOKO_BLUR_VERSION}"
+//    implementation "io.github.hokofly:hoko-blur:${Deps.hokoBlurReleaseVersion}"
 }

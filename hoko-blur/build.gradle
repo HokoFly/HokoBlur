@@ -88,7 +88,7 @@ ext {
     siteUrl = 'https://github.com/HokoFly/HokoBlur'
     gitUrl = 'https://github.com/HokoFly/HokoBlur.git'
 
-    libraryVersion = HOKO_BLUR_VERSION
+    libraryVersion = Deps.hokoBlurReleaseVersion
 
     developerName = 'HokoFly'
     developerEmail = 'yuxfzju@gmail.com'
