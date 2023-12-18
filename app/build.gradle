@@ -4,7 +4,7 @@ plugins {
     alias libs.plugins.android.application
     alias libs.plugins.dependencies.plugin
 }
-apply from: rootProject.file("stripe.gradle")
+apply from: project.file("../stripe.gradle")
 
 android {
     compileSdk(Deps.compileSdkVersion)
