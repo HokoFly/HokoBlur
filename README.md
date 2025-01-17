@@ -82,19 +82,18 @@ f.cancel(false);
 
 #### Animation
 
-<img src="doc/graphic/animation_blur_progress.gif" width = "370" height = "619" alt="动态模糊" />
+![](https://github.com/HokoFly/HokoBlur/blob/master/doc/graphic/animation_blur_progress.gif?raw=true)
+
 
 #### Arbitrary Locaton Blur
 
-<img src="doc/graphic/dynamic_blur.gif" width = "370" height = "600" alt="动态模糊" />
+![](https://github.com/HokoFly/HokoBlur/blob/master/doc/graphic/dynamic_blur.gif?raw=true)
 
 
 
 ### 4. Dynamic background blur
 
 Dynamic Blur provides real-time background blurring of View and ViewGroup, not based on Bitmap implementations. The component will blur the area where the View is located.  See the repository [HokoBlurDrawable](https://github.com/HokoFly/HokoBlurDrawable).
-
-<img src="doc/graphic/blur_drawable.gif" width = "370" alt="动态模糊" />
 
 
 
