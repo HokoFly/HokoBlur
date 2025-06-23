@@ -116,15 +116,12 @@ public class MultiBlurActivity extends AppCompatActivity implements AdapterView.
         if (spinnerId == R.id.scheme_spinner) {
             switch (position) {
                 case 0:
-                    mBlurBuilder.scheme(HokoBlur.SCHEME_RENDER_SCRIPT);
+                    mBlurBuilder.scheme(HokoBlur.SCHEME_NATIVE);
                     break;
                 case 1:
                     mBlurBuilder.scheme(HokoBlur.SCHEME_OPENGL);
                     break;
                 case 2:
-                    mBlurBuilder.scheme(HokoBlur.SCHEME_NATIVE);
-                    break;
-                case 3:
                     mBlurBuilder.scheme(HokoBlur.SCHEME_JAVA);
                     break;
             }

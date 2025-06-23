@@ -28,7 +28,7 @@ public class EasyBlurActivity extends AppCompatActivity {
         imageView.setImageBitmap(bitmap);
         imageView1.setImageBitmap(HokoBlur.with(this)
                 .forceCopy(true)
-                .scheme(HokoBlur.SCHEME_RENDER_SCRIPT)
+                .scheme(HokoBlur.SCHEME_NATIVE)
                 .sampleFactor(3.0f)
                 .radius(20)
                 .blur(bitmap));

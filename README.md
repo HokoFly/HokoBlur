@@ -15,9 +15,12 @@ See the Kotlin implement [HokoBlur-Kotlin](https://github.com/HokoFly/HokoBlur-K
 	- **Dynamic blur, real-time blurring of the background**。
 
 - Features：
-	- Multiple schemes: RenderScript、OpenGL、Native and Java；
+	- Multiple schemes: OpenGL、Native and Java；
 	- Multiple algorithms: Box、Stack and Gaussian algorithms. Provide different blur effect；
 	- Multi-core and multi-threading, accelerate blurring，asynchronous interface；
+
+- Deprecated Features:
+    - RenderScript Scheme. RenderScript has been deprecated since Android 12, and its plugin support will be removed in AGP 9.0. Additionally, RenderScript's dynamic link libraries (.so) lack support for 16KB memory alignment. For these reasons, this repository no longer supports RenderScript-based blur solutions.
 
 ### 2. Getting started
 
@@ -34,7 +37,7 @@ synchronous api
 
 ```java
 HokoBlur.with(context)
-    .scheme(Blur.SCHEME_NATIVE) //different implementation, RenderScript、OpenGL、Native(default) and Java
+    .scheme(Blur.SCHEME_NATIVE) //different implementation, OpenGL、Native(default) and Java
     .mode(Blur.MODE_STACK) //blur algorithms，Gaussian、Stack(default) and Box
     .radius(10) //blur radius，max=25，default=5
     .sampleFactor(2.0f) //scale factor，if factor=2，the width and height of a bitmap will be scale to 1/2 sizes，default=5
@@ -106,13 +109,11 @@ Dynamic Blur provides real-time background blurring of View and ViewGroup, not b
 
 3. Please limit the blur radius to 25. Increasing the radius leads to much less  blur effect increase than by increasing the scale factor, and if the radius increase, blur efficiency will also decrease;
 
-4. The RenderScript solution has to be verified for compatibility. If there are scenarios that require more computation and more complex blurring, the RenderScript scheme may be better.
-
-5. Algorithm selection
+4. Algorithm selection
 	- If you have low effect requirements for blurring and want to blur the image faster, please choose Box algorithm.；
 	- If you have a higher effect requirement for blurring and can tolerate slower blurring of the image, please choose the Gaussian algorithm;
 	- The Stack algorithm has a blur effect that is very close to the Gaussian algorithm, and it improves the efficiency. Generally, the Stack algorithm is recommended;
 	
-6. BlurDrawable is implemented by OpenGL, so if the hardware acceleration is not enabled, the background blur will be invalid.
+5. BlurDrawable is implemented by OpenGL, so if the hardware acceleration is not enabled, the background blur will be invalid.
 
-7. Sample and usage. Please see the sample project.
+6. Sample and usage. Please see the sample project.

@@ -10,9 +10,11 @@ Kotlin实现版本见 [HokoBlur-Kotlin](https://github.com/HokoFly/HokoBlur-Kotl
 	- **动态模糊，对背景的实时模糊**。
 
 - 组件主要的特性：
-	- 多种实现方案，包括RenderScript、OpenGL、Native和Java；
+	- 多种实现方案，OpenGL、Native和Java；
 	- 多种算法，包括Box、Stack和Gaussian算法，满足不同的模糊效果；
 	- 多核多线程，提升模糊效率，增加异步调用Api；
+- 废弃的特性：
+    - RenderScript 方案。RenderScript 在Android 12版本开始废弃，其插件的支持也将在 AGP 9.0 版本中被废弃。此外，RenderScript 的动态链接库so不支持 16KB 内存对齐。基于以上原因，本仓库不再支持 RenderScript的模糊方案。
 	
 ### 2. 组件版本
 
@@ -28,7 +30,7 @@ Kotlin实现版本见 [HokoBlur-Kotlin](https://github.com/HokoFly/HokoBlur-Kotl
 
 ```java
 HokoBlur.with(context)
-    .scheme(Blur.SCHEME_NATIVE) //设置模糊实现方案，包括RenderScript、OpenGL、Native和Java实现，默认为Native方案
+    .scheme(Blur.SCHEME_NATIVE) //设置模糊实现方案，包括OpenGL、Native和Java实现，默认为Native方案
     .mode(Blur.MODE_STACK) //设置模糊算法，包括Gaussian、Stack和Box，默认并推荐选择Stack算法
     .radius(10) //设置模糊半径，内部最大限制为25，默认值5
     .sampleFactor(2.0f) // 设置scale因子，factor = 2时，内部将bitmap的宽高scale为原来的 1/2，默认值5
@@ -98,15 +100,13 @@ HokoBlur.with(this)
 
 3. 请将模糊半径限制在25内（组件内部同样进行了限制），增加半径对模糊效果的提升远小于通过增加scale的缩放因子的方式，而且半径增加模糊效率也将降低；
 
-4. RenderScript方案因为兼容性有待验证，如果有需要更大计算量和更复杂模糊效果的场景，可以考虑RenderScript方案。
-
-5. 算法的选择
+4. 算法的选择
 	- 如果你对模糊效果要求不高，同时希望较快完成图片的模糊，请选择Box算法；
 	- 如果你对模糊效果要求较高，同时可以忍受较慢完成图片的模糊，请选择Gaussian算法；
 	- Stack算法有非常接近Gaussian算法的模糊效果，同时提升了算法效率，一般情况下使用Stack算法即可；
-6. BlurDrawable通过OpenGL实现，因此如果页面未开启硬件加速，背景模糊将无效。
+5. BlurDrawable通过OpenGL实现，因此如果页面未开启硬件加速，背景模糊将无效。
 
-7. 示例与用法
+6. 示例与用法
 具体示例详见组件工程
 
 

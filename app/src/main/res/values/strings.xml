@@ -2,9 +2,8 @@
     <string name="app_name">HokoBlurDemo</string>
 
     <string-array name="blur_schemes">
-        <item>RenderScript</item>
-        <item>OpenGL</item>
         <item>Native C/C++</item>
+        <item>OpenGL</item>
         <item>Java</item>
     </string-array>
 

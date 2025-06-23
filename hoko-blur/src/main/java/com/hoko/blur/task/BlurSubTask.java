@@ -62,9 +62,6 @@ public final class BlurSubTask implements Callable<Void> {
                 break;
             case HokoBlur.SCHEME_OPENGL:
                 throw new UnsupportedOperationException("Blur in parallel not supported !");
-            case HokoBlur.SCHEME_RENDER_SCRIPT:
-                //RenderScript support built-in parallel computation
-                break;
             default:
                 break;
         }

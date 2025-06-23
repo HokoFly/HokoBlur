@@ -13,8 +13,6 @@ android {
         targetSdkVersion Deps.targetSdkVersion
         buildToolsVersion Deps.buildToolsVersion
 
-        renderscriptTargetApi Deps.renderscriptTargetApi
-        renderscriptSupportModeEnabled Deps.renderscriptSupportModeEnabled
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         externalNativeBuild {
@@ -65,9 +63,6 @@ android {
 
     ndkVersion Deps.ndkVersion
 
-    buildFeatures {
-        renderScript Deps.renderscriptEnabled
-    }
 }
 
 dependencies {
