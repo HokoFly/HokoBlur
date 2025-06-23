@@ -1,7 +1,7 @@
 [versions]
-agpVersion = "8.2.0"
+agpVersion = "8.10.1"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agpVersion" }
 android-library = { id = "com.android.library", version.ref = "agpVersion" }
-dependencies-plugin = { id = "com.hoko.blur.dependencies-plugin", version = "unspecified" }
+dependencies-plugin = { id = "com.hoko.blur.dependencies-plugin"}
