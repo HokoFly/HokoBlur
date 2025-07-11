@@ -12,8 +12,8 @@ gradle.startParameter.taskNames.each({
 android {
     packagingOptions {
         if (isReleaseBuild) {
-            exclude 'lib/x86_64/*.so'
-            exclude 'lib/x86/*.so'
+//            exclude 'lib/x86_64/*.so'
+//            exclude 'lib/x86/*.so'
         }
     }
 }
