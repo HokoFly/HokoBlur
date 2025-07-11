@@ -2,6 +2,7 @@ plugins {
     alias libs.plugins.android.application apply false
     alias libs.plugins.android.library apply false
     alias libs.plugins.dependencies.plugin apply false
+    alias libs.plugins.maven.publish.plugin apply false
 }
 
 task clean(type: Delete) {

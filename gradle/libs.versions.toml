@@ -1,7 +1,9 @@
 [versions]
 agpVersion = "8.10.1"
+mavenPublishVersion = "0.33.0"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agpVersion" }
 android-library = { id = "com.android.library", version.ref = "agpVersion" }
 dependencies-plugin = { id = "com.hoko.blur.dependencies-plugin"}
+maven-publish-plugin = { id = "com.vanniktech.maven.publish", version.ref = "mavenPublishVersion" }

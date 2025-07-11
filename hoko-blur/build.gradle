@@ -3,6 +3,7 @@ import com.hoko.blur.plugin.Deps
 plugins {
     alias libs.plugins.android.library
     alias libs.plugins.dependencies.plugin
+    alias libs.plugins.maven.publish.plugin
 }
 apply from: project.file("../stripe.gradle")
 

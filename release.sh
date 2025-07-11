@@ -2,4 +2,4 @@
 
 ./gradlew clean
 ./gradlew hoko-blur:assemble
-./gradlew hoko-blur:publish
+./gradlew hoko-blur:publishToMavenCentral
