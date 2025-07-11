@@ -36,7 +36,7 @@ abstract class BlurProcessor implements IBlurProcessor {
     private int mTranslateX;
     private int mTranslateY;
 
-    private IBlurResultDispatcher mDispatcher;
+    protected IBlurResultDispatcher mDispatcher;
 
     public BlurProcessor(HokoBlurBuild builder) {
         mMode = builder.mMode;

@@ -14,17 +14,13 @@ public final class ShaderUtil {
     private static final String TAG = ShaderUtil.class.getSimpleName();
 
     public static String getVertexCode() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("uniform mat4 uMVPMatrix;   \n")
-                .append("uniform mat4 uTexMatrix;   \n")
-                .append("attribute vec2 aTexCoord;   \n")
-                .append("attribute vec3 aPosition;  \n")
-                .append("varying vec2 vTexCoord;  \n")
-                .append("void main() {              \n")
-                .append("   gl_Position = uMVPMatrix * vec4(aPosition, 1); \n")
-                .append("   vTexCoord = (uTexMatrix * vec4(aTexCoord, 1, 1)).st;\n")
-                .append("}  \n");
-        return sb.toString();
+        return "attribute vec2 aTexCoord;   \n" +
+                "attribute vec4 aPosition;  \n" +
+                "varying vec2 vTexCoord;  \n" +
+                "void main() {              \n" +
+                "  gl_Position = aPosition; \n" +
+                "  vTexCoord = aTexCoord; \n" +
+                "}  \n";
 
     }
 

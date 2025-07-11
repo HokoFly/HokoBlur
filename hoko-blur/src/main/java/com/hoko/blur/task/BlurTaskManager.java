@@ -24,6 +24,8 @@ public final class BlurTaskManager {
 
     private static final ExecutorService CONCURRENT_BLUR_EXECUTOR = Executors.newFixedThreadPool(EXECUTOR_THREADS);
 
+    private static final ExecutorService TASK_QUEUE_EXECUTOR = Executors.newSingleThreadExecutor();
+
     private static class BlurTaskManagerHolder {
         private static final BlurTaskManager INSTANCE = new BlurTaskManager();
     }
@@ -49,6 +51,11 @@ public final class BlurTaskManager {
                 Log.e(TAG, "invoke blur sub tasks error", e);
             }
         }
+    }
+
+    public Future<?> enqueue(AsyncBlurTask<?> task) {
+        Preconditions.checkNotNull(task, "task == null");
+        return TASK_QUEUE_EXECUTOR.submit(task);
     }
 
     public static int getWorkersNum() {

@@ -42,7 +42,7 @@ public class DragBlurringView extends View {
 
     private void init() {
         mProcessor = HokoBlur.with(getContext())
-                .scheme(HokoBlur.SCHEME_NATIVE)
+                .scheme(HokoBlur.SCHEME_OPENGL)
                 .mode(HokoBlur.MODE_GAUSSIAN)
                 .radius(5)
                 .sampleFactor(1.0f)

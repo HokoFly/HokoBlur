@@ -1,5 +1,8 @@
 package com.hoko.blur.opengl;
 
+import static javax.microedition.khronos.opengles.GL10.GL_RGBA;
+import static javax.microedition.khronos.opengles.GL10.GL_UNSIGNED_BYTE;
+
 import android.graphics.Bitmap;
 import android.opengl.GLES20;
 import android.util.Log;
@@ -14,9 +17,6 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLContext;
 import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
-
-import static javax.microedition.khronos.opengles.GL10.GL_RGBA;
-import static javax.microedition.khronos.opengles.GL10.GL_UNSIGNED_BYTE;
 
 /**
  * Created by yuxfzju on 16/8/29.
@@ -41,18 +41,19 @@ public final class EglBuffer {
             EGL_CONTEXT_CLIENT_VERSION, 2, EGL10.EGL_NONE
     };
 
+    private EGLDisplay eglDisplay = EGL10.EGL_NO_DISPLAY;
+    private EGLContext eglContext = null;
+    private final EGLConfig[] eglConfigs = new EGLConfig[1];
+
     public Bitmap getBlurBitmap(Bitmap bitmap, int radius, @Mode int mode) {
         final int w = bitmap.getWidth();
         final int h = bitmap.getHeight();
-        EGLDisplay eglDisplay = EGL10.EGL_NO_DISPLAY;
+
+        checkEGLContext();
         EGLSurface eglSurface = null;
-        EGLContext eglContext = null;
-        EGLConfig[] eglConfigs = new EGLConfig[1];
         OffScreenBlurRenderer renderer = null;
         try {
-            eglDisplay = createDisplay(eglConfigs);
             eglSurface = createSurface(w, h, eglDisplay, eglConfigs);
-            eglContext = createEGLContext(eglDisplay, eglConfigs);
             EGL.eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
             renderer = createRenderer(radius, mode);
             renderer.onDrawFrame(bitmap);
@@ -62,11 +63,26 @@ public final class EglBuffer {
             Log.e(TAG, "Blur the bitmap error", t);
         } finally {
             destroyEglSurface(eglDisplay, eglSurface);
-            destroyEglContext(eglDisplay, eglContext);
         }
         return bitmap;
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        release();
+    }
+
+    private void release() {
+        destroyEglContext(eglDisplay, eglContext);
+    }
+
+    private void checkEGLContext() {
+        if (eglDisplay == EGL10.EGL_NO_DISPLAY) {
+            eglDisplay = createDisplay(eglConfigs);
+            eglContext = createEGLContext(eglDisplay, eglConfigs);
+        }
+    }
 
     private void convertToBitmap(Bitmap bitmap) {
         final int w = bitmap.getWidth();
@@ -118,10 +134,7 @@ public final class EglBuffer {
     }
 
     private OffScreenBlurRenderer createRenderer(int radius, @Mode int mode) {
-        OffScreenBlurRenderer renderer = new OffScreenBlurRenderer();
-        renderer.setBlurRadius(radius);
-        renderer.setBlurMode(mode);
-        return renderer;
+        return new OffScreenBlurRenderer(mode, radius);
     }
 
 }

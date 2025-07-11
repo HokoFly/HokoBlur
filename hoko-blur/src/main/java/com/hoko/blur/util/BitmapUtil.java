@@ -18,7 +18,11 @@ public final class BitmapUtil {
             return null;
         }
         if (factor == 1.0f) {
-            return bitmap;
+            if (!bitmap.isMutable()) {
+                return bitmap.copy(bitmap.getConfig(), true);
+            } else {
+                return bitmap;
+            }
         }
         final float scale = 1.0f / factor;
         int newWidth = (int)(bitmap.getWidth() * scale);

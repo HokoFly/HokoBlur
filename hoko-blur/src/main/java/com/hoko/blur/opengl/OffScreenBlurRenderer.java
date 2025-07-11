@@ -5,7 +5,6 @@ import android.opengl.GLES20;
 
 import com.hoko.blur.anno.Mode;
 import com.hoko.blur.anno.NotThreadSafe;
-import com.hoko.blur.util.ShaderUtil;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -22,15 +21,6 @@ import javax.microedition.khronos.egl.EGLContext;
 @NotThreadSafe
 class OffScreenBlurRenderer implements IRenderer<Bitmap> {
     private final static String TAG = OffScreenBlurRenderer.class.getSimpleName();
-
-    private static final String vertexShaderCode =
-            "attribute vec2 aTexCoord;   \n" +
-                    "attribute vec4 aPosition;  \n" +
-                    "varying vec2 vTexCoord;  \n" +
-                    "void main() {              \n" +
-                    "  gl_Position = aPosition; \n" +
-                    "  vTexCoord = aTexCoord; \n" +
-                    "}  \n";
 
     private static final int COORDS_PER_VERTEX = 3;
     private static final int VERTEX_STRIDE = COORDS_PER_VERTEX * 4;
@@ -61,9 +51,10 @@ class OffScreenBlurRenderer implements IRenderer<Bitmap> {
     @Mode
     private int mMode;
 
-    private volatile boolean mNeedRelink;
+    public OffScreenBlurRenderer(@Mode int mode, int radius) {
+        mMode = mode;
+        mRadius = radius;
 
-    public OffScreenBlurRenderer() {
         ByteBuffer bb = ByteBuffer.allocateDirect(squareCoords.length * 4);
         bb.order(ByteOrder.nativeOrder());
         mVertexBuffer = bb.asFloatBuffer();
@@ -82,7 +73,7 @@ class OffScreenBlurRenderer implements IRenderer<Bitmap> {
         mTexCoordBuffer.put(mTexHorizontalCoords);
         mTexCoordBuffer.position(0);
 
-
+        mProgram = ProgramManager.getInstance().getProgram(mMode);
     }
 
     @Override
@@ -108,12 +99,7 @@ class OffScreenBlurRenderer implements IRenderer<Bitmap> {
         if (context.equals(EGL10.EGL_NO_CONTEXT)) {
             throw new IllegalStateException("This thread has no EGLContext.");
         }
-        if (mNeedRelink || mProgram == null) {
-            deletePrograms();
-            mProgram = Program.of(vertexShaderCode, ShaderUtil.getFragmentShaderCode(mMode));
-            mNeedRelink = false;
-        }
-        if (mProgram.id() == 0) {
+        if (mProgram == null || mProgram.id() == 0) {
             throw new IllegalStateException("Failed to create program.");
         }
         int w = bitmap.getWidth();
@@ -127,6 +113,7 @@ class OffScreenBlurRenderer implements IRenderer<Bitmap> {
     private void draw(BlurContext blurContext) {
         drawOneDimenBlur(blurContext, true);
         drawOneDimenBlur(blurContext, false);
+        GLES20.glFinish();
     }
 
     private void drawOneDimenBlur(BlurContext blurContext, boolean isHorizontal) {
@@ -185,28 +172,14 @@ class OffScreenBlurRenderer implements IRenderer<Bitmap> {
         mVertexBuffer.clear();
         mTexCoordBuffer.clear();
         mDrawListBuffer.clear();
-        deletePrograms();
+        releaseProgram();
     }
 
 
-    private void deletePrograms() {
-        mNeedRelink = true;
+    private void releaseProgram() {
         if (mProgram != null) {
-            mProgram.delete();
-            mProgram = null;
+            ProgramManager.getInstance().releaseProgram(mProgram);
         }
-    }
-
-    void setBlurMode(@Mode int mode) {
-        if (mMode != mode) {
-            mNeedRelink = true;
-            deletePrograms();
-        }
-        mMode = mode;
-    }
-
-    void setBlurRadius(int radius) {
-        mRadius = radius;
     }
 
     private static class BlurContext {
@@ -216,11 +189,10 @@ class OffScreenBlurRenderer implements IRenderer<Bitmap> {
         private final Bitmap bitmap;
 
         private BlurContext(Bitmap bitmap) {
-            //todo Textures share problem is not solved. Here create a new texture directly, not get from the texture cache
-            //It doesn't affect performance seriously.
             this.bitmap = bitmap;
-            inputTexture = Texture.create(bitmap);
-            horizontalTexture = Texture.create(bitmap.getWidth(), bitmap.getHeight());
+            inputTexture = TextureCache.getInstance().acquireTexture(bitmap.getWidth(), bitmap.getHeight());
+            inputTexture.uploadBitmap(bitmap);
+            horizontalTexture = TextureCache.getInstance().acquireTexture(bitmap.getWidth(), bitmap.getHeight());
             blurFrameBuffer = FrameBufferCache.getInstance().getFrameBuffer();
             if (blurFrameBuffer != null) {
                 blurFrameBuffer.bindTexture(horizontalTexture);
@@ -246,11 +218,12 @@ class OffScreenBlurRenderer implements IRenderer<Bitmap> {
         }
 
         private void finish() {
+            blurFrameBuffer.unbindTexture();
             if (inputTexture != null) {
-                inputTexture.delete();
+                TextureCache.getInstance().releaseTexture(inputTexture);
             }
             if (horizontalTexture != null) {
-                horizontalTexture.delete();
+                TextureCache.getInstance().releaseTexture(horizontalTexture);
             }
             FrameBufferCache.getInstance().recycleFrameBuffer(blurFrameBuffer);
         }
